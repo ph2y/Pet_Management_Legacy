@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/navigation_my_pet"
+        android:title="@string/title_my_pet"
+        android:icon="@drawable/ic_baseline_pets_24" />
+    <item android:id="@+id/navigation_map"
+        android:title="@string/title_map"
+        android:icon="@drawable/ic_baseline_map_24" />
+    <item android:id="@+id/navigation_community"
+        android:title="@string/title_community"
+        android:icon="@drawable/ic_baseline_language_24" />
+    <item android:id="@+id/navigation_my_page"
+        android:title="@string/title_my_page"
+        android:icon="@drawable/ic_baseline_account_circle_24" />
+</menu>
