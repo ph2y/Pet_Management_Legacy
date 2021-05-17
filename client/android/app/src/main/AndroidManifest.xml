@@ -3,6 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.sju18001.petmanagement">
 
+    <meta-data android:name="com.kakao.sdk.AppKey" android:value="fc8b31553a5077fdddb778cdda5b0d41"/>
+
+    <uses-permission android:name="android.permission.INTERNET">
+    </uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION">
+    </uses-permission>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
