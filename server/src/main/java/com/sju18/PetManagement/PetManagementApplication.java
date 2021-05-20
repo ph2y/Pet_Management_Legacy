@@ -9,7 +9,7 @@ package com.sju18.PetManagement;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "com.sju18")
 public class PetManagementApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(PetManagementApplication.class, args);
