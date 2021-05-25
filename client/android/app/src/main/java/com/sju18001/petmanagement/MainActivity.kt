@@ -6,14 +6,21 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Base64.encode
 import android.util.Log
+import androidx.appcompat.app.ActionBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
+import com.sju18001.petmanagement.ui.community.CommunityFragment
+import com.sju18001.petmanagement.ui.map.MapFragment
+import com.sju18001.petmanagement.ui.myPage.MyPageFragment
+import com.sju18001.petmanagement.ui.myPet.MyPetFragment
 import java.net.URLEncoder.encode
 import java.security.MessageDigest
 import java.util.*
@@ -22,13 +29,26 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    private var myPetFragment: Fragment = MyPetFragment()
+    private var mapFragment: Fragment = MapFragment()
+    private var communityFragment: Fragment = CommunityFragment()
+    private var myPageFragment: Fragment = MyPageFragment()
+    private var fragmentManager: FragmentManager = supportFragmentManager
+    private var activeFragment: Fragment = myPetFragment
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val actionBar: ActionBar? = supportActionBar
         val navView: BottomNavigationView = binding.navView
+
+        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPetFragment, "myPet").commit()
+        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, mapFragment, "map").hide(mapFragment).commit()
+        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, communityFragment, "community").hide(communityFragment).commit()
+        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPageFragment, "myPage").hide(myPageFragment).commit()
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
@@ -41,17 +61,38 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        var currentItem: Int = -1
         navView.setOnNavigationItemSelectedListener {
-            if (currentItem != it.itemId) {
-                currentItem = it.itemId
-
-                NavigationUI.onNavDestinationSelected(it, navController)
-                true
+            when(it.itemId){
+                R.id.navigation_my_pet -> {
+                    fragmentManager.beginTransaction().hide(activeFragment).show(myPetFragment).commit()
+                    navView.menu.getItem(0).isChecked = true
+                    actionBar?.setTitle(R.string.title_my_pet)
+                    activeFragment = myPetFragment
+                    true
+                }
+                R.id.navigation_map -> {
+                    fragmentManager.beginTransaction().hide(activeFragment).show(mapFragment).commit()
+                    navView.menu.getItem(1).isChecked = true
+                    actionBar?.setTitle(R.string.title_map)
+                    activeFragment = mapFragment
+                    true
+                }
+                R.id.navigation_community -> {
+                    fragmentManager.beginTransaction().hide(activeFragment).show(communityFragment).commit()
+                    navView.menu.getItem(2).isChecked = true
+                    actionBar?.setTitle(R.string.title_community)
+                    activeFragment = communityFragment
+                    true
+                }
+                R.id.navigation_my_page -> {
+                    fragmentManager.beginTransaction().hide(activeFragment).show(myPageFragment).commit()
+                    navView.menu.getItem(3).isChecked = true
+                    actionBar?.setTitle(R.string.title_my_page)
+                    activeFragment = myPageFragment
+                    true
+                }
             }
-            else {
-                false
-            }
+            false
         }
     }
 
