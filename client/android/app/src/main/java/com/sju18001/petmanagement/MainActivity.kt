@@ -10,6 +10,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
@@ -39,6 +40,19 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        var currentItem: Int = -1
+        navView.setOnNavigationItemSelectedListener {
+            if (currentItem != it.itemId) {
+                currentItem = it.itemId
+
+                NavigationUI.onNavDestinationSelected(it, navController)
+                true
+            }
+            else {
+                false
+            }
+        }
     }
 
     // 디버그 전용 Key
