@@ -13,19 +13,34 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentMapBinding
+import com.sju18001.petmanagement.restapi.KakaoApi
+import com.sju18001.petmanagement.restapi.Documents
+
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import net.daum.mf.map.api.MapPoint
 
+import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
 
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.http.GET
+import retrofit2.http.Header
+import retrofit2.http.Query
+import retrofit2.converter.gson.GsonConverterFactory
+
 class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
+    val API_KEY = "KakaoAK fcb50b998a702691c31e6e2b3a4555be"
+    val BASE_URL = "https://dapi.kakao.com/"
 
     private lateinit var mapViewModel: CommunityViewModel
     private var _binding: FragmentMapBinding? = null
@@ -71,6 +86,9 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
         mapView.setCurrentLocationEventListener(this)
         setMapCenterPointToCurrentLocation(mapView)
+
+        // Test For Search
+        searchKeyword("펫샵")
 
         // 현재 위치 fab 버튼
         root.findViewById<FloatingActionButton>(R.id.currentLocationButton).setOnClickListener(View.OnClickListener {
@@ -136,5 +154,30 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
                 }
             }
         }
+    }
+
+    private fun searchKeyword(keyword: String){
+        // Retrofit 구성
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        val api = retrofit.create(KakaoApi::class.java)
+        
+        // GET 요청
+        val call = api.getSearchKeyword(API_KEY, keyword)
+        call.enqueue(object: Callback<Documents> {
+            override fun onResponse(
+                call: Call<Documents>,
+                response: Response<Documents>
+            ) {
+                Log.i("성공", response.body().toString())
+            }
+
+            override fun onFailure(call: Call<Documents>, t: Throwable) {
+                Log.i("MapFragment", "Failed To Get Request: ${t.message}")
+            }
+
+        })
     }
 }
