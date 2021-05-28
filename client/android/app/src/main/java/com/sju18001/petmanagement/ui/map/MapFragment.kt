@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.map
 
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Bundle
@@ -8,6 +9,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -33,9 +38,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.Query
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
@@ -60,6 +62,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
     // 지도 관련
     private var currentMapPoint: MapPoint? = null
     private var isLoadingCurrentMapPoint: Boolean = false
+    private var searchRadiusMeter: Int = 3000
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,14 +74,13 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
 
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        
+
         // 권한 확인 및 획득
         val deniedPermissions = getDeniedPermissions()
         requestPermissions(deniedPermissions)
 
         // MavView 초기화
         val mapView = MapView(this.activity)
-
         val mapViewContainer = root?.findViewById<ViewGroup>(R.id.map_view)!!
         mapViewContainer.addView(mapView)
 
@@ -87,13 +89,19 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
         mapView.setCurrentLocationEventListener(this)
         setMapCenterPointToCurrentLocation(mapView)
 
-        // Test For Search
-        searchKeyword("펫샵")
-
-        // 현재 위치 fab 버튼
+        // 현재 위치 버튼
         root.findViewById<FloatingActionButton>(R.id.currentLocationButton).setOnClickListener(View.OnClickListener {
             setMapCenterPointToCurrentLocation(mapView)
         })
+
+        // 검색 버튼
+        val searchTextInput = root.findViewById<EditText>(R.id.search_text_input)
+        searchTextInput.setOnEditorActionListener{ textView, action, event ->
+            searchKeyword(textView.text.toString())
+            hideKeyboard(textView)
+
+            true
+        }
 
         return root
     }
@@ -165,19 +173,37 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
         val api = retrofit.create(KakaoApi::class.java)
         
         // GET 요청
-        val call = api.getSearchKeyword(API_KEY, keyword)
-        call.enqueue(object: Callback<Documents> {
-            override fun onResponse(
-                call: Call<Documents>,
-                response: Response<Documents>
-            ) {
-                Log.i("성공", response.body().toString())
-            }
+        try{
+            val call = api.getSearchKeyword(
+                API_KEY,
+                keyword,
+                currentMapPoint!!.mapPointGeoCoord.longitude.toString(),
+                currentMapPoint!!.mapPointGeoCoord.latitude.toString(),
+                searchRadiusMeter
+            )
 
-            override fun onFailure(call: Call<Documents>, t: Throwable) {
-                Log.i("MapFragment", "Failed To Get Request: ${t.message}")
-            }
+            call.enqueue(object: Callback<Documents> {
+                override fun onResponse(
+                    call: Call<Documents>,
+                    response: Response<Documents>
+                ) {
+                    Log.i("성공", response.body().toString())
+                }
 
-        })
+                override fun onFailure(call: Call<Documents>, t: Throwable) {
+                    Log.i("MapFragment", "Failed To Get Request: ${t.message}")
+                }
+
+            })
+        }catch(e: Exception){
+            // currentMapPoint가 아직 초기화되지 않았을 경우
+            Log.e("MapFragment", e.stackTrace.toString())
+        }
+    }
+
+    private fun hideKeyboard(view: View){
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        view.clearFocus()
     }
 }

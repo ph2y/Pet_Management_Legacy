@@ -67,13 +67,15 @@ class MainActivity : AppCompatActivity() {
                     fragmentManager.beginTransaction().hide(activeFragment).show(myPetFragment).commit()
                     navView.menu.getItem(0).isChecked = true
                     actionBar?.setTitle(R.string.title_my_pet)
+                    actionBar?.show()
                     activeFragment = myPetFragment
                     true
                 }
                 R.id.navigation_map -> {
                     fragmentManager.beginTransaction().hide(activeFragment).show(mapFragment).commit()
                     navView.menu.getItem(1).isChecked = true
-                    actionBar?.setTitle(R.string.title_map)
+                    actionBar?.setShowHideAnimationEnabled(false)
+                    actionBar?.hide()
                     activeFragment = mapFragment
                     true
                 }
@@ -81,6 +83,7 @@ class MainActivity : AppCompatActivity() {
                     fragmentManager.beginTransaction().hide(activeFragment).show(communityFragment).commit()
                     navView.menu.getItem(2).isChecked = true
                     actionBar?.setTitle(R.string.title_community)
+                    actionBar?.show()
                     activeFragment = communityFragment
                     true
                 }
@@ -88,6 +91,7 @@ class MainActivity : AppCompatActivity() {
                     fragmentManager.beginTransaction().hide(activeFragment).show(myPageFragment).commit()
                     navView.menu.getItem(3).isChecked = true
                     actionBar?.setTitle(R.string.title_my_page)
+                    actionBar?.show()
                     activeFragment = myPageFragment
                     true
                 }
