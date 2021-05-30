@@ -30,6 +30,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import net.daum.android.map.MapViewEventListener
 
 import net.daum.mf.map.api.MapPoint
 import net.daum.mf.map.api.MapView
@@ -40,7 +41,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
+class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.MapViewEventListener {
     val API_KEY = "KakaoAK fcb50b998a702691c31e6e2b3a4555be"
     val BASE_URL = "https://dapi.kakao.com/"
 
@@ -63,6 +64,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
     private var currentMapPoint: MapPoint? = null
     private var isLoadingCurrentMapPoint: Boolean = false
     private var searchRadiusMeter: Int = 3000
+    private var searchTextInput: EditText? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -83,10 +85,9 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
         val mapView = MapView(this.activity)
         val mapViewContainer = root?.findViewById<ViewGroup>(R.id.map_view)!!
         mapViewContainer.addView(mapView)
-
-        // 트랙킹 모드 및 현재 위치로 맵 이동
-        mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
         mapView.setCurrentLocationEventListener(this)
+        mapView.setMapViewEventListener(this)
+        mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
         setMapCenterPointToCurrentLocation(mapView)
 
         // 현재 위치 버튼
@@ -95,8 +96,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
         })
 
         // 검색 버튼
-        val searchTextInput = root.findViewById<EditText>(R.id.search_text_input)
-        searchTextInput.setOnEditorActionListener{ textView, action, event ->
+        searchTextInput = root.findViewById<EditText>(R.id.search_text_input)
+        searchTextInput?.setOnEditorActionListener{ textView, action, event ->
             searchKeyword(textView.text.toString())
             hideKeyboard(textView)
 
@@ -128,21 +129,6 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
             val array = arrayOfNulls<String>(permissions.size)
             ActivityCompat.requestPermissions(requireActivity(), permissions.toArray(array), REQUEST_CODE)
         }
-    }
-
-    override fun onCurrentLocationUpdate(p0: MapView?, p1: MapPoint?, p2: Float) {
-        if (p1 != null) {
-            currentMapPoint = p1
-        }
-    }
-
-    override fun onCurrentLocationDeviceHeadingUpdate(p0: MapView?, p1: Float) {
-    }
-
-    override fun onCurrentLocationUpdateFailed(p0: MapView?) {
-    }
-
-    override fun onCurrentLocationUpdateCancelled(p0: MapView?) {
     }
 
     private fun setMapCenterPointToCurrentLocation(mapView: MapView){
@@ -205,5 +191,52 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener {
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         view.clearFocus()
+    }
+    
+    // CurrentLocationEventListener 인터페이스 구현
+    override fun onCurrentLocationUpdate(p0: MapView?, p1: MapPoint?, p2: Float) {
+        if (p1 != null) {
+            currentMapPoint = p1
+        }
+    }
+
+    override fun onCurrentLocationDeviceHeadingUpdate(p0: MapView?, p1: Float) {
+    }
+
+    override fun onCurrentLocationUpdateFailed(p0: MapView?) {
+    }
+
+    override fun onCurrentLocationUpdateCancelled(p0: MapView?) {
+    }
+    
+    // MapViewEventListener 인터페이스 구현
+    override fun onMapViewInitialized(p0: MapView?) {
+    }
+
+    override fun onMapViewCenterPointMoved(p0: MapView?, p1: MapPoint?) {
+    }
+
+    override fun onMapViewZoomLevelChanged(p0: MapView?, p1: Int) {
+    }
+
+    override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
+        if(searchTextInput!!.isFocused == true){
+            hideKeyboard(searchTextInput!!)
+        }
+    }
+
+    override fun onMapViewDoubleTapped(p0: MapView?, p1: MapPoint?) {
+    }
+
+    override fun onMapViewLongPressed(p0: MapView?, p1: MapPoint?) {
+    }
+
+    override fun onMapViewDragStarted(p0: MapView?, p1: MapPoint?) {
+    }
+
+    override fun onMapViewDragEnded(p0: MapView?, p1: MapPoint?) {
+    }
+
+    override fun onMapViewMoveFinished(p0: MapView?, p1: MapPoint?) {
     }
 }
