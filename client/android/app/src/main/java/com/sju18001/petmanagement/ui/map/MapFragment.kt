@@ -5,17 +5,20 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 
@@ -95,13 +98,28 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             setMapCenterPointToCurrentLocation(mapView)
         })
 
-        // 검색 버튼
+        // 검색바
         searchTextInput = root.findViewById<EditText>(R.id.search_text_input)
-        searchTextInput?.setOnEditorActionListener{ textView, action, event ->
+        var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel)
+
+        searchTextInput!!.setOnEditorActionListener{ textView, action, event ->
             searchKeyword(textView.text.toString())
             hideKeyboard(textView)
 
             true
+        }
+
+        searchTextInput!!.addTextChangedListener {
+            if(!searchTextInput!!.text.isEmpty()){
+                searchTextCancel.visibility = View.VISIBLE
+            }else{
+                searchTextCancel.visibility = View.INVISIBLE
+            }
+        }
+
+        searchTextCancel!!.setOnClickListener{
+            searchTextInput!!.setText("")
+            hideKeyboard(searchTextInput!!)
         }
 
         return root
