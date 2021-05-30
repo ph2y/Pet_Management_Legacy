@@ -3,6 +3,7 @@ package com.sju18001.petmanagement.ui.map
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Geocoder
 import android.os.Bundle
 import android.text.Editable
@@ -28,15 +29,14 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentMapBinding
 import com.sju18001.petmanagement.restapi.KakaoApi
 import com.sju18001.petmanagement.restapi.Documents
+import com.sju18001.petmanagement.restapi.Place
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import net.daum.android.map.MapViewEventListener
-
-import net.daum.mf.map.api.MapPoint
-import net.daum.mf.map.api.MapView
+import net.daum.mf.map.api.*
 
 import retrofit2.Call
 import retrofit2.Callback
@@ -103,8 +103,13 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel)
 
         searchTextInput!!.setOnEditorActionListener{ textView, action, event ->
-            searchKeyword(textView.text.toString())
+            searchKeyword(textView.text.toString(), mapView)
             hideKeyboard(textView)
+
+            // WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
+            setMapCenterPointToCurrentLocation(mapView)
+            val searchAreaCircle = addCircleCenteredAtCurrentLocation(mapView, searchRadiusMeter)
+            moveCameraOnCircle(mapView, searchAreaCircle!!, 50)
 
             true
         }
@@ -168,7 +173,39 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         }
     }
 
-    private fun searchKeyword(keyword: String){
+    private fun addCircleCenteredAtCurrentLocation(mapView: MapView, radius: Int): MapCircle?{
+        var searchAreaCircle:MapCircle? = null
+        mapView.removeAllCircles()
+
+        try{
+            searchAreaCircle = MapCircle(
+                currentMapPoint,
+                radius,
+                Color.argb(128, 255, 0, 0),
+                Color.argb(0, 0, 0, 0)
+            )
+            searchAreaCircle.tag = 1000
+            mapView.addCircle(searchAreaCircle)
+        }catch(e: Exception){
+            // currentMapPoint가 아직 초기화되지 않았을 경우
+            Log.e("MapFragment", e.stackTrace.toString())
+        }
+
+        return searchAreaCircle
+    }
+    private fun moveCameraOnCircle(mapView: MapView, circle: MapCircle, padding: Int){
+        try{
+            val mapPointBoundsArray = arrayOf(circle.bound, circle.bound)
+            val mapPointBounds = MapPointBounds(mapPointBoundsArray)
+            mapView.moveCamera(CameraUpdateFactory.newMapPointBounds(mapPointBounds, padding))
+        }catch(e:Exception){
+            // circle을 반환받지 못했을 경우
+            Log.i("MapFragment", e.stackTrace.toString())
+        }
+    }
+
+    // 검색 및 JSON 데이터 로드
+    private fun searchKeyword(keyword: String, mapView:MapView){
         // Retrofit 구성
         val retrofit = Retrofit.Builder()
             .baseUrl(BASE_URL)
@@ -191,7 +228,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                     call: Call<Documents>,
                     response: Response<Documents>
                 ) {
-                    Log.i("성공", response.body().toString())
+                    addPOIItemsForDocuments(response.body()!!.documents, mapView)
                 }
 
                 override fun onFailure(call: Call<Documents>, t: Throwable) {
@@ -202,6 +239,21 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         }catch(e: Exception){
             // currentMapPoint가 아직 초기화되지 않았을 경우
             Log.e("MapFragment", e.stackTrace.toString())
+        }
+    }
+
+    // Response 데이터 처리
+    private fun addPOIItemsForDocuments(documents: List<Place>, mapView: MapView){
+        mapView.removeAllPOIItems()
+
+        for(i: Int in 0 until documents.count()){
+            val newMarker: MapPOIItem = MapPOIItem()
+            newMarker.itemName = documents[i].place_name
+            newMarker.tag = 1001
+            newMarker.mapPoint = MapPoint.mapPointWithGeoCoord(documents[i].y.toDouble(), documents[i].x.toDouble())
+            newMarker.markerType = MapPOIItem.MarkerType.BluePin
+
+            mapView.addPOIItem(newMarker)
         }
     }
 
