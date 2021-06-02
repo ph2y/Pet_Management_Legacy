@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class SignupResponseDTO {
+public class ResignResponseDTO {
     private String message;
 }
