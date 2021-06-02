@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin
-public class JwtAuthenticationController {
+public class LoginController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -24,7 +24,7 @@ public class JwtAuthenticationController {
     private JwtUserDetailsService userDetailService;
 
     @PostMapping("/api/account/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequestDTO loginRequestDTO) throws Exception {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequestDTO loginRequestDTO) {
         final Account account = userDetailService.authenticateByUsernameAndPassword
                 (loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
         final String token = jwtTokenUtil.generateToken(account.getUsername());

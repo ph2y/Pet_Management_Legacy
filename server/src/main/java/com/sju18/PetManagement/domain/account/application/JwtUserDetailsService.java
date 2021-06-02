@@ -27,6 +27,7 @@ public class JwtUserDetailsService implements UserDetailsService {
     @Autowired
     private AccountRepository accountRepository;
 
+    // 스프링 시큐리티 유저 정보 로드
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByUsername(username)
@@ -42,6 +43,7 @@ public class JwtUserDetailsService implements UserDetailsService {
         return new User(account.getUsername(), account.getPassword(), grantedAuthorities);
     }
 
+    // 유저네임과 비밀번호로 스프링 시큐리티 인증
     public Account authenticateByUsernameAndPassword(String username, String password) {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
