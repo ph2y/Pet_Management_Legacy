@@ -21,6 +21,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
 	runtime 'io.jsonwebtoken:jjwt-impl:0.11.2'
 	runtime 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+	runtimeOnly 'mysql:mysql-connector-java'
 	implementation 'javax.xml.bind:jaxb-api'
 	implementation 'com.h2database:h2'
 	implementation 'junit:junit:4.12'
