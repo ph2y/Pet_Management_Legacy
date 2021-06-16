@@ -1,12 +1,11 @@
 package com.sju18001.petmanagement.ui.map
 
 import android.Manifest
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.Geocoder
 import android.os.Bundle
-import android.text.Editable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,14 +13,13 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
-import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.google.android.material.bottomnavigation.BottomNavigationView
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -44,7 +42,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.MapViewEventListener {
+class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener {
     val API_KEY = "KakaoAK fcb50b998a702691c31e6e2b3a4555be"
     val BASE_URL = "https://dapi.kakao.com/"
 
@@ -69,6 +67,9 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     private var searchRadiusMeter: Int = 3000
     private var searchTextInput: EditText? = null
 
+    private var navView: View? = null
+    private var navViewFirstHeight: Int? = null
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -80,6 +81,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
+
         // 권한 확인 및 획득
         val deniedPermissions = getDeniedPermissions()
         requestPermissions(deniedPermissions)
@@ -90,6 +93,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         mapViewContainer.addView(mapView)
         mapView.setCurrentLocationEventListener(this)
         mapView.setMapViewEventListener(this)
+        mapView.setPOIItemEventListener(this)
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
         setMapCenterPointToCurrentLocation(mapView)
 
@@ -106,10 +110,10 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             searchKeyword(textView.text.toString(), mapView)
             hideKeyboard(textView)
 
-            // WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
+            /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
             setMapCenterPointToCurrentLocation(mapView)
             val searchAreaCircle = addCircleCenteredAtCurrentLocation(mapView, searchRadiusMeter)
-            moveCameraOnCircle(mapView, searchAreaCircle!!, 50)
+            moveCameraOnCircle(mapView, searchAreaCircle!!, 50) */
 
             true
         }
@@ -249,9 +253,10 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         for(i: Int in 0 until documents.count()){
             val newMarker: MapPOIItem = MapPOIItem()
             newMarker.itemName = documents[i].place_name
-            newMarker.tag = 1001
+            newMarker.tag = i
             newMarker.mapPoint = MapPoint.mapPointWithGeoCoord(documents[i].y.toDouble(), documents[i].x.toDouble())
             newMarker.markerType = MapPOIItem.MarkerType.BluePin
+            newMarker.isShowCalloutBalloonOnTouch = false
 
             mapView.addPOIItem(newMarker)
         }
@@ -261,6 +266,37 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
         view.clearFocus()
+    }
+
+    private fun showLocationInformation(item: MapPOIItem?){
+        if(navView!=null){
+            navViewFirstHeight = navView!!.height
+            val anim = ValueAnimator.ofInt(navViewFirstHeight!!, 0)
+            anim.addUpdateListener { valueAnimator ->
+                val value = valueAnimator.animatedValue as Int
+                navView!!.layoutParams.height = value
+                navView!!.requestLayout()
+            }
+            anim.duration = 50
+            anim.start()
+        }else{
+            Log.e("MapFragment", "navView is null.")
+        }
+    }
+
+    private fun hideLocationInformation(){
+        if(navView != null && navViewFirstHeight != null){
+            val anim = ValueAnimator.ofInt(0, navViewFirstHeight!!)
+            anim.addUpdateListener { valueAnimator ->
+                val value = valueAnimator.animatedValue as Int
+                navView!!.layoutParams.height = value
+                navView!!.requestLayout()
+            }
+            anim.duration = 50
+            anim.start()
+        }else{
+            Log.e("MapFragment", "navView or navViewFirstHeight is null.")
+        }
     }
     
     // CurrentLocationEventListener 인터페이스 구현
@@ -293,6 +329,10 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         if(searchTextInput!!.isFocused == true){
             hideKeyboard(searchTextInput!!)
         }
+
+        if(navView!!.height == 0){
+            hideLocationInformation()
+        }
     }
 
     override fun onMapViewDoubleTapped(p0: MapView?, p1: MapPoint?) {
@@ -308,5 +348,25 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     override fun onMapViewMoveFinished(p0: MapView?, p1: MapPoint?) {
+    }
+    
+    // MapView.POIItemEventListener 인터페이스 구현
+    override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
+        if(p1!=null){
+            showLocationInformation(p1)
+        }
+    }
+
+    override fun onCalloutBalloonOfPOIItemTouched(p0: MapView?, p1: MapPOIItem?) {
+    }
+
+    override fun onCalloutBalloonOfPOIItemTouched(
+        p0: MapView?,
+        p1: MapPOIItem?,
+        p2: MapPOIItem.CalloutBalloonButtonType?
+    ) {
+    }
+
+    override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?) {
     }
 }
