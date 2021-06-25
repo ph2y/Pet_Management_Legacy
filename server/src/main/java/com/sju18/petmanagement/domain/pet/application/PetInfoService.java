@@ -20,18 +20,20 @@ public class PetInfoService {
         // 로그인된 현재 사용자 정보 조회
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String currentUserName = userDetails.getUsername();
-
+        System.out.println(currentUserName);
         // 해당 사용자의 펫 세부정보 조회 및 반환
         try {
             Pet petInfo = petRepository.findByUsername(currentUserName)
                     .orElseThrow(() -> new UsernameNotFoundException(currentUserName));
-            return new PetInfoResponseDTO.builder()
+            System.out.println(petInfo.getName());
+            return new PetInfoResponseDTO("fetch success",petInfo.getName(), petInfo.getBirth(), petInfo.getSpecies(), petInfo.getSex());
+            /* return new PetInfoResponseDTO.builder()
                     .message("fetch success")
                     .name(petInfo.getName())
                     .birth(petInfo.getBirth())
                     .species(petInfo.getSpecies())
                     .sex(petInfo.getSex())
-                    .build();
+                    .build(); */
         } catch (Exception e) {
             return new PetInfoResponseDTO(e.getMessage());
         }

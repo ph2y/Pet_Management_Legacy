@@ -2,6 +2,7 @@ package com.sju18.petmanagement.domain.pet.api;
 
 import com.sju18.petmanagement.domain.pet.application.PetInfoService;
 import com.sju18.petmanagement.domain.pet.dto.PetInfoRequestDTO;
+import com.sju18.petmanagement.domain.pet.dto.PetInfoResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -12,10 +13,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 public class PetInfoController {
-    private PetInfoService petInfoService;
+    private final PetInfoService petInfoService;
 
-    @PostMapping("/api/account/petinfo")
+    @PostMapping("/api/pet/info")
     public ResponseEntity<?> fetchPetInfo(Authentication authentication, @RequestBody PetInfoRequestDTO petInfoRequestDTO) {
-        return ResponseEntity.ok(new petInfoService.fetchPetInfo(authentication));
+        PetInfoResponseDTO petInfoResponseDTO = petInfoService.fetchPetInfo(authentication);
+        return ResponseEntity.ok(petInfoResponseDTO);
     }
 }
