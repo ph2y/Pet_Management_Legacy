@@ -7,15 +7,20 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.animation.doOnEnd
 
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginBottom
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -67,8 +72,27 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     private var searchRadiusMeter: Int = 3000
     private var searchTextInput: EditText? = null
 
+    // 상수
+    private val CURRENT_LOCATION_BUTTON_MARGIN: Int = 16
+    private val NAVVIEW_HEIGHT: Int = 56
+    private val LOCATION_INFORMATION_HEIGHT: Int = 128
+    private val ANIMATION_DURATION: Long = 200
+
+    // View
+    private var currentLocationButton: View? = null
     private var navView: View? = null
-    private var navViewFirstHeight: Int? = null
+    private var locationInformation: View? = null
+
+    // 검색 기능 관련
+    private var currentDocument: List<Place>? = null
+
+    // 애니메이션
+    private var showingNavViewAnim: ValueAnimator? = null
+    private var hidingNavViewAnim: ValueAnimator? = null
+    private var increasingCurrentLocationButtonMarginAnim: ValueAnimator? = null
+    private var decreasingCurrentLocationButtonMarginAnim: ValueAnimator? = null
+    private var showingLocationInformationAnim: ValueAnimator? = null
+    private var hidingLocationInformationAnim: ValueAnimator? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -81,11 +105,11 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
 
         // 권한 확인 및 획득
         val deniedPermissions = getDeniedPermissions()
         requestPermissions(deniedPermissions)
+
 
         // MavView 초기화
         val mapView = MapView(this.activity)
@@ -97,10 +121,20 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
         setMapCenterPointToCurrentLocation(mapView)
 
+
+        // 변수 초기화
+        navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
+
+
         // 현재 위치 버튼
-        root.findViewById<FloatingActionButton>(R.id.currentLocationButton).setOnClickListener(View.OnClickListener {
+        currentLocationButton = root.findViewById<FloatingActionButton>(R.id.currentLocationButton)
+        currentLocationButton!!.setOnClickListener(View.OnClickListener {
             setMapCenterPointToCurrentLocation(mapView)
         })
+        val currentLocationButtonParams = currentLocationButton!!.layoutParams as ViewGroup.MarginLayoutParams
+        currentLocationButtonParams.bottomMargin += convertDpToPixel(NAVVIEW_HEIGHT)
+        currentLocationButton!!.layoutParams = currentLocationButtonParams
+
 
         // 검색바
         searchTextInput = root.findViewById<EditText>(R.id.search_text_input)
@@ -130,6 +164,66 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             searchTextInput!!.setText("")
             hideKeyboard(searchTextInput!!)
         }
+
+
+        // 애니메이션 초기화
+        showingNavViewAnim = ValueAnimator.ofInt(0, convertDpToPixel(NAVVIEW_HEIGHT))
+        showingNavViewAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+
+            navView!!.layoutParams.height = value
+            navView!!.requestLayout()
+        }
+        showingNavViewAnim!!.duration = ANIMATION_DURATION
+
+        hidingNavViewAnim = ValueAnimator.ofInt(convertDpToPixel(NAVVIEW_HEIGHT), 0)
+        hidingNavViewAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+
+            navView!!.layoutParams.height = value
+            navView!!.requestLayout()
+        }
+        hidingNavViewAnim!!.duration = ANIMATION_DURATION
+
+        increasingCurrentLocationButtonMarginAnim = ValueAnimator.ofInt(convertDpToPixel(CURRENT_LOCATION_BUTTON_MARGIN), convertDpToPixel(NAVVIEW_HEIGHT + CURRENT_LOCATION_BUTTON_MARGIN))
+        increasingCurrentLocationButtonMarginAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+            val params = currentLocationButton!!.layoutParams as (ViewGroup.MarginLayoutParams)
+
+            params.bottomMargin = value
+            currentLocationButton!!.requestLayout()
+        }
+        increasingCurrentLocationButtonMarginAnim!!.duration = ANIMATION_DURATION
+
+        decreasingCurrentLocationButtonMarginAnim = ValueAnimator.ofInt(convertDpToPixel(NAVVIEW_HEIGHT + CURRENT_LOCATION_BUTTON_MARGIN), convertDpToPixel(CURRENT_LOCATION_BUTTON_MARGIN))
+        decreasingCurrentLocationButtonMarginAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+            val params = currentLocationButton!!.layoutParams as (ViewGroup.MarginLayoutParams)
+
+            params.bottomMargin = value
+            currentLocationButton!!.requestLayout()
+        }
+        decreasingCurrentLocationButtonMarginAnim!!.duration = ANIMATION_DURATION
+
+        showingLocationInformationAnim = ValueAnimator.ofInt(1, convertDpToPixel(LOCATION_INFORMATION_HEIGHT))
+        showingLocationInformationAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+            if(locationInformation == null) locationInformation = requireActivity().findViewById<ConstraintLayout>(R.id.location_information)
+
+            locationInformation!!.layoutParams.height = value
+            locationInformation!!.requestLayout()
+        }
+        showingLocationInformationAnim!!.duration = ANIMATION_DURATION
+
+        hidingLocationInformationAnim = ValueAnimator.ofInt(convertDpToPixel(LOCATION_INFORMATION_HEIGHT), 1)
+        hidingLocationInformationAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+            if(locationInformation == null) locationInformation = requireActivity().findViewById<ConstraintLayout>(R.id.location_information)
+
+            locationInformation!!.layoutParams.height = value
+            locationInformation!!.requestLayout()
+        }
+        hidingLocationInformationAnim!!.duration = ANIMATION_DURATION
 
         return root
     }
@@ -232,7 +326,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                     call: Call<Documents>,
                     response: Response<Documents>
                 ) {
-                    addPOIItemsForDocuments(response.body()!!.documents, mapView)
+                    currentDocument = response.body()!!.documents
+                    addPOIItemsForDocuments(currentDocument!!, mapView)
                 }
 
                 override fun onFailure(call: Call<Documents>, t: Throwable) {
@@ -268,35 +363,82 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         view.clearFocus()
     }
 
-    private fun showLocationInformation(item: MapPOIItem?){
-        if(navView!=null){
-            navViewFirstHeight = navView!!.height
-            val anim = ValueAnimator.ofInt(navViewFirstHeight!!, 0)
-            anim.addUpdateListener { valueAnimator ->
-                val value = valueAnimator.animatedValue as Int
-                navView!!.layoutParams.height = value
-                navView!!.requestLayout()
+    private fun showLocationInformation(item: MapPOIItem){
+        try{
+            if(isAnimationRunning()){
+                return
             }
-            anim.duration = 50
-            anim.start()
+
+            // 네비게이션바 -> 위치 정보
+            if(navView!!.height > 0){
+                hidingNavViewAnim!!.doOnEnd { anim ->
+                    showingLocationInformationAnim!!.start()
+
+                    anim.removeAllListeners()
+                }
+
+                updateLocationInformation(item)
+
+                hidingNavViewAnim!!.start()
+                decreasingCurrentLocationButtonMarginAnim!!.start()
+            }else{ // 위치 정보 -> 위치 정보
+                hidingLocationInformationAnim!!.doOnEnd { anim ->
+                    updateLocationInformation(item)
+
+                    showingLocationInformationAnim!!.start()
+
+                    anim.removeAllListeners()
+                }
+
+                hidingLocationInformationAnim!!.start()
+            }
+        }catch(e: Exception){
+            Log.e("MapFragment", "Failed to show location information: " + e.message)
+        }
+    }
+
+    private fun updateLocationInformation(item: MapPOIItem){
+        if(currentDocument != null){
+            val locationPlaceName = requireActivity().findViewById<TextView>(R.id.location_place_name)
+            val locationCategoryName = requireActivity().findViewById<TextView>(R.id.location_category_name)
+
+            locationPlaceName.text = currentDocument!![item.tag].place_name
+            locationCategoryName.text = currentDocument!![item.tag].category_group_name
         }else{
-            Log.e("MapFragment", "navView is null.")
+            Log.e("MapFragment", "currentDocument is null")
         }
     }
 
     private fun hideLocationInformation(){
-        if(navView != null && navViewFirstHeight != null){
-            val anim = ValueAnimator.ofInt(0, navViewFirstHeight!!)
-            anim.addUpdateListener { valueAnimator ->
-                val value = valueAnimator.animatedValue as Int
-                navView!!.layoutParams.height = value
-                navView!!.requestLayout()
+        try{
+            if(isAnimationRunning()){
+                return
             }
-            anim.duration = 50
-            anim.start()
-        }else{
-            Log.e("MapFragment", "navView or navViewFirstHeight is null.")
+
+            hidingLocationInformationAnim!!.doOnEnd { anim ->
+                showingNavViewAnim!!.start()
+                increasingCurrentLocationButtonMarginAnim!!.start()
+
+                anim.removeAllListeners()
+            }
+
+            hidingLocationInformationAnim!!.start()
+        }catch(e: Exception){
+            Log.e("MapFragment", "Failed to show location information: " + e.message)
         }
+    }
+
+    private fun convertDpToPixel(pixel: Int): Int{
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixel.toFloat(), resources.displayMetrics).toInt()
+    }
+
+    private fun isAnimationRunning(): Boolean{
+        return showingNavViewAnim!!.isRunning ||
+                hidingNavViewAnim!!.isRunning ||
+                increasingCurrentLocationButtonMarginAnim!!.isRunning ||
+                decreasingCurrentLocationButtonMarginAnim!!.isRunning ||
+                showingLocationInformationAnim!!.isRunning ||
+                hidingLocationInformationAnim!!.isRunning
     }
     
     // CurrentLocationEventListener 인터페이스 구현
@@ -330,8 +472,10 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             hideKeyboard(searchTextInput!!)
         }
 
-        if(navView!!.height == 0){
-            hideLocationInformation()
+        if(navView != null && locationInformation != null){
+            if (navView!!.height == 0 && locationInformation!!.height > 0){
+                hideLocationInformation()
+            }
         }
     }
 
@@ -353,7 +497,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     // MapView.POIItemEventListener 인터페이스 구현
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
         if(p1!=null){
-            showLocationInformation(p1)
+            showLocationInformation(p1!!)
         }
     }
 

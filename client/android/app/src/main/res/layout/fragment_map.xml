@@ -56,12 +56,71 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_baseline_my_location_24"
-        android:layout_margin="16dp"
+        android:layout_margin = "16dp"
         android:backgroundTint="@color/white"
         app:tint="@color/black"
         app:borderWidth="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/location_information"
         app:layout_constraintEnd_toEndOf="parent"
         />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/location_information"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@drawable/border"
+        android:padding="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        >
+        <TextView
+            android:id="@+id/location_place_name"
+            android:text="place_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:textColor="@color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+        <TextView
+            android:id="@+id/location_category_name"
+            android:text="category_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/location_place_name"
+            app:layout_constraintStart_toEndOf="@+id/location_place_name"
+            />
+
+        <ImageButton
+            android:id="@+id/pathfinding_button"
+            android:layout_width="104dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_baseline_swap_calls_24"
+            android:background="@drawable/border"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            />
+        <ImageButton
+            android:id="@+id/call_button"
+            android:layout_width="104dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_baseline_call_24"
+            android:background="@drawable/border"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/pathfinding_button"
+            app:layout_constraintRight_toLeftOf="@+id/bookmark_button"
+            />
+        <ImageButton
+            android:id="@+id/bookmark_button"
+            android:layout_width="104dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_baseline_bookmark_border_24"
+            android:background="@drawable/border"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
