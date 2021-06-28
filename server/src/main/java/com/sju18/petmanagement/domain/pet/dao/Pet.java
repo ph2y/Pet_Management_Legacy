@@ -1,5 +1,6 @@
 package com.sju18.petmanagement.domain.pet.dao;
 
+import com.sju18.petmanagement.domain.pet.dto.PetInfoUpdateRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,5 +37,14 @@ public class Pet {
         this.birth = birth;
         this.species = species;
         this.sex = sex;
+    }
+
+    public Long update(PetInfoUpdateRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.birth = requestDto.getBirth();
+        this.species = requestDto.getSpecies();
+        this.sex = requestDto.getSex();
+
+        return this.id;
     }
 }
