@@ -1,14 +1,17 @@
 package com.sju18001.petmanagement
 
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.media.tv.TvContract.Programs.Genres.encode
 import android.os.Build
 import android.os.Bundle
 import android.util.Base64.encode
 import android.util.Log
+import android.view.WindowManager
 import androidx.appcompat.app.ActionBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
@@ -66,32 +69,48 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_my_pet -> {
                     fragmentManager.beginTransaction().hide(activeFragment).show(myPetFragment).commit()
                     navView.menu.getItem(0).isChecked = true
+
                     actionBar?.setTitle(R.string.title_my_pet)
                     actionBar?.show()
+
+                    window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pumpkin)
+
                     activeFragment = myPetFragment
                     true
                 }
                 R.id.navigation_map -> {
                     fragmentManager.beginTransaction().hide(activeFragment).show(mapFragment).commit()
                     navView.menu.getItem(1).isChecked = true
+
                     actionBar?.setShowHideAnimationEnabled(false)
                     actionBar?.hide()
+
+                    window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.carrot)
+
                     activeFragment = mapFragment
                     true
                 }
                 R.id.navigation_community -> {
                     fragmentManager.beginTransaction().hide(activeFragment).show(communityFragment).commit()
                     navView.menu.getItem(2).isChecked = true
+
                     actionBar?.setTitle(R.string.title_community)
                     actionBar?.show()
+
+                    window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pumpkin)
+
                     activeFragment = communityFragment
                     true
                 }
                 R.id.navigation_my_page -> {
                     fragmentManager.beginTransaction().hide(activeFragment).show(myPageFragment).commit()
                     navView.menu.getItem(3).isChecked = true
+
                     actionBar?.setTitle(R.string.title_my_page)
                     actionBar?.show()
+
+                    window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pumpkin)
+
                     activeFragment = myPageFragment
                     true
                 }
