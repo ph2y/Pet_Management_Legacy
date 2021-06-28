@@ -401,12 +401,30 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         if(currentDocument != null){
             val locationPlaceName = requireActivity().findViewById<TextView>(R.id.location_place_name)
             val locationCategoryName = requireActivity().findViewById<TextView>(R.id.location_category_name)
+            val locationDistance = requireActivity().findViewById<TextView>(R.id.location_distance)
 
             locationPlaceName.text = currentDocument!![item.tag].place_name
             locationCategoryName.text = currentDocument!![item.tag].category_group_name
+            setLocationDistance(locationDistance, currentDocument!![item.tag].distance)
+
         }else{
             Log.e("MapFragment", "currentDocument is null")
         }
+    }
+
+    private fun setLocationDistance(locationDistance: TextView, distance: String){
+        locationDistance.text = distance + "m"
+
+        var color:Int? = null
+
+        color = when (distance.toInt()){
+            in 0..750 -> ContextCompat.getColor(requireContext(), R.color.emerald)
+            in 751..1500 -> ContextCompat.getColor(requireContext(), R.color.sunflower)
+            in 1501..2250 -> ContextCompat.getColor(requireContext(), R.color.carrot)
+            else -> ContextCompat.getColor(requireContext(), R.color.alizarin)
+        }
+
+        locationDistance.setTextColor(color)
     }
 
     private fun hideLocationInformation(){
