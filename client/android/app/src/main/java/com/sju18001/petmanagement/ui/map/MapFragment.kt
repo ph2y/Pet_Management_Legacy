@@ -369,7 +369,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                 return
             }
 
-            // 네비게이션바 -> 위치 정보
+            // 네비게이션바가 열려있는 상태일 때
             if(navView!!.height > 0){
                 hidingNavViewAnim!!.doOnEnd { anim ->
                     showingLocationInformationAnim!!.start()
@@ -381,7 +381,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
                 hidingNavViewAnim!!.start()
                 decreasingCurrentLocationButtonMarginAnim!!.start()
-            }else{ // 위치 정보 -> 위치 정보
+            }else{ // 장소 정보가 열려있는 상태일 때
                 hidingLocationInformationAnim!!.doOnEnd { anim ->
                     updateLocationInformation(item)
 
@@ -396,7 +396,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             Log.e("MapFragment", "Failed to show location information: " + e.message)
         }
     }
-
+    
+    // location_information 내부 정보 갱신
     private fun updateLocationInformation(item: MapPOIItem){
         if(currentDocument != null){
             val locationPlaceName = requireActivity().findViewById<TextView>(R.id.location_place_name)
@@ -414,10 +415,9 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
     private fun setLocationDistance(locationDistance: TextView, distance: String){
         locationDistance.text = distance + "m"
-
-        var color:Int? = null
-
-        color = when (distance.toInt()){
+        
+        // 거리에 따라 색상을 지정함
+        val color:Int = when (distance.toInt()){
             in 0..750 -> ContextCompat.getColor(requireContext(), R.color.emerald)
             in 751..1500 -> ContextCompat.getColor(requireContext(), R.color.sunflower)
             in 1501..2250 -> ContextCompat.getColor(requireContext(), R.color.carrot)
@@ -490,6 +490,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             hideKeyboard(searchTextInput!!)
         }
 
+        // 장소 정보가 열려있을 때
         if(navView != null && locationInformation != null){
             if (navView!!.height == 0 && locationInformation!!.height > 0){
                 hideLocationInformation()
