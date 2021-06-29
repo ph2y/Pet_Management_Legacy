@@ -4,12 +4,11 @@ import com.sju18.petmanagement.domain.pet.dao.Pet;
 import com.sju18.petmanagement.domain.pet.dao.PetRepository;
 import com.sju18.petmanagement.domain.pet.dto.PetInfoCreateRequestDto;
 import com.sju18.petmanagement.domain.pet.dto.PetInfoDeleteRequestDto;
-import com.sju18.petmanagement.domain.pet.dto.PetInfoResponseDTO;
+import com.sju18.petmanagement.domain.pet.dto.PetInfoResponseDto;
 import com.sju18.petmanagement.domain.pet.dto.PetInfoUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +26,7 @@ public class PetInfoService {
         return userDetails.getUsername();
     }
 
+    // CREATE
     @Transactional
     public Long createPetInfo(Authentication authentication, PetInfoCreateRequestDto requestDto) {
         String username = getUserNameFromToken(authentication);
@@ -39,16 +39,18 @@ public class PetInfoService {
         }
     }
 
+    // READ
     @Transactional(readOnly = true)
-    public List<PetInfoResponseDTO> fetchPetInfo(Authentication authentication) {
+    public List<PetInfoResponseDto> fetchPetInfo(Authentication authentication) {
         String username = getUserNameFromToken(authentication);
 
         // 사용자 정보로 반려동물 리스트 인출
         return petRepository.findAllByUsername(username).stream()
-                .map(PetInfoResponseDTO::new)
+                .map(PetInfoResponseDto::new)
                 .collect(Collectors.toList());
     }
 
+    // UPDATE
     @Transactional
     public Long updatePetInfo(Authentication authentication, PetInfoUpdateRequestDto requestDto) {
         String username = getUserNameFromToken(authentication);
@@ -59,6 +61,8 @@ public class PetInfoService {
         return pet.update(requestDto);
     }
 
+    // DELETE
+    @Transactional
     public void deletePetInfo(Authentication authentication, PetInfoDeleteRequestDto requestDto) {
         String username = getUserNameFromToken(authentication);
 

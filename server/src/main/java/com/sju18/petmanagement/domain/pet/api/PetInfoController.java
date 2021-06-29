@@ -3,7 +3,6 @@ package com.sju18.petmanagement.domain.pet.api;
 import com.sju18.petmanagement.domain.pet.application.PetInfoService;
 import com.sju18.petmanagement.domain.pet.dto.PetInfoCreateRequestDto;
 import com.sju18.petmanagement.domain.pet.dto.PetInfoDeleteRequestDto;
-import com.sju18.petmanagement.domain.pet.dto.PetInfoResponseDTO;
 import com.sju18.petmanagement.domain.pet.dto.PetInfoUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -5,14 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class PetInfoResponseDTO {
+public class PetInfoResponseDto {
     private Long id;
     private String name;
     private String birth;
     private String species;
     private String sex;
 
-    public PetInfoResponseDTO(Pet pet) {
+    public PetInfoResponseDto(Pet pet) {
         this.id = pet.getId();
         this.name = pet.getName();
         this.birth = pet.getBirth();
