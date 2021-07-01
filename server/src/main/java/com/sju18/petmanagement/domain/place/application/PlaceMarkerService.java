@@ -66,7 +66,7 @@ public class PlaceMarkerService {
     public void deletePlaceMarker(Authentication authentication, PlaceMarkerDeleteRequestDto requestDto) {
         String username = getUserNameFromToken(authentication);
 
-        // 받은 사용자 정보와 반려동물 id로 정보 삭제
+        // 받은 사용자 정보와 장소 마커 id로 정보 삭제
         Place place = placeRepository.findById(requestDto.getId()).orElseThrow(() -> new IllegalArgumentException("해당 id를 가진 장소 마커가 없습니다."));
 
         placeRepository.delete(place);
