@@ -403,7 +403,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
     private fun setLocationInformationCallButton(document: Place){
         val callButton = requireActivity().findViewById<ImageButton>(R.id.call_button)
-        val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장하기", "클립보드에 저장하기")
+        val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장하기", "클립보드에 복사하기")
 
         // 전화 및 연락처 권한 획득
         val permission = Permission()
