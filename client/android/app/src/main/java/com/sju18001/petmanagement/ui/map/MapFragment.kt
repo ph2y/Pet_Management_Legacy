@@ -5,8 +5,10 @@ import android.animation.ValueAnimator
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -432,8 +434,14 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         val builder = AlertDialog.Builder(context)
             .setTitle(document.phone)
             .setItems(buttonStrings,
-                DialogInterface.OnClickListener{ dialog, which ->
-
+                DialogInterface.OnClickListener{ _, which ->
+                    when(which){
+                        0 -> {
+                            var intent = Intent(Intent.ACTION_DIAL)
+                            intent.data = Uri.parse("tel:" + document.phone)
+                            startActivity(intent)
+                        }
+                    }
                 })
             .setNegativeButton("취소",
                 DialogInterface.OnClickListener { dialog, _ ->
