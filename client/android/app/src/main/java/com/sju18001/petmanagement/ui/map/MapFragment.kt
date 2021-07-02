@@ -2,7 +2,9 @@ package com.sju18001.petmanagement.ui.map
 
 import android.Manifest
 import android.animation.ValueAnimator
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
@@ -84,7 +86,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     private var locationInformation: View? = null
 
     // 검색 기능 관련
-    private var currentDocument: List<Place>? = null
+    private var currentDocuments: List<Place>? = null
 
     // 애니메이션
     private var showingNavViewAnim: ValueAnimator? = null
@@ -326,8 +328,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                     call: Call<Documents>,
                     response: Response<Documents>
                 ) {
-                    currentDocument = response.body()!!.documents
-                    addPOIItemsForDocuments(currentDocument!!, mapView)
+                    currentDocuments = response.body()!!.documents
+                    addPOIItemsForDocuments(currentDocuments!!, mapView)
                 }
 
                 override fun onFailure(call: Call<Documents>, t: Throwable) {
@@ -399,17 +401,48 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     
     // location_information 내부 정보 갱신
     private fun updateLocationInformation(item: MapPOIItem){
-        if(currentDocument != null){
-            val locationPlaceName = requireActivity().findViewById<TextView>(R.id.location_place_name)
-            val locationCategoryName = requireActivity().findViewById<TextView>(R.id.location_category_name)
-            val locationDistance = requireActivity().findViewById<TextView>(R.id.location_distance)
+        if(currentDocuments != null){
+            val document = currentDocuments!![item.tag]
 
-            locationPlaceName.text = currentDocument!![item.tag].place_name
-            locationCategoryName.text = currentDocument!![item.tag].category_group_name
-            setLocationDistance(locationDistance, currentDocument!![item.tag].distance)
-
+            setLocationInformationTexts(document)
+            setLocationInformationButtons(document)
         }else{
-            Log.e("MapFragment", "currentDocument is null")
+            Log.e("MapFragment", "currentDocuments is null")
+        }
+    }
+
+    private fun setLocationInformationTexts(document: Place){
+        val locationPlaceName = requireActivity().findViewById<TextView>(R.id.location_place_name)
+        val locationCategoryName = requireActivity().findViewById<TextView>(R.id.location_category_name)
+        val locationDistance = requireActivity().findViewById<TextView>(R.id.location_distance)
+
+        locationPlaceName.text = document.place_name
+        locationCategoryName.text = document.category_group_name
+        setLocationDistance(locationDistance, document.distance)
+    }
+
+    private fun setLocationInformationButtons(document: Place){
+        setLocationInformationCallButton(document)
+    }
+
+    private fun setLocationInformationCallButton(document: Place){
+        val callButton = requireActivity().findViewById<ImageButton>(R.id.call_button)
+        val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장", "클립보드에 저장")
+
+        val builder = AlertDialog.Builder(context)
+            .setTitle(document.phone)
+            .setItems(buttonStrings,
+                DialogInterface.OnClickListener{ dialog, which ->
+
+                })
+            .setNegativeButton("취소",
+                DialogInterface.OnClickListener { dialog, _ ->
+                    dialog.cancel()
+                })
+            .create()
+
+        callButton.setOnClickListener{ _ ->
+            builder.show()
         }
     }
 
