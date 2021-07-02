@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement
 
+import android.Manifest
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.media.tv.TvContract.Programs.Genres.encode
@@ -11,6 +12,7 @@ import android.view.WindowManager
 import androidx.appcompat.app.ActionBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
@@ -38,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     private var myPageFragment: Fragment = MyPageFragment()
     private var fragmentManager: FragmentManager = supportFragmentManager
     private var activeFragment: Fragment = myPetFragment
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

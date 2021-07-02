@@ -34,6 +34,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Permission
 import com.sju18001.petmanagement.databinding.FragmentMapBinding
 import com.sju18001.petmanagement.restapi.KakaoApi
 import com.sju18001.petmanagement.restapi.Documents
@@ -62,14 +63,6 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
-
-    // 권한 관련
-    private val REQUEST_CODE = 100
-    private val requiredPermissions = arrayOf(
-        Manifest.permission.INTERNET,
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
 
     // 지도 관련
     private var currentMapPoint: MapPoint? = null
@@ -111,9 +104,9 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         val root: View = binding.root
 
 
-        // 권한 확인 및 획득
-        val deniedPermissions = getDeniedPermissions()
-        requestPermissions(deniedPermissions)
+        // 맵 권한
+        val permission = Permission()
+        permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForMap)
 
 
         // MavView 초기화
@@ -236,25 +229,6 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    private fun getDeniedPermissions():ArrayList<String>{
-        var deniedPermissions = ArrayList<String>()
-
-        for(p in requiredPermissions){
-            if(ContextCompat.checkSelfPermission(requireContext(), p) == PackageManager.PERMISSION_DENIED){
-                deniedPermissions.add(p)
-            }
-        }
-
-        return deniedPermissions
-    }
-
-    private fun requestPermissions(permissions: ArrayList<String>){
-        if(permissions.isNotEmpty()){
-            val array = arrayOfNulls<String>(permissions.size)
-            ActivityCompat.requestPermissions(requireActivity(), permissions.toArray(array), REQUEST_CODE)
-        }
     }
 
     private fun setMapCenterPointToCurrentLocation(mapView: MapView){
@@ -432,33 +406,19 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         val callButton = requireActivity().findViewById<ImageButton>(R.id.call_button)
         val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장", "클립보드에 저장")
 
+        // 전화 및 연락처 권한 획득
+        val permission = Permission()
+        permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForCall)
+        permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForContacts)
+        
+        // AlertDialog 구성
         val builder = AlertDialog.Builder(context)
             .setTitle(document.phone)
             .setItems(buttonStrings,
                 DialogInterface.OnClickListener{ _, which ->
                     when(which){
-                        // 전화하기
-                        0 -> {
-                            val intent = Intent(Intent.ACTION_DIAL).apply {
-                                data = Uri.parse("tel:" + document.phone)
-                            }
-
-                            startActivity(intent)
-                        }
-
-                        // 연락처 저장
-                        1 -> {
-                            val intent = Intent(ContactsContract.Intents.Insert.ACTION).apply {
-                                type = ContactsContract.RawContacts.CONTENT_TYPE
-
-                                putExtra(ContactsContract.Intents.Insert.NAME, document.place_name)
-                                putExtra(ContactsContract.Intents.Insert.PHONE, document.phone)
-                            }
-
-                            startActivity(intent)
-                        }
-
-                        // 클립보드에 저장
+                        0 -> doCall(document.phone)
+                        1 -> insertContactsContract(document)
                         2 -> {
 
                         }
@@ -473,6 +433,22 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         callButton.setOnClickListener{ _ ->
             builder.show()
         }
+    }
+
+    private fun doCall(phone: String){
+        val intent = Intent(Intent.ACTION_DIAL).apply {
+            data = Uri.parse("tel:" + phone)
+        }
+
+        startActivity(intent)
+    }
+
+    private fun insertContactsContract(document: Place){
+        val intent = Intent(ContactsContract.Intents.Insert.ACTION).apply {
+            type = ContactsContract.RawContacts.CONTENT_TYPE
+
+            putExtra(ContactsContract.Intents.Insert.NAME, document.place_name)
+            putExtra(ContactsContract.Intents.Insert.PHONE, document.phone)
     }
 
     private fun setLocationDistance(locationDistance: TextView, distance: String){
