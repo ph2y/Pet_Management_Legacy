@@ -3,9 +3,7 @@ package com.sju18001.petmanagement.ui.map
 import android.Manifest
 import android.animation.ValueAnimator
 import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
@@ -20,6 +18,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.animation.doOnEnd
 
@@ -404,7 +403,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
     private fun setLocationInformationCallButton(document: Place){
         val callButton = requireActivity().findViewById<ImageButton>(R.id.call_button)
-        val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장", "클립보드에 저장")
+        val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장하기", "클립보드에 저장하기")
 
         // 전화 및 연락처 권한 획득
         val permission = Permission()
@@ -419,9 +418,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                     when(which){
                         0 -> doCall(document.phone)
                         1 -> insertContactsContract(document)
-                        2 -> {
-
-                        }
+                        2 -> doCopy(requireActivity(), document.phone)
                     }
                 })
             .setNegativeButton("취소",
@@ -437,18 +434,32 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
     private fun doCall(phone: String){
         val intent = Intent(Intent.ACTION_DIAL).apply {
-            data = Uri.parse("tel:" + phone)
+            data = Uri.parse("tel:$phone")
         }
 
         startActivity(intent)
     }
 
-    private fun insertContactsContract(document: Place){
+    private fun insertContactsContract(document: Place) {
         val intent = Intent(ContactsContract.Intents.Insert.ACTION).apply {
             type = ContactsContract.RawContacts.CONTENT_TYPE
 
             putExtra(ContactsContract.Intents.Insert.NAME, document.place_name)
             putExtra(ContactsContract.Intents.Insert.PHONE, document.phone)
+        }
+
+        startActivity(intent)
+    }
+
+    private fun doCopy(context: Context, str: String){
+        // 복사
+        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData: ClipData = ClipData.newPlainText("A phone number", str)
+
+        clipboard.setPrimaryClip(clipData)
+        
+        // 토스트 메시지
+        Toast.makeText(context, "클립보드에 복사되었습니다.", Toast.LENGTH_LONG).show()
     }
 
     private fun setLocationDistance(locationDistance: TextView, distance: String){
