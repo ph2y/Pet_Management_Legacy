@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
@@ -436,10 +437,30 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             .setItems(buttonStrings,
                 DialogInterface.OnClickListener{ _, which ->
                     when(which){
+                        // 전화하기
                         0 -> {
-                            var intent = Intent(Intent.ACTION_DIAL)
-                            intent.data = Uri.parse("tel:" + document.phone)
+                            val intent = Intent(Intent.ACTION_DIAL).apply {
+                                data = Uri.parse("tel:" + document.phone)
+                            }
+
                             startActivity(intent)
+                        }
+
+                        // 연락처 저장
+                        1 -> {
+                            val intent = Intent(ContactsContract.Intents.Insert.ACTION).apply {
+                                type = ContactsContract.RawContacts.CONTENT_TYPE
+
+                                putExtra(ContactsContract.Intents.Insert.NAME, document.place_name)
+                                putExtra(ContactsContract.Intents.Insert.PHONE, document.phone)
+                            }
+
+                            startActivity(intent)
+                        }
+
+                        // 클립보드에 저장
+                        2 -> {
+
                         }
                     }
                 })
