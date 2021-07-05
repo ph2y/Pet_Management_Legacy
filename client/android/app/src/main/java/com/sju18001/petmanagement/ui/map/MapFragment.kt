@@ -304,8 +304,11 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                     call: Call<Documents>,
                     response: Response<Documents>
                 ) {
-                    currentDocuments = response.body()!!.documents
-                    addPOIItemsForDocuments(currentDocuments!!, mapView)
+                    val body = response.body()
+                    if(body != null){
+                        currentDocuments = body.documents
+                        addPOIItemsForDocuments(currentDocuments!!, mapView)
+                    }
                 }
 
                 override fun onFailure(call: Call<Documents>, t: Throwable) {
