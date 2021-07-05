@@ -46,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //for fragment reset(after activity destruction)
+        // for fragment reset(after activity destruction)
         fragmentManager.findFragmentByTag("myPet")?.let {
             fragmentManager.beginTransaction().remove(it).commitNow()
         }
@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
-        //get current selected item + set title
+        // get current selected item + set title
         when(savedInstanceState?.getInt("active_fragment_index")) {
             0 -> {
                 activeFragment = myPetFragment
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //initialize fragmentManager and show active fragment
+        // initialize fragmentManager and show active fragment
         if(fragmentManager.fragments.size != 0){ fragmentManager.beginTransaction().detach(fragmentManager.fragments[0]).commitNow() }
         fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPetFragment, "myPet").hide(myPetFragment).commitNow()
         fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, mapFragment, "map").hide(mapFragment).commitNow()
@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //for saving currently active fragment index
+    // for saving currently active fragment index
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt("active_fragment_index", activeFragmentIndex)
