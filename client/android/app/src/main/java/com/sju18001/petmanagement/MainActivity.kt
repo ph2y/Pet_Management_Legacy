@@ -39,22 +39,32 @@ class MainActivity : AppCompatActivity() {
     private var communityFragment: Fragment = CommunityFragment()
     private var myPageFragment: Fragment = MyPageFragment()
     private var fragmentManager: FragmentManager = supportFragmentManager
-    private var activeFragment: Fragment = myPetFragment
+    private lateinit var activeFragment: Fragment
+    private var activeFragmentIndex: Int = 0
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //for fragment reset(after activity destruction)
+        fragmentManager.findFragmentByTag("myPet")?.let {
+            fragmentManager.beginTransaction().remove(it).commitNow()
+        }
+        fragmentManager.findFragmentByTag("map")?.let {
+            fragmentManager.beginTransaction().remove(it).commitNow()
+        }
+        fragmentManager.findFragmentByTag("community")?.let {
+            fragmentManager.beginTransaction().remove(it).commitNow()
+        }
+        fragmentManager.findFragmentByTag("myPage")?.let {
+            fragmentManager.beginTransaction().remove(it).commitNow()
+        }
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val actionBar: ActionBar? = supportActionBar
         val navView: BottomNavigationView = binding.navView
-
-        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPetFragment, "myPet").commit()
-        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, mapFragment, "map").hide(mapFragment).commit()
-        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, communityFragment, "community").hide(communityFragment).commit()
-        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPageFragment, "myPage").hide(myPageFragment).commit()
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
@@ -67,59 +77,94 @@ class MainActivity : AppCompatActivity() {
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
 
+        //get current selected item + set title
+        when(savedInstanceState?.getInt("active_fragment_index")) {
+            0 -> {
+                activeFragment = myPetFragment
+                activeFragmentIndex = 0
+                actionBar?.setTitle(R.string.title_my_pet)
+                actionBar?.show()
+            }
+            1 -> {
+                activeFragment = mapFragment
+                activeFragmentIndex = 1
+                actionBar?.hide()
+            }
+            2 -> {
+                activeFragment = communityFragment
+                activeFragmentIndex = 2
+                actionBar?.setTitle(R.string.title_community)
+                actionBar?.show()
+            }
+            3 -> {
+                activeFragment = myPageFragment
+                activeFragmentIndex = 3
+                actionBar?.setTitle(R.string.title_my_page)
+                actionBar?.show()
+            }
+            else -> {
+                activeFragment = myPetFragment
+                activeFragmentIndex = 0
+                actionBar?.setTitle(R.string.title_my_pet)
+                actionBar?.show()
+            }
+        }
+
+        //initialize fragmentManager and show active fragment
+        if(fragmentManager.fragments.size != 0){ fragmentManager.beginTransaction().detach(fragmentManager.fragments[0]).commitNow() }
+        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPetFragment, "myPet").hide(myPetFragment).commitNow()
+        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, mapFragment, "map").hide(mapFragment).commitNow()
+        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, communityFragment, "community").hide(communityFragment).commitNow()
+        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPageFragment, "myPage").hide(myPageFragment).commitNow()
+        fragmentManager.beginTransaction().show(activeFragment).commitNow()
+
         navView.setOnNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.navigation_my_pet -> {
-                    fragmentManager.beginTransaction().hide(activeFragment).show(myPetFragment).commit()
+                    fragmentManager.beginTransaction().hide(activeFragment).show(myPetFragment).commitNow()
                     navView.menu.getItem(0).isChecked = true
-
                     actionBar?.setTitle(R.string.title_my_pet)
                     actionBar?.show()
-
-                    window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pumpkin)
-
+                    activeFragmentIndex = 0
                     activeFragment = myPetFragment
                     true
                 }
                 R.id.navigation_map -> {
-                    fragmentManager.beginTransaction().hide(activeFragment).show(mapFragment).commit()
+                    fragmentManager.beginTransaction().hide(activeFragment).show(mapFragment).commitNow()
                     navView.menu.getItem(1).isChecked = true
-
                     actionBar?.setShowHideAnimationEnabled(false)
                     actionBar?.hide()
-
-                    window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.carrot)
-
+                    activeFragmentIndex = 1
                     activeFragment = mapFragment
                     true
                 }
                 R.id.navigation_community -> {
-                    fragmentManager.beginTransaction().hide(activeFragment).show(communityFragment).commit()
+                    fragmentManager.beginTransaction().hide(activeFragment).show(communityFragment).commitNow()
                     navView.menu.getItem(2).isChecked = true
-
                     actionBar?.setTitle(R.string.title_community)
                     actionBar?.show()
-
-                    window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pumpkin)
-
+                    activeFragmentIndex = 2
                     activeFragment = communityFragment
                     true
                 }
                 R.id.navigation_my_page -> {
-                    fragmentManager.beginTransaction().hide(activeFragment).show(myPageFragment).commit()
+                    fragmentManager.beginTransaction().hide(activeFragment).show(myPageFragment).commitNow()
                     navView.menu.getItem(3).isChecked = true
-
                     actionBar?.setTitle(R.string.title_my_page)
                     actionBar?.show()
-
-                    window.statusBarColor = ContextCompat.getColor(applicationContext, R.color.pumpkin)
-
+                    activeFragmentIndex = 3
                     activeFragment = myPageFragment
                     true
                 }
             }
             false
         }
+    }
+
+    //for saving currently active fragment index
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("active_fragment_index", activeFragmentIndex)
     }
 
     // 디버그 전용 Key
