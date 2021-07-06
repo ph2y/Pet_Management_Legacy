@@ -173,6 +173,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         _binding = null
     }
 
+
     // * MapView
     private fun setMapCenterPointToCurrentLocation(mapView: MapView){
         if(currentMapPoint!=null){
@@ -406,6 +407,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             Log.e("MapFragment", "Failed to show location information: " + e.message)
         }
     }
+
 
     // * 애니메이션
     private fun initializeAnimations(){
