@@ -103,6 +103,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
+
 
         // 맵 권한
         val permission = Permission()
@@ -118,10 +120,6 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         mapView.setPOIItemEventListener(this)
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
         setMapCenterPointToCurrentLocation(mapView)
-
-
-        // 변수 초기화
-        navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
 
 
         // 현재 위치 버튼
@@ -165,63 +163,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
 
         // 애니메이션 초기화
-        showingNavViewAnim = ValueAnimator.ofInt(0, Util().convertDpToPixel(NAVVIEW_HEIGHT))
-        showingNavViewAnim!!.addUpdateListener { valueAnimator ->
-            val value = valueAnimator.animatedValue as Int
-
-            navView!!.layoutParams.height = value
-            navView!!.requestLayout()
-        }
-        showingNavViewAnim!!.duration = ANIMATION_DURATION
-
-        hidingNavViewAnim = ValueAnimator.ofInt(Util().convertDpToPixel(NAVVIEW_HEIGHT), 0)
-        hidingNavViewAnim!!.addUpdateListener { valueAnimator ->
-            val value = valueAnimator.animatedValue as Int
-
-            navView!!.layoutParams.height = value
-            navView!!.requestLayout()
-        }
-        hidingNavViewAnim!!.duration = ANIMATION_DURATION
-
-        increasingCurrentLocationButtonMarginAnim = ValueAnimator.ofInt(Util().convertDpToPixel(CURRENT_LOCATION_BUTTON_MARGIN), Util().convertDpToPixel(NAVVIEW_HEIGHT + CURRENT_LOCATION_BUTTON_MARGIN))
-        increasingCurrentLocationButtonMarginAnim!!.addUpdateListener { valueAnimator ->
-            val value = valueAnimator.animatedValue as Int
-            val params = currentLocationButton!!.layoutParams as (ViewGroup.MarginLayoutParams)
-
-            params.bottomMargin = value
-            currentLocationButton!!.requestLayout()
-        }
-        increasingCurrentLocationButtonMarginAnim!!.duration = ANIMATION_DURATION
-
-        decreasingCurrentLocationButtonMarginAnim = ValueAnimator.ofInt(Util().convertDpToPixel(NAVVIEW_HEIGHT + CURRENT_LOCATION_BUTTON_MARGIN), Util().convertDpToPixel(CURRENT_LOCATION_BUTTON_MARGIN))
-        decreasingCurrentLocationButtonMarginAnim!!.addUpdateListener { valueAnimator ->
-            val value = valueAnimator.animatedValue as Int
-            val params = currentLocationButton!!.layoutParams as (ViewGroup.MarginLayoutParams)
-
-            params.bottomMargin = value
-            currentLocationButton!!.requestLayout()
-        }
-        decreasingCurrentLocationButtonMarginAnim!!.duration = ANIMATION_DURATION
-
-        showingLocationInformationAnim = ValueAnimator.ofInt(1, Util().convertDpToPixel(LOCATION_INFORMATION_HEIGHT))
-        showingLocationInformationAnim!!.addUpdateListener { valueAnimator ->
-            val value = valueAnimator.animatedValue as Int
-            if(locationInformation == null) locationInformation = requireActivity().findViewById<ConstraintLayout>(R.id.location_information)
-
-            locationInformation!!.layoutParams.height = value
-            locationInformation!!.requestLayout()
-        }
-        showingLocationInformationAnim!!.duration = ANIMATION_DURATION
-
-        hidingLocationInformationAnim = ValueAnimator.ofInt(Util().convertDpToPixel(LOCATION_INFORMATION_HEIGHT), 1)
-        hidingLocationInformationAnim!!.addUpdateListener { valueAnimator ->
-            val value = valueAnimator.animatedValue as Int
-            if(locationInformation == null) locationInformation = requireActivity().findViewById<ConstraintLayout>(R.id.location_information)
-
-            locationInformation!!.layoutParams.height = value
-            locationInformation!!.requestLayout()
-        }
-        hidingLocationInformationAnim!!.duration = ANIMATION_DURATION
+        initializeAnimations()
 
         return root
     }
@@ -465,6 +407,67 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         }
     }
 
+    // * 애니메이션
+    private fun initializeAnimations(){
+        showingNavViewAnim = ValueAnimator.ofInt(0, Util().convertDpToPixel(NAVVIEW_HEIGHT))
+        showingNavViewAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+
+            navView!!.layoutParams.height = value
+            navView!!.requestLayout()
+        }
+        showingNavViewAnim!!.duration = ANIMATION_DURATION
+
+        hidingNavViewAnim = ValueAnimator.ofInt(Util().convertDpToPixel(NAVVIEW_HEIGHT), 0)
+        hidingNavViewAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+
+            navView!!.layoutParams.height = value
+            navView!!.requestLayout()
+        }
+        hidingNavViewAnim!!.duration = ANIMATION_DURATION
+
+        increasingCurrentLocationButtonMarginAnim = ValueAnimator.ofInt(Util().convertDpToPixel(CURRENT_LOCATION_BUTTON_MARGIN), Util().convertDpToPixel(NAVVIEW_HEIGHT + CURRENT_LOCATION_BUTTON_MARGIN))
+        increasingCurrentLocationButtonMarginAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+            val params = currentLocationButton!!.layoutParams as (ViewGroup.MarginLayoutParams)
+
+            params.bottomMargin = value
+            currentLocationButton!!.requestLayout()
+        }
+        increasingCurrentLocationButtonMarginAnim!!.duration = ANIMATION_DURATION
+
+        decreasingCurrentLocationButtonMarginAnim = ValueAnimator.ofInt(Util().convertDpToPixel(NAVVIEW_HEIGHT + CURRENT_LOCATION_BUTTON_MARGIN), Util().convertDpToPixel(CURRENT_LOCATION_BUTTON_MARGIN))
+        decreasingCurrentLocationButtonMarginAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+            val params = currentLocationButton!!.layoutParams as (ViewGroup.MarginLayoutParams)
+
+            params.bottomMargin = value
+            currentLocationButton!!.requestLayout()
+        }
+        decreasingCurrentLocationButtonMarginAnim!!.duration = ANIMATION_DURATION
+
+        showingLocationInformationAnim = ValueAnimator.ofInt(1, Util().convertDpToPixel(LOCATION_INFORMATION_HEIGHT))
+        showingLocationInformationAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+            if(locationInformation == null) locationInformation = requireActivity().findViewById<ConstraintLayout>(R.id.location_information)
+
+            locationInformation!!.layoutParams.height = value
+            locationInformation!!.requestLayout()
+        }
+        showingLocationInformationAnim!!.duration = ANIMATION_DURATION
+
+        hidingLocationInformationAnim = ValueAnimator.ofInt(Util().convertDpToPixel(LOCATION_INFORMATION_HEIGHT), 1)
+        hidingLocationInformationAnim!!.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Int
+            if(locationInformation == null) locationInformation = requireActivity().findViewById<ConstraintLayout>(R.id.location_information)
+
+            locationInformation!!.layoutParams.height = value
+            locationInformation!!.requestLayout()
+        }
+        hidingLocationInformationAnim!!.duration = ANIMATION_DURATION
+    }
+
     private fun isAnimationRunning(): Boolean{
         return showingNavViewAnim!!.isRunning ||
                 hidingNavViewAnim!!.isRunning ||
@@ -475,7 +478,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
 
-    // CurrentLocationEventListener 인터페이스 구현
+    // * CurrentLocationEventListener 인터페이스
     override fun onCurrentLocationUpdate(p0: MapView?, p1: MapPoint?, p2: Float) {
         if (p1 != null) {
             currentMapPoint = p1
@@ -491,7 +494,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     override fun onCurrentLocationUpdateCancelled(p0: MapView?) {
     }
 
-    // MapViewEventListener 인터페이스 구현
+
+    // * MapViewEventListener 인터페이스
     override fun onMapViewInitialized(p0: MapView?) {
     }
 
@@ -529,7 +533,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     override fun onMapViewMoveFinished(p0: MapView?, p1: MapPoint?) {
     }
 
-    // MapView.POIItemEventListener 인터페이스 구현
+
+    // * MapView.POIItemEventListener 인터페이스
     override fun onPOIItemSelected(p0: MapView?, p1: MapPOIItem?) {
         if(p1!=null){
             showLocationInformation(p1!!)
