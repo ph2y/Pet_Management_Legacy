@@ -347,7 +347,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     private fun setLocationInformationCallButton(document: Place){
-        // 전화 번호 정도가 없을 때는 전화 버튼을 숨김
+        // 전화번호 정보가 없을 때는 전화 버튼을 숨김
         if(document.phone.isEmpty()){
             setCallButtonHorizontalWeight(0f)
         }else{
