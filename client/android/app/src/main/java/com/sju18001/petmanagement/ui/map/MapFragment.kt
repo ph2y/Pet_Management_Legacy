@@ -20,6 +20,7 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.animation.doOnEnd
 
 import androidx.core.app.ActivityCompat
@@ -345,34 +346,50 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     private fun setLocationInformationCallButton(document: Place){
-        val callButton = requireActivity().findViewById<ImageButton>(R.id.call_button)
-        val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장하기", "클립보드에 복사하기")
+        // 전화 번호 정도가 없을 때는 전화 버튼을 숨김
+        if(document.phone.isEmpty()){
+            setCallButtonHorizontalWeight(0f)
+        }else{
+            setCallButtonHorizontalWeight(1f)
 
-        // 전화 및 연락처 권한 획득
-        val permission = Permission()
-        permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForCall)
-        permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForContacts)
+            // 전화 및 연락처 권한 획득
+            val permission = Permission()
+            permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForCall)
+            permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForContacts)
 
-        // AlertDialog 구성
-        val builder = AlertDialog.Builder(context)
-            .setTitle(document.phone)
-            .setItems(buttonStrings,
-                DialogInterface.OnClickListener{ _, which ->
-                    when(which){
-                        0 -> Util().doCall(requireActivity(), document.phone)
-                        1 -> Util().insertContactsContract(requireActivity(), document)
-                        2 -> Util().doCopy(requireActivity(), document.phone)
-                    }
-                })
-            .setNegativeButton("취소",
-                DialogInterface.OnClickListener { dialog, _ ->
-                    dialog.cancel()
-                })
-            .create()
-
-        callButton.setOnClickListener{ _ ->
-            builder.show()
+            // AlertDialog 구성
+            val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장하기", "클립보드에 복사하기")
+            val builder = AlertDialog.Builder(context)
+                .setTitle(document.phone)
+                .setItems(buttonStrings,
+                    DialogInterface.OnClickListener{ _, which ->
+                        when(which){
+                            0 -> Util().doCall(requireActivity(), document.phone)
+                            1 -> Util().insertContactsContract(requireActivity(), document)
+                            2 -> Util().doCopy(requireActivity(), document.phone)
+                        }
+                    })
+                .setNegativeButton("취소",
+                    DialogInterface.OnClickListener { dialog, _ ->
+                        dialog.cancel()
+                    })
+                .create()
+            
+            // 버튼 이벤트
+            val callButton = requireActivity().findViewById<ImageButton>(R.id.call_button)
+            callButton.setOnClickListener{ _ ->
+                builder.show()
+            }
         }
+    }
+
+    private fun setCallButtonHorizontalWeight(weight: Float){
+        val locationInformationButtons = requireActivity().findViewById<ConstraintLayout>(R.id.location_information_buttons)
+        val constraintSet = ConstraintSet()
+
+        constraintSet.clone(locationInformationButtons)
+        constraintSet.setHorizontalWeight(R.id.call_button, weight)
+        constraintSet.applyTo(locationInformationButtons)
     }
 
     private fun setLocationDistance(locationDistance: TextView, distance: String){
