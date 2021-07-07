@@ -343,6 +343,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
     private fun setLocationInformationButtons(document: Place){
         setLocationInformationCallButton(document)
+        setLocationInformationShareButton(document)
     }
 
     private fun setLocationInformationCallButton(document: Place){
@@ -390,6 +391,14 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         constraintSet.clone(locationInformationButtons)
         constraintSet.setHorizontalWeight(R.id.call_button, weight)
         constraintSet.applyTo(locationInformationButtons)
+    }
+
+    private fun setLocationInformationShareButton(document: Place){
+        // 버튼 이벤트
+        val shareButton = requireActivity().findViewById<ImageButton>(R.id.share_button)
+        shareButton.setOnClickListener{ _ ->
+            Util().shareText(requireActivity(), document.place_url)
+        }
     }
 
     private fun setLocationDistance(locationDistance: TextView, distance: String){

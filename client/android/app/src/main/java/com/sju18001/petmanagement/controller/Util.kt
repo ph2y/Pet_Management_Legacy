@@ -54,4 +54,15 @@ class Util {
         // 토스트 메시지
         Toast.makeText(context, "클립보드에 복사되었습니다.", Toast.LENGTH_LONG).show()
     }
+
+    public fun shareText(activity: Activity, value: String){
+        val sendIntent: Intent = Intent().apply{
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, value)
+            type= "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        activity.startActivity(shareIntent)
+    }
 }
