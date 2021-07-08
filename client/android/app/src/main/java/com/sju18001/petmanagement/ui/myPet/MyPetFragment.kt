@@ -7,6 +7,8 @@ import android.view.ViewGroup
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
+import com.sju18001.petmanagement.R
 
 import com.sju18001.petmanagement.databinding.FragmentMyPetBinding
 
@@ -14,6 +16,9 @@ class MyPetFragment : Fragment() {
 
     private lateinit var myPetViewModel: MyPetViewModel
     private var _binding: FragmentMyPetBinding? = null
+
+    // create view variables
+    private lateinit var myPetListRecyclerView: RecyclerView
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -29,6 +34,9 @@ class MyPetFragment : Fragment() {
 
         _binding = FragmentMyPetBinding.inflate(inflater, container, false)
         val root: View = binding.root
+
+        // initialize view variables
+        myPetListRecyclerView = root.findViewById(R.id.my_pet_list_recyclerView)
 
         return root
     }
