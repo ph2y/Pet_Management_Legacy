@@ -342,8 +342,30 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     private fun setLocationInformationButtons(document: Place){
+        setLocationInformationPathfindingButton(document)
         setLocationInformationCallButton(document)
         setLocationInformationShareButton(document)
+    }
+
+    private fun setLocationInformationPathfindingButton(document: Place){
+        val builder = AlertDialog.Builder(context)
+            .setTitle("길찾기")
+            .setMessage("길찾기를 위해 카카오맵 웹페이지로 이동합니다.")
+            .setPositiveButton("확인",
+                DialogInterface.OnClickListener { _, _ ->
+                    Util().openWebPage(requireActivity(), "https://map.kakao.com/link/to/" + document.id)
+                })
+            .setNegativeButton("취소",
+                DialogInterface.OnClickListener { dialog, _ ->
+                    dialog.cancel()
+                })
+            .create()
+
+        // 버튼 이벤트
+        val pathfindingButton = requireActivity().findViewById<ImageButton>(R.id.pathfinding_button)
+        pathfindingButton.setOnClickListener{ _ ->
+            builder.show()
+        }
     }
 
     private fun setLocationInformationCallButton(document: Place){

@@ -25,6 +25,15 @@ class Util {
         view.clearFocus()
     }
 
+    // * Location Information
+    public fun openWebPage(activity: Activity, url: String){
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(url)
+        }
+
+        activity.startActivity(intent)
+    }
+
     public fun doCall(activity: Activity, phone: String){
         val intent = Intent(Intent.ACTION_DIAL).apply {
             data = Uri.parse("tel:$phone")
