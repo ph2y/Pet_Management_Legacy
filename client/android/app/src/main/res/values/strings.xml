@@ -5,4 +5,15 @@
     <string name="title_map">지도</string>
     <string name="title_community">커뮤니티</string>
     <string name="title_my_page">내 정보</string>
+
+    <string name="add_pet_image">사진\n추가</string>
+    <string name="pet_name_label">이름:</string>
+    <string name="pet_gender_label">성별:</string>
+    <string name="pet_gender_male">남</string>
+    <string name="pet_gender_female">여</string>
+    <string name="pet_species_label">동물 종:</string>
+    <string name="pet_breed_label">품종:</string>
+    <string name="pet_birth_label">생년월일:</string>
+    <string name="pet_birth_only_year_label">출생 연도만 알고 있어요!</string>
+    <string name="confirm_add_pet">펫 추가</string>
 </resources>

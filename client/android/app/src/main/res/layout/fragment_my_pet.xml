@@ -10,7 +10,7 @@
         android:id="@+id/my_pet_list_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false" />
+        android:clipToPadding="false"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_pet_fab"
@@ -21,6 +21,6 @@
         android:layout_gravity="end|bottom"
         app:backgroundTint="@color/carrot"
         android:src="@drawable/ic_baseline_add_24"
-        android:layout_margin="16dp" />
+        android:layout_margin="16dp"/>
 
 </RelativeLayout>
