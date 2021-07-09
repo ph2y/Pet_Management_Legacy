@@ -13,10 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.sju18001.petmanagement.R
 import de.hdodenhof.circleimageview.CircleImageView
 
-// constant variables
-private const val PICK_IMAGE = 0
-
 class AddEditPetActivity : AppCompatActivity() {
+    // constant variables
+    private val PICK_IMAGE = 0
+
     // create view variables
     private lateinit var petImageInput: CircleImageView
     private lateinit var petNameInput: EditText
