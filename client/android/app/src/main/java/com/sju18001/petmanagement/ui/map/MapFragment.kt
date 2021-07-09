@@ -5,6 +5,7 @@ import android.animation.ValueAnimator
 import android.app.AlertDialog
 import android.content.*
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -273,12 +274,27 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         mapView.removeAllPOIItems()
 
         for(i: Int in 0 until documents.count()){
-            val newMarker: MapPOIItem = MapPOIItem()
-            newMarker.itemName = documents[i].place_name
-            newMarker.tag = i
-            newMarker.mapPoint = MapPoint.mapPointWithGeoCoord(documents[i].y.toDouble(), documents[i].x.toDouble())
-            newMarker.markerType = MapPOIItem.MarkerType.BluePin
-            newMarker.isShowCalloutBalloonOnTouch = false
+            var iconId: Int = when(documents[i].category_group_code){
+                "MT1", "CS2" -> R.drawable.marker_store
+                "PS3", "SC4", "AC5" -> R.drawable.marker_school
+                "PK6", "OL7" -> R.drawable.marker_car
+                "SW8" -> R.drawable.marker_train
+                "CE7" -> R.drawable.marker_cafe
+                "HP8", "PM9" -> R.drawable.marker_hospital
+                else -> R.drawable.marker_default
+            }
+
+            val newMarker: MapPOIItem = MapPOIItem().apply{
+                itemName = documents[i].place_name
+                tag = i
+                mapPoint = MapPoint.mapPointWithGeoCoord(documents[i].y.toDouble(), documents[i].x.toDouble())
+                isShowCalloutBalloonOnTouch = false
+
+                markerType = MapPOIItem.MarkerType.CustomImage
+                isCustomImageAutoscale = false
+                setCustomImageAnchor(0.5f, 0.5f)
+                customImageResourceId = iconId
+            }
 
             mapView.addPOIItem(newMarker)
         }
