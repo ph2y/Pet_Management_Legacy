@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.myPet.AddPetActivity">
+    tools:context=".ui.myPet.AddEditPetActivity">
 
     <ImageView
         android:id="@+id/back_button"
@@ -76,7 +76,9 @@
                     <EditText
                         android:id="@+id/pet_name_input"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:hint="@string/pet_name_hint"/>
 
                 </LinearLayout>
 
@@ -141,7 +143,9 @@
                     <EditText
                         android:id="@+id/pet_species_input"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:hint="@string/pet_species_hint"/>
 
                 </LinearLayout>
 
@@ -160,7 +164,9 @@
                     <EditText
                         android:id="@+id/pet_breed_input"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:hint="@string/pet_breed_hint"/>
 
                 </LinearLayout>
 

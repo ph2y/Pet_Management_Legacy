@@ -18,7 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PetManagement">
-        <activity android:name=".ui.myPet.AddPetActivity"
+        <activity android:name=".ui.myPet.AddEditPetActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
 
         <meta-data

@@ -44,7 +44,7 @@ class MyPetFragment : Fragment() {
 
         // add pet fab -> open add pet activity
         addPetFab.setOnClickListener {
-            startActivity(Intent(context, AddPetActivity::class.java))
+            startActivity(Intent(context, AddEditPetActivity::class.java))
         }
 
         return root
