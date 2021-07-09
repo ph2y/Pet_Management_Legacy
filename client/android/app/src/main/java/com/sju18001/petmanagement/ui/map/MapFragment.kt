@@ -1,59 +1,45 @@
 package com.sju18001.petmanagement.ui.map
 
-import android.Manifest
 import android.animation.ValueAnimator
 import android.app.AlertDialog
 import android.content.*
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.animation.doOnEnd
-
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Permission
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentMapBinding
-import com.sju18001.petmanagement.restapi.KakaoApi
 import com.sju18001.petmanagement.restapi.Documents
+import com.sju18001.petmanagement.restapi.KakaoApi
 import com.sju18001.petmanagement.restapi.Place
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import net.daum.android.map.MapViewEventListener
 import net.daum.mf.map.api.*
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
 
 class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener {
     val API_KEY = "KakaoAK fcb50b998a702691c31e6e2b3a4555be"
@@ -117,10 +103,14 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         val mapView = MapView(this.activity)
         val mapViewContainer = root?.findViewById<ViewGroup>(R.id.map_view)!!
         mapViewContainer.addView(mapView)
+
         mapView.setCurrentLocationEventListener(this)
         mapView.setMapViewEventListener(this)
         mapView.setPOIItemEventListener(this)
+        mapView.setCalloutBalloonAdapter(CustomCalloutBalloonAdapter(inflater))
+
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
+
         setMapCenterPointToCurrentLocation(mapView)
 
 
@@ -288,7 +278,6 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                 itemName = documents[i].place_name
                 tag = i
                 mapPoint = MapPoint.mapPointWithGeoCoord(documents[i].y.toDouble(), documents[i].x.toDouble())
-                isShowCalloutBalloonOnTouch = false
 
                 markerType = MapPOIItem.MarkerType.CustomImage
                 isCustomImageAutoscale = false
@@ -618,5 +607,22 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?) {
+    }
+
+    // * 커스텀 말풍선 클래스
+    class CustomCalloutBalloonAdapter(inflater: LayoutInflater) : CalloutBalloonAdapter {
+        private val mCalloutBalloon: View = inflater.inflate(R.layout.custom_callout_balloon, null)
+
+        override fun getCalloutBalloon(poiItem: MapPOIItem): View {
+            val customCalloutBalloonImage = (mCalloutBalloon.findViewById<View>(R.id.custom_callout_balloon_image) as ImageView)
+            customCalloutBalloonImage.setImageResource(R.drawable.ic_baseline_place_48)
+            customCalloutBalloonImage.y = 8f
+
+            return mCalloutBalloon
+        }
+
+        override fun getPressedCalloutBalloon(poiItem: MapPOIItem?): View? {
+            return null
+        }
     }
 }
