@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="onSelectedThemeCarrot">
+        <item name="colorControlActivated">@color/carrot</item>
+        <item name="android:textColorHighlight">#5CD35400</item>
+    </style>
+</resources>
