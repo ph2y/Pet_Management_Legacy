@@ -107,9 +107,11 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         mapView.setCurrentLocationEventListener(this)
         mapView.setMapViewEventListener(this)
         mapView.setPOIItemEventListener(this)
-        mapView.setCalloutBalloonAdapter(CustomCalloutBalloonAdapter(inflater))
 
+        mapView.setCustomCurrentLocationMarkerTrackingImage(R.drawable.marker_current_location, MapPOIItem.ImageOffset(16, 16))
+        mapView.setCalloutBalloonAdapter(CustomCalloutBalloonAdapter(inflater))
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
+
 
         setMapCenterPointToCurrentLocation(mapView)
 
