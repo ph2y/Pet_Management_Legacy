@@ -41,6 +41,9 @@ class AddEditPetActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_edit_pet)
 
+        // set status bar color
+        window.statusBarColor = resources.getColor(R.color.pumpkin)
+
         // initialize view variables
         petImageInput = findViewById(R.id.pet_image_input)
         petNameInput = findViewById(R.id.pet_name_input)
