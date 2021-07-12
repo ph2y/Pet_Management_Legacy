@@ -9,10 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.animation.doOnEnd
@@ -39,6 +36,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.system.exitProcess
 
 
 class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener {
@@ -95,9 +93,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
 
         // 맵 권한
-        if(!Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForMap)){
-            Permission().requestDeniedPermissions(requireActivity(), Permission().requiredPermissionsForMap)
-        }
+        Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForMap)
 
         // MavView 초기화
         val mapView = MapView(this.activity)
@@ -110,9 +106,15 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
         mapView.setCustomCurrentLocationMarkerTrackingImage(R.drawable.marker_current_location, MapPOIItem.ImageOffset(16, 16))
         mapView.setCalloutBalloonAdapter(CustomCalloutBalloonAdapter(inflater))
-        mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
-
-        setMapCenterPointToCurrentLocation(mapView)
+        
+        // 위치 권한이 없을 때, 아래에서 에러가 발생함
+        try{
+            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
+            setMapCenterPointToCurrentLocation(mapView)
+        }catch(e: Exception){
+            Toast.makeText(requireContext(), "앱의 정상적인 작동을 위해, 위치 권한이 필요합니다.", Toast.LENGTH_LONG).show()
+            exitProcess(-1)
+        }
 
 
         // 현재 위치 버튼
@@ -395,14 +397,14 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                                 if(Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForCall)){
                                     Util().doCall(requireActivity(), document.phone)
                                 }else{
-                                    Permission().requestDeniedPermissions(requireActivity(), Permission().requiredPermissionsForCall)
+                                    Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForCall)
                                 }
                             }
                             1 -> {
                                 if(Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForContacts)){
                                     Util().insertContactsContract(requireActivity(), document)
                                 }else{
-                                    Permission().requestDeniedPermissions(requireActivity(), Permission().requiredPermissionsForContacts)
+                                    Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForContacts)
                                 }
                             }
                             2 -> Util().doCopy(requireActivity(), document.phone)

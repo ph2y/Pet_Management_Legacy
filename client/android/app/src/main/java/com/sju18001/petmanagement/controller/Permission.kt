@@ -28,7 +28,7 @@ class Permission {
 
     public fun isAllPermissionsGranted(context: Context, permissions: Array<String>): Boolean {
         for(p in permissions){
-            if(ContextCompat.checkSelfPermission(context, p) == PackageManager.PERMISSION_DENIED){
+            if(ContextCompat.checkSelfPermission(context, p) != PackageManager.PERMISSION_GRANTED){
                 return false
             }
         }
@@ -36,21 +36,21 @@ class Permission {
         return true
     }
 
-    public fun requestDeniedPermissions(context: Context, requiredPermissions: Array<String>){
-        val deniedPermissions = getDeniedPermissions(context, requiredPermissions)
-        requestPermissions(context as Activity, deniedPermissions)
+    public fun requestNotGrantedPermissions(context: Context, requiredPermissions: Array<String>){
+        val notGrantedPermissions = getNotGrantedPermissions(context, requiredPermissions)
+        requestPermissions(context as Activity, notGrantedPermissions)
     }
 
-    private fun getDeniedPermissions(context: Context, requiredPermissions: Array<String>): ArrayList<String> {
-        var deniedPermissions = ArrayList<String>()
+    private fun getNotGrantedPermissions(context: Context, requiredPermissions: Array<String>): ArrayList<String> {
+        var notGrantedPermissions = ArrayList<String>()
 
         for(p in requiredPermissions){
-            if(ContextCompat.checkSelfPermission(context, p) == PackageManager.PERMISSION_DENIED){
-                deniedPermissions.add(p)
+            if(ContextCompat.checkSelfPermission(context, p) != PackageManager.PERMISSION_GRANTED){
+                notGrantedPermissions.add(p)
             }
         }
 
-        return deniedPermissions
+        return notGrantedPermissions
     }
 
     private fun requestPermissions(activity: Activity, permissions: ArrayList<String>){
