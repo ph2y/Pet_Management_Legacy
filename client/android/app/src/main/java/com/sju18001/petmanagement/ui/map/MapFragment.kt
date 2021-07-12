@@ -112,47 +112,49 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         mapView.setCalloutBalloonAdapter(CustomCalloutBalloonAdapter(inflater))
         mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
 
-
         setMapCenterPointToCurrentLocation(mapView)
 
 
         // 현재 위치 버튼
-        currentLocationButton = root.findViewById<FloatingActionButton>(R.id.currentLocationButton)
-        currentLocationButton!!.setOnClickListener(View.OnClickListener {
-            setMapCenterPointToCurrentLocation(mapView)
-        })
-        val currentLocationButtonParams = currentLocationButton!!.layoutParams as ViewGroup.MarginLayoutParams
-        currentLocationButtonParams.bottomMargin += Util().convertDpToPixel(NAVVIEW_HEIGHT)
-        currentLocationButton!!.layoutParams = currentLocationButtonParams
+        currentLocationButton = root.findViewById<FloatingActionButton>(R.id.currentLocationButton).apply{
+            setOnClickListener(View.OnClickListener {
+                setMapCenterPointToCurrentLocation(mapView)
+            })
+
+            val currentLocationButtonParams = layoutParams as ViewGroup.MarginLayoutParams
+            currentLocationButtonParams.bottomMargin += Util().convertDpToPixel(NAVVIEW_HEIGHT)
+            layoutParams = currentLocationButtonParams
+        }
 
 
         // 검색바
-        searchTextInput = root.findViewById<EditText>(R.id.search_text_input)
-        var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel)
-
-        searchTextInput!!.setOnEditorActionListener{ textView, action, event ->
-            searchKeyword(textView.text.toString(), mapView)
-            Util().hideKeyboard(requireActivity(), textView)
-
-            /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
-            setMapCenterPointToCurrentLocation(mapView)
-            val searchAreaCircle = addCircleCenteredAtCurrentLocation(mapView, searchRadiusMeter)
-            moveCameraOnCircle(mapView, searchAreaCircle!!, 50) */
-
-            true
-        }
-
-        searchTextInput!!.addTextChangedListener {
-            if(!searchTextInput!!.text.isEmpty()){
-                searchTextCancel.visibility = View.VISIBLE
-            }else{
-                searchTextCancel.visibility = View.INVISIBLE
+        searchTextInput = root.findViewById<EditText>(R.id.search_text_input).apply {
+            var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel).apply {
+                setOnClickListener{
+                    searchTextInput!!.setText("")
+                    Util().hideKeyboard(requireActivity(), searchTextInput!!)
+                }
             }
-        }
 
-        searchTextCancel!!.setOnClickListener{
-            searchTextInput!!.setText("")
-            Util().hideKeyboard(requireActivity(), searchTextInput!!)
+            setOnEditorActionListener{ textView, _, _ ->
+                searchKeyword(textView.text.toString(), mapView)
+                Util().hideKeyboard(requireActivity(), textView)
+
+                /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
+                setMapCenterPointToCurrentLocation(mapView)
+                val searchAreaCircle = addCircleCenteredAtCurrentLocation(mapView, searchRadiusMeter)
+                moveCameraOnCircle(mapView, searchAreaCircle!!, 50) */
+
+                true
+            }
+
+            addTextChangedListener {
+                if(!searchTextInput!!.text.isEmpty()){
+                    searchTextCancel.visibility = View.VISIBLE
+                }else{
+                    searchTextCancel.visibility = View.INVISIBLE
+                }
+            }
         }
 
 
@@ -570,7 +572,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
-        if(searchTextInput!!.isFocused == true){
+        if(searchTextInput!!.isFocused){
             Util().hideKeyboard(requireActivity(), searchTextInput!!)
         }
 
