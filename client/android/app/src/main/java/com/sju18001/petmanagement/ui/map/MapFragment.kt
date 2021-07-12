@@ -95,9 +95,9 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
 
         // 맵 권한
-        val permission = Permission()
-        permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForMap)
-
+        if(!Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForMap)){
+            Permission().requestDeniedPermissions(requireActivity(), Permission().requiredPermissionsForMap)
+        }
 
         // MavView 초기화
         val mapView = MapView(this.activity)
@@ -382,11 +382,6 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         }else{
             setCallButtonHorizontalWeight(1f)
 
-            // 전화 및 연락처 권한 획득
-            val permission = Permission()
-            permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForCall)
-            permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForContacts)
-
             // AlertDialog 구성
             val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장하기", "클립보드에 복사하기")
             val builder = AlertDialog.Builder(context)
@@ -394,8 +389,20 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                 .setItems(buttonStrings,
                     DialogInterface.OnClickListener{ _, which ->
                         when(which){
-                            0 -> Util().doCall(requireActivity(), document.phone)
-                            1 -> Util().insertContactsContract(requireActivity(), document)
+                            0 -> {
+                                if(Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForCall)){
+                                    Util().doCall(requireActivity(), document.phone)
+                                }else{
+                                    Permission().requestDeniedPermissions(requireActivity(), Permission().requiredPermissionsForCall)
+                                }
+                            }
+                            1 -> {
+                                if(Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForContacts)){
+                                    Util().insertContactsContract(requireActivity(), document)
+                                }else{
+                                    Permission().requestDeniedPermissions(requireActivity(), Permission().requiredPermissionsForContacts)
+                                }
+                            }
                             2 -> Util().doCopy(requireActivity(), document.phone)
                         }
                     })

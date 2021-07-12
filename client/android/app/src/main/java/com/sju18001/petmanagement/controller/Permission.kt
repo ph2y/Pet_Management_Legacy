@@ -26,6 +26,15 @@ class Permission {
         Manifest.permission.READ_CONTACTS
     )
 
+    public fun isAllPermissionsGranted(context: Context, permissions: Array<String>): Boolean {
+        for(p in permissions){
+            if(ContextCompat.checkSelfPermission(context, p) == PackageManager.PERMISSION_DENIED){
+                return false
+            }
+        }
+
+        return true
+    }
 
     public fun requestDeniedPermissions(context: Context, requiredPermissions: Array<String>){
         val deniedPermissions = getDeniedPermissions(context, requiredPermissions)
