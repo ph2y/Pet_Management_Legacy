@@ -42,9 +42,11 @@ class MyPetFragment : Fragment() {
         myPetListRecyclerView = root.findViewById(R.id.my_pet_list_recyclerView)
         addPetFab = root.findViewById(R.id.add_pet_fab)
 
-        // add pet fab -> open add pet activity
+        // add pet fab -> start activity and set fragment to add pet
         addPetFab.setOnClickListener {
-            startActivity(Intent(context, AddEditPetActivity::class.java))
+            val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
+            myPetActivityIntent.putExtra("fragmentType", "add_pet")
+            startActivity(myPetActivityIntent)
         }
 
         return root

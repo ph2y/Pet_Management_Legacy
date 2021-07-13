@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.myPet.AddEditPetActivity">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/back_button"
@@ -56,7 +55,7 @@
             android:id="@+id/pet_info_scrollview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="25dp"
             android:layout_marginBottom="20dp"
             android:fillViewport="true"
             app:layout_constrainedHeight="true"
@@ -124,7 +123,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="2.5dp"
-                                android:onClick="onRadioButtonClicked"
                                 android:text="@string/pet_gender_female"
                                 android:theme="@style/onSelectedThemeCarrot"/>
 
@@ -133,7 +131,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2.5dp"
-                                android:onClick="onRadioButtonClicked"
                                 android:text="@string/pet_gender_male"
                                 android:theme="@style/onSelectedThemeCarrot"/>
 
@@ -216,10 +213,10 @@
                         android:theme="@style/onSelectedThemeCarrot"/>
 
                     <CheckBox
+                        android:id="@+id/year_only_checkbox"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:onClick="onCheckboxClicked"
                         android:text="@string/pet_birth_only_year_label"
                         android:theme="@style/onSelectedThemeCarrot"/>
 

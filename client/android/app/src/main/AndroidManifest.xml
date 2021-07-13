@@ -20,8 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetManagement">
         <activity
-            android:name=".ui.myPet.AddEditPetActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
+            android:name=".ui.myPet.MyPetActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
 
         <meta-data
             android:name="com.kakao.sdk.AppKey"
