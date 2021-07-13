@@ -1,57 +1,43 @@
 package com.sju18001.petmanagement.ui.map
 
-import android.Manifest
 import android.animation.ValueAnimator
 import android.app.AlertDialog
 import android.content.*
-import android.content.pm.PackageManager
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.animation.doOnEnd
-
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.marginBottom
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.bottomnavigation.BottomNavigationView
-
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Permission
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentMapBinding
-import com.sju18001.petmanagement.restapi.KakaoApi
 import com.sju18001.petmanagement.restapi.Documents
+import com.sju18001.petmanagement.restapi.KakaoApi
 import com.sju18001.petmanagement.restapi.Place
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import net.daum.android.map.MapViewEventListener
 import net.daum.mf.map.api.*
-
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.system.exitProcess
+
 
 class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.MapViewEventListener, MapView.POIItemEventListener {
     val API_KEY = "KakaoAK fcb50b998a702691c31e6e2b3a4555be"
@@ -107,58 +93,70 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
 
         // 맵 권한
-        val permission = Permission()
-        permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForMap)
-
+        Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForMap)
 
         // MavView 초기화
         val mapView = MapView(this.activity)
         val mapViewContainer = root?.findViewById<ViewGroup>(R.id.map_view)!!
         mapViewContainer.addView(mapView)
+
         mapView.setCurrentLocationEventListener(this)
         mapView.setMapViewEventListener(this)
         mapView.setPOIItemEventListener(this)
-        mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
-        setMapCenterPointToCurrentLocation(mapView)
+
+        mapView.setCustomCurrentLocationMarkerTrackingImage(R.drawable.marker_current_location, MapPOIItem.ImageOffset(16, 16))
+        mapView.setCalloutBalloonAdapter(CustomCalloutBalloonAdapter(inflater))
+        
+        // 위치 권한이 없을 때, 아래에서 에러가 발생함
+        try{
+            mapView.currentLocationTrackingMode = MapView.CurrentLocationTrackingMode.TrackingModeOnWithoutHeadingWithoutMapMoving
+            setMapCenterPointToCurrentLocation(mapView)
+        }catch(e: Exception){
+            Toast.makeText(requireContext(), "앱의 정상적인 작동을 위해, 위치 권한이 필요합니다.", Toast.LENGTH_LONG).show()
+            exitProcess(-1)
+        }
 
 
         // 현재 위치 버튼
-        currentLocationButton = root.findViewById<FloatingActionButton>(R.id.currentLocationButton)
-        currentLocationButton!!.setOnClickListener(View.OnClickListener {
-            setMapCenterPointToCurrentLocation(mapView)
-        })
-        val currentLocationButtonParams = currentLocationButton!!.layoutParams as ViewGroup.MarginLayoutParams
-        currentLocationButtonParams.bottomMargin += Util().convertDpToPixel(NAVVIEW_HEIGHT)
-        currentLocationButton!!.layoutParams = currentLocationButtonParams
+        currentLocationButton = root.findViewById<FloatingActionButton>(R.id.currentLocationButton).apply{
+            setOnClickListener(View.OnClickListener {
+                setMapCenterPointToCurrentLocation(mapView)
+            })
+
+            val currentLocationButtonParams = layoutParams as ViewGroup.MarginLayoutParams
+            currentLocationButtonParams.bottomMargin += Util().convertDpToPixel(NAVVIEW_HEIGHT)
+            layoutParams = currentLocationButtonParams
+        }
 
 
         // 검색바
-        searchTextInput = root.findViewById<EditText>(R.id.search_text_input)
-        var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel)
-
-        searchTextInput!!.setOnEditorActionListener{ textView, action, event ->
-            searchKeyword(textView.text.toString(), mapView)
-            Util().hideKeyboard(requireActivity(), textView)
-
-            /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
-            setMapCenterPointToCurrentLocation(mapView)
-            val searchAreaCircle = addCircleCenteredAtCurrentLocation(mapView, searchRadiusMeter)
-            moveCameraOnCircle(mapView, searchAreaCircle!!, 50) */
-
-            true
-        }
-
-        searchTextInput!!.addTextChangedListener {
-            if(!searchTextInput!!.text.isEmpty()){
-                searchTextCancel.visibility = View.VISIBLE
-            }else{
-                searchTextCancel.visibility = View.INVISIBLE
+        searchTextInput = root.findViewById<EditText>(R.id.search_text_input).apply {
+            var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel).apply {
+                setOnClickListener{
+                    searchTextInput!!.setText("")
+                    Util().hideKeyboard(requireActivity(), searchTextInput!!)
+                }
             }
-        }
 
-        searchTextCancel!!.setOnClickListener{
-            searchTextInput!!.setText("")
-            Util().hideKeyboard(requireActivity(), searchTextInput!!)
+            setOnEditorActionListener{ textView, _, _ ->
+                searchKeyword(textView.text.toString(), mapView)
+                Util().hideKeyboard(requireActivity(), textView)
+
+                /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
+                setMapCenterPointToCurrentLocation(mapView)
+                val searchAreaCircle = addCircleCenteredAtCurrentLocation(mapView, searchRadiusMeter)
+                moveCameraOnCircle(mapView, searchAreaCircle!!, 50) */
+
+                true
+            }
+
+            addTextChangedListener {
+                if(!searchTextInput!!.text.isEmpty()){
+                    searchTextCancel.visibility = View.VISIBLE
+                }else{
+                    searchTextCancel.visibility = View.INVISIBLE
+                }
+            }
         }
 
 
@@ -272,12 +270,26 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         mapView.removeAllPOIItems()
 
         for(i: Int in 0 until documents.count()){
-            val newMarker: MapPOIItem = MapPOIItem()
-            newMarker.itemName = documents[i].place_name
-            newMarker.tag = i
-            newMarker.mapPoint = MapPoint.mapPointWithGeoCoord(documents[i].y.toDouble(), documents[i].x.toDouble())
-            newMarker.markerType = MapPOIItem.MarkerType.BluePin
-            newMarker.isShowCalloutBalloonOnTouch = false
+            var iconId: Int = when(documents[i].category_group_code){
+                "MT1", "CS2" -> R.drawable.marker_store
+                "PS3", "SC4", "AC5" -> R.drawable.marker_school
+                "PK6", "OL7" -> R.drawable.marker_car
+                "SW8" -> R.drawable.marker_train
+                "CE7" -> R.drawable.marker_cafe
+                "HP8", "PM9" -> R.drawable.marker_hospital
+                else -> R.drawable.marker_default
+            }
+
+            val newMarker: MapPOIItem = MapPOIItem().apply{
+                itemName = documents[i].place_name
+                tag = i
+                mapPoint = MapPoint.mapPointWithGeoCoord(documents[i].y.toDouble(), documents[i].x.toDouble())
+
+                markerType = MapPOIItem.MarkerType.CustomImage
+                isCustomImageAutoscale = false
+                setCustomImageAnchor(0.5f, 0.5f)
+                customImageResourceId = iconId
+            }
 
             mapView.addPOIItem(newMarker)
         }
@@ -341,28 +353,18 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     private fun setLocationInformationButtons(document: Place){
+        setLocationInformationPathfindingButton(document)
         setLocationInformationCallButton(document)
+        setLocationInformationShareButton(document)
     }
 
-    private fun setLocationInformationCallButton(document: Place){
-        val callButton = requireActivity().findViewById<ImageButton>(R.id.call_button)
-        val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장하기", "클립보드에 복사하기")
-
-        // 전화 및 연락처 권한 획득
-        val permission = Permission()
-        permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForCall)
-        permission.requestDeniedPermissions(requireActivity(), permission.requiredPermissionsForContacts)
-
-        // AlertDialog 구성
+    private fun setLocationInformationPathfindingButton(document: Place){
         val builder = AlertDialog.Builder(context)
-            .setTitle(document.phone)
-            .setItems(buttonStrings,
-                DialogInterface.OnClickListener{ _, which ->
-                    when(which){
-                        0 -> Util().doCall(requireActivity(), document.phone)
-                        1 -> Util().insertContactsContract(requireActivity(), document)
-                        2 -> Util().doCopy(requireActivity(), document.phone)
-                    }
+            .setTitle("길찾기")
+            .setMessage("길찾기를 위해 카카오맵 웹페이지로 이동합니다.")
+            .setPositiveButton("확인",
+                DialogInterface.OnClickListener { _, _ ->
+                    Util().openWebPage(requireActivity(), "https://map.kakao.com/link/to/" + document.id)
                 })
             .setNegativeButton("취소",
                 DialogInterface.OnClickListener { dialog, _ ->
@@ -370,8 +372,72 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                 })
             .create()
 
-        callButton.setOnClickListener{ _ ->
+        // 버튼 이벤트
+        val pathfindingButton = requireActivity().findViewById<ImageButton>(R.id.pathfinding_button)
+        pathfindingButton.setOnClickListener{ _ ->
             builder.show()
+        }
+    }
+
+    private fun setLocationInformationCallButton(document: Place){
+        // 전화번호 정보가 없을 때는 전화 버튼을 숨김
+        if(document.phone.isEmpty()){
+            setCallButtonHorizontalWeight(0f)
+        }else{
+            setCallButtonHorizontalWeight(1f)
+
+            // AlertDialog 구성
+            val buttonStrings: Array<CharSequence> = arrayOf("전화하기", "연락처 저장하기", "클립보드에 복사하기")
+            val builder = AlertDialog.Builder(context)
+                .setTitle(document.phone)
+                .setItems(buttonStrings,
+                    DialogInterface.OnClickListener{ _, which ->
+                        when(which){
+                            0 -> {
+                                if(Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForCall)){
+                                    Util().doCall(requireActivity(), document.phone)
+                                }else{
+                                    Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForCall)
+                                }
+                            }
+                            1 -> {
+                                if(Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForContacts)){
+                                    Util().insertContactsContract(requireActivity(), document)
+                                }else{
+                                    Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForContacts)
+                                }
+                            }
+                            2 -> Util().doCopy(requireActivity(), document.phone)
+                        }
+                    })
+                .setNegativeButton("취소",
+                    DialogInterface.OnClickListener { dialog, _ ->
+                        dialog.cancel()
+                    })
+                .create()
+            
+            // 버튼 이벤트
+            val callButton = requireActivity().findViewById<ImageButton>(R.id.call_button)
+            callButton.setOnClickListener{ _ ->
+                builder.show()
+            }
+        }
+    }
+
+    private fun setCallButtonHorizontalWeight(weight: Float){
+        val locationInformationButtons = requireActivity().findViewById<ConstraintLayout>(R.id.location_information_buttons)
+        val constraintSet = ConstraintSet()
+
+        constraintSet.clone(locationInformationButtons)
+        constraintSet.setHorizontalWeight(R.id.call_button, weight)
+        constraintSet.applyTo(locationInformationButtons)
+    }
+
+    private fun setLocationInformationShareButton(document: Place){
+        // 버튼 이벤트
+        val shareButton = requireActivity().findViewById<ImageButton>(R.id.share_button)
+        shareButton.setOnClickListener{ _ ->
+            Util().shareText(requireActivity(), document.place_url)
         }
     }
 
@@ -508,7 +574,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
-        if(searchTextInput!!.isFocused == true){
+        if(searchTextInput!!.isFocused){
             Util().hideKeyboard(requireActivity(), searchTextInput!!)
         }
 
@@ -554,5 +620,22 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?) {
+    }
+
+    // * 커스텀 말풍선 클래스
+    class CustomCalloutBalloonAdapter(inflater: LayoutInflater) : CalloutBalloonAdapter {
+        private val mCalloutBalloon: View = inflater.inflate(R.layout.custom_callout_balloon, null)
+
+        override fun getCalloutBalloon(poiItem: MapPOIItem): View {
+            val customCalloutBalloonImage = (mCalloutBalloon.findViewById<View>(R.id.custom_callout_balloon_image) as ImageView)
+            customCalloutBalloonImage.setImageResource(R.drawable.ic_baseline_place_48)
+            customCalloutBalloonImage.y = 8f
+
+            return mCalloutBalloon
+        }
+
+        override fun getPressedCalloutBalloon(poiItem: MapPOIItem?): View? {
+            return null
+        }
     }
 }
