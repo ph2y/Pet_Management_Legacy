@@ -19,6 +19,7 @@ class AddEditPetActivity : AppCompatActivity() {
 
     // create view variables
     private lateinit var petImageInput: CircleImageView
+    private lateinit var petImageInputButton: CircleImageView
     private lateinit var petNameInput: EditText
     private lateinit var petSpeciesInput: EditText
     private lateinit var petBreedInput: EditText
@@ -29,7 +30,7 @@ class AddEditPetActivity : AppCompatActivity() {
     // create user value variables
     private var petImageValue: Uri? = null
     private var petNameValue: String? = null
-    private var petGenderValue: Boolean? = null // [false -> Male / true -> Female]
+    private var petGenderValue: Boolean? = null // [true -> Female / false -> Male]
     private var petSpeciesValue: String? = null
     private var petBreedValue: String? = null
     private var petBirthYearValue: Int? = null
@@ -46,6 +47,7 @@ class AddEditPetActivity : AppCompatActivity() {
 
         // initialize view variables
         petImageInput = findViewById(R.id.pet_image_input)
+        petImageInputButton = findViewById(R.id.pet_image_input_button)
         petNameInput = findViewById(R.id.pet_name_input)
         petSpeciesInput = findViewById(R.id.pet_species_input)
         petBreedInput = findViewById(R.id.pet_breed_input)
@@ -54,7 +56,7 @@ class AddEditPetActivity : AppCompatActivity() {
         backButton = findViewById(R.id.back_button)
 
         // for pet image picker
-        petImageInput.setOnClickListener {
+        petImageInputButton.setOnClickListener {
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
@@ -114,13 +116,13 @@ class AddEditPetActivity : AppCompatActivity() {
 
             // save pet gender value
             when (view.getId()) {
-                R.id.gender_male ->
-                    if (checked) {
-                        petGenderValue = false
-                    }
                 R.id.gender_female ->
                     if (checked) {
                         petGenderValue = true
+                    }
+                R.id.gender_male ->
+                    if (checked) {
+                        petGenderValue = false
                     }
             }
         }
