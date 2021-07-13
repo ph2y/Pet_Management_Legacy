@@ -2,6 +2,6 @@
 <resources>
     <style name="onSelectedThemeCarrot">
         <item name="colorControlActivated">@color/carrot</item>
-        <item name="android:textColorHighlight">#5CD35400</item>
+        <item name="android:textColorHighlight">#CCE67E22</item>
     </style>
 </resources>
