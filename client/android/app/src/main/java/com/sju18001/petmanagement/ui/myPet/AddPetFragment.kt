@@ -97,7 +97,10 @@ class AddPetFragment : Fragment() {
                 petBirthDateValue = null
             }
 
-            // for testing #######################################################################
+
+
+            //
+            //for testing #######################################################################
             Log.d("AA", "image: " + petImageValue.toString())
             Log.d("AA", "name: " + petNameValue.toString())
             Log.d("AA", "gender: " + petGenderValue.toString())
@@ -107,6 +110,10 @@ class AddPetFragment : Fragment() {
             Log.d("AA", "month: " + petBirthMonthValue.toString())
             Log.d("AA", "date: " + petBirthDateValue.toString())
             Log.d("AA", "year only: " + petBirthYearOnlyValue.toString())
+            //for testing #######################################################################
+            //
+
+
         }
 
         // for back button
