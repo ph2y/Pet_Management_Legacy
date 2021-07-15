@@ -5,4 +5,11 @@
     <string name="title_map">지도</string>
     <string name="title_community">커뮤니티</string>
     <string name="title_my_page">내 정보</string>
+
+    <string name="id_hint">아이디</string>
+    <string name="pw_hint">비밀번호</string>
+    <string name="sign_in_button">로그인</string>
+    <string name="register_button">회원가입</string>
+    <string name="divider">|</string>
+    <string name="id_pw_find_button">ID/PW 찾기</string>
 </resources>
