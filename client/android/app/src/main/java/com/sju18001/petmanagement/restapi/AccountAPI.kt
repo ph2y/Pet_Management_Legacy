@@ -6,5 +6,5 @@ import retrofit2.http.POST
 
 interface AccountAPI {
     @POST("api/account/login")
-    fun loginRequest(@Body accountLoginRequestDTO: AccountLoginRequestDTO): Call<AccountLoginResponseDTO>
+    fun signInRequest(@Body accountSignInRequestDTO: AccountSignInRequestDTO): Call<AccountSignInResponseDTO>
 }
