@@ -1,16 +1,29 @@
 package com.sju18001.petmanagement.ui.signIn
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.android.material.snackbar.Snackbar
 import com.sju18001.petmanagement.MainActivity
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
+import com.sju18001.petmanagement.restapi.AccountLoginRequestDTO
+import com.sju18001.petmanagement.restapi.AccountLoginResponseDTO
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 
 class SignInFragment : Fragment() {
 
@@ -41,9 +54,43 @@ class SignInFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        //
-//        idPwFindButton.setOnClickListener {
-//            startActivity(Intent(context, MainActivity::class.java))
-//        }
+        // for sign in button
+        signInButton.setOnClickListener {
+            Util().hideKeyboard(requireActivity(), requireView())
+            signIn(idEditText.text.toString(), pwEditText.text.toString())
+        }
+    }
+
+    private fun signIn(username: String, password: String) {
+        // create sign in request DTO
+        val accountLoginRequestDTO = AccountLoginRequestDTO(username, password)
+
+        // call API using Retrofit
+        RetrofitBuilder.accountApi.loginRequest(accountLoginRequestDTO).enqueue(object: Callback<AccountLoginResponseDTO> {
+            override fun onResponse(
+                call: Call<AccountLoginResponseDTO>,
+                response: Response<AccountLoginResponseDTO>
+            ) {
+                if(response.isSuccessful) {
+                    val intent = Intent(context, MainActivity::class.java)
+                    intent.putExtra("token", response.body()?.token)
+
+                    startActivity(intent)
+                }
+                else {
+                    // create custom snack bar to display error message
+                    val snackBar = Snackbar.make(view?.findViewById(R.id.fragment_sign_in_layout)!!,
+                        context?.getText(R.string.sign_in_failed)!!, Snackbar.LENGTH_INDEFINITE)
+                    val snackBarView = snackBar.view
+                    snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
+                    snackBarView.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
+                    snackBar.show()
+                }
+            }
+
+            override fun onFailure(call: Call<AccountLoginResponseDTO>, t: Throwable) {
+                Log.d("error", t.message.toString())
+            }
+        })
     }
 }
