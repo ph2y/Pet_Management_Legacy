@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Base64.encode
 import android.util.Log
 import android.view.WindowManager
+import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -45,6 +46,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //
+        // temp(for testing)
+        val testString = "로그인 성공! (Token: " + intent.getStringExtra("token") + ')'
+        Toast.makeText(applicationContext, testString, Toast.LENGTH_LONG).show()
+        // temp(for testing)
+        //
 
         // for fragment reset(after activity destruction)
         fragmentManager.findFragmentByTag("myPet")?.let {

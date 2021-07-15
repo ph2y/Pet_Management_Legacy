@@ -12,4 +12,5 @@
     <string name="register_button">회원가입</string>
     <string name="divider">|</string>
     <string name="id_pw_find_button">ID/PW 찾기</string>
+    <string name="sign_in_failed">아이디 또는 비밀번호가 일치하지 않아요!</string>
 </resources>
