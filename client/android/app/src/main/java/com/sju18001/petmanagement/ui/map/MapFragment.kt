@@ -119,9 +119,9 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
         // 현재 위치 버튼
         currentLocationButton = root.findViewById<FloatingActionButton>(R.id.currentLocationButton).apply{
-            setOnClickListener(View.OnClickListener {
+            setOnClickListener{
                 setMapCenterPointToCurrentLocation(mapView)
-            })
+            }
 
             val currentLocationButtonParams = layoutParams as ViewGroup.MarginLayoutParams
             currentLocationButtonParams.bottomMargin += Util().convertDpToPixel(NAVVIEW_HEIGHT)
@@ -131,12 +131,43 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
         // 검색바
         searchTextInput = root.findViewById<EditText>(R.id.search_text_input).apply {
+            // 취소 버튼
             var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel).apply {
                 setOnClickListener{
                     searchTextInput!!.setText("")
                     Util().hideKeyboard(requireActivity(), searchTextInput!!)
                 }
             }
+
+            // 검색 바로가기
+            root.findViewById<ConstraintLayout>(R.id.search_shortcut_cafe).apply {
+                setOnClickListener{
+                    searchKeyword("애견카페", mapView)
+                    Util().hideKeyboard(requireActivity(), this)
+                }
+            }
+
+            root.findViewById<ConstraintLayout>(R.id.search_shortcut_grooming).apply {
+                setOnClickListener{
+                    searchKeyword("애견미용", mapView)
+                    Util().hideKeyboard(requireActivity(), this)
+                }
+            }
+
+            root.findViewById<ConstraintLayout>(R.id.search_shortcut_supply).apply {
+                setOnClickListener{
+                    searchKeyword("애견용품", mapView)
+                    Util().hideKeyboard(requireActivity(), this)
+                }
+            }
+
+            root.findViewById<ConstraintLayout>(R.id.search_shortcut_hospital).apply {
+                setOnClickListener{
+                    searchKeyword("동물병원", mapView)
+                    Util().hideKeyboard(requireActivity(), this)
+                }
+            }
+
 
             setOnEditorActionListener{ textView, _, _ ->
                 searchKeyword(textView.text.toString(), mapView)
