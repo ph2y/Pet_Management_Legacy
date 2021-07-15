@@ -141,43 +141,24 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
             // 검색 바로가기
             root.findViewById<ConstraintLayout>(R.id.search_shortcut_cafe).apply {
-                setOnClickListener{
-                    searchKeyword("애견카페", mapView)
-                    Util().hideKeyboard(requireActivity(), this)
-                }
+                setOnClickListener{ doSearch("애견카페", mapView, this) }
             }
 
             root.findViewById<ConstraintLayout>(R.id.search_shortcut_grooming).apply {
-                setOnClickListener{
-                    searchKeyword("애견미용", mapView)
-                    Util().hideKeyboard(requireActivity(), this)
-                }
+                setOnClickListener{ doSearch("애견미용", mapView, this) }
             }
 
             root.findViewById<ConstraintLayout>(R.id.search_shortcut_supply).apply {
-                setOnClickListener{
-                    searchKeyword("애견용품", mapView)
-                    Util().hideKeyboard(requireActivity(), this)
-                }
+                setOnClickListener{ doSearch("애견용품", mapView, this) }
             }
 
             root.findViewById<ConstraintLayout>(R.id.search_shortcut_hospital).apply {
-                setOnClickListener{
-                    searchKeyword("동물병원", mapView)
-                    Util().hideKeyboard(requireActivity(), this)
-                }
+                setOnClickListener{ doSearch("동물병원", mapView, this) }
             }
 
 
             setOnEditorActionListener{ textView, _, _ ->
-                searchKeyword(textView.text.toString(), mapView)
-                Util().hideKeyboard(requireActivity(), textView)
-
-                /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
-                setMapCenterPointToCurrentLocation(mapView)
-                val searchAreaCircle = addCircleCenteredAtCurrentLocation(mapView, searchRadiusMeter)
-                moveCameraOnCircle(mapView, searchAreaCircle!!, 50) */
-
+                doSearch(textView.text.toString(), mapView, textView)
                 true
             }
 
@@ -256,6 +237,16 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
 
     // * 검색
+    private fun doSearch(keyword: String, mapView:MapView, keyboardView: View){
+        searchKeyword(keyword, mapView)
+        Util().hideKeyboard(requireActivity(), keyboardView)
+
+        /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
+        setMapCenterPointToCurrentLocation(mapView)
+        val searchAreaCircle = addCircleCenteredAtCurrentLocation(mapView, searchRadiusMeter)
+        moveCameraOnCircle(mapView, searchAreaCircle!!, 50) */
+    }
+
     private fun searchKeyword(keyword: String, mapView:MapView){
         // Retrofit 구성
         val retrofit = Retrofit.Builder()
