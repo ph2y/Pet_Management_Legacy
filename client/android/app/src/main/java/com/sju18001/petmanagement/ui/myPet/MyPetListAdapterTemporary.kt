@@ -35,7 +35,7 @@ class MyPetListAdapterTemporary : RecyclerView.Adapter<MyPetListAdapterTemporary
         petNameInfo += if(currentItem.getPetGender()!!) {
             holder.itemView.context.getString(R.string.pet_gender_female) + "/N세)"
         } else {
-            holder.itemView.context.getString(R.string.pet_gender_female) + "/N세)"
+            holder.itemView.context.getString(R.string.pet_gender_male) + "/N세)"
         }
 
         var petBirth = ""

@@ -14,6 +14,7 @@ import com.sju18001.petmanagement.R
 import de.hdodenhof.circleimageview.CircleImageView
 
 class AddPetFragment : Fragment() {
+
     // constant variables
     private val PICK_IMAGE = 0
 

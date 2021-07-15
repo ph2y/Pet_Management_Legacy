@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.myPet
 
 class MyPetListItemTemporary {
+
     private var mPetId: Int? = null
     private var mPetName: String? = null
     private var mPetBirth: String? = null
