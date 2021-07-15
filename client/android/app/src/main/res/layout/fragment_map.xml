@@ -58,7 +58,7 @@
             app:layout_constraintStart_toStartOf="@+id/search_text_input"
             >
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/cafe_search_shortcut"
+                android:id="@+id/search_shortcut_cafe"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:paddingLeft="8dp"
@@ -88,7 +88,7 @@
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/grooming_search_shortcut"
+                android:id="@+id/search_shortcut_grooming"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:paddingLeft="8dp"
@@ -97,7 +97,7 @@
                 android:background="@drawable/search_shortcut_background"
                 android:clickable="true"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/cafe_search_shortcut"
+                app:layout_constraintStart_toEndOf="@id/search_shortcut_cafe"
                 >
                 <ImageView
                     android:layout_width="wrap_content"
@@ -119,7 +119,7 @@
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/supply_search_shortcut"
+                android:id="@+id/search_shortcut_supply"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:paddingLeft="8dp"
@@ -128,7 +128,7 @@
                 android:background="@drawable/search_shortcut_background"
                 android:clickable="true"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/grooming_search_shortcut"
+                app:layout_constraintStart_toEndOf="@id/search_shortcut_grooming"
                 >
                 <ImageView
                     android:layout_width="wrap_content"
@@ -150,7 +150,7 @@
                     />
             </androidx.constraintlayout.widget.ConstraintLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/hospital_search_shortcut"
+                android:id="@+id/search_shortcut_hospital"
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:paddingLeft="8dp"
@@ -159,7 +159,7 @@
                 android:background="@drawable/search_shortcut_background"
                 android:clickable="true"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/supply_search_shortcut"
+                app:layout_constraintStart_toEndOf="@id/search_shortcut_supply"
                 >
                 <ImageView
                     android:layout_width="wrap_content"
