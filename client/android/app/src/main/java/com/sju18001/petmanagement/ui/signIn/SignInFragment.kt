@@ -8,18 +8,13 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.google.android.material.snackbar.Snackbar
 import com.sju18001.petmanagement.MainActivity
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.restapi.AccountLoginRequestDTO
-import com.sju18001.petmanagement.restapi.AccountLoginResponseDTO
-import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,6 +26,7 @@ class SignInFragment : Fragment() {
     private lateinit var idEditText: EditText
     private lateinit var pwEditText: EditText
     private lateinit var signInButton: Button
+    private lateinit var signInButtonProgressBar: ProgressBar
     private lateinit var registerButton: TextView
     private lateinit var idPwFindButton: TextView
 
@@ -45,6 +41,7 @@ class SignInFragment : Fragment() {
         idEditText = view.findViewById(R.id.id_edit_text)
         pwEditText = view.findViewById(R.id.pw_edit_text)
         signInButton = view.findViewById(R.id.sign_in_button)
+        signInButtonProgressBar = view.findViewById(R.id.sign_in_progress_bar)
         registerButton = view.findViewById(R.id.register_button)
         idPwFindButton = view.findViewById(R.id.id_pw_find_button)
 
@@ -56,6 +53,11 @@ class SignInFragment : Fragment() {
 
         // for sign in button
         signInButton.setOnClickListener {
+            // set button status to loading
+            signInButton.text = ""
+            signInButtonProgressBar.visibility = View.VISIBLE
+            signInButton.isEnabled = false
+
             Util().hideKeyboard(requireActivity(), requireView())
             signIn(idEditText.text.toString(), pwEditText.text.toString())
         }
@@ -63,13 +65,13 @@ class SignInFragment : Fragment() {
 
     private fun signIn(username: String, password: String) {
         // create sign in request DTO
-        val accountLoginRequestDTO = AccountLoginRequestDTO(username, password)
+        val accountSignInRequestDTO = AccountSignInRequestDTO(username, password)
 
         // call API using Retrofit
-        RetrofitBuilder.accountApi.loginRequest(accountLoginRequestDTO).enqueue(object: Callback<AccountLoginResponseDTO> {
+        RetrofitBuilder.accountApi.signInRequest(accountSignInRequestDTO).enqueue(object: Callback<AccountSignInResponseDTO> {
             override fun onResponse(
-                call: Call<AccountLoginResponseDTO>,
-                response: Response<AccountLoginResponseDTO>
+                call: Call<AccountSignInResponseDTO>,
+                response: Response<AccountSignInResponseDTO>
             ) {
                 if(response.isSuccessful) {
                     val intent = Intent(context, MainActivity::class.java)
@@ -85,10 +87,29 @@ class SignInFragment : Fragment() {
                     snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
                     snackBarView.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
                     snackBar.show()
+
+                    // set button status to active
+                    signInButton.text = context?.getText(R.string.sign_in_button)
+                    signInButtonProgressBar.visibility = View.GONE
+                    signInButton.isEnabled = true
                 }
             }
 
-            override fun onFailure(call: Call<AccountLoginResponseDTO>, t: Throwable) {
+            override fun onFailure(call: Call<AccountSignInResponseDTO>, t: Throwable) {
+                // create custom snack bar to display error message
+                val snackBar = Snackbar.make(view?.findViewById(R.id.fragment_sign_in_layout)!!,
+                    t.message.toString(), Snackbar.LENGTH_INDEFINITE)
+                val snackBarView = snackBar.view
+                snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
+                snackBarView.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
+                snackBar.show()
+
+                // set button status to active
+                signInButton.text = context?.getText(R.string.sign_in_button)
+                signInButtonProgressBar.visibility = View.GONE
+                signInButton.isEnabled = true
+
+                // log error message
                 Log.d("error", t.message.toString())
             }
         })

@@ -13,10 +13,12 @@ class SignInActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         // show sign in fragment
-        val fragment = SignInFragment()
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.sign_in_activity_fragment_container, fragment)
-            .commit()
+        if(supportFragmentManager.findFragmentById(R.id.sign_in_activity_fragment_container) == null) {
+            val fragment = SignInFragment()
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.sign_in_activity_fragment_container, fragment)
+                .commit()
+        }
     }
 }
