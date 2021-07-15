@@ -237,8 +237,6 @@
         android:layout_marginStart="70dp"
         android:layout_marginEnd="70dp"
         android:layout_marginBottom="20dp"
-        android:backgroundTint="@color/carrot"
-        android:textColor="@color/white"
         android:textStyle="bold"
         android:text="@string/confirm_add_pet"/>
 

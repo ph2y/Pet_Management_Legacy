@@ -12,8 +12,8 @@ class MyPetActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_pet)
 
-        // set status bar color
-        window.statusBarColor = resources.getColor(R.color.pumpkin)
+        // hide action bar
+        supportActionBar?.hide()
 
         // get fragment type and show it(for first launch)
         val fragmentType = intent.getStringExtra("fragmentType")
