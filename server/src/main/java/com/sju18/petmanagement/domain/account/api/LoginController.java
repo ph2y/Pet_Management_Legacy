@@ -2,8 +2,8 @@ package com.sju18.petmanagement.domain.account.api;
 
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.application.JwtUserDetailsService;
-import com.sju18.petmanagement.domain.account.dto.LoginRequestDTO;
-import com.sju18.petmanagement.domain.account.dto.LoginResponseDTO;
+import com.sju18.petmanagement.domain.account.dto.LoginRequestDto;
+import com.sju18.petmanagement.domain.account.dto.LoginResponseDto;
 import com.sju18.petmanagement.global.config.security.JwtTokenUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,11 @@ public class LoginController {
     private JwtUserDetailsService userDetailService;
 
     @PostMapping("/api/account/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequestDTO loginRequestDTO) {
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequestDto loginRequestDto) {
         final Account account = userDetailService.authenticateByUsernameAndPassword
-                (loginRequestDTO.getUsername(), loginRequestDTO.getPassword());
+                (loginRequestDto.getUsername(), loginRequestDto.getPassword());
         final String token = jwtTokenUtil.generateToken(account.getUsername());
-        return ResponseEntity.ok(new LoginResponseDTO(token));
+        return ResponseEntity.ok(new LoginResponseDto(token));
     }
 
 }

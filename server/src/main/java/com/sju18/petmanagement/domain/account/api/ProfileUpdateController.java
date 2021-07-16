@@ -2,8 +2,8 @@ package com.sju18.petmanagement.domain.account.api;
 
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
-import com.sju18.petmanagement.domain.account.dto.ProfileUpdateResponseDTO;
-import com.sju18.petmanagement.domain.account.dto.ProfileUpdateRequestDTO;
+import com.sju18.petmanagement.domain.account.dto.ProfileUpdateResponseDto;
+import com.sju18.petmanagement.domain.account.dto.ProfileUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +23,7 @@ public class ProfileUpdateController {
     final AccountRepository accountRepository;
 
     @PostMapping("/api/account/profileupdate")
-    public ResponseEntity<?> updateAccountProfile(Authentication authentication, @RequestBody ProfileUpdateRequestDTO profileUpdateRequestDTO) {
+    public ResponseEntity<?> updateAccountProfile(Authentication authentication, @RequestBody ProfileUpdateRequestDto profileUpdateRequestDto) {
         // 로그인된 현재 사용자 정보 조회
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String currentUserName = userDetails.getUsername();
@@ -33,30 +33,30 @@ public class ProfileUpdateController {
             currentUserProfile = accountRepository.findByUsername(currentUserName)
                     .orElseThrow(() -> new UsernameNotFoundException(currentUserName));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ProfileUpdateResponseDTO(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ProfileUpdateResponseDto(e.getMessage()));
         }
 
         // 기존 사용자 프로필 중 변경사항이 있는 필드 업데이트
-        if (profileUpdateRequestDTO.getEmail() != null) {
-            currentUserProfile.setEmail(profileUpdateRequestDTO.getEmail());
+        if (profileUpdateRequestDto.getEmail() != null) {
+            currentUserProfile.setEmail(profileUpdateRequestDto.getEmail());
         }
-        if (profileUpdateRequestDTO.getName() != null) {
-            currentUserProfile.setName(profileUpdateRequestDTO.getName());
+        if (profileUpdateRequestDto.getName() != null) {
+            currentUserProfile.setName(profileUpdateRequestDto.getName());
         }
-        if (profileUpdateRequestDTO.getPhone() != null) {
-            currentUserProfile.setPhone(profileUpdateRequestDTO.getPhone());
+        if (profileUpdateRequestDto.getPhone() != null) {
+            currentUserProfile.setPhone(profileUpdateRequestDto.getPhone());
         }
         // 프로필 사진 변경 기능은 파일을 다루어야 함으로 장래 변경해야됨.
-        if (profileUpdateRequestDTO.getPhoto() != null) {
-            currentUserProfile.setPhoto(profileUpdateRequestDTO.getPhoto());
+        if (profileUpdateRequestDto.getPhoto() != null) {
+            currentUserProfile.setPhoto(profileUpdateRequestDto.getPhoto());
         }
 
         // 기존 사용자 정보 변경사항 적용
         try {
             accountRepository.save(currentUserProfile);
-            return ResponseEntity.ok(new ProfileUpdateResponseDTO("Account profile update success"));
+            return ResponseEntity.ok(new ProfileUpdateResponseDto("Account profile update success"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ProfileUpdateResponseDTO(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ProfileUpdateResponseDto(e.getMessage()));
         }
     }
 }
