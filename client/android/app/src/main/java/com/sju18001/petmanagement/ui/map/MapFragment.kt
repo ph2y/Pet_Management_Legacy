@@ -119,9 +119,9 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
         // 현재 위치 버튼
         currentLocationButton = root.findViewById<FloatingActionButton>(R.id.currentLocationButton).apply{
-            setOnClickListener(View.OnClickListener {
+            setOnClickListener{
                 setMapCenterPointToCurrentLocation(mapView)
-            })
+            }
 
             val currentLocationButtonParams = layoutParams as ViewGroup.MarginLayoutParams
             currentLocationButtonParams.bottomMargin += Util().convertDpToPixel(NAVVIEW_HEIGHT)
@@ -131,6 +131,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
         // 검색바
         searchTextInput = root.findViewById<EditText>(R.id.search_text_input).apply {
+            // 취소 버튼
             var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel).apply {
                 setOnClickListener{
                     searchTextInput!!.setText("")
@@ -138,15 +139,26 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                 }
             }
 
+            // 검색 바로가기
+            root.findViewById<ConstraintLayout>(R.id.search_shortcut_cafe).apply {
+                setOnClickListener{ doSearch("애견카페", mapView, this) }
+            }
+
+            root.findViewById<ConstraintLayout>(R.id.search_shortcut_grooming).apply {
+                setOnClickListener{ doSearch("애견미용", mapView, this) }
+            }
+
+            root.findViewById<ConstraintLayout>(R.id.search_shortcut_supply).apply {
+                setOnClickListener{ doSearch("애견용품", mapView, this) }
+            }
+
+            root.findViewById<ConstraintLayout>(R.id.search_shortcut_hospital).apply {
+                setOnClickListener{ doSearch("동물병원", mapView, this) }
+            }
+
+
             setOnEditorActionListener{ textView, _, _ ->
-                searchKeyword(textView.text.toString(), mapView)
-                Util().hideKeyboard(requireActivity(), textView)
-
-                /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
-                setMapCenterPointToCurrentLocation(mapView)
-                val searchAreaCircle = addCircleCenteredAtCurrentLocation(mapView, searchRadiusMeter)
-                moveCameraOnCircle(mapView, searchAreaCircle!!, 50) */
-
+                doSearch(textView.text.toString(), mapView, textView)
                 true
             }
 
@@ -225,6 +237,16 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
 
     // * 검색
+    private fun doSearch(keyword: String, mapView:MapView, keyboardView: View){
+        searchKeyword(keyword, mapView)
+        Util().hideKeyboard(requireActivity(), keyboardView)
+
+        /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
+        setMapCenterPointToCurrentLocation(mapView)
+        val searchAreaCircle = addCircleCenteredAtCurrentLocation(mapView, searchRadiusMeter)
+        moveCameraOnCircle(mapView, searchAreaCircle!!, 50) */
+    }
+
     private fun searchKeyword(keyword: String, mapView:MapView){
         // Retrofit 구성
         val retrofit = Retrofit.Builder()
@@ -574,9 +596,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
-        if(searchTextInput!!.isFocused){
-            Util().hideKeyboard(requireActivity(), searchTextInput!!)
-        }
+        Util().hideKeyboard(requireActivity(), searchTextInput!!)
 
         // 장소 정보가 열려있을 때
         if(navView != null && locationInformation != null){

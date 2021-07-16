@@ -2,8 +2,8 @@ package com.sju18.petmanagement.domain.account.api;
 
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
-import com.sju18.petmanagement.domain.account.dto.ProfileLookupRequestDTO;
-import com.sju18.petmanagement.domain.account.dto.ProfileLookupResponseDTO;
+import com.sju18.petmanagement.domain.account.dto.ProfileLookupRequestDto;
+import com.sju18.petmanagement.domain.account.dto.ProfileLookupResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -23,7 +23,7 @@ public class ProfileLookupController {
     final AccountRepository accountRepository;
 
     @PostMapping("/api/account/profilelookup")
-    public ResponseEntity<?> lookupAccountProfile(Authentication authentication, @RequestBody ProfileLookupRequestDTO profilelookupRequestDTO) {
+    public ResponseEntity<?> lookupAccountProfile(Authentication authentication, @RequestBody ProfileLookupRequestDto profilelookupRequestDto) {
         // 로그인된 현재 사용자 정보 조회
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String currentUserName = userDetails.getUsername();
@@ -32,7 +32,7 @@ public class ProfileLookupController {
         try {
             Account currentUserProfile = accountRepository.findByUsername(currentUserName)
                     .orElseThrow(() -> new UsernameNotFoundException(currentUserName));
-            return ResponseEntity.ok(new ProfileLookupResponseDTO(
+            return ResponseEntity.ok(new ProfileLookupResponseDto(
                     "Account profile lookup success",
                     currentUserProfile.getUsername(),
                     currentUserProfile.getEmail(),
@@ -41,7 +41,7 @@ public class ProfileLookupController {
                     currentUserProfile.getPhoto()
             ));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new ProfileLookupResponseDTO(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ProfileLookupResponseDto(e.getMessage()));
         }
     }
 }

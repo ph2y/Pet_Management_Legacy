@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class ProfileUpdateResponseDTO {
+public class ProfileUpdateResponseDto {
     String message;
 }

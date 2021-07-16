@@ -1,7 +1,7 @@
 package com.sju18.petmanagement.domain.account.api;
 
-import com.sju18.petmanagement.domain.account.dto.SignupRequestDTO;
-import com.sju18.petmanagement.domain.account.dto.SignupResponseDTO;
+import com.sju18.petmanagement.domain.account.dto.SignupRequestDto;
+import com.sju18.petmanagement.domain.account.dto.SignupResponseDto;
 import lombok.RequiredArgsConstructor;
 
 import com.sju18.petmanagement.domain.account.dao.Account;
@@ -24,29 +24,29 @@ public class SignupController {
     final PasswordEncoder encode;
 
     @PostMapping("/api/account/signup")
-    public ResponseEntity<?> registerAccount(@RequestBody SignupRequestDTO signupRequestDTO) {
+    public ResponseEntity<?> registerAccount(@RequestBody SignupRequestDto signupRequestDto) {
         // Account 객체 생성
         Account newAccount = Account.createAccount(
-                signupRequestDTO.getUsername(),
-                encode.encode(signupRequestDTO.getPassword()),
-                signupRequestDTO.getEmail(),
-                signupRequestDTO.getName(),
-                signupRequestDTO.getPhone(),
-                signupRequestDTO.getPhoto()
+                signupRequestDto.getUsername(),
+                encode.encode(signupRequestDto.getPassword()),
+                signupRequestDto.getEmail(),
+                signupRequestDto.getName(),
+                signupRequestDto.getPhone(),
+                signupRequestDto.getPhoto()
         );
         
         // 중복 확인
         if (accountRepository.existsByUsername(newAccount.getUsername())) {
-            return ResponseEntity.badRequest().body(new SignupResponseDTO("Username already exists"));
+            return ResponseEntity.badRequest().body(new SignupResponseDto("Username already exists"));
         }
 
         // DB에 계정정보 저장
         try {
             accountRepository.save(newAccount);
-            return ResponseEntity.ok(new SignupResponseDTO("Account register success"));
+            return ResponseEntity.ok(new SignupResponseDto("Account register success"));
         } catch (Exception e) {
             logger.warn(e.getMessage());
-            return ResponseEntity.status(500).body(new SignupResponseDTO(e.getMessage()));
+            return ResponseEntity.status(500).body(new SignupResponseDto(e.getMessage()));
         }
     }
 
