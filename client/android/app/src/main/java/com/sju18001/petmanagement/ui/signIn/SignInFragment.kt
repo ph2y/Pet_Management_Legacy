@@ -17,12 +17,16 @@ import com.sju18001.petmanagement.restapi.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.NullPointerException
 
 class SignInFragment : Fragment() {
 
     // variables for view binding
     private var _binding: FragmentSignInBinding? = null
     private val binding get() = _binding!!
+
+    // variable for storing API call(for cancel)
+    private var signInApiCall: Call<AccountSignInResponseDto>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -64,7 +68,8 @@ class SignInFragment : Fragment() {
         val accountSignInRequestDto = AccountSignInRequestDto(username, password)
 
         // call API using Retrofit
-        RetrofitBuilder.serverApi.signInRequest(accountSignInRequestDto).enqueue(object: Callback<AccountSignInResponseDto> {
+        signInApiCall = RetrofitBuilder.serverApi.signInRequest(accountSignInRequestDto)
+        signInApiCall!!.enqueue(object: Callback<AccountSignInResponseDto> {
             override fun onResponse(
                 call: Call<AccountSignInResponseDto>,
                 response: Response<AccountSignInResponseDto>
@@ -88,6 +93,9 @@ class SignInFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<AccountSignInResponseDto>, t: Throwable) {
+                // if the view was destroyed(API call canceled) -> do nothing
+                if(_binding == null) { return }
+
                 // create custom snack bar to display error message
                 displayErrorMessage(t.message.toString())
 
@@ -115,5 +123,8 @@ class SignInFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        // stop api call when fragment is destroyed
+        signInApiCall?.cancel()
     }
 }
