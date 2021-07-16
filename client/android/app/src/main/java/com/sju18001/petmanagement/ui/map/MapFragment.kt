@@ -43,7 +43,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     val API_KEY = "KakaoAK fcb50b998a702691c31e6e2b3a4555be"
     val BASE_URL = "https://dapi.kakao.com/"
 
-    private lateinit var mapViewModel: CommunityViewModel
+    private lateinit var mapViewModel: MapViewModel
     private var _binding: FragmentMapBinding? = null
 
     // This property is only valid between onCreateView and
@@ -84,13 +84,13 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         savedInstanceState: Bundle?
     ): View? {
         mapViewModel =
-            ViewModelProvider(this).get(CommunityViewModel::class.java)
+            ViewModelProvider(this).get(MapViewModel::class.java)
 
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
-
+        Log.d("test", "onCreateView")
 
         // 맵 권한
         Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForMap)
