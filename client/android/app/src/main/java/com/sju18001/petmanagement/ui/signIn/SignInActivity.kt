@@ -3,11 +3,19 @@ package com.sju18001.petmanagement.ui.signIn
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.databinding.ActivitySignInBinding
 
 class SignInActivity : AppCompatActivity() {
+
+    // variable for view binding
+    private lateinit var binding: ActivitySignInBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_in)
+
+        //view binding
+        binding = ActivitySignInBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // hide action bar
         supportActionBar?.hide()

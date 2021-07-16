@@ -74,6 +74,7 @@ class SignInFragment : Fragment() {
                     intent.putExtra("token", response.body()?.token)
 
                     startActivity(intent)
+                    activity?.finish()
                 }
                 else {
                     // create custom snack bar to display error message
