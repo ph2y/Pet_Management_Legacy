@@ -574,9 +574,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
-        if(searchTextInput!!.isFocused){
-            Util().hideKeyboard(requireActivity(), searchTextInput!!)
-        }
+        Util().hideKeyboard(requireActivity(), searchTextInput!!)
 
         // 장소 정보가 열려있을 때
         if(navView != null && locationInformation != null){
