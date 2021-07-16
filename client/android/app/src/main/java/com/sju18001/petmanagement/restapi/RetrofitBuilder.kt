@@ -4,6 +4,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+// 싱글톤 패턴을 사용하므로, RetrofitBuilder.* 형태로 호출합니다.
 object RetrofitBuilder {
     var serverApi: ServerApi
 
