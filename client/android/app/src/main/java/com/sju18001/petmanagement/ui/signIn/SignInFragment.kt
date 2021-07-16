@@ -47,6 +47,12 @@ class SignInFragment : Fragment() {
             Util().hideKeyboard(requireActivity(), requireView())
             signIn(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
         }
+
+        // 키보드 
+        binding.fragmentSignInLayout.setOnClickListener{
+            Util().hideKeyboard(requireActivity(), binding.idEditText)
+            Util().hideKeyboard(requireActivity(), binding.pwEditText)
+        }
     }
 
     private fun signIn(username: String, password: String) {
