@@ -44,7 +44,11 @@ class SignInFragment : Fragment() {
             binding.signInProgressBar.visibility = View.VISIBLE
             binding.signInButton.isEnabled = false
 
-            Util().hideKeyboard(requireActivity(), requireView())
+            // hide keyboard
+            Util().hideKeyboard(requireActivity(), binding.idEditText)
+            Util().hideKeyboard(requireActivity(), binding.pwEditText)
+
+            // call signIn function
             signIn(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
         }
 
