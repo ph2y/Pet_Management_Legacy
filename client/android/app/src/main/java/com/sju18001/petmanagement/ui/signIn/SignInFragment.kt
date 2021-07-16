@@ -48,7 +48,7 @@ class SignInFragment : Fragment() {
             signIn(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
         }
 
-        // 키보드
+        // hide keyboard when touch signInLayout
         binding.fragmentSignInLayout.setOnClickListener{
             Util().hideKeyboard(requireActivity(), binding.idEditText)
             Util().hideKeyboard(requireActivity(), binding.pwEditText)
