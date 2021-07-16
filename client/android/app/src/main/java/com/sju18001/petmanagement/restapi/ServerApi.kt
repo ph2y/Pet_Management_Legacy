@@ -4,7 +4,7 @@ import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 
-interface AccountAPI {
+interface ServerApi {
     @POST("api/account/login")
-    fun signInRequest(@Body accountSignInRequestDTO: AccountSignInRequestDTO): Call<AccountSignInResponseDTO>
+    fun signInRequest(@Body accountSignInRequestDto: AccountSignInRequestDto): Call<AccountSignInResponseDto>
 }

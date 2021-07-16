@@ -5,7 +5,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitBuilder {
-    var accountApi: AccountAPI
+    var serverApi: ServerApi
 
     init {
         val retrofit = Retrofit.Builder()
@@ -14,6 +14,6 @@ object RetrofitBuilder {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        accountApi = retrofit.create(AccountAPI::class.java)
+        serverApi = retrofit.create(ServerApi::class.java)
     }
 }
