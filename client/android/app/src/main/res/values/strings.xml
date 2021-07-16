@@ -13,4 +13,17 @@
     <string name="divider">|</string>
     <string name="id_pw_find_button">ID/PW 찾기</string>
     <string name="sign_in_failed">아이디 또는 비밀번호가 일치하지 않아요!</string>
+
+    <string name="pet_name_label">이름:</string>
+    <string name="pet_name_hint">예) 코코</string>
+    <string name="pet_gender_label">성별:</string>
+    <string name="pet_gender_female">암</string>
+    <string name="pet_gender_male">수</string>
+    <string name="pet_species_label">동물 종:</string>
+    <string name="pet_species_hint">예) 강아지</string>
+    <string name="pet_breed_label">품종:</string>
+    <string name="pet_breed_hint">예) 푸들</string>
+    <string name="pet_birth_label">생년월일:</string>
+    <string name="pet_birth_only_year_label">출생 연도만 알고 있어요!</string>
+    <string name="confirm_add_pet">펫 추가</string>
 </resources>

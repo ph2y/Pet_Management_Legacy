@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
     <uses-permission android:name="android.permission.WRITE_CONTACTS"></uses-permission>
     <uses-permission android:name="android.permission.READ_CONTACTS"></uses-permission>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
 
     <application
         android:allowBackup="true"
@@ -30,6 +31,7 @@
             android:name="com.kakao.sdk.AppKey"
             android:value="fc8b31553a5077fdddb778cdda5b0d41" />
 
+        <activity android:name=".ui.myPet.MyPetActivity" />
         <activity android:name=".MainActivity"/>
     </application>
 
