@@ -50,14 +50,14 @@ class SignInFragment : Fragment() {
     }
 
     private fun signIn(username: String, password: String) {
-        // create sign in request DTO
-        val accountSignInRequestDTO = AccountSignInRequestDTO(username, password)
+        // create sign in request Dto
+        val accountSignInRequestDto = AccountSignInRequestDto(username, password)
 
         // call API using Retrofit
-        RetrofitBuilder.accountApi.signInRequest(accountSignInRequestDTO).enqueue(object: Callback<AccountSignInResponseDTO> {
+        RetrofitBuilder.serverApi.signInRequest(accountSignInRequestDto).enqueue(object: Callback<AccountSignInResponseDto> {
             override fun onResponse(
-                call: Call<AccountSignInResponseDTO>,
-                response: Response<AccountSignInResponseDTO>
+                call: Call<AccountSignInResponseDto>,
+                response: Response<AccountSignInResponseDto>
             ) {
                 if(response.isSuccessful) {
                     val intent = Intent(context, MainActivity::class.java)
@@ -76,7 +76,7 @@ class SignInFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<AccountSignInResponseDTO>, t: Throwable) {
+            override fun onFailure(call: Call<AccountSignInResponseDto>, t: Throwable) {
                 // create custom snack bar to display error message
                 displayErrorMessage(t.message.toString())
 
