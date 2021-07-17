@@ -26,6 +26,7 @@ public class Account {
     @Column(unique = true, nullable = false)
     private String phone;
     private String photo;
+
     @Column(nullable = false)
     private Boolean marketing;
     private String userMessage;
