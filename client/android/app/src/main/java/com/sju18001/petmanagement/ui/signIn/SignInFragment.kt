@@ -17,7 +17,6 @@ import com.sju18001.petmanagement.restapi.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.NullPointerException
 
 class SignInFragment : Fragment() {
 
@@ -27,6 +26,9 @@ class SignInFragment : Fragment() {
 
     // variable for storing API call(for cancel)
     private var signInApiCall: Call<AccountSignInResponseDto>? = null
+
+    // Snackbar variable(for dismiss)
+    private var snackBar: Snackbar? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,10 +45,8 @@ class SignInFragment : Fragment() {
 
         // for sign in button
         binding.signInButton.setOnClickListener {
-            // set button status to loading
-            binding.signInButton.text = ""
-            binding.signInProgressBar.visibility = View.VISIBLE
-            binding.signInButton.isEnabled = false
+            // disable buttons
+            disableButtons()
 
             // hide keyboard
             Util().hideKeyboard(requireActivity(), binding.idEditText)
@@ -54,6 +54,15 @@ class SignInFragment : Fragment() {
 
             // call signIn function
             signIn(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
+        }
+
+        // for sign up button
+        binding.signUpButton.setOnClickListener {
+            val signUpFragment = SignUpFragment()
+            activity?.supportFragmentManager?.beginTransaction()!!
+                .replace(R.id.sign_in_activity_fragment_container, signUpFragment)
+                .addToBackStack(null)
+                .commit()
         }
 
         // hide keyboard when touch signInLayout
@@ -85,10 +94,8 @@ class SignInFragment : Fragment() {
                     // create custom snack bar to display error message
                     displayErrorMessage(context?.getText(R.string.sign_in_failed)!!.toString())
 
-                    // set button status to active
-                    binding.signInButton.text = context?.getText(R.string.sign_in_button)
-                    binding.signInProgressBar.visibility = View.GONE
-                    binding.signInButton.isEnabled = true
+                    // enable buttons
+                    enableButtons()
                 }
             }
 
@@ -99,10 +106,8 @@ class SignInFragment : Fragment() {
                 // create custom snack bar to display error message
                 displayErrorMessage(t.message.toString())
 
-                // set button status to active
-                binding.signInButton.text = context?.getText(R.string.sign_in_button)
-                binding.signInProgressBar.visibility = View.GONE
-                binding.signInButton.isEnabled = true
+                // enable buttons
+                enableButtons()
 
                 // log error message
                 Log.d("error", t.message.toString())
@@ -110,19 +115,46 @@ class SignInFragment : Fragment() {
         })
     }
 
+    // disable buttons
+    private fun disableButtons() {
+        // set sign in button status to loading
+        binding.signInButton.text = ""
+        binding.signInProgressBar.visibility = View.VISIBLE
+        binding.signInButton.isEnabled = false
+
+        // disable sign up, find id/pw buttons
+        binding.signUpButton.isEnabled = false
+        binding.idPwFindButton.isEnabled = false
+    }
+
+    // enable buttons
+    private fun enableButtons() {
+        // set sign in button status to active
+        binding.signInButton.text = context?.getText(R.string.sign_in_button)
+        binding.signInProgressBar.visibility = View.GONE
+        binding.signInButton.isEnabled = true
+
+        // enable sign up, find id/pw buttons
+        binding.signUpButton.isEnabled = true
+        binding.idPwFindButton.isEnabled = true
+    }
+
     // display error message(Snackbar)
     private fun displayErrorMessage(message: String) {
-        val snackBar = Snackbar.make(view?.findViewById(R.id.fragment_sign_in_layout)!!,
+        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_sign_in_layout)!!,
             message, Snackbar.LENGTH_INDEFINITE)
-        val snackBarView = snackBar.view
+        val snackBarView = snackBar!!.view
         snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
         snackBarView.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
-        snackBar.show()
+        snackBar!!.show()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        // dismiss Snackbar
+        snackBar?.dismiss()
 
         // stop api call when fragment is destroyed
         signInApiCall?.cancel()
