@@ -1,0 +1,5 @@
+## Pet-Management Ignore File **
+
+*.mwb
+*.bak
+*.sql
