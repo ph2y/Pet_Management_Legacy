@@ -32,7 +32,8 @@ public class SignupController {
                 signupRequestDto.getEmail(),
                 signupRequestDto.getName(),
                 signupRequestDto.getPhone(),
-                signupRequestDto.getPhoto()
+                signupRequestDto.getPhoto(),
+                signupRequestDto.getMarketing()
         );
         
         // 중복 확인

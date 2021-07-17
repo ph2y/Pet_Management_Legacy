@@ -34,6 +34,14 @@
     <string name="name_hint">이름</string>
     <string name="phone_hint">전화번호</string>
     <string name="email_hint">이메일</string>
-    <string name="terms_and_conditions_check_box">(agree to the terms and conditions)</string>
-    <string name="sign_up_confirm">"app name" 가입하기</string>
+    <string name="terms_check_box">{app name} 이용약관 동의(필수)</string>
+    <string name="marketing_check_box">마케팅 정보 수신 동의(선택)</string>
+    <string name="sign_up_confirm">{app name} 가입하기</string>
+
+    <string name="id_message">5~16자의 영문 소문자, 숫자만 사용 가능해요!</string>
+    <string name="pw_message">8~20자의 영문, 숫자, 특수문자(!@.#$%^&amp;*?_~)만 사용 가능해요!</string>
+    <string name="pw_check_message">비밀번호가 일치하지 않아요!</string>
+    <string name="name_message">1~20자의 영문, 한글, 공백문자만 사용 가능해요!</string>
+    <string name="phone_message">(-)을 제외한 휴대폰 번호 형식으로 작성해 주세요!</string>
+    <string name="email_message">이메일 주소 형식으로 작성해 주세요!</string>
 </resources>

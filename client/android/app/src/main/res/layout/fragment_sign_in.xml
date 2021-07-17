@@ -137,20 +137,26 @@
                 android:id="@+id/sign_up_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/sign_up_button"/>
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/sign_up_button"
+                android:background="?attr/selectableItemBackground"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
                 android:text="@string/divider"/>
 
             <TextView
                 android:id="@+id/id_pw_find_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/id_pw_find_button"/>
+                android:padding="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:text="@string/id_pw_find_button"
+                android:background="?attr/selectableItemBackground"/>
 
         </LinearLayout>
 

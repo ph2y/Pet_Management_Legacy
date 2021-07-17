@@ -15,4 +15,5 @@ public class ProfileLookupResponseDto {
     private String name;
     private String phone;
     private String photo;
+    private Boolean marketing;
 }
