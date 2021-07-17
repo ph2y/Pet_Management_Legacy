@@ -23,17 +23,19 @@ public class Account {
     private String name;
     private String phone;
     private String photo;
+    private Boolean marketing;
 
-    public Account(String username, String password, String email, String name, String phone, String photo) {
+    public Account(String username, String password, String email, String name, String phone, String photo, Boolean marketing) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.name = name;
         this.phone = phone;
         this.photo = photo;
+        this.marketing = marketing;
     }
 
-    public static Account createAccount(String username, String password, String email, String name, String phone, String photo) {
-        return new Account(username,password,email,name,phone,photo);
+    public static Account createAccount(String username, String password, String email, String name, String phone, String photo, Boolean marketing) {
+        return new Account(username,password,email,name,phone,photo,marketing);
     }
 }

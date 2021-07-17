@@ -10,4 +10,5 @@ public class SignupRequestDto {
     private String name;
     private String phone;
     private String photo;
+    private Boolean marketing;
 }
