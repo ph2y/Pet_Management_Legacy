@@ -90,7 +90,6 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         val root: View = binding.root
 
         navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
-        Log.d("test", "onCreateView")
 
         // 맵 권한
         Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForMap)

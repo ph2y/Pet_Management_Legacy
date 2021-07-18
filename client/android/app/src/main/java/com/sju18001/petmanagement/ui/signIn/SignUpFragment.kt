@@ -9,9 +9,11 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.databinding.FragmentSignInBinding
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignUpBinding
 import com.sju18001.petmanagement.restapi.*
 import org.w3c.dom.Text
@@ -46,14 +48,16 @@ class SignUpFragment : Fragment() {
     ): View? {
         // view binding
         _binding = FragmentSignUpBinding.inflate(inflater, container, false)
-        return binding.root
+        val root: View = binding.root
+
+        // initialize valid input map
+        for(i in 0..6) { isValidInput[i] = false }
+
+        return root
     }
 
     override fun onStart() {
         super.onStart()
-
-        // initialize valid input map
-        for(i in 0..6) { isValidInput[i] = false }
 
         // for back button(top-left)
         binding.backButton.setOnClickListener {
@@ -71,6 +75,7 @@ class SignUpFragment : Fragment() {
                     isValidInput[0] = false
                     binding.idMessage.visibility = View.VISIBLE
                 }
+                binding.idMessageOverlap.visibility = View.GONE
                 checkIsValid()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -178,11 +183,20 @@ class SignUpFragment : Fragment() {
 
         // for sign up button
         binding.signUpButton.setOnClickListener {
+            // call sign up API
             signUp(binding.idEditText.text.toString(), binding.pwEditText.text.toString(),
                 binding.emailEditText.text.toString(), binding.nameEditText.text.toString(),
             binding.phoneEditText.text.toString(), binding.marketingCheckBox.isChecked)
-            //
+
+            // hide keyboard
+            hideKeyboard()
+
+            // disable sign up button
+            disableSignUpButton()
         }
+
+        // hide keyboard when touched signUpLayout
+        binding.fragmentSignUpLayout.setOnClickListener{ hideKeyboard() }
     }
 
     private fun signUp(username: String, password: String, email: String, name: String, phone: String, marketing: Boolean) {
@@ -197,17 +211,46 @@ class SignUpFragment : Fragment() {
                 response: Response<AccountSignUpResponseDto>
             ) {
                 if(response.isSuccessful) {
-                    Log.d("server", "Sign Up Success!")
+                    // return to previous fragment + send sign up result data
+                    toPreviousFragment(true, null)
                 }
                 else {
-
+                    // if id overlap -> show message + enable sign up button
+                    binding.idMessageOverlap.visibility = View.VISIBLE
+                    enableSignUpButton()
                 }
             }
 
             override fun onFailure(call: Call<AccountSignUpResponseDto>, t: Throwable) {
+                // if the view was destroyed(API call canceled) -> do nothing
+                if(_binding == null) { return }
+
+                // return to previous fragment + send sign up result data
+                toPreviousFragment(false, t.message.toString())
+
+                // log error message
                 Log.d("error", t.message.toString())
             }
         })
+    }
+
+    // hide keyboard
+    private fun hideKeyboard() {
+        Util().hideKeyboard(requireActivity(), binding.idEditText)
+        Util().hideKeyboard(requireActivity(), binding.pwEditText)
+        Util().hideKeyboard(requireActivity(), binding.pwCheckEditText)
+        Util().hideKeyboard(requireActivity(), binding.nameEditText)
+        Util().hideKeyboard(requireActivity(), binding.phoneEditText)
+        Util().hideKeyboard(requireActivity(), binding.emailEditText)
+    }
+
+    // return to previous fragment + send sign up result data
+    private fun toPreviousFragment(result: Boolean, message: String?) {
+        // set result
+        setFragmentResult("signUpResult", bundleOf("isSuccessful" to mutableListOf(result, message)))
+
+        // return to previous fragment
+        activity?.supportFragmentManager?.popBackStack()
     }
 
     // check for all valid(for enabling sign up button)
@@ -222,6 +265,21 @@ class SignUpFragment : Fragment() {
 
         // if all is valid -> enable button
         binding.signUpButton.isEnabled = true
+    }
+
+    // disable sign up button
+    private fun disableSignUpButton() {
+        // set sign up button status to loading + disable
+        binding.signUpButton.text = ""
+        binding.signUpProgressBar.visibility = View.VISIBLE
+        binding.signUpButton.isEnabled = false
+    }
+
+    // enable sign up button
+    private fun enableSignUpButton() {
+        // set sign up button status to active + enable
+        binding.signUpButton.text = context?.getText(R.string.sign_up_confirm_button)
+        binding.signUpProgressBar.visibility = View.GONE
     }
 
     override fun onDestroyView() {
