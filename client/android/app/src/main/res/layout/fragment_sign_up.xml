@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_sign_up_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -36,13 +37,15 @@
         android:id="@+id/sign_up_main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
         android:layout_marginBottom="20dp"
         app:layout_constrainedHeight="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/logo_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/sign_up_button">
+        app:layout_constraintBottom_toTopOf="@id/sign_up_button_layout">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,9 +55,9 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
-                android:layout_marginEnd="40dp"
-                android:layout_marginTop="5dp">
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="5dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -80,6 +83,17 @@
                         android:layout_marginEnd="4dp"
                         android:visibility="gone"
                         android:text="@string/id_message"
+                        android:textSize="12dp"
+                        android:textColor="@android:color/holo_red_dark"/>
+
+                    <TextView
+                        android:id="@+id/id_message_overlap"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:visibility="gone"
+                        android:text="@string/id_message_overlap"
                         android:textSize="12dp"
                         android:textColor="@android:color/holo_red_dark"/>
 
@@ -250,16 +264,31 @@
 
     </ScrollView>
 
-    <Button
-        android:id="@+id/sign_up_button"
+    <RelativeLayout
+        android:id="@+id/sign_up_button_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sign_up_main_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="@string/sign_up_confirm"
-        android:enabled="false"/>
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/sign_up_button"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:text="@string/sign_up_confirm_button"
+            android:enabled="false"/>
+
+        <ProgressBar
+            android:id="@+id/sign_up_progress_bar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/carrot"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
