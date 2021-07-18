@@ -24,11 +24,12 @@ class Util {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixel.toFloat(), Resources.getSystem().displayMetrics).toInt()
     }
 
-    public fun hideKeyboard(activity: Activity, view: View){
-        if(view.isFocused){
+    public fun hideKeyboard(activity: Activity){
+        activity.currentFocus?.let{
             val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-            view.clearFocus()
+
+            imm.hideSoftInputFromWindow(it.windowToken, 0)
+            it.clearFocus()
         }
     }
 

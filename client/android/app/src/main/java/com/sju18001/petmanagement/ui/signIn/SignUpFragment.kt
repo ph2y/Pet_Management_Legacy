@@ -189,14 +189,14 @@ class SignUpFragment : Fragment() {
             binding.phoneEditText.text.toString(), binding.marketingCheckBox.isChecked)
 
             // hide keyboard
-            hideKeyboard()
+            Util().hideKeyboard(requireActivity())
 
             // disable sign up button
             disableSignUpButton()
         }
 
         // hide keyboard when touched signUpLayout
-        binding.fragmentSignUpLayout.setOnClickListener{ hideKeyboard() }
+        binding.fragmentSignUpLayout.setOnClickListener{ Util().hideKeyboard(requireActivity()) }
     }
 
     private fun signUp(username: String, password: String, email: String, name: String, phone: String, marketing: Boolean) {
@@ -232,16 +232,6 @@ class SignUpFragment : Fragment() {
                 Log.d("error", t.message.toString())
             }
         })
-    }
-
-    // hide keyboard
-    private fun hideKeyboard() {
-        Util().hideKeyboard(requireActivity(), binding.idEditText)
-        Util().hideKeyboard(requireActivity(), binding.pwEditText)
-        Util().hideKeyboard(requireActivity(), binding.pwCheckEditText)
-        Util().hideKeyboard(requireActivity(), binding.nameEditText)
-        Util().hideKeyboard(requireActivity(), binding.phoneEditText)
-        Util().hideKeyboard(requireActivity(), binding.emailEditText)
     }
 
     // return to previous fragment + send sign up result data

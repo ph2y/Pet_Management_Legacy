@@ -134,7 +134,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel).apply {
                 setOnClickListener{
                     searchTextInput!!.setText("")
-                    Util().hideKeyboard(requireActivity(), searchTextInput!!)
+                    Util().hideKeyboard(requireActivity())
                 }
             }
 
@@ -238,7 +238,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     // * 검색
     private fun doSearch(keyword: String, mapView:MapView, keyboardView: View){
         searchKeyword(keyword, mapView)
-        Util().hideKeyboard(requireActivity(), keyboardView)
+        Util().hideKeyboard(requireActivity())
 
         /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
         setMapCenterPointToCurrentLocation(mapView)
@@ -595,7 +595,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
-        Util().hideKeyboard(requireActivity(), searchTextInput!!)
+        Util().hideKeyboard(requireActivity())
 
         // 장소 정보가 열려있을 때
         if(navView != null && locationInformation != null){

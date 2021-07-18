@@ -70,7 +70,7 @@ class SignInFragment : Fragment() {
             disableButtons()
 
             // hide keyboard
-            hideKeyboard()
+            Util().hideKeyboard(requireActivity())
 
             // call signIn function
             signIn(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
@@ -87,7 +87,7 @@ class SignInFragment : Fragment() {
         }
 
         // hide keyboard when touch signInLayout
-        binding.fragmentSignInLayout.setOnClickListener{ hideKeyboard() }
+        binding.fragmentSignInLayout.setOnClickListener{ Util().hideKeyboard(requireActivity()) }
     }
 
     private fun signIn(username: String, password: String) {
@@ -132,12 +132,6 @@ class SignInFragment : Fragment() {
                 Log.d("error", t.message.toString())
             }
         })
-    }
-
-    // hide keyboard
-    private fun hideKeyboard() {
-        Util().hideKeyboard(requireActivity(), binding.idEditText)
-        Util().hideKeyboard(requireActivity(), binding.pwEditText)
     }
 
     // disable buttons
