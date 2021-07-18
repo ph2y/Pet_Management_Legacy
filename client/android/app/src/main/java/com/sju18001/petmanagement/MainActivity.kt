@@ -74,17 +74,6 @@ class MainActivity : AppCompatActivity() {
         val actionBar: ActionBar? = supportActionBar
         val navView: BottomNavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_my_pet, R.id.navigation_map, R.id.navigation_community, R.id.navigation_my_page
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-
         // get current selected item + set title
         when(savedInstanceState?.getInt("active_fragment_index")) {
             0 -> {
@@ -118,8 +107,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // initialize fragmentManager and show active fragment
-        if(fragmentManager.fragments.size != 0){ fragmentManager.beginTransaction().detach(fragmentManager.fragments[0]).commitNow() }
+        // add fragments and show active fragment
         fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPetFragment, "myPet").hide(myPetFragment).commitNow()
         fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, mapFragment, "map").hide(mapFragment).commitNow()
         fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, communityFragment, "community").hide(communityFragment).commitNow()

@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import com.google.android.material.snackbar.Snackbar
 import com.sju18001.petmanagement.MainActivity
 import com.sju18001.petmanagement.R
@@ -30,6 +31,26 @@ class SignInFragment : Fragment() {
     // Snackbar variable(for dismiss)
     private var snackBar: Snackbar? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // get sign up result
+        setFragmentResultListener("signUpResult") { _, bundle ->
+            val result: MutableList<Any> = bundle.get("isSuccessful") as MutableList<Any>
+
+            // if successful -> show success message
+            if(result[0] as Boolean) {
+                displaySuccessMessage(context?.getText(R.string.sign_up_success)!!.toString())
+            }
+
+            // if unsuccessful -> show error message
+            else {
+                displayErrorMessage(result[1] as String)
+                Log.d("error", result[1] as String)
+            }
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -49,8 +70,7 @@ class SignInFragment : Fragment() {
             disableButtons()
 
             // hide keyboard
-            Util().hideKeyboard(requireActivity(), binding.idEditText)
-            Util().hideKeyboard(requireActivity(), binding.pwEditText)
+            hideKeyboard()
 
             // call signIn function
             signIn(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
@@ -60,16 +80,14 @@ class SignInFragment : Fragment() {
         binding.signUpButton.setOnClickListener {
             val signUpFragment = SignUpFragment()
             activity?.supportFragmentManager?.beginTransaction()!!
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
                 .replace(R.id.sign_in_activity_fragment_container, signUpFragment)
                 .addToBackStack(null)
                 .commit()
         }
 
         // hide keyboard when touch signInLayout
-        binding.fragmentSignInLayout.setOnClickListener{
-            Util().hideKeyboard(requireActivity(), binding.idEditText)
-            Util().hideKeyboard(requireActivity(), binding.pwEditText)
-        }
+        binding.fragmentSignInLayout.setOnClickListener{ hideKeyboard() }
     }
 
     private fun signIn(username: String, password: String) {
@@ -84,6 +102,7 @@ class SignInFragment : Fragment() {
                 response: Response<AccountSignInResponseDto>
             ) {
                 if(response.isSuccessful) {
+                    // start main activity + send token
                     val intent = Intent(context, MainActivity::class.java)
                     intent.putExtra("token", response.body()?.token)
 
@@ -115,6 +134,12 @@ class SignInFragment : Fragment() {
         })
     }
 
+    // hide keyboard
+    private fun hideKeyboard() {
+        Util().hideKeyboard(requireActivity(), binding.idEditText)
+        Util().hideKeyboard(requireActivity(), binding.pwEditText)
+    }
+
     // disable buttons
     private fun disableButtons() {
         // set sign in button status to loading
@@ -142,9 +167,19 @@ class SignInFragment : Fragment() {
     // display error message(Snackbar)
     private fun displayErrorMessage(message: String) {
         snackBar = Snackbar.make(view?.findViewById(R.id.fragment_sign_in_layout)!!,
-            message, Snackbar.LENGTH_INDEFINITE)
+            message, Snackbar.LENGTH_LONG)
         val snackBarView = snackBar!!.view
         snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
+        snackBarView.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
+        snackBar!!.show()
+    }
+
+    // display success message(Snackbar)
+    private fun displaySuccessMessage(message: String) {
+        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_sign_in_layout)!!,
+            message, Snackbar.LENGTH_LONG)
+        val snackBarView = snackBar!!.view
+        snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_green_dark))
         snackBarView.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
         snackBar!!.show()
     }
