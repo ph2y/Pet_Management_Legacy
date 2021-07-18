@@ -163,7 +163,7 @@ class SignUpFragment : Fragment() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
                     isValidInput[5] = true
-                    binding.emailMessage.visibility = View.INVISIBLE
+                    binding.emailMessage.visibility = View.GONE
                 }
                 else {
                     isValidInput[5] = false
