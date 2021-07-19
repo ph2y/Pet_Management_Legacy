@@ -41,6 +41,15 @@ class FindIdPwFragment: Fragment() {
             tab.text = TAB_ELEMENTS[position]
         }.attach()
     }
+
+    override fun onStart() {
+        super.onStart()
+
+        // for back button(top-left)
+        binding.backButton.setOnClickListener{
+            activity?.supportFragmentManager?.popBackStack()
+        }
+    }
 }
 
 class FindIdPwCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
