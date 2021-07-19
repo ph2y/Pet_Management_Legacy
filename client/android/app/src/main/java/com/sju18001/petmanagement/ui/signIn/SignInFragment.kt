@@ -2,12 +2,15 @@ package com.sju18001.petmanagement.ui.signIn
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import com.google.android.material.snackbar.Snackbar
 import com.sju18001.petmanagement.MainActivity
@@ -63,6 +66,31 @@ class SignInFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
+        // variable for ViewModel
+        val signInViewModel: SignInViewModel by activityViewModels()
+
+        // restore EditText values after view destruction
+        binding.idEditText.setText(signInViewModel.signInIdEditText)
+        binding.pwEditText.setText(signInViewModel.signInPwEditText)
+
+        // for id text change listener
+        binding.idEditText.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                signInViewModel.signInIdEditText = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // for pw text change listener
+        binding.pwEditText.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                signInViewModel.signInPwEditText = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         // for sign in button
         binding.signInButton.setOnClickListener {

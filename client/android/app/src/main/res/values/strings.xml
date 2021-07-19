@@ -6,10 +6,23 @@
     <string name="title_community">커뮤니티</string>
     <string name="title_my_page">내 정보</string>
 
+    <string name="previous_step_button">이전</string>
+    <string name="next_step_button">다음</string>
+    <string name="sign_up_button">회원가입</string>
+
+
+
+
+    <string name="terms_title">서비스 이용약관</string>
+    <string name="select_all_check_box">약관 전체동의</string>
+    <string name="terms_check_box">이용약관 동의(필수)</string>
+    <string name="privacy_check_box">개인정보 수집 및 이용 동의(필수)</string>
+    <string name="marketing_check_box">마케팅 및 광고성 정보 수신 동의(선택)</string>
+
     <string name="id_hint">아이디</string>
     <string name="pw_hint">비밀번호</string>
     <string name="sign_in_button">로그인</string>
-    <string name="sign_up_button">회원가입</string>
+
     <string name="divider">|</string>
     <string name="id_pw_find_button">ID/PW 찾기</string>
     <string name="sign_in_failed">아이디 또는 비밀번호가 일치하지 않아요!</string>
@@ -19,8 +32,8 @@
     <string name="name_hint">이름</string>
     <string name="phone_hint">전화번호</string>
     <string name="email_hint">이메일</string>
-    <string name="terms_check_box">{app name} 이용약관 동의(필수)</string>
-    <string name="marketing_check_box">마케팅 정보 수신 동의(선택)</string>
+
+
     <string name="sign_up_confirm_button">{app name} 가입하기</string>
 
     <string name="id_message">5~16자의 영문 소문자, 숫자만 사용 가능해요!</string>
