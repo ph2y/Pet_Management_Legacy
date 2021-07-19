@@ -129,7 +129,7 @@ class FindIdFragment : Fragment() {
     private fun findUsername(email: String){
         val reqBody = AccountFindUsernameRequestDto(email)
         val call = RetrofitBuilder.getServerApi().findUsernameRequest(reqBody)
-        
+
         // 버튼 로딩 상태
         setButtonLoading(true)
 

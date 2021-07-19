@@ -93,7 +93,7 @@ class FindPwFragment : Fragment() {
         binding.emailInputLayout.visibility = View.VISIBLE
         binding.codeInputLayout.visibility = View.GONE
         binding.resultLayout.visibility = View.GONE
-        
+
         // 정규식 검사
         checkEmailValidation(binding.emailEditText.text)
         setMessageGone()
@@ -201,7 +201,7 @@ class FindPwFragment : Fragment() {
             }
         )
     }
-    
+
     // 이메일 입력 버튼 프로그래스바
     private fun setEmailInputButtonLoading(isLoading: Boolean){
         if(isLoading){
