@@ -11,7 +11,7 @@
     <string name="sign_in_button">로그인</string>
     <string name="sign_up_button">회원가입</string>
     <string name="divider">|</string>
-    <string name="id_pw_find_button">ID/PW 찾기</string>
+    <string name="find_id_pw_button">ID/PW 찾기</string>
     <string name="sign_in_failed">아이디 또는 비밀번호가 일치하지 않아요!</string>
     <string name="sign_up_success">회원가입 성공~ 로그인 후 이용해 주세요!</string>
 
@@ -46,4 +46,6 @@
     <string name="name_message">1~20자의 영문, 한글, 공백문자만 사용 가능해요!</string>
     <string name="phone_message">(-)을 제외한 휴대폰 번호 형식으로 작성해 주세요!</string>
     <string name="email_message">이메일 주소 형식으로 작성해 주세요!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
