@@ -3,6 +3,7 @@ package com.sju18001.petmanagement.ui.signIn.findIdPw
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,7 +14,7 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFindPwBinding
 import java.util.regex.Pattern
 
-class FindPwFragment : Fragment(){
+class FindPwFragment : Fragment() {
     private var _binding: FragmentFindPwBinding? = null
     private val binding get() = _binding!!
 
@@ -31,14 +32,23 @@ class FindPwFragment : Fragment(){
     ): View? {
         _binding = FragmentFindPwBinding.inflate(inflater, container, false)
 
-        // initialize valid input map
-        for(i in 0 until INPUT_LENGTH) { isValidInput[i] = false }
+        if(savedInstanceState?.getBoolean("is_input_code_shown") == true){
+            setViewForInputCode()
+        }
 
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
+
+        // initialize valid input map
+        for(i in 0 until INPUT_LENGTH) { isValidInput[i] = false }
+
+        checkIdValidation(binding.idEditText.text)
+        checkEmailValidation(binding.emailEditText.text)
+        checkIsValid()
+        setMessageGone()
 
         // 비밀번호 찾기 버튼 클릭
         binding.findPwButton.setOnClickListener{
@@ -56,14 +66,7 @@ class FindPwFragment : Fragment(){
         // ID 입력란 입력
         binding.idEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(patternId.matcher(s).matches()) {
-                    isValidInput[ID] = true
-                    binding.idMessage.visibility = View.GONE
-                }
-                else {
-                    isValidInput[ID] = false
-                    binding.idMessage.visibility = View.VISIBLE
-                }
+                checkIdValidation(s)
                 checkIsValid()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -73,14 +76,7 @@ class FindPwFragment : Fragment(){
         // 이메일 입력란 입력
         binding.emailEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
-                    isValidInput[EMAIL] = true
-                    binding.emailMessage.visibility = View.GONE
-                }
-                else {
-                    isValidInput[EMAIL] = false
-                    binding.emailMessage.visibility = View.VISIBLE
-                }
+                checkEmailValidation(s)
                 checkIsValid()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -88,7 +84,35 @@ class FindPwFragment : Fragment(){
         })
     }
 
-    // 유효성 검사
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("is_input_code_shown", binding.codeEditText.visibility == View.VISIBLE)
+    }
+
+
+    // * 유효성 검사
+    private fun checkIdValidation(s: CharSequence?) {
+        if(patternId.matcher(s).matches()) {
+            isValidInput[ID] = true
+            binding.idMessage.visibility = View.GONE
+        }
+        else {
+            isValidInput[ID] = false
+            binding.idMessage.visibility = View.VISIBLE
+        }
+    }
+
+    private fun checkEmailValidation(s: CharSequence?) {
+        if(Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
+            isValidInput[EMAIL] = true
+            binding.emailMessage.visibility = View.GONE
+        }
+        else {
+            isValidInput[EMAIL] = false
+            binding.emailMessage.visibility = View.VISIBLE
+        }
+    }
+
     private fun checkIsValid() {
         for(i in 0 until INPUT_LENGTH) {
             if(!isValidInput[i]!!) {
@@ -102,7 +126,8 @@ class FindPwFragment : Fragment(){
         binding.findPwButton.isEnabled = true
     }
 
-    private fun setViewForInputCode(){
+
+    private fun setViewForInputCode() {
         binding.codeEditText.visibility = View.VISIBLE
         binding.idEditText.visibility = View.GONE
         binding.emailEditText.visibility = View.GONE
@@ -112,5 +137,10 @@ class FindPwFragment : Fragment(){
                 // 코드 확인
             }
         }
+    }
+
+    private fun setMessageGone() {
+        binding.idMessage.visibility = View.GONE
+        binding.emailMessage.visibility = View.GONE
     }
 }
