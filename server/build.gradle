@@ -17,6 +17,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-devtools'
+	implementation 'org.springframework:spring-context-support:5.2.0.RELEASE'
+	implementation 'javax.mail:mail:1.4.7'
 	implementation 'org.projectlombok:lombok'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
 	runtime 'io.jsonwebtoken:jjwt-impl:0.11.2'
