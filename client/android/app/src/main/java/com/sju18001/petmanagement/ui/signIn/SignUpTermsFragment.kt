@@ -37,24 +37,28 @@ class SignUpTermsFragment: Fragment() {
         binding.selectAllCheckBox.setOnClickListener {
             signInViewModel.signUpSelectAllCheckBox = binding.selectAllCheckBox.isChecked
             selectDeselectAll(signInViewModel, signInViewModel.signUpSelectAllCheckBox)
+            allSelectedCheck(signInViewModel)
             validCheck(signInViewModel)
         }
 
         // for terms check box
         binding.termsCheckBox.setOnClickListener {
             signInViewModel.signUpTermsCheckBox = binding.termsCheckBox.isChecked
+            allSelectedCheck(signInViewModel)
             validCheck(signInViewModel)
         }
 
         // for privacy check box
         binding.privacyCheckBox.setOnClickListener {
             signInViewModel.signUpPrivacyCheckBox = binding.privacyCheckBox.isChecked
+            allSelectedCheck(signInViewModel)
             validCheck(signInViewModel)
         }
 
         // for marketing check box
         binding.marketingCheckBox.setOnClickListener {
             signInViewModel.signUpMarketingCheckBox = binding.marketingCheckBox.isChecked
+            allSelectedCheck(signInViewModel)
         }
     }
 
@@ -66,6 +70,12 @@ class SignUpTermsFragment: Fragment() {
         binding.termsCheckBox.isChecked = signInViewModel.signUpTermsCheckBox
         binding.privacyCheckBox.isChecked = signInViewModel.signUpPrivacyCheckBox
         binding.marketingCheckBox.isChecked = signInViewModel.signUpMarketingCheckBox
+    }
+
+    private fun allSelectedCheck(signInViewModel: SignInViewModel) {
+        signInViewModel.signUpSelectAllCheckBox =
+            signInViewModel.signUpTermsCheckBox && signInViewModel.signUpPrivacyCheckBox && signInViewModel.signUpMarketingCheckBox
+        binding.selectAllCheckBox.isChecked = signInViewModel.signUpSelectAllCheckBox
     }
 
     private fun validCheck(signInViewModel: SignInViewModel) {
@@ -83,6 +93,7 @@ class SignUpTermsFragment: Fragment() {
         binding.privacyCheckBox.isChecked = signInViewModel.signUpPrivacyCheckBox
         binding.marketingCheckBox.isChecked = signInViewModel.signUpMarketingCheckBox
 
+        (parentFragment as SignUpFragment).hidePreviousButton()
         validCheck(signInViewModel)
     }
 

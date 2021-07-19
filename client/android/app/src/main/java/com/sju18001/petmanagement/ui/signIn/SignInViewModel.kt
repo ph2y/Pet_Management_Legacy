@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 
 class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
     // variables for sign in
-    var signInIdEditText = handle.get<String>("signInIdEditText")?: "testId"
+    var signInIdEditText = handle.get<String>("signInIdEditText")?: ""
         set(value){
             handle.set("signInIdEditText", value)
             field = value
         }
-    var signInPwEditText = handle.get<String>("signInPwEditText")?: "testPw"
+    var signInPwEditText = handle.get<String>("signInPwEditText")?: ""
         set(value){
             handle.set("signInPwEditText", value)
             field = value
@@ -40,4 +40,48 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
         }
 
         // id/pw
+    var signUpIdEditText = handle.get<String>("signUpIdEditText")?: ""
+        set(value){
+            handle.set("signUpIdEditText", value)
+            field = value
+        }
+    var signUpIdValid = handle.get<Boolean>("signUpIdValid")?: false
+        set(value){
+            handle.set("signUpIdValid", value)
+            field = value
+        }
+    var signUpPwEditText = handle.get<String>("signUpPwEditText")?: ""
+        set(value){
+            handle.set("signUpPwEditText", value)
+            field = value
+        }
+    var signUpPwValid = handle.get<Boolean>("signUpPwValid")?: false
+        set(value){
+            handle.set("signUpPwValid", value)
+            field = value
+        }
+    var signUpPwCheckEditText = handle.get<String>("signUpPwCheckEditText")?: ""
+        set(value){
+            handle.set("signUpPwCheckEditText", value)
+            field = value
+        }
+    var signUpPwCheckValid = handle.get<Boolean>("signUpPwCheckValid")?: false
+        set(value){
+            handle.set("signUpPwCheckValid", value)
+            field = value
+        }
+
+    public fun resetSignUpValues() {
+        signUpSelectAllCheckBox = false
+        signUpTermsCheckBox = false
+        signUpPrivacyCheckBox = false
+        signUpMarketingCheckBox = false
+
+        signUpIdEditText = ""
+        signUpIdValid = false
+        signUpPwEditText = ""
+        signUpPwValid = false
+        signUpPwCheckEditText = ""
+        signUpPwCheckValid = false
+    }
 }

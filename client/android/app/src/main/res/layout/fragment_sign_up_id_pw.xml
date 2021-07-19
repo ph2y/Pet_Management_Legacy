@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/id_pw_title"
+        android:textSize="32dp"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/id_edit_text"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_baseline_person_24"
+            android:drawablePadding="4dp"
+            android:inputType="textPersonName"
+            android:hint="@string/id_hint"
+            android:theme="@style/onSelectedThemeCarrot"/>
+
+        <TextView
+            android:id="@+id/id_message"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:visibility="gone"
+            android:text="@string/id_message"
+            android:textSize="12dp"
+            android:textColor="@android:color/holo_red_dark"/>
+
+        <EditText
+            android:id="@+id/pw_edit_text"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawableStart="@drawable/ic_baseline_lock_24"
+            android:drawablePadding="4dp"
+            android:inputType="textPassword"
+            android:hint="@string/pw_hint"
+            android:theme="@style/onSelectedThemeCarrot"/>
+
+        <TextView
+            android:id="@+id/pw_message"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:visibility="gone"
+            android:text="@string/pw_message"
+            android:textSize="12dp"
+            android:textColor="@android:color/holo_red_dark"/>
+
+        <EditText
+            android:id="@+id/pw_check_edit_text"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:drawableStart="@drawable/ic_baseline_lock_24"
+            android:drawablePadding="4dp"
+            android:inputType="textPassword"
+            android:hint="@string/pw_check_hint"
+            android:theme="@style/onSelectedThemeCarrot"/>
+
+        <TextView
+            android:id="@+id/pw_check_message"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:visibility="gone"
+            android:text="@string/pw_check_message"
+            android:textSize="12dp"
+            android:textColor="@android:color/holo_red_dark"/>
+
+    </LinearLayout>
+
+</LinearLayout>

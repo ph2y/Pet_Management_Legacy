@@ -74,6 +74,9 @@ class SignInFragment : Fragment() {
         binding.idEditText.setText(signInViewModel.signInIdEditText)
         binding.pwEditText.setText(signInViewModel.signInPwEditText)
 
+        // reset sign up values in ViewModel
+        signInViewModel.resetSignUpValues()
+
         // for id text change listener
         binding.idEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -108,7 +111,7 @@ class SignInFragment : Fragment() {
         binding.signUpButton.setOnClickListener {
             val signUpFragment = SignUpFragment()
             activity?.supportFragmentManager?.beginTransaction()!!
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
                 .replace(R.id.sign_in_activity_fragment_container, signUpFragment)
                 .addToBackStack(null)
                 .commit()
