@@ -26,6 +26,10 @@ class FindIdFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentFindIdBinding.inflate(inflater, container, false)
+
+        // initialize valid input map
+        for(i in 0 until INPUT_LENGTH) { isValidInput[i] = false }
+
         return binding.root
     }
 

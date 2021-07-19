@@ -30,15 +30,22 @@ class FindPwFragment : Fragment(){
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentFindPwBinding.inflate(inflater, container, false)
+
+        // initialize valid input map
+        for(i in 0 until INPUT_LENGTH) { isValidInput[i] = false }
+
         return binding.root
     }
 
     override fun onStart() {
         super.onStart()
 
-        // 아이디 찾기 버튼 클릭
+        // 비밀번호 찾기 버튼 클릭
         binding.findPwButton.setOnClickListener{
             activity?.let { Util().hideKeyboard(it) }
+            
+            // API 서버를 통해, id-email이 유효한지 검사
+            setViewForInputCode()
         }
 
         // 레이아웃 클릭
@@ -93,5 +100,17 @@ class FindPwFragment : Fragment(){
 
         // if all is valid -> enable button
         binding.findPwButton.isEnabled = true
+    }
+
+    private fun setViewForInputCode(){
+        binding.codeEditText.visibility = View.VISIBLE
+        binding.idEditText.visibility = View.GONE
+        binding.emailEditText.visibility = View.GONE
+        binding.findPwButton.apply{
+            text = "확인"
+            setOnClickListener{
+                // 코드 확인
+            }
+        }
     }
 }
