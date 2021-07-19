@@ -60,7 +60,7 @@ class FindIdFragment : Fragment(){
         })
     }
 
-    // check for all valid(for enabling sign up button)
+    // 유효성 검사
     private fun checkIsValid() {
         for(i in 0 until INPUT_LENGTH) {
             if(!isValidInput[i]!!) {
