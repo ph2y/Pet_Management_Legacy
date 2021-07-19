@@ -43,7 +43,7 @@
     <LinearLayout
         android:id="@+id/sign_in_main_layout"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="240dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,6 +55,7 @@
         <androidx.cardview.widget.CardView
             android:layout_width="320dp"
             android:layout_height="140dp"
+            android:layout_marginTop="5dp"
             app:cardCornerRadius="6dp"
             app:cardElevation="4dp">
 
