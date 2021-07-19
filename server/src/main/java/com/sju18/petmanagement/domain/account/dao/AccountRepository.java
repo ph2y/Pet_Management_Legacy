@@ -10,6 +10,7 @@ import java.util.Optional;
 public interface AccountRepository extends CrudRepository<Account, Long> {
     Optional<Account> findByUsername(String username);
     boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
     @Transactional
     void deleteByUsername(String username);
 }
