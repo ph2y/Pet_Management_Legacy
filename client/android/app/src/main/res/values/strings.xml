@@ -46,6 +46,6 @@
     <string name="name_message">1~20자의 영문, 한글, 공백문자만 사용 가능해요!</string>
     <string name="phone_message">(-)을 제외한 휴대폰 번호 형식으로 작성해 주세요!</string>
     <string name="email_message">이메일 주소 형식으로 작성해 주세요!</string>
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
