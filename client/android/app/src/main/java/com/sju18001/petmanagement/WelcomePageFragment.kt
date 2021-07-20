@@ -36,7 +36,8 @@ class WelcomePageFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-
+        
+        // 스킵버튼
         binding.skipButton.setOnClickListener{
             val intent = Intent(context, MainActivity::class.java)
             startActivity(intent)
