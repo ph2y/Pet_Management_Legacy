@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.media.tv.TvContract.Programs.Genres.encode
@@ -27,6 +28,7 @@ import com.sju18001.petmanagement.ui.community.CommunityFragment
 import com.sju18001.petmanagement.ui.map.MapFragment
 import com.sju18001.petmanagement.ui.myPage.MyPageFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetFragment
+import com.sju18001.petmanagement.ui.welcomePage.WelcomePageActivity
 import java.net.URLEncoder.encode
 import java.security.MessageDigest
 import java.util.*
@@ -53,6 +55,13 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(applicationContext, testString, Toast.LENGTH_LONG).show()
         // temp(for testing)
         //
+
+        // For welcome page
+        if(true){ // TODO: '처음 로그인 했을 경우'로 조건문 수정
+            val intent = Intent(baseContext, WelcomePageActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         // for fragment reset(after activity destruction)
         fragmentManager.findFragmentByTag("myPet")?.let {
