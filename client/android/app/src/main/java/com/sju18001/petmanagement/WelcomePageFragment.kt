@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -32,6 +33,16 @@ class WelcomePageFragment : Fragment() {
         TabLayoutMediator(tabLayout, viewPager){ _, _ ->
         }.attach()
     }
+
+    override fun onStart() {
+        super.onStart()
+
+        binding.skipButton.setOnClickListener{
+            val intent = Intent(context, MainActivity::class.java)
+            startActivity(intent)
+            activity?.finish()
+        }
+    }
 }
 
 class WelcomePageCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
@@ -40,5 +51,4 @@ class WelcomePageCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fra
     override fun createFragment(position: Int): Fragment {
         return WelcomePageProfileFragment()
     }
-
 }
