@@ -1,12 +1,11 @@
 package com.sju18.petmanagement.domain.pet.dao;
 
-<<<<<<< HEAD
 import com.sju18.petmanagement.domain.pet.dto.PetProfileFetchResponseDto;
 import com.sju18.petmanagement.domain.pet.dto.PetProfileUpdateRequestDto;
 import com.sju18.petmanagement.domain.pet.dto.PetProfileUpdateResponseDto;
-=======
-import com.sju18.petmanagement.domain.pet.dto.PetInfoUpdateRequestDto;
->>>>>>> 6616c1d (server pet API implemented)
+import com.sju18.petmanagement.domain.pet.dto.PetProfileFetchResponseDto;
+import com.sju18.petmanagement.domain.pet.dto.PetProfileUpdateRequestDto;
+import com.sju18.petmanagement.domain.pet.dto.PetProfileUpdateResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

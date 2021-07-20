@@ -22,7 +22,7 @@ public class PetProfileController {
 
     // READ
     @PostMapping("/api/pet/profile/fetch")
-    public ResponseEntity<?> fetchPetProfile(Authentication authentication, @RequestBody PetProfileFetchRequestDto requestDto) {
+    public ResponseEntity<?> fetchPetProfile(Authentication authentication) {
         return ResponseEntity.ok(petInfoService.fetchPetProfile(authentication));
     }
 

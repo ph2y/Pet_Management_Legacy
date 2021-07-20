@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.restapi.dto
+package com.sju18001.petmanagement.restapi
 
 data class AccountSignInRequestDto (
     val username: String,
