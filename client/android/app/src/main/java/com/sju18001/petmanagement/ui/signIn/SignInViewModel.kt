@@ -50,6 +50,11 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
             handle.set("signUpIdValid", value)
             field = value
         }
+    var signUpIdIsOverlap = handle.get<Boolean>("signUpIdIsOverlap")?: false
+        set(value){
+            handle.set("signUpIdIsOverlap", value)
+            field = value
+        }
     var signUpPwEditText = handle.get<String>("signUpPwEditText")?: ""
         set(value){
             handle.set("signUpPwEditText", value)
@@ -71,6 +76,38 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
             field = value
         }
 
+        // user info
+    var signUpNameEditText = handle.get<String>("signUpNameEditText")?: ""
+        set(value){
+            handle.set("signUpNameEditText", value)
+            field = value
+        }
+    var signUpNameValid = handle.get<Boolean>("signUpNameValid")?: false
+        set(value){
+            handle.set("signUpNameValid", value)
+            field = value
+        }
+    var signUpPhoneEditText = handle.get<String>("signUpPhoneEditText")?: ""
+        set(value){
+            handle.set("signUpPhoneEditText", value)
+            field = value
+        }
+    var signUpPhoneValid = handle.get<Boolean>("signUpPhoneValid")?: false
+        set(value){
+            handle.set("signUpPhoneValid", value)
+            field = value
+        }
+    var signUpEmailEditText = handle.get<String>("signUpEmailEditText")?: ""
+        set(value){
+            handle.set("signUpEmailEditText", value)
+            field = value
+        }
+    var signUpEmailValid = handle.get<Boolean>("signUpEmailValid")?: false
+        set(value){
+            handle.set("signUpEmailValid", value)
+            field = value
+        }
+
     public fun resetSignUpValues() {
         signUpSelectAllCheckBox = false
         signUpTermsCheckBox = false
@@ -79,9 +116,17 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
 
         signUpIdEditText = ""
         signUpIdValid = false
+        signUpIdIsOverlap = false
         signUpPwEditText = ""
         signUpPwValid = false
         signUpPwCheckEditText = ""
         signUpPwCheckValid = false
+
+        signUpNameEditText = ""
+        signUpNameValid = false
+        signUpPhoneEditText = ""
+        signUpPhoneValid = false
+        signUpEmailEditText = ""
+        signUpEmailValid = false
     }
 }

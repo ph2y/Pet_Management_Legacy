@@ -53,6 +53,8 @@ class SignUpIdPwFragment : Fragment() {
                     binding.idMessage.visibility = View.VISIBLE
                 }
                 signInViewModel.signUpIdEditText = s.toString()
+                signInViewModel.signUpIdIsOverlap = false
+                binding.idMessageOverlap.visibility = View.GONE
                 validCheck(signInViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -126,6 +128,9 @@ class SignUpIdPwFragment : Fragment() {
         }
         if(!signInViewModel.signUpPwCheckValid && signInViewModel.signUpPwCheckEditText != "") {
             binding.pwCheckMessage.visibility = View.VISIBLE
+        }
+        if(signInViewModel.signUpIdIsOverlap) {
+            binding.idMessageOverlap.visibility = View.VISIBLE
         }
 
         (parentFragment as SignUpFragment).showPreviousButton()
