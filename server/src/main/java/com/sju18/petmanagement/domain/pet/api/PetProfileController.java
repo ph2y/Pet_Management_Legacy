@@ -16,25 +16,25 @@ public class PetProfileController {
 
     // CREATE
     @PostMapping("/api/pet/profile/create")
-    public ResponseEntity<?> createPetInfo(Authentication authentication, @RequestBody PetProfileCreateRequestDto requestDto) {
-        return ResponseEntity.ok(petInfoService.createPetInfo(authentication, requestDto));
+    public ResponseEntity<?> createPetProfile(Authentication authentication, @RequestBody PetProfileCreateRequestDto requestDto) {
+        return ResponseEntity.ok(petInfoService.createPetProfile(authentication, requestDto));
     }
 
     // READ
     @PostMapping("/api/pet/profile/fetch")
-    public ResponseEntity<?> fetchPetInfo(Authentication authentication, @RequestBody PetProfileFetchRequestDto requestDto) {
-        return ResponseEntity.ok(petInfoService.fetchPetInfo(authentication));
+    public ResponseEntity<?> fetchPetProfile(Authentication authentication, @RequestBody PetProfileFetchRequestDto requestDto) {
+        return ResponseEntity.ok(petInfoService.fetchPetProfile(authentication));
     }
 
     // UPDATE
     @PostMapping("/api/pet/profile/update")
-    public ResponseEntity<?> updatePetInfo(Authentication authentication, @RequestBody PetProfileUpdateRequestDto requestDto) {
-        return ResponseEntity.ok(petInfoService.updatePetInfo(authentication, requestDto));
+    public ResponseEntity<?> updatePetProfile(Authentication authentication, @RequestBody PetProfileUpdateRequestDto requestDto) {
+        return ResponseEntity.ok(petInfoService.updatePetProfile(authentication, requestDto));
     }
 
     // DELETE
     @PostMapping("/api/pet/profile/delete")
-    public ResponseEntity<?> deletePetInfo(Authentication authentication, @RequestBody PetProfileDeleteRequestDto requestDto) {
-        return ResponseEntity.ok(petInfoService.deletePetInfo(authentication, requestDto));
+    public ResponseEntity<?> deletePetProfile(Authentication authentication, @RequestBody PetProfileDeleteRequestDto requestDto) {
+        return ResponseEntity.ok(petInfoService.deletePetProfile(authentication, requestDto));
     }
 }
