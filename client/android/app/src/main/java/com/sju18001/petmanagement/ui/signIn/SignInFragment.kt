@@ -18,6 +18,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignInBinding
 import com.sju18001.petmanagement.restapi.*
+import com.sju18001.petmanagement.ui.signIn.signUp.SignUpFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -111,7 +112,7 @@ class SignInFragment : Fragment() {
         binding.signUpButton.setOnClickListener {
             val signUpFragment = SignUpFragment()
             activity?.supportFragmentManager?.beginTransaction()!!
-                .setCustomAnimations(R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out)
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
                 .replace(R.id.sign_in_activity_fragment_container, signUpFragment)
                 .addToBackStack(null)
                 .commit()

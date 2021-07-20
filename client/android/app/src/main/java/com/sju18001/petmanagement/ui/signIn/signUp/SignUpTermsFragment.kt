@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.signIn
+package com.sju18001.petmanagement.ui.signIn.signUp
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.sju18001.petmanagement.databinding.FragmentSignUpTermsBinding
+import com.sju18001.petmanagement.ui.signIn.SignInViewModel
 
 class SignUpTermsFragment: Fragment() {
 

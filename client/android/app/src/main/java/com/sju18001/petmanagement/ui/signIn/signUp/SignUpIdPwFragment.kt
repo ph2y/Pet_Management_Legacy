@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.signIn
+package com.sju18001.petmanagement.ui.signIn.signUp
 
 import android.os.Bundle
 import android.text.Editable
@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignUpIdPwBinding
+import com.sju18001.petmanagement.ui.signIn.SignInViewModel
 import java.util.regex.Pattern
 
 class SignUpIdPwFragment : Fragment() {

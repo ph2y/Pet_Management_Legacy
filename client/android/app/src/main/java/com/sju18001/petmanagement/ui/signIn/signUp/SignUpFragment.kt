@@ -1,7 +1,6 @@
-package com.sju18001.petmanagement.ui.signIn
+package com.sju18001.petmanagement.ui.signIn.signUp
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -11,14 +10,10 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignUpBinding
-import com.sju18001.petmanagement.restapi.*
-import retrofit2.Call
-import java.util.regex.Pattern
 
 class SignUpFragment : Fragment() {
 
@@ -28,6 +23,11 @@ class SignUpFragment : Fragment() {
     // variables for view binding
     private var _binding: FragmentSignUpBinding? = null
     private val binding get() = _binding!!
+
+    // const variables for fragment tags
+    private val FRAGMENT_TAG_TERMS: String = "terms"
+    private val FRAGMENT_TAG_ID_PW: String = "id_pw"
+    private val FRAGMENT_TAG_USER_INFO: String = "user_info"
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -61,7 +61,7 @@ class SignUpFragment : Fragment() {
         super.onStart()
 
         // for close button
-        binding.closeButton.setOnClickListener {
+        binding.backButton.setOnClickListener {
             val alertBuilder = AlertDialog.Builder(context)
             alertBuilder.setMessage(R.string.return_to_sign_in_dialog)
             alertBuilder.setPositiveButton(R.string.confirm){ _, _->
@@ -75,7 +75,7 @@ class SignUpFragment : Fragment() {
         if(childFragmentManager.findFragmentById(R.id.child_fragment_container) == null) {
             val signUpTermsFragment = SignUpTermsFragment()
             childFragmentManager.beginTransaction()
-                .add(R.id.child_fragment_container, signUpTermsFragment)
+                .add(R.id.child_fragment_container, signUpTermsFragment, FRAGMENT_TAG_TERMS)
                 .commit()
         }
 
@@ -87,13 +87,20 @@ class SignUpFragment : Fragment() {
         //for next step button
         binding.nextStepButton.setOnClickListener {
             var nextFragment: Fragment? = null
-            if(childFragmentManager.fragments.size == 1) {
+            var nextFragmentTag: String? = null
+
+            if(childFragmentManager.fragments[0].tag == FRAGMENT_TAG_TERMS) {
                 nextFragment = SignUpIdPwFragment()
+                nextFragmentTag = FRAGMENT_TAG_ID_PW
+            }
+            else if(childFragmentManager.fragments[0].tag == FRAGMENT_TAG_ID_PW) {
+                nextFragment = SignUpUserInfoFragment()
+                nextFragmentTag = FRAGMENT_TAG_USER_INFO
             }
 
             childFragmentManager.beginTransaction()
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.child_fragment_container, nextFragment!!)
+                .replace(R.id.child_fragment_container, nextFragment!!, nextFragmentTag)
                 .addToBackStack(null)
                 .commit()
         }
