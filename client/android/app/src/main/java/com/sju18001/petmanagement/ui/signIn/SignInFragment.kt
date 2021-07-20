@@ -19,6 +19,7 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignInBinding
 import com.sju18001.petmanagement.restapi.*
 import com.sju18001.petmanagement.ui.signIn.signUp.SignUpFragment
+import com.sju18001.petmanagement.ui.signIn.findIdPw.FindIdPwFragment
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -118,6 +119,16 @@ class SignInFragment : Fragment() {
                 .commit()
         }
 
+        // for find id pw button
+        binding.findIdPwButton.setOnClickListener {
+            val findIdPwFragment = FindIdPwFragment()
+            activity?.supportFragmentManager?.beginTransaction()!!
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                .replace(R.id.sign_in_activity_fragment_container, findIdPwFragment)
+                .addToBackStack(null)
+                .commit()
+        }
+
         // hide keyboard when touch signInLayout
         binding.fragmentSignInLayout.setOnClickListener{ Util().hideKeyboard(requireActivity()) }
     }
@@ -175,7 +186,7 @@ class SignInFragment : Fragment() {
 
         // disable sign up, find id/pw buttons
         binding.signUpButton.isEnabled = false
-        binding.idPwFindButton.isEnabled = false
+        binding.findIdPwButton.isEnabled = false
     }
 
     // enable buttons
@@ -187,7 +198,7 @@ class SignInFragment : Fragment() {
 
         // enable sign up, find id/pw buttons
         binding.signUpButton.isEnabled = true
-        binding.idPwFindButton.isEnabled = true
+        binding.findIdPwButton.isEnabled = true
     }
 
     // display error message(Snackbar)

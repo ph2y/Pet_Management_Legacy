@@ -150,13 +150,13 @@
                 android:text="@string/divider"/>
 
             <TextView
-                android:id="@+id/id_pw_find_button"
+                android:id="@+id/find_id_pw_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/id_pw_find_button"
+                android:text="@string/find_id_pw_button"
                 android:background="?attr/selectableItemBackground"/>
 
         </LinearLayout>

@@ -31,6 +31,7 @@
     <string name="id_hint">아이디</string>
     <string name="pw_hint">비밀번호</string>
     <string name="pw_check_hint">비밀번호 확인</string>
+
     <string name="id_message">5~16자의 영문 소문자, 숫자만 사용 가능해요!</string>
     <string name="id_message_overlap">이미 존재하는 아이디에요!</string>
     <string name="pw_message">8~20자의 영문, 숫자, 특수문자(!@.#$%^&amp;*?_~)만 사용 가능해요!</string>
@@ -45,4 +46,6 @@
     <string name="name_message">1~20자의 영문, 한글, 공백문자만 사용 가능해요!</string>
     <string name="phone_message">(-)을 제외한 휴대폰 번호 형식으로 작성해 주세요!</string>
     <string name="email_message">이메일 주소 형식으로 작성해 주세요!</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
