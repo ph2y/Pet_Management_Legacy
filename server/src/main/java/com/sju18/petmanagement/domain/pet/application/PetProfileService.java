@@ -25,7 +25,7 @@ public class PetProfileService {
 
     // CREATE
     @Transactional
-    public PetProfileCreateResponseDto createPetInfo(Authentication authentication, PetProfileCreateRequestDto requestDto) {
+    public PetProfileCreateResponseDto createPetProfile(Authentication authentication, PetProfileCreateRequestDto requestDto) {
         String username = getUserNameFromToken(authentication);
 
         // 받은 사용자 정보와 새 입력 정보로 새 반려동물 정보 생성
@@ -39,7 +39,7 @@ public class PetProfileService {
 
     // READ
     @Transactional(readOnly = true)
-    public List<PetProfileFetchResponseDto> fetchPetInfo(Authentication authentication) {
+    public List<PetProfileFetchResponseDto> fetchPetProfile(Authentication authentication) {
         String username = getUserNameFromToken(authentication);
 
         // 사용자 정보로 반려동물 리스트 인출
@@ -50,7 +50,7 @@ public class PetProfileService {
 
     // UPDATE
     @Transactional
-    public PetProfileUpdateResponseDto updatePetInfo(Authentication authentication, PetProfileUpdateRequestDto requestDto) {
+    public PetProfileUpdateResponseDto updatePetProfile(Authentication authentication, PetProfileUpdateRequestDto requestDto) {
         String username = getUserNameFromToken(authentication);
 
         // 받은 사용자 정보와 입력 정보로 반려동물 정보 업데이트
@@ -65,7 +65,7 @@ public class PetProfileService {
     }
 
     // DELETE
-    public PetProfileDeleteResponseDto deletePetInfo(Authentication authentication, PetProfileDeleteRequestDto requestDto) {
+    public PetProfileDeleteResponseDto deletePetProfile(Authentication authentication, PetProfileDeleteRequestDto requestDto) {
         String username = getUserNameFromToken(authentication);
 
         // 받은 사용자 정보와 반려동물 id로 정보 삭제
