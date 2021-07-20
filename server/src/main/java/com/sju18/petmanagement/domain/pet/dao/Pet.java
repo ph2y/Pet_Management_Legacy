@@ -1,6 +1,8 @@
 package com.sju18.petmanagement.domain.pet.dao;
 
-import com.sju18.petmanagement.domain.pet.dto.PetInfoUpdateRequestDto;
+import com.sju18.petmanagement.domain.pet.dto.PetProfileFetchResponseDto;
+import com.sju18.petmanagement.domain.pet.dto.PetProfileUpdateRequestDto;
+import com.sju18.petmanagement.domain.pet.dto.PetProfileUpdateResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,7 +42,7 @@ public class Pet {
         this.photo_url = photo_url;
     }
 
-    public Long update(PetInfoUpdateRequestDto requestDto) {
+    public void update(PetProfileUpdateRequestDto requestDto) {
         this.name = requestDto.getName();
         this.species = requestDto.getSpecies();
         this.breed = requestDto.getBreed();
@@ -49,7 +51,5 @@ public class Pet {
         this.feed_interval = requestDto.getFeed_interval();
         this.memo = requestDto.getMemo();
         this.photo_url = requestDto.getPhoto_url();
-
-        return this.id;
     }
 }

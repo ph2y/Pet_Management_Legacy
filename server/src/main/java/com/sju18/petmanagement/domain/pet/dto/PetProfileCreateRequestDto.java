@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class PetInfoCreateRequestDto {
+public class PetProfileCreateRequestDto {
     private String name;
     private String species;
     private String breed;
@@ -16,7 +16,7 @@ public class PetInfoCreateRequestDto {
     private String photo_url;
 
     @Builder
-    public PetInfoCreateRequestDto(String name, String species, String breed, String birth, String gender, String feed_interval, String memo, String photo_url) {
+    public PetProfileCreateRequestDto(String name, String species, String breed, String birth, String gender, String feed_interval, String memo, String photo_url) {
         this.name = name;
         this.species = species;
         this.breed = breed;
