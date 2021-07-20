@@ -80,6 +80,7 @@
             android:inputType="textEmailAddress"
             android:hint="이메일을 입력하세요."
             android:backgroundTint="@color/border_line"
+            android:theme="@style/onSelectedThemeCarrot"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
