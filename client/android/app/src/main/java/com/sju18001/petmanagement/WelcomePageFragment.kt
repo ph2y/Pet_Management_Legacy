@@ -30,7 +30,8 @@ class WelcomePageFragment : Fragment() {
         val viewPager = binding.viewPager
         viewPager.adapter = WelcomePageCollectionAdapter(this)
 
-        TabLayoutMediator(tabLayout, viewPager){ _, _ ->
+        TabLayoutMediator(tabLayout, viewPager){ tab, position ->
+            tab.view.isClickable = false
         }.attach()
     }
 
