@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 
 @Data
-public class PetInfoResponseDTO {
+public class PetProfileFetchResponseDto {
     private Long id;
     private String name;
     private String species;
@@ -16,7 +16,7 @@ public class PetInfoResponseDTO {
     private String memo;
     private String photo_url;
 
-    public PetInfoResponseDTO(Pet pet) {
+    public PetProfileFetchResponseDto(Pet pet) {
         this.id = pet.getId();
         this.name = pet.getName();
         this.species = pet.getSpecies();

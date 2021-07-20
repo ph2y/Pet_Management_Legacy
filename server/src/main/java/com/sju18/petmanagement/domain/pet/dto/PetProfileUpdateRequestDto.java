@@ -3,7 +3,7 @@ package com.sju18.petmanagement.domain.pet.dto;
 import lombok.Data;
 
 @Data
-public class PetInfoUpdateRequestDto {
+public class PetProfileUpdateRequestDto {
     private Long id;
     private String name;
     private String species;
