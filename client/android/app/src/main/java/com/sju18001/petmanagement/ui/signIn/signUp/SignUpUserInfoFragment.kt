@@ -55,7 +55,7 @@ class SignUpUserInfoFragment : Fragment() {
                     binding.nameMessage.visibility = View.VISIBLE
                 }
                 signInViewModel.signUpNameEditText = s.toString()
-                validCheck(signInViewModel)
+                checkIsValid(signInViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -73,7 +73,7 @@ class SignUpUserInfoFragment : Fragment() {
                     binding.phoneMessage.visibility = View.VISIBLE
                 }
                 signInViewModel.signUpPhoneEditText = s.toString()
-                validCheck(signInViewModel)
+                checkIsValid(signInViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -91,14 +91,14 @@ class SignUpUserInfoFragment : Fragment() {
                     binding.emailMessage.visibility = View.VISIBLE
                 }
                 signInViewModel.signUpEmailEditText = s.toString()
-                validCheck(signInViewModel)
+                checkIsValid(signInViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
     }
 
-    private fun validCheck(signInViewModel: SignInViewModel) {
+    private fun checkIsValid(signInViewModel: SignInViewModel) {
         if(signInViewModel.signUpNameValid && signInViewModel.signUpPhoneValid && signInViewModel.signUpEmailValid) {
             (parentFragment as SignUpFragment).enableNextButton()
         }
@@ -123,7 +123,7 @@ class SignUpUserInfoFragment : Fragment() {
         }
 
         (parentFragment as SignUpFragment).showPreviousButton()
-        validCheck(signInViewModel)
+        checkIsValid(signInViewModel)
     }
 
     override fun onDestroyView() {

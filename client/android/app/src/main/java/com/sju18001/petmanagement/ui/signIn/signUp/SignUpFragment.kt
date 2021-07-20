@@ -127,7 +127,7 @@ class SignUpFragment : Fragment() {
                     signInViewModel)
 
                 // set sign up button to loading
-                nextButtonToLoading()
+                setNextButtonToLoading()
             }
 
             // hide keyboard
@@ -173,7 +173,7 @@ class SignUpFragment : Fragment() {
     }
 
     // set next step button to loading
-    private fun nextButtonToLoading() {
+    private fun setNextButtonToLoading() {
         // set sign up button status to loading + disable
         binding.nextStepButton.text = ""
         binding.signUpProgressBar.visibility = View.VISIBLE
@@ -197,7 +197,7 @@ class SignUpFragment : Fragment() {
             ) {
                 if(response.isSuccessful) {
                     // return to previous fragment + send sign up result data
-                    toPreviousFragment(true, null)
+                    returnToPreviousFragment(true, null)
                 }
                 else {
                     // if id overlap -> go to id/pw fragment + show message
@@ -211,7 +211,7 @@ class SignUpFragment : Fragment() {
                 if(_binding == null) { return }
 
                 // return to previous fragment + send sign up result data
-                toPreviousFragment(false, t.message.toString())
+                returnToPreviousFragment(false, t.message.toString())
 
                 // log error message
                 Log.d("error", t.message.toString())
@@ -220,7 +220,7 @@ class SignUpFragment : Fragment() {
     }
 
     // return to previous fragment + send sign up result data
-    private fun toPreviousFragment(result: Boolean, message: String?) {
+    private fun returnToPreviousFragment(result: Boolean, message: String?) {
         // set result
         setFragmentResult("signUpResult", bundleOf("isSuccessful" to mutableListOf(result, message)))
 

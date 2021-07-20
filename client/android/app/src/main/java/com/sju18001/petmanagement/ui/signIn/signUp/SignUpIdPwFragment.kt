@@ -55,7 +55,7 @@ class SignUpIdPwFragment : Fragment() {
                 signInViewModel.signUpIdEditText = s.toString()
                 signInViewModel.signUpIdIsOverlap = false
                 binding.idMessageOverlap.visibility = View.GONE
-                validCheck(signInViewModel)
+                checkIsValid(signInViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -81,7 +81,7 @@ class SignUpIdPwFragment : Fragment() {
                     binding.pwCheckMessage.visibility = View.VISIBLE
                 }
                 signInViewModel.signUpPwEditText = s.toString()
-                validCheck(signInViewModel)
+                checkIsValid(signInViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -99,14 +99,14 @@ class SignUpIdPwFragment : Fragment() {
                     binding.pwCheckMessage.visibility = View.VISIBLE
                 }
                 signInViewModel.signUpPwCheckEditText = s.toString()
-                validCheck(signInViewModel)
+                checkIsValid(signInViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
     }
 
-    private fun validCheck(signInViewModel: SignInViewModel) {
+    private fun checkIsValid(signInViewModel: SignInViewModel) {
         if(signInViewModel.signUpIdValid && signInViewModel.signUpPwValid && signInViewModel.signUpPwCheckValid) {
             (parentFragment as SignUpFragment).enableNextButton()
         }
@@ -134,7 +134,7 @@ class SignUpIdPwFragment : Fragment() {
         }
 
         (parentFragment as SignUpFragment).showPreviousButton()
-        validCheck(signInViewModel)
+        checkIsValid(signInViewModel)
     }
 
     override fun onDestroyView() {

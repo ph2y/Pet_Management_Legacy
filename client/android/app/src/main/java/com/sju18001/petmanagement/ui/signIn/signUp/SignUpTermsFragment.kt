@@ -38,28 +38,28 @@ class SignUpTermsFragment: Fragment() {
         binding.selectAllCheckBox.setOnClickListener {
             signInViewModel.signUpSelectAllCheckBox = binding.selectAllCheckBox.isChecked
             selectDeselectAll(signInViewModel, signInViewModel.signUpSelectAllCheckBox)
-            allSelectedCheck(signInViewModel)
-            validCheck(signInViewModel)
+            checkIsAllSelected(signInViewModel)
+            checkIsValid(signInViewModel)
         }
 
         // for terms check box
         binding.termsCheckBox.setOnClickListener {
             signInViewModel.signUpTermsCheckBox = binding.termsCheckBox.isChecked
-            allSelectedCheck(signInViewModel)
-            validCheck(signInViewModel)
+            checkIsAllSelected(signInViewModel)
+            checkIsValid(signInViewModel)
         }
 
         // for privacy check box
         binding.privacyCheckBox.setOnClickListener {
             signInViewModel.signUpPrivacyCheckBox = binding.privacyCheckBox.isChecked
-            allSelectedCheck(signInViewModel)
-            validCheck(signInViewModel)
+            checkIsAllSelected(signInViewModel)
+            checkIsValid(signInViewModel)
         }
 
         // for marketing check box
         binding.marketingCheckBox.setOnClickListener {
             signInViewModel.signUpMarketingCheckBox = binding.marketingCheckBox.isChecked
-            allSelectedCheck(signInViewModel)
+            checkIsAllSelected(signInViewModel)
         }
     }
 
@@ -73,13 +73,13 @@ class SignUpTermsFragment: Fragment() {
         binding.marketingCheckBox.isChecked = signInViewModel.signUpMarketingCheckBox
     }
 
-    private fun allSelectedCheck(signInViewModel: SignInViewModel) {
+    private fun checkIsAllSelected(signInViewModel: SignInViewModel) {
         signInViewModel.signUpSelectAllCheckBox =
             signInViewModel.signUpTermsCheckBox && signInViewModel.signUpPrivacyCheckBox && signInViewModel.signUpMarketingCheckBox
         binding.selectAllCheckBox.isChecked = signInViewModel.signUpSelectAllCheckBox
     }
 
-    private fun validCheck(signInViewModel: SignInViewModel) {
+    private fun checkIsValid(signInViewModel: SignInViewModel) {
         if(signInViewModel.signUpTermsCheckBox && signInViewModel.signUpPrivacyCheckBox) {
             (parentFragment as SignUpFragment).enableNextButton()
         }
@@ -95,7 +95,7 @@ class SignUpTermsFragment: Fragment() {
         binding.marketingCheckBox.isChecked = signInViewModel.signUpMarketingCheckBox
 
         (parentFragment as SignUpFragment).hidePreviousButton()
-        validCheck(signInViewModel)
+        checkIsValid(signInViewModel)
     }
 
     override fun onDestroyView() {
