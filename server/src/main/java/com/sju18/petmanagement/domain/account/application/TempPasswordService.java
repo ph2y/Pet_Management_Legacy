@@ -1,9 +1,7 @@
 package com.sju18.petmanagement.domain.account.application;
 
+import com.sju18.petmanagement.global.util.tempcode.TempCodeGenerator;
 import org.springframework.stereotype.Service;
-
-import java.security.SecureRandom;
-import java.util.Date;
 
 @Service
 public class TempPasswordService {
@@ -14,17 +12,6 @@ public class TempPasswordService {
                 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
                 '!','@','#','$','%','^','&'
         };
-        int tempPasswordLength = 8;
-        StringBuffer tempPasswordBuffer = new StringBuffer();
-        SecureRandom secureRandomNumberGenerator = new SecureRandom();
-        secureRandomNumberGenerator.setSeed(new Date().getTime());
-
-        int randomCharIndex = 0;
-        for (int i = 0; i < tempPasswordLength; i++) {
-            randomCharIndex = secureRandomNumberGenerator.nextInt(tempPasswordCharSet.length);
-            tempPasswordBuffer.append(tempPasswordCharSet[randomCharIndex]);
-        }
-
-        return tempPasswordBuffer.toString();
+        return TempCodeGenerator.generate(tempPasswordCharSet, 8);
     }
 }

@@ -7,6 +7,7 @@ import com.sju18.petmanagement.domain.account.dto.VerifyAuthCodeRequestDto;
 import com.sju18.petmanagement.domain.account.dto.VerifyAuthCodeResponseDto;
 import com.sju18.petmanagement.global.util.email.EmailService;
 
+import com.sju18.petmanagement.global.util.email.EmailVerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,7 +39,9 @@ public class EmailAuthController {
 
     @PostMapping("/api/account/verifyauthcode")
     public ResponseEntity<?> verifyAuthCode(@RequestBody VerifyAuthCodeRequestDto verifyAuthCodeRequestDto) {
-        if(EmailService.authCode.equals(verifyAuthCodeRequestDto.getCode())) {
+        if(EmailVerificationService.checkAuthCode(
+                verifyAuthCodeRequestDto.getEmail(), verifyAuthCodeRequestDto.getCode())
+        ) {
             return ResponseEntity.ok(new VerifyAuthCodeResponseDto("Email verification success"));
         }
         else{

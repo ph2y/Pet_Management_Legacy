@@ -4,5 +4,6 @@ import lombok.Data;
 
 @Data
 public class VerifyAuthCodeRequestDto {
+    String email;
     String code;
 }
