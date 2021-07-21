@@ -20,6 +20,7 @@ import com.sju18001.petmanagement.databinding.FragmentSignInBinding
 import com.sju18001.petmanagement.restapi.*
 import com.sju18001.petmanagement.ui.signIn.signUp.SignUpFragment
 import com.sju18001.petmanagement.ui.signIn.findIdPw.FindIdPwFragment
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -138,7 +139,7 @@ class SignInFragment : Fragment() {
         val accountSignInRequestDto = AccountSignInRequestDto(username, password)
 
         // call API using Retrofit
-        signInApiCall = RetrofitBuilder.serverApi.signInRequest(accountSignInRequestDto)
+        signInApiCall = RetrofitBuilder.getServerApi(OkHttpClient()).signInRequest(accountSignInRequestDto)
         signInApiCall!!.enqueue(object: Callback<AccountSignInResponseDto> {
             override fun onResponse(
                 call: Call<AccountSignInResponseDto>,

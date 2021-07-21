@@ -22,3 +22,12 @@ data class AccountSignUpRequestDto (
 data class AccountSignUpResponseDto (
     val message: String
 )
+
+data class AccountProfileLookupResponseDto(
+    val message: String,
+    val username: String,
+    val email: String,
+    val name: String?,
+    val phone: String,
+    val photo: String?
+)
