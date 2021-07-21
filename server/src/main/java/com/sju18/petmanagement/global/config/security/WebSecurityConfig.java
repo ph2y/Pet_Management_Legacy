@@ -51,7 +51,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     "/api/account/login",
                     "/api/account/logout",
                     "/api/account/sendauthcode",
-                    "/api/account/verifyauthcode"
+                    "/api/account/verifyauthcode",
+                    "/api/account/findusername",
+                    "/api/account/findpassword"
                 ).permitAll()
                 .anyRequest().authenticated()
                 .and()
