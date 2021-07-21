@@ -46,6 +46,6 @@
     <string name="phone_message_overlap">이미 사용중인 휴대폰 번호에요!</string>
     <string name="email_message">이메일 주소 형식으로 작성해 주세요!</string>
     <string name="email_message_overlap">이미 사용중인 이메일 주소에요!</string>
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

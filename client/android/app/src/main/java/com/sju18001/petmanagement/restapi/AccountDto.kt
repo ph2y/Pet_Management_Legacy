@@ -23,3 +23,28 @@ data class AccountSignUpRequestDto (
 data class AccountSignUpResponseDto (
     val message: String
 )
+
+data class AccountProfileLookupResponseDto(
+    val message: String,
+    val username: String,
+    val email: String,
+    val nickname: String?,
+    val phone: String,
+    val photo: String?,
+    val marketing: Boolean?,
+    val userMessage: String?
+)
+
+data class AccountProfileUpdateRequestDto(
+    val username: String,
+    val email: String,
+    val nickname: String?,
+    val phone: String,
+    val photo: String?,
+    val marketing: Boolean?,
+    val userMessage: String?
+)
+
+data class AccountProfileUpdateResponseDto(
+    val message: String
+)

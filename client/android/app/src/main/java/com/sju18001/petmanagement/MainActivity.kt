@@ -1,35 +1,37 @@
 package com.sju18001.petmanagement
 
-import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.media.tv.TvContract.Programs.Genres.encode
 import android.os.Build
 import android.os.Bundle
-import android.util.Base64.encode
 import android.util.Log
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.sju18001.petmanagement.controller.ServerUtil
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
+import com.sju18001.petmanagement.restapi.AccountProfileLookupResponseDto
+import com.sju18001.petmanagement.restapi.AccountProfileUpdateRequestDto
+import com.sju18001.petmanagement.restapi.AccountSignInRequestDto
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.ui.community.CommunityFragment
 import com.sju18001.petmanagement.ui.map.MapFragment
 import com.sju18001.petmanagement.ui.myPage.MyPageFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetFragment
-import java.net.URLEncoder.encode
+import com.sju18001.petmanagement.ui.welcomePage.WelcomePageActivity
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import okhttp3.*
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.security.MessageDigest
 import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -53,6 +55,9 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(applicationContext, testString, Toast.LENGTH_LONG).show()
         // temp(for testing)
         //
+
+        // For welcome page
+        checkIsFirstLogin()
 
         // for fragment reset(after activity destruction)
         fragmentManager.findFragmentByTag("myPet")?.let {
@@ -163,6 +168,7 @@ class MainActivity : AppCompatActivity() {
         outState.putInt("active_fragment_index", activeFragmentIndex)
     }
 
+
     // 디버그 전용 Key
     private fun getAppKeyHash() {
         try {
@@ -178,5 +184,51 @@ class MainActivity : AppCompatActivity() {
         } catch(e: Exception) {
             Log.e("Not found", e.toString())
         }
+    }
+
+
+    // 첫 로그인인지 체킹
+    private fun checkIsFirstLogin(){
+        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+
+        // API 호출
+        val token:String? = intent.getStringExtra("token")
+        if(token == null){
+            Log.e("MainActivity", "No token!")
+            return
+        }
+
+        val call = RetrofitBuilder.getServerApiWithToken(token).profileLookupRequest(body)
+        call.enqueue(object: Callback<AccountProfileLookupResponseDto> {
+            override fun onResponse(
+                call: Call<AccountProfileLookupResponseDto>,
+                response: Response<AccountProfileLookupResponseDto>
+            ) {
+                if(response.isSuccessful){
+                    // 첫 로그인일 시
+                    if(response.body()!!.photo.isNullOrEmpty()){
+                        // photo -> default, nickname -> username
+                        ServerUtil.updateProfile(
+                            token,
+                            AccountProfileUpdateRequestDto(
+                                response.body()!!.username, response.body()!!.email, response.body()!!.username, response.body()!!.phone,
+                                "default", response.body()!!.marketing, response.body()!!.userMessage
+                            )
+                        )
+                        
+                        // 웰컴 페이지 호출
+                        val intent = Intent(baseContext, WelcomePageActivity::class.java)
+                        intent.putExtra("token", token)
+
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<AccountProfileLookupResponseDto>, t: Throwable) {
+                Log.e("error", t.message.toString())
+            }
+        })
     }
 }

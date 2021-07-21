@@ -21,6 +21,7 @@ import com.sju18001.petmanagement.restapi.AccountSignUpResponseDto
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.ui.signIn.SignInViewModel
 import org.json.JSONObject
+import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -207,7 +208,7 @@ class SignUpFragment : Fragment() {
             phone, null, marketing, null)
 
         // call API using Retrofit
-        signUpApiCall = RetrofitBuilder.serverApi.signUpRequest(accountSignUpRequestDto)
+        signUpApiCall = RetrofitBuilder.getServerApi().signUpRequest(accountSignUpRequestDto)
         signUpApiCall!!.enqueue(object: Callback<AccountSignUpResponseDto> {
             override fun onResponse(
                 call: Call<AccountSignUpResponseDto>,
