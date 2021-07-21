@@ -11,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.sju18001.petmanagement.controller.ServerUtil
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
 import com.sju18001.petmanagement.restapi.AccountProfileLookupResponseDto
+import com.sju18001.petmanagement.restapi.AccountProfileUpdateRequestDto
 import com.sju18001.petmanagement.restapi.AccountSignInRequestDto
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.ui.community.CommunityFragment
@@ -56,11 +58,7 @@ class MainActivity : AppCompatActivity() {
         //
 
         // For welcome page
-        if(isFirstLogin()){
-            val intent = Intent(baseContext, WelcomePageActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+        checkIsFirstLogin()
 
         // for fragment reset(after activity destruction)
         fragmentManager.findFragmentByTag("myPet")?.let {
@@ -190,37 +188,38 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    // 첫 로그인인지 구분
-    private fun isFirstLogin() : Boolean{
-        var isFirstLogin = true
-
-        // 인터셉터 초기화
-        val networkInterceptor = Interceptor { chain ->
-            val newRequest = chain.request().newBuilder()
-                .addHeader("Authorization", "Bearer " + intent.getStringExtra("token"))
-                .build()
-            val response = chain.proceed(newRequest)
-
-            response.newBuilder().build()
-        }
-        
-        // OkHttpClient 빌드
-        val client = OkHttpClient.Builder()
-            .addNetworkInterceptor(networkInterceptor)
-            .build()
+    // 첫 로그인인지 체킹
+    private fun checkIsFirstLogin(){
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
-
         // API 호출
-        val call = RetrofitBuilder.getServerApi(client).profileLookupRequest(body)
+        val token:String? = intent.getStringExtra("token")
+        if(token == null){
+            Log.e("MainActivity", "No token!")
+            return
+        }
+
+        val call = RetrofitBuilder.getServerApiWithToken(token).profileLookupRequest(body)
         call.enqueue(object: Callback<AccountProfileLookupResponseDto> {
             override fun onResponse(
                 call: Call<AccountProfileLookupResponseDto>,
                 response: Response<AccountProfileLookupResponseDto>
             ) {
                 if(response.isSuccessful){
-                    if(response.body()!!.photo != null){
-                        isFirstLogin = false
+                    // 첫 로그인일 시
+                    if(response.body()!!.photo.isNullOrEmpty()){
+                        // photo를 default로 설정 및 닉네임을 username으로 설정
+                        ServerUtil.updateProfile(
+                            token,
+                            AccountProfileUpdateRequestDto(
+                                response.body()!!.email, response.body()!!.username, response.body()!!.phone, "default"
+                            )
+                        )
+                        
+                        // 웰컴 페이지 호출
+                        val intent = Intent(baseContext, WelcomePageActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     }
                 }
             }
@@ -229,7 +228,5 @@ class MainActivity : AppCompatActivity() {
                 Log.e("error", t.message.toString())
             }
         })
-
-        return isFirstLogin
     }
 }

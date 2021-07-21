@@ -31,3 +31,14 @@ data class AccountProfileLookupResponseDto(
     val phone: String,
     val photo: String?
 )
+
+data class AccountProfileUpdateRequestDto(
+    val email: String,
+    val name: String,
+    val phone: String,
+    val photo: String?
+)
+
+data class AccountProfileUpdateResponseDto(
+    val message: String
+)

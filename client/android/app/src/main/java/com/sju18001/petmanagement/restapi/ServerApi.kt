@@ -15,4 +15,7 @@ interface ServerApi {
 
     @POST("api/account/profilelookup")
     fun profileLookupRequest(@Body body: RequestBody): Call<AccountProfileLookupResponseDto>
+
+    @POST("api/account/profileupdate")
+    fun profileUpdateRequest(@Body accountProfileUpdateRequestDto: AccountProfileUpdateRequestDto): Call<AccountProfileUpdateResponseDto>
 }
