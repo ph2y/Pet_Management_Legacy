@@ -33,4 +33,11 @@ interface ServerApi {
 
     @POST("api/account/findpassword")
     fun findPasswordRequest(@Body accountFindPasswordRequestDto: AccountFindPasswordRequestDto): Call<AccountFindPasswordResponseDto>
+
+    // Pet Profile CRUD API
+    @POST("api/pet/profile/create")
+    fun petProfileCreateRequest(@Body petProfileCreateRequestDto: PetProfileCreateRequestDto): Call<PetProfileCreateResponseDto>
+
+    @POST("api/pet/profile/fetch")
+    fun petProfileFetchRequest(@Body petProfileFetchRequestDto: PetProfileFetchRequestDto): Call<PetProfileFetchResponseDto>
 }
