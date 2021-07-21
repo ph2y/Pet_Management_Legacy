@@ -11,25 +11,13 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.databinding.FragmentAddEditPetBinding
 import de.hdodenhof.circleimageview.CircleImageView
 
 class AddPetFragment : Fragment() {
 
     // constant variables
     private val PICK_IMAGE = 0
-
-    // create view variables
-    private lateinit var petImageInput: CircleImageView
-    private lateinit var petImageInputButton: CircleImageView
-    private lateinit var petNameInput: EditText
-    private lateinit var petGenderFemaleRadioButton: RadioButton
-    private lateinit var petGenderMaleRadioButton: RadioButton
-    private lateinit var petSpeciesInput: EditText
-    private lateinit var petBreedInput: EditText
-    private lateinit var petBirthInput: DatePicker
-    private lateinit var confirmButton: Button
-    private lateinit var backButton: ImageView
-    private lateinit var yearOnlyCheckBox: CheckBox
 
     // create user value variables
     private var petImageValue: Uri? = null
@@ -42,34 +30,25 @@ class AddPetFragment : Fragment() {
     private var petBirthDateValue: Int? = null
     private var petBirthYearOnlyValue: Boolean = false
 
+    // variables for view binding
+    private var _binding: FragmentAddEditPetBinding? = null
+    private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_add_edit_pet, container, false)
-
-        // initialize view variables
-        petImageInput = view.findViewById(R.id.pet_image_input)
-        petImageInputButton = view.findViewById(R.id.pet_image_input_button)
-        petNameInput = view.findViewById(R.id.pet_name_input)
-        petGenderFemaleRadioButton = view.findViewById(R.id.gender_female)
-        petGenderMaleRadioButton = view.findViewById(R.id.gender_male)
-        petSpeciesInput = view.findViewById(R.id.pet_species_input)
-        petBreedInput = view.findViewById(R.id.pet_breed_input)
-        petBirthInput = view.findViewById(R.id.pet_birth_input)
-        confirmButton = view.findViewById(R.id.confirm_button)
-        backButton = view.findViewById(R.id.back_button)
-        yearOnlyCheckBox = view.findViewById(R.id.year_only_checkbox)
-
-        return view
+        // view binding
+        _binding = FragmentAddEditPetBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onStart() {
         super.onStart()
 
         // for pet image picker
-        petImageInputButton.setOnClickListener {
+        binding.petImageInputButton.setOnClickListener {
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
@@ -77,21 +56,21 @@ class AddPetFragment : Fragment() {
         }
 
         // for gender RadioButtons
-        petGenderFemaleRadioButton.setOnClickListener{ petGenderValue = true }
-        petGenderMaleRadioButton.setOnClickListener{ petGenderValue = false }
+        binding.genderFemale.setOnClickListener{ petGenderValue = true }
+        binding.genderMale.setOnClickListener{ petGenderValue = false }
 
         // for year only CheckBox
-        yearOnlyCheckBox.setOnClickListener{ petBirthYearOnlyValue = yearOnlyCheckBox.isChecked }
+        binding.yearOnlyCheckbox.setOnClickListener{ petBirthYearOnlyValue = binding.yearOnlyCheckbox.isChecked }
 
         // save the rest of the values when the confirm button is pressed
-        confirmButton.setOnClickListener {
-            petNameValue = petNameInput.text.toString()
-            petSpeciesValue = petSpeciesInput.text.toString()
-            petBreedValue = petBreedInput.text.toString()
-            petBirthYearValue = petBirthInput.year
+        binding.confirmButton.setOnClickListener {
+            petNameValue = binding.petNameInput.text.toString()
+            petSpeciesValue = binding.petSpeciesInput.text.toString()
+            petBreedValue = binding.petBreedInput.text.toString()
+            petBirthYearValue = binding.petBirthInput.year
             if (!petBirthYearOnlyValue){
-                petBirthMonthValue = petBirthInput.month
-                petBirthDateValue = petBirthInput.dayOfMonth
+                petBirthMonthValue = binding.petBirthInput.month
+                petBirthDateValue = binding.petBirthInput.dayOfMonth
             }
             else {
                 petBirthMonthValue = null
@@ -99,18 +78,17 @@ class AddPetFragment : Fragment() {
             }
 
 
-
             //
             //for testing #######################################################################
-            Log.d("AA", "image: " + petImageValue.toString())
-            Log.d("AA", "name: " + petNameValue.toString())
-            Log.d("AA", "gender: " + petGenderValue.toString())
-            Log.d("AA", "species: " + petSpeciesValue.toString())
-            Log.d("AA", "breed: " + petBreedValue.toString())
-            Log.d("AA", "year: " + petBirthYearValue.toString())
-            Log.d("AA", "month: " + petBirthMonthValue.toString())
-            Log.d("AA", "date: " + petBirthDateValue.toString())
-            Log.d("AA", "year only: " + petBirthYearOnlyValue.toString())
+            Log.d("values", "image: " + petImageValue.toString())
+            Log.d("values", "name: " + petNameValue.toString())
+            Log.d("values", "gender: " + petGenderValue.toString())
+            Log.d("values", "species: " + petSpeciesValue.toString())
+            Log.d("values", "breed: " + petBreedValue.toString())
+            Log.d("values", "year: " + petBirthYearValue.toString())
+            Log.d("values", "month: " + petBirthMonthValue.toString())
+            Log.d("values", "date: " + petBirthDateValue.toString())
+            Log.d("values", "year only: " + petBirthYearOnlyValue.toString())
             //for testing #######################################################################
             //
 
@@ -118,7 +96,7 @@ class AddPetFragment : Fragment() {
         }
 
         // for back button
-        backButton.setOnClickListener {
+        binding.backButton.setOnClickListener {
             activity?.finish()
         }
     }
@@ -131,7 +109,7 @@ class AddPetFragment : Fragment() {
         if (resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_IMAGE){
             if (data != null) {
                 petImageValue = data.data
-                petImageInput.setImageURI(data.data)
+                binding.petImageInput.setImageURI(data.data)
             }
         }
     }

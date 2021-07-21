@@ -5,73 +5,83 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/back_button"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/back_button_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:src="@drawable/ic_baseline_arrow_back_36"
-        android:paddingStart="16dp"
-        android:paddingTop="16dp"/>
+        android:padding="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/confirm_button"
-        android:layout_alignParentTop="true">
-
-        <RelativeLayout
-            android:id="@+id/pet_image_input_layout"
-            android:layout_width="175dp"
-            android:layout_height="175dp"
-            android:layout_marginTop="50dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/pet_info_scrollview"
-            app:layout_constraintHorizontal_chainStyle="spread_inside">
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/pet_image_input"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                app:civ_border_width="1dp"
-                app:civ_border_color="@color/carrot"
-                android:src="@android:color/transparent"/>
-
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/pet_image_input_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                app:civ_circle_background_color="@color/carrot"
-                android:src="@drawable/ic_baseline_add_photo_alternate_48"/>
-
-        </RelativeLayout>
-
-        <ScrollView
-            android:id="@+id/pet_info_scrollview"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="20dp"
-            android:fillViewport="true"
-            app:layout_constrainedHeight="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pet_image_input_layout">
+            android:src="@drawable/ic_baseline_arrow_back_36"
+            android:background="?selectableItemBackgroundBorderless"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_gravity="center"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="@string/add_pet_title"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/back_button_layout">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:id="@+id/pet_image_input_layout"
+                android:layout_width="175dp"
+                android:layout_height="175dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintBottom_toTopOf="@id/pet_info_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/pet_image_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@android:color/transparent"
+                    app:civ_border_color="@color/carrot"
+                    app:civ_border_width="1dp" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/pet_image_input_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentBottom="true"
+                    android:src="@drawable/ic_baseline_add_photo_alternate_48"
+                    app:civ_circle_background_color="@color/carrot" />
+
+            </RelativeLayout>
 
             <LinearLayout
-                android:layout_width="match_parent"
+                android:id="@+id/pet_info_layout"
+                android:layout_width="280dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:paddingStart="50dp"
-                android:paddingEnd="50dp">
+                app:layout_constraintBottom_toTopOf="@id/confirm_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pet_image_input_layout">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -87,7 +97,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/pet_name_label"/>
+                            android:text="@string/pet_name_label" />
 
                         <EditText
                             android:id="@+id/pet_name_input"
@@ -95,7 +105,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_name_hint"
                             android:inputType="textPersonName"
-                            android:theme="@style/onSelectedThemeCarrot"/>
+                            android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
 
@@ -109,7 +119,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/pet_gender_label"/>
+                            android:text="@string/pet_gender_label" />
 
                         <RadioGroup
                             android:layout_width="wrap_content"
@@ -124,7 +134,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginEnd="2.5dp"
                                 android:text="@string/pet_gender_female"
-                                android:theme="@style/onSelectedThemeCarrot"/>
+                                android:theme="@style/onSelectedThemeCarrot" />
 
                             <RadioButton
                                 android:id="@+id/gender_male"
@@ -132,7 +142,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_marginStart="2.5dp"
                                 android:text="@string/pet_gender_male"
-                                android:theme="@style/onSelectedThemeCarrot"/>
+                                android:theme="@style/onSelectedThemeCarrot" />
 
                         </RadioGroup>
 
@@ -155,7 +165,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/pet_species_label"/>
+                            android:text="@string/pet_species_label" />
 
                         <EditText
                             android:id="@+id/pet_species_input"
@@ -163,7 +173,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_species_hint"
                             android:inputType="textPersonName"
-                            android:theme="@style/onSelectedThemeCarrot"/>
+                            android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
 
@@ -177,7 +187,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/pet_breed_label"/>
+                            android:text="@string/pet_breed_label" />
 
                         <EditText
                             android:id="@+id/pet_breed_input"
@@ -185,7 +195,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_breed_hint"
                             android:inputType="textPersonName"
-                            android:theme="@style/onSelectedThemeCarrot"/>
+                            android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
 
@@ -200,7 +210,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/pet_birth_label"/>
+                        android:text="@string/pet_birth_label" />
 
                     <DatePicker
                         android:id="@+id/pet_birth_input"
@@ -210,7 +220,7 @@
                         android:layout_marginBottom="-10dp"
                         android:calendarViewShown="false"
                         android:datePickerMode="spinner"
-                        android:theme="@style/onSelectedThemeCarrot"/>
+                        android:theme="@style/onSelectedThemeCarrot" />
 
                     <CheckBox
                         android:id="@+id/year_only_checkbox"
@@ -218,26 +228,26 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:text="@string/pet_birth_only_year_label"
-                        android:theme="@style/onSelectedThemeCarrot"/>
+                        android:theme="@style/onSelectedThemeCarrot" />
 
                 </LinearLayout>
 
             </LinearLayout>
 
-        </ScrollView>
+            <Button
+                android:id="@+id/confirm_button"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="@string/confirm_add_pet"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pet_info_layout" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/confirm_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="70dp"
-        android:layout_marginEnd="70dp"
-        android:layout_marginBottom="20dp"
-        android:textStyle="bold"
-        android:text="@string/confirm_add_pet"/>
+    </ScrollView>
 
 </RelativeLayout>

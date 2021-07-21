@@ -1,7 +1,8 @@
 package com.sju18001.petmanagement.ui.myPet
 
-class MyPetListItemTemporary {
+class MyPetListItem {
 
+    // item elements
     private var mPetId: Int? = null
     private var mPetName: String? = null
     private var mPetBirth: String? = null
@@ -11,7 +12,8 @@ class MyPetListItemTemporary {
     private var mPetPhotoUrl: Int? = null
 
     // set values for the item
-    public fun MyPetListItemTemporary(petId: Int, petName: String, petBirth: String, petSpecies: String, petBreed: String, petGender: Boolean, petPhotoUrl: Int) {
+    public fun setValues(petId: Int, petName: String, petBirth: String, petSpecies: String,
+                         petBreed: String, petGender: Boolean, petPhotoUrl: Int) {
         mPetId = petId
         mPetName = petName
         mPetBirth = petBirth

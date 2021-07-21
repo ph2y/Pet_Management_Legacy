@@ -1,19 +1,16 @@
 package com.sju18001.petmanagement.ui.myPet
 
-import android.content.ContentResolver
-import android.provider.Settings.Global.getString
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.contentValuesOf
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 
-class MyPetListAdapterTemporary : RecyclerView.Adapter<MyPetListAdapterTemporary.HistoryListViewHolder>() {
+class MyPetListAdapter : RecyclerView.Adapter<MyPetListAdapter.HistoryListViewHolder>() {
 
-    private var resultList = emptyList<MyPetListItemTemporary>()
+    private var resultList = emptyList<MyPetListItem>()
 
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val petImage: ImageView = itemView.findViewById(R.id.pet_image)
@@ -49,7 +46,7 @@ class MyPetListAdapterTemporary : RecyclerView.Adapter<MyPetListAdapterTemporary
 
     override fun getItemCount() = resultList.size
 
-    fun setResult(result: List<MyPetListItemTemporary>){
+    fun setResult(result: List<MyPetListItem>){
         this.resultList = result
         notifyDataSetChanged()
     }
