@@ -28,31 +28,9 @@
             android:orientation="vertical">
 
             <EditText
-                android:id="@+id/name_edit_text"
-                android:layout_width="280dp"
-                android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_baseline_perm_contact_calendar_24"
-                android:drawablePadding="4dp"
-                android:inputType="textPersonName"
-                android:hint="@string/name_hint"
-                android:theme="@style/onSelectedThemeCarrot"/>
-
-            <TextView
-                android:id="@+id/name_message"
-                android:layout_width="260dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
-                android:visibility="gone"
-                android:text="@string/name_message"
-                android:textSize="12dp"
-                android:textColor="@android:color/holo_red_dark"/>
-
-            <EditText
                 android:id="@+id/phone_edit_text"
                 android:layout_width="280dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:drawableStart="@drawable/ic_baseline_phone_24"
                 android:drawablePadding="4dp"
                 android:inputType="phone"
@@ -67,6 +45,17 @@
                 android:layout_marginEnd="4dp"
                 android:visibility="gone"
                 android:text="@string/phone_message"
+                android:textSize="12dp"
+                android:textColor="@android:color/holo_red_dark"/>
+
+            <TextView
+                android:id="@+id/phone_message_overlap"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:visibility="gone"
+                android:text="@string/phone_message_overlap"
                 android:textSize="12dp"
                 android:textColor="@android:color/holo_red_dark"/>
 
@@ -89,6 +78,17 @@
                 android:layout_marginEnd="4dp"
                 android:visibility="gone"
                 android:text="@string/email_message"
+                android:textSize="12dp"
+                android:textColor="@android:color/holo_red_dark"/>
+
+            <TextView
+                android:id="@+id/email_message_overlap"
+                android:layout_width="260dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:visibility="gone"
+                android:text="@string/email_message_overlap"
                 android:textSize="12dp"
                 android:textColor="@android:color/holo_red_dark"/>
 

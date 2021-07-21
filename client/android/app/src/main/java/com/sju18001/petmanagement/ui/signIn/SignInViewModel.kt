@@ -77,16 +77,6 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
         }
 
         // user info
-    var signUpNameEditText = handle.get<String>("signUpNameEditText")?: ""
-        set(value){
-            handle.set("signUpNameEditText", value)
-            field = value
-        }
-    var signUpNameValid = handle.get<Boolean>("signUpNameValid")?: false
-        set(value){
-            handle.set("signUpNameValid", value)
-            field = value
-        }
     var signUpPhoneEditText = handle.get<String>("signUpPhoneEditText")?: ""
         set(value){
             handle.set("signUpPhoneEditText", value)
@@ -97,6 +87,11 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
             handle.set("signUpPhoneValid", value)
             field = value
         }
+    var signUpPhoneIsOverlap = handle.get<Boolean>("signUpPhoneIsOverlap")?: false
+        set(value){
+            handle.set("signUpPhoneIsOverlap", value)
+            field = value
+        }
     var signUpEmailEditText = handle.get<String>("signUpEmailEditText")?: ""
         set(value){
             handle.set("signUpEmailEditText", value)
@@ -105,6 +100,11 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
     var signUpEmailValid = handle.get<Boolean>("signUpEmailValid")?: false
         set(value){
             handle.set("signUpEmailValid", value)
+            field = value
+        }
+    var signUpEmailIsOverlap = handle.get<Boolean>("signUpEmailIsOverlap")?: false
+        set(value){
+            handle.set("signUpEmailIsOverlap", value)
             field = value
         }
 
@@ -122,8 +122,6 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
         signUpPwCheckEditText = ""
         signUpPwCheckValid = false
 
-        signUpNameEditText = ""
-        signUpNameValid = false
         signUpPhoneEditText = ""
         signUpPhoneValid = false
         signUpEmailEditText = ""

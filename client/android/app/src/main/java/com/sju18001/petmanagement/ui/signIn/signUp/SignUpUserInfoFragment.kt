@@ -3,12 +3,15 @@ package com.sju18001.petmanagement.ui.signIn.signUp
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.setFragmentResultListener
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentSignUpUserInfoBinding
 import com.sju18001.petmanagement.ui.signIn.SignInViewModel
 import java.util.regex.Pattern
@@ -16,7 +19,6 @@ import java.util.regex.Pattern
 class SignUpUserInfoFragment : Fragment() {
 
     // pattern regex for EditTexts
-    private val patternName: Pattern = Pattern.compile("^[a-zA-Z가-힣 ]{1,20}$")
     private val patternPhone: Pattern = Pattern.compile("^01(?:0|1|[6-9])(?:\\d{3}|\\d{4})\\d{4}$")
     //private val patternEmailCode: Pattern = Pattern.compile("^[0-9]{6}$")
 
@@ -43,24 +45,6 @@ class SignUpUserInfoFragment : Fragment() {
         // for state restore(ViewModel)
         restoreState(signInViewModel)
 
-        // for name text change listener
-        binding.nameEditText.addTextChangedListener(object: TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(patternName.matcher(s).matches()) {
-                    signInViewModel.signUpNameValid = true
-                    binding.nameMessage.visibility = View.GONE
-                }
-                else {
-                    signInViewModel.signUpNameValid = false
-                    binding.nameMessage.visibility = View.VISIBLE
-                }
-                signInViewModel.signUpNameEditText = s.toString()
-                checkIsValid(signInViewModel)
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
         // for phone text change listener
         binding.phoneEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -73,6 +57,8 @@ class SignUpUserInfoFragment : Fragment() {
                     binding.phoneMessage.visibility = View.VISIBLE
                 }
                 signInViewModel.signUpPhoneEditText = s.toString()
+                signInViewModel.signUpPhoneIsOverlap = false
+                binding.phoneMessageOverlap.visibility = View.GONE
                 checkIsValid(signInViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -91,6 +77,8 @@ class SignUpUserInfoFragment : Fragment() {
                     binding.emailMessage.visibility = View.VISIBLE
                 }
                 signInViewModel.signUpEmailEditText = s.toString()
+                signInViewModel.signUpEmailIsOverlap = false
+                binding.emailMessageOverlap.visibility = View.GONE
                 checkIsValid(signInViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -99,7 +87,7 @@ class SignUpUserInfoFragment : Fragment() {
     }
 
     private fun checkIsValid(signInViewModel: SignInViewModel) {
-        if(signInViewModel.signUpNameValid && signInViewModel.signUpPhoneValid && signInViewModel.signUpEmailValid) {
+        if(signInViewModel.signUpPhoneValid && signInViewModel.signUpEmailValid) {
             (parentFragment as SignUpFragment).enableNextButton()
         }
         else{
@@ -107,19 +95,30 @@ class SignUpUserInfoFragment : Fragment() {
         }
     }
 
+    public fun showMessage(signInViewModel: SignInViewModel) {
+        if(signInViewModel.signUpPhoneIsOverlap) {
+            binding.phoneMessageOverlap.visibility = View.VISIBLE
+        }
+        if(signInViewModel.signUpEmailIsOverlap) {
+            binding.emailMessageOverlap.visibility = View.VISIBLE
+        }
+    }
+
     private fun restoreState(signInViewModel: SignInViewModel) {
-        binding.nameEditText.setText(signInViewModel.signUpNameEditText)
         binding.phoneEditText.setText(signInViewModel.signUpPhoneEditText)
         binding.emailEditText.setText(signInViewModel.signUpEmailEditText)
 
-        if(!signInViewModel.signUpNameValid && signInViewModel.signUpNameEditText != "") {
-            binding.nameMessage.visibility = View.VISIBLE
-        }
         if(!signInViewModel.signUpPhoneValid && signInViewModel.signUpPhoneEditText != "") {
             binding.phoneMessage.visibility = View.VISIBLE
         }
         if(!signInViewModel.signUpEmailValid && signInViewModel.signUpEmailEditText != "") {
             binding.emailMessage.visibility = View.VISIBLE
+        }
+        if(signInViewModel.signUpPhoneIsOverlap) {
+            binding.phoneMessageOverlap.visibility = View.VISIBLE
+        }
+        if(signInViewModel.signUpEmailIsOverlap) {
+            binding.emailMessageOverlap.visibility = View.VISIBLE
         }
 
         (parentFragment as SignUpFragment).showPreviousButton()

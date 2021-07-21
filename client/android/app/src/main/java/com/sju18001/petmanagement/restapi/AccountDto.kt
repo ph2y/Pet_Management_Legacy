@@ -13,10 +13,11 @@ data class AccountSignUpRequestDto (
     val username: String,
     val password: String,
     val email: String,
-    val name: String,
+    val nickname: String?,
     val phone: String,
     val photo: String?,
-    val marketing: Boolean?
+    val marketing: Boolean,
+    val userMessage: String?
 )
 
 data class AccountSignUpResponseDto (

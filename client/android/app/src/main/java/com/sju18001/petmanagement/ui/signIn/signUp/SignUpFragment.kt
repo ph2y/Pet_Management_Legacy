@@ -12,6 +12,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResult
+import com.google.gson.Gson
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignUpBinding
@@ -19,6 +20,7 @@ import com.sju18001.petmanagement.restapi.AccountSignUpRequestDto
 import com.sju18001.petmanagement.restapi.AccountSignUpResponseDto
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.ui.signIn.SignInViewModel
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -36,6 +38,11 @@ class SignUpFragment : Fragment() {
     private val FRAGMENT_TAG_TERMS: String = "terms"
     private val FRAGMENT_TAG_ID_PW: String = "id_pw"
     private val FRAGMENT_TAG_USER_INFO: String = "user_info"
+
+    // const variables for error message
+    private val MESSAGE_ID_OVERLAP: String = "Username already exists"
+    private val MESSAGE_PHONE_OVERLAP: String = "Phone number already exists"
+    private val MESSAGE_EMAIL_OVERLAP: String = "Email already exists"
 
     // variable for storing API call(for cancel)
     private var signUpApiCall: Call<AccountSignUpResponseDto>? = null
@@ -122,9 +129,8 @@ class SignUpFragment : Fragment() {
             else {
                 // call sign up API
                 signUp(signInViewModel.signUpIdEditText, signInViewModel.signUpPwEditText,
-                    signInViewModel.signUpEmailEditText, signInViewModel.signUpNameEditText,
-                    signInViewModel.signUpPhoneEditText, signInViewModel.signUpMarketingCheckBox,
-                    signInViewModel)
+                    signInViewModel.signUpEmailEditText, signInViewModel.signUpPhoneEditText,
+                    signInViewModel.signUpMarketingCheckBox, signInViewModel)
 
                 // set sign up button to loading
                 setNextButtonToLoading()
@@ -172,6 +178,17 @@ class SignUpFragment : Fragment() {
         }
     }
 
+    // set next step button to normal
+    private fun setNextButtonToNormal() {
+        // set sign up button status to normal + enable
+        binding.nextStepButton.text = context?.getText(R.string.sign_up_button)
+        binding.signUpProgressBar.visibility = View.GONE
+        binding.nextStepButton.isEnabled = true
+
+        // hide back button
+        binding.previousStepButton.visibility = View.VISIBLE
+    }
+
     // set next step button to loading
     private fun setNextButtonToLoading() {
         // set sign up button status to loading + disable
@@ -183,10 +200,11 @@ class SignUpFragment : Fragment() {
         binding.previousStepButton.visibility = View.INVISIBLE
     }
 
-    private fun signUp(username: String, password: String, email: String, name: String, phone: String, marketing: Boolean,
+    private fun signUp(username: String, password: String, email: String, phone: String, marketing: Boolean,
                        signInViewModel: SignInViewModel) {
         // create sign up request Dto
-        val accountSignUpRequestDto = AccountSignUpRequestDto(username, password, email, name, phone, null, marketing)
+        val accountSignUpRequestDto = AccountSignUpRequestDto(username, password, email, null,
+            phone, null, marketing, null)
 
         // call API using Retrofit
         signUpApiCall = RetrofitBuilder.serverApi.signUpRequest(accountSignUpRequestDto)
@@ -200,9 +218,29 @@ class SignUpFragment : Fragment() {
                     returnToPreviousFragment(true, null)
                 }
                 else {
+                    // get error message(overlap)
+                    val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
+
                     // if id overlap -> go to id/pw fragment + show message
-                    signInViewModel.signUpIdIsOverlap = true
-                    childFragmentManager.popBackStack()
+                    Log.d("test", errorMessage)
+                    if(errorMessage == MESSAGE_ID_OVERLAP) {
+                        signInViewModel.signUpIdIsOverlap = true
+                        childFragmentManager.popBackStack()
+                    }
+                    // if email overlap + show message
+                    else if(errorMessage == MESSAGE_PHONE_OVERLAP) {
+                        Log.d("test", errorMessage)
+                        signInViewModel.signUpPhoneIsOverlap = true
+                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment).showMessage(signInViewModel)
+                        setNextButtonToNormal()
+                    }
+                    // if phone overlap + show message
+                    else if(errorMessage == MESSAGE_EMAIL_OVERLAP) {
+                        Log.d("test", errorMessage)
+                        signInViewModel.signUpEmailIsOverlap = true
+                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment).showMessage(signInViewModel)
+                        setNextButtonToNormal()
+                    }
                 }
             }
 
