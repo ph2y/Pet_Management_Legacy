@@ -25,7 +25,6 @@ import com.sju18001.petmanagement.ui.welcomePage.WelcomePageActivity
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import okhttp3.*
-import okhttp3.logging.HttpLoggingInterceptor
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -212,7 +211,8 @@ class MainActivity : AppCompatActivity() {
                         ServerUtil.updateProfile(
                             token,
                             AccountProfileUpdateRequestDto(
-                                response.body()!!.email, response.body()!!.username, response.body()!!.phone, "default"
+                                response.body()!!.username, response.body()!!.email, response.body()!!.username, response.body()!!.phone,
+                                "default", response.body()!!.marketing, response.body()!!.userMessage
                             )
                         )
                         

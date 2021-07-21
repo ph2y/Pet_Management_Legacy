@@ -187,7 +187,7 @@ class SignUpFragment : Fragment() {
     private fun signUp(username: String, password: String, email: String, name: String, phone: String, marketing: Boolean,
                        signInViewModel: SignInViewModel) {
         // create sign up request Dto
-        val accountSignUpRequestDto = AccountSignUpRequestDto(username, password, email, name, phone, null, marketing)
+        val accountSignUpRequestDto = AccountSignUpRequestDto(username, password, email, name, phone, null, marketing, null)
 
         // call API using Retrofit
         signUpApiCall = RetrofitBuilder.getServerApi().signUpRequest(accountSignUpRequestDto)
