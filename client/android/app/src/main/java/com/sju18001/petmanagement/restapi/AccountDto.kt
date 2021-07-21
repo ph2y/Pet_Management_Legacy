@@ -13,7 +13,7 @@ data class AccountSignUpRequestDto (
     val username: String,
     val password: String,
     val email: String,
-    val name: String,
+    val nickname: String?,
     val phone: String,
     val photo: String?,
     val marketing: Boolean?
@@ -27,14 +27,14 @@ data class AccountProfileLookupResponseDto(
     val message: String,
     val username: String,
     val email: String,
-    val name: String?,
+    val nickname: String?,
     val phone: String,
     val photo: String?
 )
 
 data class AccountProfileUpdateRequestDto(
     val email: String,
-    val name: String,
+    val nickname: String?,
     val phone: String,
     val photo: String?
 )

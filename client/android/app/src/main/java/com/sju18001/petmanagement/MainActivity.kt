@@ -208,7 +208,7 @@ class MainActivity : AppCompatActivity() {
                 if(response.isSuccessful){
                     // 첫 로그인일 시
                     if(response.body()!!.photo.isNullOrEmpty()){
-                        // photo를 default로 설정 및 닉네임을 username으로 설정
+                        // photo -> default, nickname -> username
                         ServerUtil.updateProfile(
                             token,
                             AccountProfileUpdateRequestDto(
