@@ -9,7 +9,7 @@ public class PetProfileUpdateRequestDto {
     private String species;
     private String breed;
     private String birth;
-    private String gender;
+    private Boolean gender;
     private String feed_interval;
     private String memo;
     private String photo_url;

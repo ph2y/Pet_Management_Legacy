@@ -37,8 +37,14 @@ class SignInFragment : Fragment() {
     // Snackbar variable(for dismiss)
     private var snackBar: Snackbar? = null
 
+    // session manager for user token
+    private lateinit var sessionManager: SessionManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // get session manager
+        sessionManager = context?.let { SessionManager(it) }!!
 
         // get sign up result
         setFragmentResultListener("signUpResult") { _, bundle ->
@@ -142,7 +148,9 @@ class SignInFragment : Fragment() {
                 if(response.isSuccessful) {
                     // start main activity + send token
                     val intent = Intent(context, MainActivity::class.java)
-                    intent.putExtra("token", response.body()?.token)
+                    // token is now stored in session
+                    // intent.putExtra("token", response.body()?.token)
+                    sessionManager.saveUserToken(response.body()!!.token)
 
                     startActivity(intent)
                     activity?.finish()

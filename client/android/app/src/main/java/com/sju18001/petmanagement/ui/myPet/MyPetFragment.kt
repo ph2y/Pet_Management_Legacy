@@ -2,6 +2,7 @@ package com.sju18001.petmanagement.ui.myPet
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sju18001.petmanagement.R
 
 import com.sju18001.petmanagement.databinding.FragmentMyPetBinding
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.PetProfileFetchResponseDto
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MyPetFragment : Fragment() {
 
@@ -20,6 +27,19 @@ class MyPetFragment : Fragment() {
     // variables for view binding
     private var _binding: FragmentMyPetBinding? = null
     private val binding get() = _binding!!
+
+    // variable for storing API call(for cancel)
+    private var petProfileFetchApiCall: Call<List<PetProfileFetchResponseDto>>? = null
+
+    // session manager for user token
+    private lateinit var sessionManager: SessionManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // get session manager
+        sessionManager = context?.let { SessionManager(it) }!!
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,14 +60,13 @@ class MyPetFragment : Fragment() {
             startActivity(myPetActivityIntent)
         }
 
-
-        //
         //for testing #######################################################################
         val adapter = MyPetListAdapter()
         binding.myPetListRecyclerView.adapter = adapter
         binding.myPetListRecyclerView.layoutManager = LinearLayoutManager(activity)
 
         val petList: ArrayList<MyPetListItem> = ArrayList()
+        /*
         val item1 = MyPetListItem()
         val item2 = MyPetListItem()
         val item3 = MyPetListItem()
@@ -60,9 +79,37 @@ class MyPetFragment : Fragment() {
         petList.add(item3)
 
         adapter.setResult(petList)
-        //for testing #######################################################################
-        //
+        */
 
+        // call API using Retrofit
+        petProfileFetchApiCall = RetrofitBuilder.serverApi.petProfileFetchRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}")
+        petProfileFetchApiCall!!.enqueue(object: Callback<List<PetProfileFetchResponseDto>> {
+            override fun onResponse(
+                call: Call<List<PetProfileFetchResponseDto>>,
+                response: Response<List<PetProfileFetchResponseDto>>
+            ) {
+                response.body()?.map {
+                    val item = MyPetListItem()
+                    item.setValues(
+                        it.id,
+                        it.name,
+                        it.birth,
+                        it.species,
+                        it.breed,
+                        it.gender,
+                        R.drawable.sample1
+                    )
+                    petList.add(item)
+                }
+
+                adapter.setResult(petList)
+            }
+
+            override fun onFailure(call: Call<List<PetProfileFetchResponseDto>>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
+        //for testing #######################################################################
 
         return root
     }

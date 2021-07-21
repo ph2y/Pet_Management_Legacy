@@ -42,5 +42,5 @@ interface ServerApi {
     fun petProfileCreateRequest(@Body petProfileCreateRequestDto: PetProfileCreateRequestDto): Call<PetProfileCreateResponseDto>
 
     @POST("api/pet/profile/fetch")
-    fun petProfileFetchRequest(@Body petProfileFetchRequestDto: PetProfileFetchRequestDto): Call<PetProfileFetchResponseDto>
+    fun petProfileFetchRequest(@Header("Authorization") token: String): Call<List<PetProfileFetchResponseDto>>
 }

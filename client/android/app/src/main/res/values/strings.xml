@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">PetManagement</string>
     <string name="title_activity_main">MainActivity</string>
+
+    <string name="user_token">UserToken</string>
+
     <string name="title_my_pet">마이펫</string>
     <string name="title_map">지도</string>
     <string name="title_community">커뮤니티</string>
