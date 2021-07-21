@@ -65,6 +65,7 @@ public class PetProfileService {
     }
 
     // DELETE
+    @Transactional
     public PetProfileDeleteResponseDto deletePetProfile(Authentication authentication, PetProfileDeleteRequestDto requestDto) {
         String username = getUserNameFromToken(authentication);
 

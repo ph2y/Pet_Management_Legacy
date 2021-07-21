@@ -10,13 +10,13 @@ public class PetProfileCreateRequestDto {
     private String species;
     private String breed;
     private String birth;
-    private String gender;
+    private Boolean gender;
     private String feed_interval;
     private String memo;
     private String photo_url;
 
     @Builder
-    public PetProfileCreateRequestDto(String name, String species, String breed, String birth, String gender, String feed_interval, String memo, String photo_url) {
+    public PetProfileCreateRequestDto(String name, String species, String breed, String birth, Boolean gender, String feed_interval, String memo, String photo_url) {
         this.name = name;
         this.species = species;
         this.breed = breed;

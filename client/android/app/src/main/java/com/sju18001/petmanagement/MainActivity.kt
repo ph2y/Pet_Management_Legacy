@@ -47,13 +47,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //
-        // temp(for testing)
-        val testString = "로그인 성공! (Token: " + intent.getStringExtra("token") + ')'
-        Toast.makeText(applicationContext, testString, Toast.LENGTH_LONG).show()
-        // temp(for testing)
-        //
-
         // for fragment reset(after activity destruction)
         fragmentManager.findFragmentByTag("myPet")?.let {
             fragmentManager.beginTransaction().remove(it).commitNow()

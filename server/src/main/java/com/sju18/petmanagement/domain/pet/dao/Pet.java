@@ -18,19 +18,19 @@ public class Pet {
     @Column(name = "pet_id")
     private Long id;
 
-    @Column(unique = true)
+    @Column
     private String username;
     private String name;
     private String species;
     private String breed;
     private String birth;
-    private String gender;
+    private Boolean gender;
     private String feed_interval;
     private String memo;
     private String photo_url;
 
     @Builder
-    public Pet(String username, String name, String species, String breed, String birth, String gender, String feed_interval, String memo, String photo_url) {
+    public Pet(String username, String name, String species, String breed, String birth, Boolean gender, String feed_interval, String memo, String photo_url) {
         this.username = username;
         this.name = name;
         this.species = species;

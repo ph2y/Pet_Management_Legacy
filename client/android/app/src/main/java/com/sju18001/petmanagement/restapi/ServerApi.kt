@@ -3,6 +3,7 @@ package com.sju18001.petmanagement.restapi
 import com.sju18001.petmanagement.restapi.dto.*
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ServerApi {
@@ -19,5 +20,5 @@ interface ServerApi {
     fun petProfileCreateRequest(@Body petProfileCreateRequestDto: PetProfileCreateRequestDto): Call<PetProfileCreateResponseDto>
 
     @POST("api/pet/profile/fetch")
-    fun petProfileFetchRequest(@Body petProfileFetchRequestDto: PetProfileFetchRequestDto): Call<PetProfileFetchResponseDto>
+    fun petProfileFetchRequest(@Header("Authorization") token: String): Call<List<PetProfileFetchResponseDto>>
 }
