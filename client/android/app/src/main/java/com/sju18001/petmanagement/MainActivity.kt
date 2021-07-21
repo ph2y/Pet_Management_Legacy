@@ -218,6 +218,8 @@ class MainActivity : AppCompatActivity() {
                         
                         // 웰컴 페이지 호출
                         val intent = Intent(baseContext, WelcomePageActivity::class.java)
+                        intent.putExtra("token", token)
+
                         startActivity(intent)
                         finish()
                     }

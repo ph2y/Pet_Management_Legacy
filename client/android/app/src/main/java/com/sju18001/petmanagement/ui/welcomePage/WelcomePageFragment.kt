@@ -41,7 +41,10 @@ class WelcomePageFragment : Fragment() {
         
         // 스킵버튼
         binding.skipButton.setOnClickListener{
+            val token = requireActivity().intent.getStringExtra("token")
             val intent = Intent(context, MainActivity::class.java)
+            intent.putExtra("token", token)
+
             startActivity(intent)
             activity?.finish()
         }
