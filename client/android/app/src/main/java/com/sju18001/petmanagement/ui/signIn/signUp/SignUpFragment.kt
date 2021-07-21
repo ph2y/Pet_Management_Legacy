@@ -190,7 +190,7 @@ class SignUpFragment : Fragment() {
         val accountSignUpRequestDto = AccountSignUpRequestDto(username, password, email, name, phone, null, marketing)
 
         // call API using Retrofit
-        signUpApiCall = RetrofitBuilder.getServerApi(OkHttpClient()).signUpRequest(accountSignUpRequestDto)
+        signUpApiCall = RetrofitBuilder.getServerApi().signUpRequest(accountSignUpRequestDto)
         signUpApiCall!!.enqueue(object: Callback<AccountSignUpResponseDto> {
             override fun onResponse(
                 call: Call<AccountSignUpResponseDto>,
