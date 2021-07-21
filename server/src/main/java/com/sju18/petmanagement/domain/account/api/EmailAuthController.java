@@ -23,10 +23,6 @@ public class EmailAuthController {
 
     @PostMapping("/api/account/sendauthcode")
     public ResponseEntity<?> sendAuthCodeToEmail(@RequestBody SendAuthCodeRequestDto sendAuthCodeRequestDto) {
-        if (accountRepository.existsByEmail(sendAuthCodeRequestDto.getEmail())) {
-            return ResponseEntity.badRequest().body(new SendAuthCodeResponseDto("Email already exists"));
-        }
-
         try {
             emailService.sendVerificationMessage(sendAuthCodeRequestDto.getEmail());
         } catch (Exception e) {

@@ -8,8 +8,10 @@ import com.sju18.petmanagement.domain.account.dto.FindUsernameResponseDto;
 import com.sju18.petmanagement.domain.account.dto.FindPasswordRequestDto;
 import com.sju18.petmanagement.domain.account.dto.FindPasswordResponseDto;
 import com.sju18.petmanagement.domain.account.exception.EmailNotFoundException;
+import com.sju18.petmanagement.domain.account.exception.EmailVerificationFailureException;
 import com.sju18.petmanagement.global.util.email.EmailService;
 
+import com.sju18.petmanagement.global.util.email.EmailVerificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -45,20 +47,22 @@ public class FindAccountController {
 
     @PostMapping("/api/account/findpassword")
     public ResponseEntity<?> findPassword(@RequestBody FindPasswordRequestDto findPasswordRequestDto) {
-        // 이메일과 유저네임을 인증 후 비밀번호 초기화
-        String tempPassword = tempPasswordService.createTempPassword();
-
+        // 유저네임 및 이메일 인증여부 확인 후 비밀번호 초기화
         try {
             Account foundAccount = accountRepository.findByUsername(findPasswordRequestDto.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("Username not exists"));
-            if (foundAccount.getEmail().equals(findPasswordRequestDto.getEmail())) {
+            // 이메일 인증 확인
+            if (EmailVerificationService.checkAuthCode(
+                    foundAccount.getEmail(), findPasswordRequestDto.getCode()
+            )) {
+                String tempPassword = tempPasswordService.createTempPassword();
                 // 임시 비밀번호 통지
-                emailService.sendTempPasswordNotifyMessage(findPasswordRequestDto.getEmail(),tempPassword);
+                emailService.sendTempPasswordNotifyMessage(foundAccount.getEmail(),tempPassword);
                 // 임시 비밀번호 적용
                 foundAccount.setPassword(encode.encode(tempPassword));
                 accountRepository.save(foundAccount);
             } else {
-                throw new EmailNotFoundException(findPasswordRequestDto.getEmail());
+                throw new EmailVerificationFailureException(foundAccount.getEmail());
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new FindPasswordResponseDto(e.getMessage()));
