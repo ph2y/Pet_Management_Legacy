@@ -36,7 +36,7 @@ public class ProfileLookupController {
                     "Account profile lookup success",
                     currentUserProfile.getUsername(),
                     currentUserProfile.getEmail(),
-                    currentUserProfile.getName(),
+                    currentUserProfile.getNickname(),
                     currentUserProfile.getPhone(),
                     currentUserProfile.getPhoto(),
                     currentUserProfile.getMarketing()

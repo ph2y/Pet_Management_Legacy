@@ -40,8 +40,8 @@ public class ProfileUpdateController {
         if (profileUpdateRequestDto.getEmail() != null) {
             currentUserProfile.setEmail(profileUpdateRequestDto.getEmail());
         }
-        if (profileUpdateRequestDto.getName() != null) {
-            currentUserProfile.setName(profileUpdateRequestDto.getName());
+        if (profileUpdateRequestDto.getNickname() != null) {
+            currentUserProfile.setNickname(profileUpdateRequestDto.getNickname());
         }
         if (profileUpdateRequestDto.getPhone() != null) {
             currentUserProfile.setPhone(profileUpdateRequestDto.getPhone());

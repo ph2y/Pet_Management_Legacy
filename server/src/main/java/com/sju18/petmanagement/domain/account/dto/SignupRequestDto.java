@@ -7,7 +7,7 @@ public class SignupRequestDto {
     private String username;
     private String password;
     private String email;
-    private String name;
+    private String nickname;
     private String phone;
     private String photo;
     private Boolean marketing;

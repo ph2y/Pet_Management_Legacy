@@ -12,7 +12,7 @@ public class ProfileLookupResponseDto {
     private String message;
     private String username;
     private String email;
-    private String name;
+    private String nickname;
     private String phone;
     private String photo;
     private Boolean marketing;
