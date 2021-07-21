@@ -10,4 +10,5 @@ public class ProfileUpdateRequestDto {
     private String phone;
     private String photo;
     private Boolean marketing;
+    private String userMessage;
 }

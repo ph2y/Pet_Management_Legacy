@@ -11,4 +11,5 @@ public class SignupRequestDto {
     private String phone;
     private String photo;
     private Boolean marketing;
+    private String userMessage;
 }

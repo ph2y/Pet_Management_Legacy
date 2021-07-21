@@ -39,7 +39,8 @@ public class ProfileLookupController {
                     currentUserProfile.getNickname(),
                     currentUserProfile.getPhone(),
                     currentUserProfile.getPhoto(),
-                    currentUserProfile.getMarketing()
+                    currentUserProfile.getMarketing(),
+                    currentUserProfile.getUserMessage()
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ProfileLookupResponseDto(e.getMessage()));

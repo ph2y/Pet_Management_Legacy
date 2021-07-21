@@ -46,6 +46,9 @@ public class ProfileUpdateController {
         if (profileUpdateRequestDto.getPhone() != null) {
             currentUserProfile.setPhone(profileUpdateRequestDto.getPhone());
         }
+        if (profileUpdateRequestDto.getUserMessage() != null) {
+            currentUserProfile.setUserMessage(profileUpdateRequestDto.getUserMessage());
+        }
         // 프로필 사진 변경 기능은 파일을 다루어야 함으로 장래 변경해야됨.
         if (profileUpdateRequestDto.getPhoto() != null) {
             currentUserProfile.setPhoto(profileUpdateRequestDto.getPhoto());

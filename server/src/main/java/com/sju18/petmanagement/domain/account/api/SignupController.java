@@ -33,7 +33,8 @@ public class SignupController {
                 signupRequestDto.getNickname(),
                 signupRequestDto.getPhone(),
                 signupRequestDto.getPhoto(),
-                signupRequestDto.getMarketing()
+                signupRequestDto.getMarketing(),
+                signupRequestDto.getUserMessage()
         );
         
         // 중복 확인
