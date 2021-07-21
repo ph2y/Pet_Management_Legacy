@@ -1,37 +1,36 @@
 package com.sju18001.petmanagement
 
-import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Color
-import android.media.tv.TvContract.Programs.Genres.encode
 import android.os.Build
 import android.os.Bundle
-import android.util.Base64.encode
 import android.util.Log
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.ActionBar
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
+import com.sju18001.petmanagement.restapi.AccountProfileLookupResponseDto
+import com.sju18001.petmanagement.restapi.AccountSignInRequestDto
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.ui.community.CommunityFragment
 import com.sju18001.petmanagement.ui.map.MapFragment
 import com.sju18001.petmanagement.ui.myPage.MyPageFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetFragment
 import com.sju18001.petmanagement.ui.welcomePage.WelcomePageActivity
-import java.net.URLEncoder.encode
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import okhttp3.*
+import okhttp3.logging.HttpLoggingInterceptor
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.security.MessageDigest
 import java.util.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -57,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         //
 
         // For welcome page
-        if(true){ // TODO: '처음 로그인 했을 경우'로 조건문 수정
+        if(isFirstLogin()){
             val intent = Intent(baseContext, WelcomePageActivity::class.java)
             startActivity(intent)
             finish()
@@ -172,6 +171,7 @@ class MainActivity : AppCompatActivity() {
         outState.putInt("active_fragment_index", activeFragmentIndex)
     }
 
+
     // 디버그 전용 Key
     private fun getAppKeyHash() {
         try {
@@ -187,5 +187,49 @@ class MainActivity : AppCompatActivity() {
         } catch(e: Exception) {
             Log.e("Not found", e.toString())
         }
+    }
+
+
+    // 첫 로그인인지 구분
+    private fun isFirstLogin() : Boolean{
+        var isFirstLogin = true
+
+        // 인터셉터 초기화
+        val networkInterceptor = Interceptor { chain ->
+            val newRequest = chain.request().newBuilder()
+                .addHeader("Authorization", "Bearer " + intent.getStringExtra("token"))
+                .build()
+            val response = chain.proceed(newRequest)
+
+            response.newBuilder().build()
+        }
+        
+        // OkHttpClient 빌드
+        val client = OkHttpClient.Builder()
+            .addNetworkInterceptor(networkInterceptor)
+            .build()
+        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+
+
+        // API 호출
+        val call = RetrofitBuilder.getServerApi(client).profileLookupRequest(body)
+        call.enqueue(object: Callback<AccountProfileLookupResponseDto> {
+            override fun onResponse(
+                call: Call<AccountProfileLookupResponseDto>,
+                response: Response<AccountProfileLookupResponseDto>
+            ) {
+                if(response.isSuccessful){
+                    if(response.body()!!.photo != null){
+                        isFirstLogin = false
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<AccountProfileLookupResponseDto>, t: Throwable) {
+                Log.e("error", t.message.toString())
+            }
+        })
+
+        return isFirstLogin
     }
 }
