@@ -16,6 +16,8 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignUpBinding
 import com.sju18001.petmanagement.restapi.*
+import com.sju18001.petmanagement.restapi.dto.AccountSignUpRequestDto
+import com.sju18001.petmanagement.restapi.dto.AccountSignUpResponseDto
 import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback

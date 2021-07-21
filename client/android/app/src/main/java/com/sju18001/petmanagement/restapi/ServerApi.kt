@@ -1,9 +1,6 @@
 package com.sju18001.petmanagement.restapi
 
-import com.sju18001.petmanagement.restapi.dto.AccountSignInRequestDto
-import com.sju18001.petmanagement.restapi.dto.AccountSignInResponseDto
-import com.sju18001.petmanagement.restapi.dto.AccountSignUpRequestDto
-import com.sju18001.petmanagement.restapi.dto.AccountSignUpResponseDto
+import com.sju18001.petmanagement.restapi.dto.*
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -16,4 +13,11 @@ interface ServerApi {
 
     @POST("api/account/signup")
     fun signUpRequest(@Body accountSignUpRequestDto: AccountSignUpRequestDto): Call<AccountSignUpResponseDto>
+
+    // Pet Profile CRUD API
+    @POST("api/pet/profile/create")
+    fun petProfileCreateRequest(@Body petProfileCreateRequestDto: PetProfileCreateRequestDto): Call<PetProfileCreateResponseDto>
+
+    @POST("api/pet/profile/fetch")
+    fun petProfileFetchRequest(@Body petProfileFetchRequestDto: PetProfileFetchRequestDto): Call<PetProfileFetchResponseDto>
 }
