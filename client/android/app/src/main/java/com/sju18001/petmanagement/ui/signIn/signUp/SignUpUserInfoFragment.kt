@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.signIn.signUp
 
 import android.os.Bundle
+import android.os.SystemClock
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -96,11 +97,17 @@ class SignUpUserInfoFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        // for email code text change listener
+        binding.emailCodeEditText.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                signInViewModel.signUpEmailCodeEditText = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         // for request email code button
         binding.requestEmailCodeButton.setOnClickListener {
-            // set current code requested email
-            signInViewModel.currentCodeRequestedEmail = signInViewModel.signUpEmailEditText
-
             // set request code button to loading
             setRequestCodeButtonToLoading()
 
@@ -140,13 +147,40 @@ class SignUpUserInfoFragment : Fragment() {
         }
     }
 
-    public fun showMessage(signInViewModel: SignInViewModel) {
+    public fun showOverlapMessage(signInViewModel: SignInViewModel) {
         if(signInViewModel.signUpPhoneIsOverlap) {
             binding.phoneMessageOverlap.visibility = View.VISIBLE
         }
         if(signInViewModel.signUpEmailIsOverlap) {
             binding.emailMessageOverlap.visibility = View.VISIBLE
         }
+    }
+
+    public fun showHideRequestMessage(signInViewModel: SignInViewModel) {
+        if(signInViewModel.showEmailRequestMessage) {
+            binding.emailMessageRequest.visibility = View.VISIBLE
+        }
+        else {
+            binding.emailMessageRequest.visibility = View.GONE
+        }
+    }
+
+    private fun startTimer(signInViewModel: SignInViewModel) {
+        // set base
+        binding.emailCodeChronometer.base = signInViewModel.emailCodeChronometerBase
+
+        // start timer + show
+        binding.emailCodeChronometer.start()
+        binding.emailCodeChronometerLayout.visibility = View.VISIBLE
+    }
+
+    public fun lockEmailViews() {
+        binding.emailEditText.isEnabled = false
+        binding.requestEmailCodeButton.isEnabled = false
+        binding.emailCodeEditText.isEnabled = false
+        binding.emailMessageCodeValid.visibility = View.VISIBLE
+        binding.emailCodeChronometer.stop()
+        binding.emailCodeChronometerLayout.visibility = View.GONE
     }
 
     private fun requestEmailCode(signInViewModel: SignInViewModel) {
@@ -161,6 +195,17 @@ class SignUpUserInfoFragment : Fragment() {
                 if(response.isSuccessful) {
                     // if success -> display a toast message
                     Toast.makeText(context, R.string.email_code_sent, Toast.LENGTH_LONG).show()
+
+                    // set current code requested email
+                    signInViewModel.currentCodeRequestedEmail = signInViewModel.signUpEmailEditText
+
+                    // hide request message
+                    signInViewModel.showEmailRequestMessage = false
+                    showHideRequestMessage(signInViewModel)
+
+                    // start a 10 minute timer
+                    signInViewModel.emailCodeChronometerBase = SystemClock.elapsedRealtime() + 600000.toLong()
+                    startTimer(signInViewModel)
                 }
                 else {
                     // get error message
@@ -206,6 +251,9 @@ class SignUpUserInfoFragment : Fragment() {
         if(binding.emailEditText.text.toString() != signInViewModel.signUpEmailEditText) {
             binding.emailEditText.setText(signInViewModel.signUpEmailEditText)
         }
+        if(binding.emailCodeEditText.text.toString() != signInViewModel.signUpEmailCodeEditText) {
+            binding.emailCodeEditText.setText(signInViewModel.signUpEmailCodeEditText)
+        }
 
         if(!signInViewModel.signUpPhoneValid && signInViewModel.signUpPhoneEditText != "") {
             binding.phoneMessage.visibility = View.VISIBLE
@@ -222,6 +270,13 @@ class SignUpUserInfoFragment : Fragment() {
         if(signInViewModel.signUpEmailValid && codeRequestApiCall == null) {
             binding.requestEmailCodeButton.isEnabled = true
         }
+        if(signInViewModel.emailCodeChronometerBase != 0.toLong()) {
+            startTimer(signInViewModel)
+        }
+        if(signInViewModel.emailCodeValid) {
+            lockEmailViews()
+        }
+        showHideRequestMessage(signInViewModel)
 
         (parentFragment as SignUpFragment).showPreviousButton()
         checkIsValid(signInViewModel)

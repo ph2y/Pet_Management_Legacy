@@ -17,9 +17,7 @@ import com.google.gson.Gson
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignUpBinding
-import com.sju18001.petmanagement.restapi.AccountSignUpRequestDto
-import com.sju18001.petmanagement.restapi.AccountSignUpResponseDto
-import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.*
 import com.sju18001.petmanagement.ui.signIn.SignInViewModel
 import org.json.JSONObject
 import okhttp3.OkHttpClient
@@ -46,8 +44,9 @@ class SignUpFragment : Fragment() {
     private val MESSAGE_PHONE_OVERLAP: String = "Phone number already exists"
     private val MESSAGE_EMAIL_OVERLAP: String = "Email already exists"
 
-    // variable for storing API call(for cancel)
+    // variables for storing API call(for cancel)
     private var signUpApiCall: Call<AccountSignUpResponseDto>? = null
+    private var verifyAuthCodeApiCall: Call<VerifyAuthCodeResponseDto>? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -129,13 +128,22 @@ class SignUpFragment : Fragment() {
                     .commit()
             }
             else {
-                // call sign up API
-                signUp(signInViewModel.signUpIdEditText, signInViewModel.signUpPwEditText,
-                    signInViewModel.signUpEmailEditText, signInViewModel.signUpPhoneEditText,
-                    signInViewModel.signUpMarketingCheckBox, signInViewModel)
-
                 // set sign up button to loading
                 setNextButtonToLoading()
+
+                // check if inputted email is the same as code requested email
+                if(signInViewModel.signUpEmailEditText == signInViewModel.currentCodeRequestedEmail) {
+                    // validate email code(+ sign up)
+                    emailCodeIsValid(signInViewModel)
+                }
+                else {
+                    signInViewModel.showEmailRequestMessage = true
+                    (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment)
+                        .showHideRequestMessage(signInViewModel)
+
+                    // set next button to normal
+                    setNextButtonToNormal()
+                }
             }
 
             // hide keyboard
@@ -148,7 +156,7 @@ class SignUpFragment : Fragment() {
 
     // show previous step button
     public fun showPreviousButton() {
-        if(signUpApiCall == null) {
+        if(signUpApiCall == null && verifyAuthCodeApiCall == null) {
             binding.previousStepButton.visibility = View.VISIBLE
         }
     }
@@ -160,7 +168,7 @@ class SignUpFragment : Fragment() {
 
     // enable next step button
     public fun enableNextButton() {
-        if(signUpApiCall == null) {
+        if(signUpApiCall == null && verifyAuthCodeApiCall == null) {
             binding.nextStepButton.isEnabled = true
 
             if(childFragmentManager.fragments[0].tag == FRAGMENT_TAG_USER_INFO) {
@@ -206,11 +214,11 @@ class SignUpFragment : Fragment() {
         binding.previousStepButton.visibility = View.INVISIBLE
     }
 
-    private fun signUp(username: String, password: String, email: String, phone: String, marketing: Boolean,
-                       signInViewModel: SignInViewModel) {
+    private fun signUp(signInViewModel: SignInViewModel) {
         // create sign up request Dto
-        val accountSignUpRequestDto = AccountSignUpRequestDto(username, password, email, null,
-            phone, null, marketing, null)
+        val accountSignUpRequestDto = AccountSignUpRequestDto(signInViewModel.signUpIdEditText,
+            signInViewModel.signUpPwEditText, signInViewModel.signUpEmailEditText, null,
+            signInViewModel.signUpPhoneEditText, null, signInViewModel.signUpMarketingCheckBox, null)
 
         // call API using Retrofit
         signUpApiCall = RetrofitBuilder.getServerApi().signUpRequest(accountSignUpRequestDto)
@@ -220,7 +228,7 @@ class SignUpFragment : Fragment() {
                 response: Response<AccountSignUpResponseDto>
             ) {
                 if(response.isSuccessful) {
-                    // return to previous fragment + send sign up result data
+                    // return to previous fragment
                     returnToPreviousFragment()
                 }
                 else {
@@ -236,14 +244,16 @@ class SignUpFragment : Fragment() {
                     else if(errorMessage == MESSAGE_PHONE_OVERLAP) {
                         Log.d("test", errorMessage)
                         signInViewModel.signUpPhoneIsOverlap = true
-                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment).showMessage(signInViewModel)
+                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment)
+                            .showOverlapMessage(signInViewModel)
                         setNextButtonToNormal()
                     }
                     // if phone overlap + show message
                     else if(errorMessage == MESSAGE_EMAIL_OVERLAP) {
                         Log.d("test", errorMessage)
                         signInViewModel.signUpEmailIsOverlap = true
-                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment).showMessage(signInViewModel)
+                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment)
+                            .showOverlapMessage(signInViewModel)
                         setNextButtonToNormal()
                     }
                 }
@@ -271,7 +281,69 @@ class SignUpFragment : Fragment() {
         })
     }
 
-    // return to previous fragment + send sign up result data
+    private fun emailCodeIsValid(signInViewModel: SignInViewModel) {
+        // create verify code request DTO
+        val verifyAuthCodeRequestDto = VerifyAuthCodeRequestDto(signInViewModel.currentCodeRequestedEmail,
+        signInViewModel.signUpEmailCodeEditText)
+
+        // if not yet verified
+        if(!signInViewModel.emailCodeValid) {
+            // call API using Retrofit
+            verifyAuthCodeApiCall = RetrofitBuilder.getServerApi().verifyAuthCodeRequest(verifyAuthCodeRequestDto)
+            verifyAuthCodeApiCall!!.enqueue(object: Callback<VerifyAuthCodeResponseDto> {
+                override fun onResponse(
+                    call: Call<VerifyAuthCodeResponseDto>,
+                    response: Response<VerifyAuthCodeResponseDto>
+                ) {
+                    if(response.isSuccessful) {
+                        // set email code valid to true + lock email views
+                        signInViewModel.emailCodeValid = true
+                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment)
+                            .lockEmailViews()
+
+                        // call sign up API if the code is valid
+                        signUp(signInViewModel)
+                    }
+                    else {
+                        // code invalid Toast message
+                        Toast.makeText(context, context?.getText(R.string.email_message_code_invalid),
+                            Toast.LENGTH_LONG).show()
+
+                        // set next button to normal
+                        setNextButtonToNormal()
+                    }
+
+                    // reset verifyAuthCodeApiCall variable
+                    verifyAuthCodeApiCall = null
+                }
+
+                override fun onFailure(call: Call<VerifyAuthCodeResponseDto>, t: Throwable) {
+                    // if the view was destroyed(API call canceled) -> set result to false + return
+                    if(_binding == null) {
+                        return
+                    }
+
+                    //display error toast message
+                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", t.message.toString())
+
+                    // set next button to normal
+                    setNextButtonToNormal()
+
+                    // reset verifyAuthCodeApiCall variable
+                    verifyAuthCodeApiCall = null
+                }
+            })
+        }
+        else {
+            // call sign up API if already verified
+            signUp(signInViewModel)
+        }
+    }
+
+    // return to previous fragment
     private fun returnToPreviousFragment() {
         // set result
         setFragmentResult("signUpResult", bundleOf("isSuccessful" to true))
@@ -284,7 +356,8 @@ class SignUpFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        // stop api call when fragment is destroyed
+        // stop api calls when fragment is destroyed
         signUpApiCall?.cancel()
+        verifyAuthCodeApiCall?.cancel()
     }
 }

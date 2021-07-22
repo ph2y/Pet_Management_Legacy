@@ -21,4 +21,7 @@ interface ServerApi {
 
     @POST("api/account/sendauthcode")
     fun sendAuthCodeRequest(@Body sendAuthCodeRequestDto: SendAuthCodeRequestDto): Call<SendAuthCodeResponseDto>
+
+    @POST("api/account/verifyauthcode")
+    fun verifyAuthCodeRequest(@Body verifyAuthCodeRequestDto: VerifyAuthCodeRequestDto): Call<VerifyAuthCodeResponseDto>
 }

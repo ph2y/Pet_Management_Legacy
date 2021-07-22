@@ -107,14 +107,29 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
             handle.set("signUpEmailIsOverlap", value)
             field = value
         }
-    var signUpEmailCodeValid = handle.get<Boolean>("signUpEmailCodeIsValid")?: false
+    var signUpEmailCodeEditText = handle.get<String>("signUpEmailCodeEditText")?: ""
         set(value){
-            handle.set("signUpEmailCodeIsValid", value)
+            handle.set("signUpEmailCodeEditText", value)
             field = value
         }
     var currentCodeRequestedEmail = handle.get<String>("currentCodeRequestedEmail")?: ""
         set(value){
             handle.set("currentCodeRequestedEmail", value)
+            field = value
+        }
+    var showEmailRequestMessage = handle.get<Boolean>("showEmailRequestMessage")?: false
+        set(value){
+            handle.set("showEmailRequestMessage", value)
+            field = value
+        }
+    var emailCodeChronometerBase = handle.get<Long>("emailCodeChronometerBase")?: 0
+        set(value){
+            handle.set("emailCodeChronometerBase", value)
+            field = value
+        }
+    var emailCodeValid = handle.get<Boolean>("emailCodeValid")?: false
+        set(value){
+            handle.set("emailCodeValid", value)
             field = value
         }
 
@@ -136,5 +151,11 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
         signUpPhoneValid = false
         signUpEmailEditText = ""
         signUpEmailValid = false
+        signUpEmailIsOverlap = false
+        signUpEmailCodeEditText = ""
+        currentCodeRequestedEmail = ""
+        showEmailRequestMessage = false
+        emailCodeChronometerBase = 0
+        emailCodeValid = false
     }
 }
