@@ -27,7 +27,7 @@
             android:layout_height="wrap_content"
             android:text="아이디 / 비밀번호 찾기"
             android:textSize="20dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginStart="12dp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/back_button"
             app:layout_constraintTop_toTopOf="parent"
