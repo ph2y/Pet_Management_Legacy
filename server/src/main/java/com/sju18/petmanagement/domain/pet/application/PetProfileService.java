@@ -55,10 +55,10 @@ public class PetProfileService {
 
         // 받은 사용자 정보와 입력 정보로 반려동물 정보 업데이트
         try {
-            Pet pet = petRepository.findByUsernameAndId(username,requestDto.getId()).orElseThrow(() -> new IllegalArgumentException("해당 id를 가진 반려동물 정보가 없습니다."));
+            Pet pet = petRepository.findByUsernameAndId(username,requestDto.getId()).orElseThrow(() -> new IllegalArgumentException("Pet entity does not exists"));
             pet.update(requestDto);
 
-            return new PetProfileUpdateResponseDto("Pet Profile Update Success");
+            return new PetProfileUpdateResponseDto("Pet profile update success");
         } catch (Exception e) {
             return new PetProfileUpdateResponseDto(e.getMessage());
         }
@@ -72,10 +72,10 @@ public class PetProfileService {
         // 받은 사용자 정보와 반려동물 id로 정보 삭제
 
         try {
-            Pet pet = petRepository.findByUsernameAndId(username,requestDto.getId()).orElseThrow(() -> new IllegalArgumentException("해당 id를 가진 반려동물 정보가 없습니다."));
+            Pet pet = petRepository.findByUsernameAndId(username,requestDto.getId()).orElseThrow(() -> new IllegalArgumentException("Pet entity does not exists"));
             petRepository.delete(pet);
 
-            return new PetProfileDeleteResponseDto("Pet Profile Delete Success");
+            return new PetProfileDeleteResponseDto("Pet profile delete success");
         } catch (Exception e) {
             return new PetProfileDeleteResponseDto(e.getMessage());
         }
