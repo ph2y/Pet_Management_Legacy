@@ -54,10 +54,9 @@ class FindIdFragment : Fragment() {
 
         // 아이디 찾기 버튼 클릭
         binding.findIdButton.setOnClickListener{
-            activity?.let {
-                Util().hideKeyboard(it)
-                findUsername(binding.emailEditText.text.toString())
-            }
+            activity?.let { Util().hideKeyboard(it) }
+
+            findUsername(binding.emailEditText.text.toString())
         }
 
         // 레이아웃 클릭
@@ -122,12 +121,18 @@ class FindIdFragment : Fragment() {
     private fun findUsername(email: String){
         val reqBody = AccountFindUsernameRequestDto(email)
         val call = RetrofitBuilder.getServerApi().findUsernameRequest(reqBody)
+        
+        // 버튼 로딩 상태
+        setButtonLoading(true)
 
         call.enqueue(object: Callback<AccountFindUsernameResponseDto> {
             override fun onResponse(
                 call: Call<AccountFindUsernameResponseDto>,
                 response: Response<AccountFindUsernameResponseDto>
             ) {
+                // 버튼 로딩 상태 해제
+                setButtonLoading(false)
+
                 if(response.isSuccessful){
                     response.body()?.let{
                         setViewForResult(it.username)
@@ -138,9 +143,28 @@ class FindIdFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<AccountFindUsernameResponseDto>, t: Throwable) {
+                // 버튼 로딩 상태 해제
+                setButtonLoading(false)
+
                 Toast.makeText(context, "요청에 실패하였습니다.", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    private fun setButtonLoading(isLoading: Boolean){
+        if(isLoading){
+            binding.findIdButton.apply {
+                text = ""
+                isEnabled = false
+            }
+            binding.findIdProgressBar.visibility = View.VISIBLE
+        }else{
+            binding.findIdButton.apply {
+                text = context?.getText(R.string.find_id)
+                isEnabled = true
+            }
+            binding.findIdProgressBar.visibility = View.GONE
+        }
     }
 
     // 아이디 찾기 결과
