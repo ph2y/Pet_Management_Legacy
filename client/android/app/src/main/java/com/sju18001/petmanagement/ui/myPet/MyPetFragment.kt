@@ -27,6 +27,7 @@ class MyPetFragment : Fragment() {
     // variables for view binding
     private var _binding: FragmentMyPetBinding? = null
     private val binding get() = _binding!!
+    private lateinit var adapter: MyPetListAdapter
 
     // variable for storing API call(for cancel)
     private var petProfileFetchApiCall: Call<List<PetProfileFetchResponseDto>>? = null
@@ -41,47 +42,11 @@ class MyPetFragment : Fragment() {
         sessionManager = context?.let { SessionManager(it) }!!
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        myPetViewModel =
-            ViewModelProvider(this).get(MyPetViewModel::class.java)
-
-        // view binding
-        _binding = FragmentMyPetBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        // add pet fab -> start activity and set fragment to add pet
-        binding.addPetFab.setOnClickListener {
-            val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
-            myPetActivityIntent.putExtra("fragmentType", "add_pet")
-            startActivity(myPetActivityIntent)
-        }
-
-        //for testing #######################################################################
-        val adapter = MyPetListAdapter()
-        binding.myPetListRecyclerView.adapter = adapter
-        binding.myPetListRecyclerView.layoutManager = LinearLayoutManager(activity)
-
-        val petList: ArrayList<MyPetListItem> = ArrayList()
-        /*
-        val item1 = MyPetListItem()
-        val item2 = MyPetListItem()
-        val item3 = MyPetListItem()
-
-        item1.setValues(0, "둥이", "2013년", "강아지", "불도그", false, R.drawable.sample1)
-        petList.add(item1)
-        item2.setValues(1, "초코", "2021년 1월 1일", "강아지", "시추", true, R.drawable.sample2)
-        petList.add(item2)
-        item3.setValues(2, "똘이", "2020년 12월 31일", "강아지", "푸들", true, R.drawable.sample3)
-        petList.add(item3)
-
-        adapter.setResult(petList)
-        */
+    override fun onResume() {
+        super.onResume()
 
         // call API using Retrofit
+        val petList: ArrayList<MyPetListItem> = ArrayList()
         petProfileFetchApiCall = RetrofitBuilder.serverApi.petProfileFetchRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}")
         petProfileFetchApiCall!!.enqueue(object: Callback<List<PetProfileFetchResponseDto>> {
             override fun onResponse(
@@ -109,7 +74,30 @@ class MyPetFragment : Fragment() {
                 TODO("Not yet implemented")
             }
         })
-        //for testing #######################################################################
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        myPetViewModel =
+            ViewModelProvider(this).get(MyPetViewModel::class.java)
+
+        // view binding
+        _binding = FragmentMyPetBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        // add pet fab -> start activity and set fragment to add pet
+        binding.addPetFab.setOnClickListener {
+            val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
+            myPetActivityIntent.putExtra("fragmentType", "add_pet")
+            startActivity(myPetActivityIntent)
+        }
+
+        adapter = MyPetListAdapter()
+        binding.myPetListRecyclerView.adapter = adapter
+        binding.myPetListRecyclerView.layoutManager = LinearLayoutManager(activity)
 
         return root
     }

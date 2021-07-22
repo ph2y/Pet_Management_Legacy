@@ -10,9 +10,14 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentAddEditPetBinding
-import de.hdodenhof.circleimageview.CircleImageView
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.PetProfileCreateRequestDto
+import com.sju18001.petmanagement.restapi.dto.PetProfileCreateResponseDto
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class AddPetFragment : Fragment() {
 
@@ -33,6 +38,19 @@ class AddPetFragment : Fragment() {
     // variables for view binding
     private var _binding: FragmentAddEditPetBinding? = null
     private val binding get() = _binding!!
+
+    // variable for storing API call(for cancel)
+    private var petProfileCreateRequest: Call<PetProfileCreateResponseDto>? = null
+
+    // session manager for user token
+    private lateinit var sessionManager: SessionManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // get session manager
+        sessionManager = context?.let { SessionManager(it) }!!
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -77,21 +95,31 @@ class AddPetFragment : Fragment() {
                 petBirthDateValue = null
             }
 
+            var petProfileCreateRequestDto = PetProfileCreateRequestDto(
+                petNameValue.toString(),
+                petSpeciesValue.toString(),
+                petBreedValue.toString(),
+                petBirthYearValue.toString() + "-" + petBirthMonthValue?.toString() + "-" + petBirthDateValue?.toString(),
+                petGenderValue,
+                "",
+                "",
+                petImageValue.toString()
+            )
 
-            //
-            //for testing #######################################################################
-            Log.d("values", "image: " + petImageValue.toString())
-            Log.d("values", "name: " + petNameValue.toString())
-            Log.d("values", "gender: " + petGenderValue.toString())
-            Log.d("values", "species: " + petSpeciesValue.toString())
-            Log.d("values", "breed: " + petBreedValue.toString())
-            Log.d("values", "year: " + petBirthYearValue.toString())
-            Log.d("values", "month: " + petBirthMonthValue.toString())
-            Log.d("values", "date: " + petBirthDateValue.toString())
-            Log.d("values", "year only: " + petBirthYearOnlyValue.toString())
-            //for testing #######################################################################
-            //
+            petProfileCreateRequest = RetrofitBuilder.serverApi.petProfileCreateRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}", petProfileCreateRequestDto)
+            petProfileCreateRequest!!.enqueue(object: Callback<PetProfileCreateResponseDto> {
+                override fun onResponse(
+                    call: Call<PetProfileCreateResponseDto>,
+                    response: Response<PetProfileCreateResponseDto>
+                ) {
+                    Log.d("Create Response Message", response.body()?.message.toString())
+                    activity?.finish()
+                }
 
+                override fun onFailure(call: Call<PetProfileCreateResponseDto>, t: Throwable) {
+                    TODO("Not yet implemented")
+                }
+            })
 
         }
 
