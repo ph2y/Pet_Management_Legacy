@@ -143,7 +143,7 @@ class FindIdFragment : Fragment() {
         })
     }
 
-    // 아이디 보여주기
+    // 아이디 찾기 결과
     private fun setViewForResult(username: String?){
         binding.resultUsername.text = username
         binding.findIdLayout.visibility = View.GONE

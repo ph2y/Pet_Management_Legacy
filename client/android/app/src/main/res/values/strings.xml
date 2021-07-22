@@ -36,6 +36,7 @@
     <string name="id_message_overlap">이미 존재하는 아이디에요!</string>
     <string name="pw_message">8~20자의 영문, 숫자, 특수문자(!@.#$%^&amp;*?_~)만 사용 가능해요!</string>
     <string name="pw_check_message">비밀번호가 일치하지 않아요!</string>
+    <string name="code_message">아이디 및 인증코드가 일치하지 않습니다.</string>
 
     <string name="user_info_title">사용자 정보</string>
     <string name="name_hint">이름</string>

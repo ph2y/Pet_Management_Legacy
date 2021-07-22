@@ -6,43 +6,21 @@
     >
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/find_pw_layout"
+        android:id="@+id/email_input_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="visible"
         >
-        <EditText
-            android:id="@+id/id_edit_text"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:inputType="textEmailAddress"
-            android:hint="ID를 입력하세요."
-            android:backgroundTint="@color/border_line"
-            android:theme="@style/onSelectedThemeCarrot"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-        <TextView
-            android:id="@+id/id_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/id_message"
-            android:textSize="12dp"
-            android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/id_edit_text"
-            app:layout_constraintStart_toStartOf="@id/id_edit_text"
-            />
         <EditText
             android:id="@+id/email_edit_text"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
             android:inputType="textEmailAddress"
             android:hint="이메일을 입력하세요."
             android:backgroundTint="@color/border_line"
             android:theme="@style/onSelectedThemeCarrot"
-            app:layout_constraintTop_toBottomOf="@id/id_message"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             />
@@ -57,31 +35,104 @@
             app:layout_constraintTop_toBottomOf="@id/email_edit_text"
             app:layout_constraintStart_toStartOf="@id/email_edit_text"
             />
+        <Button
+            android:id="@+id/email_input_button"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="인증코드 전송"
+            android:enabled="false"
+            app:layout_constraintTop_toBottomOf="@id/email_message"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/code_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        >
+        <EditText
+            android:id="@+id/username_edit_text"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:inputType="textEmailAddress"
+            android:hint="아이디를 입력하세요."
+            android:backgroundTint="@color/border_line"
+            android:theme="@style/onSelectedThemeCarrot"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
         <EditText
             android:id="@+id/code_edit_text"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
             android:inputType="textEmailAddress"
             android:hint="인증코드 입력"
             android:textSize="24dp"
             android:backgroundTint="@color/border_line"
             android:theme="@style/onSelectedThemeCarrot"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/email_message"
+            app:layout_constraintTop_toBottomOf="@id/username_edit_text"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             />
+        <TextView
+            android:id="@+id/code_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/code_message"
+            android:textSize="12dp"
+            android:textColor="@android:color/holo_red_dark"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/code_edit_text"
+            app:layout_constraintStart_toStartOf="@id/code_edit_text"
+            />
+
         <Button
-            android:id="@+id/find_pw_button"
+            android:id="@+id/code_input_button"
             android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="비밀번호 찾기"
-            android:enabled="false"
-            app:layout_constraintTop_toBottomOf="@id/code_edit_text"
+            android:text="확인"
+            app:layout_constraintTop_toBottomOf="@id/code_message"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/result_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="40dp"
+        android:visibility="gone"
+        >
+        <TextView
+            android:id="@+id/result_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="비밀번호 찾기 결과"
+            android:textSize="24dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+        <TextView
+            android:id="@+id/result_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="회원님의 임시 비밀번호를 이메일로 전송하였습니다. 로그인 후 비밀번호를 꼭 변경해주세요."
+            android:textSize="16dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toBottomOf="@id/result_title"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

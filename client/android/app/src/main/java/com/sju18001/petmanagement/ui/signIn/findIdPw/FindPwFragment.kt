@@ -9,21 +9,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.ServerUtil
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFindPwBinding
+import com.sju18001.petmanagement.restapi.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.regex.Pattern
 
 class FindPwFragment : Fragment() {
     private var _binding: FragmentFindPwBinding? = null
     private val binding get() = _binding!!
-
-    private val INPUT_LENGTH = 2
-    private val ID = 0
-    private val EMAIL = 1
-    private val isValidInput: HashMap<Int, Boolean> = HashMap()
-
-    private val patternId: Pattern = Pattern.compile("^[a-z0-9]{5,16}$")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,8 +31,10 @@ class FindPwFragment : Fragment() {
     ): View? {
         _binding = FragmentFindPwBinding.inflate(inflater, container, false)
 
-        if(savedInstanceState?.getBoolean("is_input_code_shown") == true){
-            setViewForInputCode()
+        when(savedInstanceState?.getInt("page")){
+            1 -> setViewForCodeInput()
+            2 -> setViewForResult()
+            else -> setViewForEmailInput()
         }
 
         return binding.root
@@ -42,105 +43,131 @@ class FindPwFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        // initialize valid input map
-        for(i in 0 until INPUT_LENGTH) { isValidInput[i] = false }
-
-        checkIdValidation(binding.idEditText.text)
+        // 뷰 초기화
         checkEmailValidation(binding.emailEditText.text)
-        checkIsValid()
         setMessageGone()
+    }
 
-        // 비밀번호 찾기 버튼 클릭
-        binding.findPwButton.setOnClickListener{
-            activity?.let { Util().hideKeyboard(it) }
-            
-            // API 서버를 통해, id-email이 유효한지 검사
-            setViewForInputCode()
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        var page: Int = 0
+        if(binding.codeInputLayout.visibility == View.VISIBLE){
+            page = 1
+        }else if(binding.resultLayout.visibility == View.VISIBLE){
+            page = 2
         }
+        outState.putInt("page", page)
+    }
 
-        // 레이아웃 클릭
-        binding.findPwLayout.setOnClickListener{
-            activity?.let { Util().hideKeyboard(it) }
+
+    // 유효성 검사
+    private fun checkEmailValidation(s: CharSequence?) {
+        if(Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
+            binding.emailMessage.visibility = View.GONE
+            binding.emailInputButton.isEnabled = true
         }
+        else {
+            binding.emailMessage.visibility = View.VISIBLE
+            binding.emailInputButton.isEnabled = false
+        }
+    }
 
-        // ID 입력란 입력
-        binding.idEditText.addTextChangedListener(object: TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                checkIdValidation(s)
-                checkIsValid()
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
-        })
+    // 이메일 입력창
+    private fun setViewForEmailInput(){
+        binding.emailInputLayout.visibility = View.VISIBLE
+        binding.codeInputLayout.visibility = View.GONE
+        binding.resultLayout.visibility = View.GONE
 
         // 이메일 입력란 입력
         binding.emailEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 checkEmailValidation(s)
-                checkIsValid()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
-    }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean("is_input_code_shown", binding.codeEditText.visibility == View.VISIBLE)
-    }
+        // 버튼 클릭
+        binding.emailInputButton.setOnClickListener{
+            activity?.let { Util().hideKeyboard(it) }
 
-
-    // * 유효성 검사
-    private fun checkIdValidation(s: CharSequence?) {
-        if(patternId.matcher(s).matches()) {
-            isValidInput[ID] = true
-            binding.idMessage.visibility = View.GONE
+            // 인증코드 전송
+            sendAuthCode(binding.emailEditText.text.toString())
         }
-        else {
-            isValidInput[ID] = false
-            binding.idMessage.visibility = View.VISIBLE
+
+        // 레이아웃 클릭
+        binding.emailInputLayout.setOnClickListener{
+            activity?.let { Util().hideKeyboard(it) }
         }
     }
 
-    private fun checkEmailValidation(s: CharSequence?) {
-        if(Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
-            isValidInput[EMAIL] = true
-            binding.emailMessage.visibility = View.GONE
-        }
-        else {
-            isValidInput[EMAIL] = false
-            binding.emailMessage.visibility = View.VISIBLE
-        }
-    }
+    // 코드 입력창
+    private fun setViewForCodeInput() {
+        binding.emailInputLayout.visibility = View.GONE
+        binding.codeInputLayout.visibility = View.VISIBLE
+        binding.resultLayout.visibility = View.GONE
 
-    private fun checkIsValid() {
-        for(i in 0 until INPUT_LENGTH) {
-            if(!isValidInput[i]!!) {
-                // if not valid -> disable button + return
-                binding.findPwButton.isEnabled = false
-                return
-            }
+        // 버튼 클릭
+        binding.codeInputButton.setOnClickListener{
+            activity?.let { Util().hideKeyboard(it) }
+
+            // 코드 확인
+            findPassword(binding.usernameEditText.text.toString(), binding.codeEditText.text.toString())
         }
 
-        // if all is valid -> enable button
-        binding.findPwButton.isEnabled = true
-    }
-
-
-    private fun setViewForInputCode() {
-        binding.codeEditText.visibility = View.VISIBLE
-        binding.idEditText.visibility = View.GONE
-        binding.emailEditText.visibility = View.GONE
-        binding.findPwButton.apply{
-            text = "확인"
-            setOnClickListener{
-                // 코드 확인
-            }
+        // 레이아웃 클릭
+        binding.emailInputLayout.setOnClickListener{
+            activity?.let { Util().hideKeyboard(it) }
         }
     }
 
+    // 비밀번호 찾기 결과
+    private fun setViewForResult(){
+        binding.emailInputLayout.visibility = View.GONE
+        binding.codeInputLayout.visibility = View.GONE
+        binding.resultLayout.visibility = View.VISIBLE
+    }
+
+    // 에러 메시지 제거
     private fun setMessageGone() {
-        binding.idMessage.visibility = View.GONE
         binding.emailMessage.visibility = View.GONE
+        binding.codeMessage.visibility = View.GONE
+    }
+
+    // 코드 전송
+    private fun sendAuthCode(email: String){
+        val accountSendAuthCodeRequestDto = AccountSendAuthCodeRequestDto(email)
+
+        ServerUtil.sendAuthCode(accountSendAuthCodeRequestDto,
+            { response ->
+                if(response.isSuccessful){
+                    // 코드 입력
+                    setViewForCodeInput()
+                }else{
+                    // 어떤 이메일이든 코드 전송은 하기 때문에, 보통 실패할 수 없다.
+                    Toast.makeText(context, "알 수 없는 에러가 발생하였습니다.", Toast.LENGTH_LONG).show()
+                }
+            }, { t ->
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        )
+    }
+
+    // 코드를 통한 비밀번호 임시 변경
+    private fun findPassword(username: String, code: String){
+        val accountFindPasswordRequestDto = AccountFindPasswordRequestDto(username, code)
+
+        ServerUtil.findPassword(accountFindPasswordRequestDto,
+            { response ->
+                if(response.isSuccessful){
+                    setViewForResult()
+                }else{
+                    binding.codeMessage.visibility = View.VISIBLE
+                }
+            }, { t ->
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+            }
+        )
     }
 }
