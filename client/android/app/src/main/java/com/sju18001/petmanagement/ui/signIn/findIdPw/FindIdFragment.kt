@@ -35,6 +35,11 @@ class FindIdFragment : Fragment() {
     ): View? {
         _binding = FragmentFindIdBinding.inflate(inflater, container, false)
 
+        if(savedInstanceState?.getBoolean("is_result_shown") == true){
+            val username = savedInstanceState.getString("result_username")
+            setViewForResult(username)
+        }
+
         return binding.root
     }
 
@@ -69,6 +74,17 @@ class FindIdFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        if(binding.resultLayout.visibility == View.VISIBLE){
+            outState.putBoolean("is_result_shown", true)
+            outState.putString("result_username", binding.resultUsername.text.toString())
+        }else{
+            outState.putBoolean("is_result_shown", false)
+        }
     }
 
 
@@ -114,9 +130,7 @@ class FindIdFragment : Fragment() {
             ) {
                 if(response.isSuccessful){
                     response.body()?.let{
-                        binding.resultUsername.text = it.username
-                        binding.findIdLayout.visibility = View.GONE
-                        binding.resultLayout.visibility = View.VISIBLE
+                        setViewForResult(it.username)
                     }
                 }else{
                     Toast.makeText(context, "해당 이메일을 찾을 수 없습니다.", Toast.LENGTH_LONG).show()
@@ -127,5 +141,12 @@ class FindIdFragment : Fragment() {
                 Toast.makeText(context, "요청에 실패하였습니다.", Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    // 아이디 보여주기
+    private fun setViewForResult(username: String?){
+        binding.resultUsername.text = username
+        binding.findIdLayout.visibility = View.GONE
+        binding.resultLayout.visibility = View.VISIBLE
     }
 }
