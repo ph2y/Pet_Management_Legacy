@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFindIdBinding
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
 
 class FindIdFragment : Fragment() {
     private var _binding: FragmentFindIdBinding? = null
@@ -41,7 +42,9 @@ class FindIdFragment : Fragment() {
 
         // 아이디 찾기 버튼 클릭
         binding.findIdButton.setOnClickListener{
-            activity?.let { Util().hideKeyboard(it) }
+            activity?.let {
+                Util().hideKeyboard(it)
+            }
         }
 
         // 레이아웃 클릭
