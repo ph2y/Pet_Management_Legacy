@@ -117,7 +117,7 @@ class FindPwFragment : Fragment() {
         }
 
         // 레이아웃 클릭
-        binding.emailInputLayout.setOnClickListener{
+        binding.codeInputLayout.setOnClickListener{
             activity?.let { Util().hideKeyboard(it) }
         }
     }
