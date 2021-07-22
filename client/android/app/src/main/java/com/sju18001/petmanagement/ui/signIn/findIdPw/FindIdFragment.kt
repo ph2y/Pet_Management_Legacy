@@ -3,15 +3,22 @@ package com.sju18001.petmanagement.ui.signIn.findIdPw
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFindIdBinding
+import com.sju18001.petmanagement.restapi.AccountFindUsernameRequestDto
+import com.sju18001.petmanagement.restapi.AccountFindUsernameResponseDto
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class FindIdFragment : Fragment() {
     private var _binding: FragmentFindIdBinding? = null
@@ -44,6 +51,7 @@ class FindIdFragment : Fragment() {
         binding.findIdButton.setOnClickListener{
             activity?.let {
                 Util().hideKeyboard(it)
+                findUsername(binding.emailEditText.text.toString())
             }
         }
 
@@ -91,5 +99,33 @@ class FindIdFragment : Fragment() {
 
     private fun setMessageGone() {
         binding.emailMessage.visibility = View.GONE
+    }
+
+
+    // 아이디 찾기
+    private fun findUsername(email: String){
+        val reqBody = AccountFindUsernameRequestDto(email)
+        val call = RetrofitBuilder.getServerApi().findUsernameRequest(reqBody)
+
+        call.enqueue(object: Callback<AccountFindUsernameResponseDto> {
+            override fun onResponse(
+                call: Call<AccountFindUsernameResponseDto>,
+                response: Response<AccountFindUsernameResponseDto>
+            ) {
+                if(response.isSuccessful){
+                    response.body()?.let{
+                        binding.resultUsername.text = it.username
+                        binding.findIdLayout.visibility = View.GONE
+                        binding.resultLayout.visibility = View.VISIBLE
+                    }
+                }else{
+                    Toast.makeText(context, "해당 이메일을 찾을 수 없습니다.", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<AccountFindUsernameResponseDto>, t: Throwable) {
+                Toast.makeText(context, "요청에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }

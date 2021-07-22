@@ -46,4 +46,35 @@
             app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/result_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        >
+        <TextView
+            android:id="@+id/result_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:text="회원님의 아이디는 다음과 같습니다."
+            android:textSize="16dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            />
+        <TextView
+            android:id="@+id/result_username"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@color/sunflower"
+            android:text="username"
+            android:textSize="24dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toBottomOf="@id/result_description"
+            app:layout_constraintStart_toStartOf="@id/result_description"
+            />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
