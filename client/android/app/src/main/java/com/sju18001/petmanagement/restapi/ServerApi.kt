@@ -43,4 +43,10 @@ interface ServerApi {
 
     @POST("api/pet/profile/fetch")
     fun petProfileFetchRequest(@Header("Authorization") token: String): Call<List<PetProfileFetchResponseDto>>
+
+    @POST("api/pet/profile/update")
+    fun petProfileUpdateRequest(@Header("Authorization") token: String, @Body petProfileUpdateRequestDto: PetProfileUpdateRequestDto): Call<PetProfileUpdateResponseDto>
+
+    @POST("api/pet/profile/delete")
+    fun petProfileDeleteRequest(@Header("Authorization") token: String, @Body petProfileDeleteRequestDto: PetProfileDeleteRequestDto): Call<PetProfileDeleteResponseDto>
 }
