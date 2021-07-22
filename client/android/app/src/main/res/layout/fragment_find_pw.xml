@@ -41,16 +41,30 @@
                     app:layout_constraintTop_toBottomOf="@id/email_edit_text"
                     app:layout_constraintStart_toStartOf="@id/email_edit_text"
                     />
-                <Button
-                    android:id="@+id/email_input_button"
-                    android:layout_width="280dp"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="인증코드 전송"
-                    android:enabled="false"
                     app:layout_constraintTop_toBottomOf="@id/email_message"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent">
+                    <Button
+                        android:id="@+id/email_input_button"
+                        android:layout_width="280dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/find_password_email_input_button"
+                        android:enabled="false"
+                        />
+                    <ProgressBar
+                        android:id="@+id/email_input_progress_bar"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:indeterminateTint="@color/carrot"
+                        android:layout_centerInParent="true"
+                        android:visibility="gone"
+                        />
+                </RelativeLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -97,15 +111,28 @@
                     app:layout_constraintStart_toStartOf="@id/code_edit_text"
                     />
 
-                <Button
-                    android:id="@+id/code_input_button"
-                    android:layout_width="280dp"
+                <RelativeLayout
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="확인"
                     app:layout_constraintTop_toBottomOf="@id/code_message"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"/>
+                    app:layout_constraintEnd_toEndOf="parent">
+                    <Button
+                        android:id="@+id/code_input_button"
+                        android:layout_width="280dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/confirm"/>
+                    <ProgressBar
+                        android:id="@+id/code_input_progress_bar"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
+                        android:indeterminateTint="@color/carrot"
+                        android:layout_centerInParent="true"
+                        android:visibility="gone"
+                        />
+                </RelativeLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -120,7 +147,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="비밀번호 찾기 결과"
+                    android:text="비밀번호 찾기 결과 안내"
                     android:textSize="24dp"
                     android:textColor="@android:color/black"
                     app:layout_constraintTop_toTopOf="parent"

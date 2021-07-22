@@ -139,8 +139,14 @@ class FindPwFragment : Fragment() {
     private fun sendAuthCode(email: String){
         val accountSendAuthCodeRequestDto = AccountSendAuthCodeRequestDto(email)
 
+        // 버튼 로딩 상태
+        setEmailInputButtonLoading(true)
+
         ServerUtil.sendAuthCode(accountSendAuthCodeRequestDto,
             { response ->
+                // 버튼 로딩 상태 해제
+                setEmailInputButtonLoading(false)
+
                 if(response.isSuccessful){
                     // 코드 입력
                     setViewForCodeInput()
@@ -149,25 +155,72 @@ class FindPwFragment : Fragment() {
                     Toast.makeText(context, "알 수 없는 에러가 발생하였습니다.", Toast.LENGTH_LONG).show()
                 }
             }, { t ->
+                // 버튼 로딩 상태 해제
+                setEmailInputButtonLoading(false)
+
                 Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
         )
     }
+    
+    // 이메일 입력 버튼 프로그래스바
+    private fun setEmailInputButtonLoading(isLoading: Boolean){
+        if(isLoading){
+            binding.emailInputButton.apply {
+                text = ""
+                isEnabled = false
+            }
+            binding.emailInputProgressBar.visibility = View.VISIBLE
+        }else{
+            binding.emailInputButton.apply {
+                text = context?.getText(R.string.find_password_email_input_button)
+                isEnabled = true
+            }
+            binding.emailInputProgressBar.visibility = View.GONE
+        }
+    }
+
 
     // 코드를 통한 비밀번호 임시 변경
     private fun findPassword(username: String, code: String){
         val accountFindPasswordRequestDto = AccountFindPasswordRequestDto(username, code)
 
+        // 버튼 로딩 상태
+        setCodeInputButtonLoading(true)
+
         ServerUtil.findPassword(accountFindPasswordRequestDto,
             { response ->
+                // 버튼 로딩 상태 해제
+                setCodeInputButtonLoading(false)
+
                 if(response.isSuccessful){
                     setViewForResult()
                 }else{
                     binding.codeMessage.visibility = View.VISIBLE
                 }
             }, { t ->
+                // 버튼 로딩 상태 해제
+                setCodeInputButtonLoading(false)
+
                 Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
         )
+    }
+
+    // 코드 입력 버튼 프로그래스바
+    private fun setCodeInputButtonLoading(isLoading: Boolean){
+        if(isLoading){
+            binding.codeInputButton.apply {
+                text = ""
+                isEnabled = false
+            }
+            binding.codeInputProgressBar.visibility = View.VISIBLE
+        }else{
+            binding.codeInputButton.apply {
+                text = context?.getText(R.string.confirm)
+                isEnabled = true
+            }
+            binding.codeInputProgressBar.visibility = View.GONE
+        }
     }
 }

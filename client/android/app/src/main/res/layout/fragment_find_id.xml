@@ -52,7 +52,7 @@
                         android:id="@+id/find_id_button"
                         android:layout_width="280dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/find_id"
+                        android:text="@string/find_username"
                         android:enabled="false"/>
                     <ProgressBar
                         android:id="@+id/find_id_progress_bar"
@@ -76,7 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="60dp"
-                    android:text="아이디 찾기 결과"
+                    android:text="아이디 찾기 결과 안내"
                     android:textSize="24dp"
                     android:textColor="@android:color/black"
                     app:layout_constraintTop_toTopOf="parent"

@@ -160,7 +160,7 @@ class FindIdFragment : Fragment() {
             binding.findIdProgressBar.visibility = View.VISIBLE
         }else{
             binding.findIdButton.apply {
-                text = context?.getText(R.string.find_id)
+                text = context?.getText(R.string.find_username)
                 isEnabled = true
             }
             binding.findIdProgressBar.visibility = View.GONE
