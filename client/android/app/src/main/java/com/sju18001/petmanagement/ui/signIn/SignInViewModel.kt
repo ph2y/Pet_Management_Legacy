@@ -107,6 +107,16 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
             handle.set("signUpEmailIsOverlap", value)
             field = value
         }
+    var signUpEmailCodeValid = handle.get<Boolean>("signUpEmailCodeIsValid")?: false
+        set(value){
+            handle.set("signUpEmailCodeIsValid", value)
+            field = value
+        }
+    var currentCodeRequestedEmail = handle.get<String>("currentCodeRequestedEmail")?: ""
+        set(value){
+            handle.set("currentCodeRequestedEmail", value)
+            field = value
+        }
 
     public fun resetSignUpValues() {
         signUpSelectAllCheckBox = false

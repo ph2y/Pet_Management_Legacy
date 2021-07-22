@@ -116,9 +116,15 @@ class SignUpIdPwFragment : Fragment() {
     }
 
     private fun restoreState(signInViewModel: SignInViewModel) {
-        binding.idEditText.setText(signInViewModel.signUpIdEditText)
-        binding.pwEditText.setText(signInViewModel.signUpPwEditText)
-        binding.pwCheckEditText.setText(signInViewModel.signUpPwCheckEditText)
+        if(binding.idEditText.text.toString() != signInViewModel.signUpIdEditText) {
+            binding.idEditText.setText(signInViewModel.signUpIdEditText)
+        }
+        if(binding.pwEditText.text.toString() != signInViewModel.signUpPwEditText) {
+            binding.pwEditText.setText(signInViewModel.signUpPwEditText)
+        }
+        if(binding.pwCheckEditText.text.toString() != signInViewModel.signUpPwCheckEditText) {
+            binding.pwCheckEditText.setText(signInViewModel.signUpPwCheckEditText)
+        }
 
         if(!signInViewModel.signUpIdValid && signInViewModel.signUpIdEditText != "") {
             binding.idMessage.visibility = View.VISIBLE

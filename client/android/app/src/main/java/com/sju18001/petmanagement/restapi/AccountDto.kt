@@ -24,6 +24,23 @@ data class AccountSignUpResponseDto (
     val message: String
 )
 
+data class SendAuthCodeRequestDto(
+    val email: String
+)
+
+data class SendAuthCodeResponseDto(
+    val message: String
+)
+
+data class VerifyAuthCodeRequestDto(
+    val email: String,
+    val code: String
+)
+
+data class VerifyAuthCodeResponseDto(
+    val message: String
+)
+
 data class AccountProfileLookupResponseDto(
     val message: String,
     val username: String,

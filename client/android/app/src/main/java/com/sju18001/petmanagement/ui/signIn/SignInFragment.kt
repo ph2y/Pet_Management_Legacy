@@ -42,17 +42,11 @@ class SignInFragment : Fragment() {
 
         // get sign up result
         setFragmentResultListener("signUpResult") { _, bundle ->
-            val result: MutableList<Any> = bundle.get("isSuccessful") as MutableList<Any>
+            val result: Boolean = bundle.get("isSuccessful") as Boolean
 
             // if successful -> show success message
-            if(result[0] as Boolean) {
+            if(result) {
                 displaySuccessMessage(context?.getText(R.string.sign_up_success)!!.toString())
-            }
-
-            // if unsuccessful -> show error message
-            else {
-                displayErrorMessage(result[1] as String)
-                Log.d("error", result[1] as String)
             }
         }
     }

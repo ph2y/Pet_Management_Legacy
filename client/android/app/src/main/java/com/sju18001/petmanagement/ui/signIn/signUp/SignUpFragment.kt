@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -147,7 +148,9 @@ class SignUpFragment : Fragment() {
 
     // show previous step button
     public fun showPreviousButton() {
-        binding.previousStepButton.visibility = View.VISIBLE
+        if(signUpApiCall == null) {
+            binding.previousStepButton.visibility = View.VISIBLE
+        }
     }
 
     // hide previous step button
@@ -157,13 +160,15 @@ class SignUpFragment : Fragment() {
 
     // enable next step button
     public fun enableNextButton() {
-        binding.nextStepButton.isEnabled = true
+        if(signUpApiCall == null) {
+            binding.nextStepButton.isEnabled = true
 
-        if(childFragmentManager.fragments[0].tag == FRAGMENT_TAG_USER_INFO) {
-            binding.nextStepButton.text = getText(R.string.sign_up_button)
-        }
-        else {
-            binding.nextStepButton.text = getText(R.string.next_step_button)
+            if(childFragmentManager.fragments[0].tag == FRAGMENT_TAG_USER_INFO) {
+                binding.nextStepButton.text = getText(R.string.sign_up_button)
+            }
+            else {
+                binding.nextStepButton.text = getText(R.string.next_step_button)
+            }
         }
     }
 
@@ -216,14 +221,13 @@ class SignUpFragment : Fragment() {
             ) {
                 if(response.isSuccessful) {
                     // return to previous fragment + send sign up result data
-                    returnToPreviousFragment(true, null)
+                    returnToPreviousFragment()
                 }
                 else {
                     // get error message(overlap)
                     val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
 
                     // if id overlap -> go to id/pw fragment + show message
-                    Log.d("test", errorMessage)
                     if(errorMessage == MESSAGE_ID_OVERLAP) {
                         signInViewModel.signUpIdIsOverlap = true
                         childFragmentManager.popBackStack()
@@ -243,25 +247,34 @@ class SignUpFragment : Fragment() {
                         setNextButtonToNormal()
                     }
                 }
+
+                // reset signUpApiCall variable
+                signUpApiCall = null
             }
 
             override fun onFailure(call: Call<AccountSignUpResponseDto>, t: Throwable) {
                 // if the view was destroyed(API call canceled) -> do nothing
                 if(_binding == null) { return }
 
-                // return to previous fragment + send sign up result data
-                returnToPreviousFragment(false, t.message.toString())
+                //display error toast message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
 
                 // log error message
                 Log.d("error", t.message.toString())
+
+                // set next button to normal
+                setNextButtonToNormal()
+
+                // reset signUpApiCall variable
+                signUpApiCall = null
             }
         })
     }
 
     // return to previous fragment + send sign up result data
-    private fun returnToPreviousFragment(result: Boolean, message: String?) {
+    private fun returnToPreviousFragment() {
         // set result
-        setFragmentResult("signUpResult", bundleOf("isSuccessful" to mutableListOf(result, message)))
+        setFragmentResult("signUpResult", bundleOf("isSuccessful" to true))
 
         // return to previous fragment
         activity?.supportFragmentManager?.popBackStack()
