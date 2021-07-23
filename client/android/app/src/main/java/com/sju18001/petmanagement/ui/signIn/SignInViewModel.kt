@@ -117,9 +117,9 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
             handle.set("currentCodeRequestedEmail", value)
             field = value
         }
-    var showEmailRequestMessage = handle.get<Boolean>("showEmailRequestMessage")?: false
+    var showsEmailRequestMessage = handle.get<Boolean>("showsEmailRequestMessage")?: false
         set(value){
-            handle.set("showEmailRequestMessage", value)
+            handle.set("showsEmailRequestMessage", value)
             field = value
         }
     var emailCodeChronometerBase = handle.get<Long>("emailCodeChronometerBase")?: 0
@@ -154,7 +154,7 @@ class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
         signUpEmailIsOverlap = false
         signUpEmailCodeEditText = ""
         currentCodeRequestedEmail = ""
-        showEmailRequestMessage = false
+        showsEmailRequestMessage = false
         emailCodeChronometerBase = 0
         emailCodeValid = false
     }

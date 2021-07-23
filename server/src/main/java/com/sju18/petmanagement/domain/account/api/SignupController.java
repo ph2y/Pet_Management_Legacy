@@ -38,14 +38,14 @@ public class SignupController {
         );
         
         // 중복 확인
+        if (accountRepository.existsByEmail(newAccount.getEmail())) {
+            return ResponseEntity.badRequest().body(new SignupResponseDto("Email already exists"));
+        }
         if (accountRepository.existsByUsername(newAccount.getUsername())) {
             return ResponseEntity.badRequest().body(new SignupResponseDto("Username already exists"));
         }
         if (accountRepository.existsByPhone(newAccount.getPhone())) {
             return ResponseEntity.badRequest().body(new SignupResponseDto("Phone number already exists"));
-        }
-        if (accountRepository.existsByEmail(newAccount.getEmail())) {
-            return ResponseEntity.badRequest().body(new SignupResponseDto("Email already exists"));
         }
 
         // DB에 계정정보 저장

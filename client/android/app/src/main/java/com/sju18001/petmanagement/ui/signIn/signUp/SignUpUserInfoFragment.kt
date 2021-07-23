@@ -157,7 +157,7 @@ class SignUpUserInfoFragment : Fragment() {
     }
 
     public fun showHideRequestMessage(signInViewModel: SignInViewModel) {
-        if(signInViewModel.showEmailRequestMessage) {
+        if(signInViewModel.showsEmailRequestMessage) {
             binding.emailMessageRequest.visibility = View.VISIBLE
         }
         else {
@@ -183,6 +183,15 @@ class SignUpUserInfoFragment : Fragment() {
         binding.emailCodeChronometerLayout.visibility = View.GONE
     }
 
+    public fun unlockEmailViews() {
+        binding.emailEditText.isEnabled = true
+        binding.requestEmailCodeButton.isEnabled = true
+        binding.emailCodeEditText.isEnabled = true
+        binding.emailMessageCodeValid.visibility = View.GONE
+        binding.emailCodeChronometer.stop()
+        binding.emailCodeChronometerLayout.visibility = View.GONE
+    }
+
     private fun requestEmailCode(signInViewModel: SignInViewModel) {
         val sendAuthCodeRequestDto = SendAuthCodeRequestDto(signInViewModel.signUpEmailEditText)
 
@@ -200,7 +209,7 @@ class SignUpUserInfoFragment : Fragment() {
                     signInViewModel.currentCodeRequestedEmail = signInViewModel.signUpEmailEditText
 
                     // hide request message
-                    signInViewModel.showEmailRequestMessage = false
+                    signInViewModel.showsEmailRequestMessage = false
                     showHideRequestMessage(signInViewModel)
 
                     // start a 10 minute timer

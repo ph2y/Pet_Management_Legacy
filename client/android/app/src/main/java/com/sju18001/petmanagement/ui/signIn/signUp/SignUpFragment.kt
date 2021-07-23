@@ -134,10 +134,10 @@ class SignUpFragment : Fragment() {
                 // check if inputted email is the same as code requested email
                 if(signInViewModel.signUpEmailEditText == signInViewModel.currentCodeRequestedEmail) {
                     // validate email code(+ sign up)
-                    emailCodeIsValid(signInViewModel)
+                    validateEmailCode(signInViewModel)
                 }
                 else {
-                    signInViewModel.showEmailRequestMessage = true
+                    signInViewModel.showsEmailRequestMessage = true
                     (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment)
                         .showHideRequestMessage(signInViewModel)
 
@@ -235,23 +235,30 @@ class SignUpFragment : Fragment() {
                     // get error message(overlap)
                     val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
 
-                    // if id overlap -> go to id/pw fragment + show message
-                    if(errorMessage == MESSAGE_ID_OVERLAP) {
-                        signInViewModel.signUpIdIsOverlap = true
-                        childFragmentManager.popBackStack()
-                    }
                     // if email overlap + show message
-                    else if(errorMessage == MESSAGE_PHONE_OVERLAP) {
-                        Log.d("test", errorMessage)
-                        signInViewModel.signUpPhoneIsOverlap = true
+                    if(errorMessage == MESSAGE_EMAIL_OVERLAP) {
+                        signInViewModel.signUpEmailIsOverlap = true
+
+                        // set email code valid to false + reset chronometer/requested email + unlock email views
+                        signInViewModel.emailCodeValid = false
+                        signInViewModel.emailCodeChronometerBase = 0
+                        signInViewModel.currentCodeRequestedEmail = ""
+                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment)
+                            .unlockEmailViews()
+
+                        // show message
                         (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment)
                             .showOverlapMessage(signInViewModel)
                         setNextButtonToNormal()
                     }
+                    // if id overlap -> go to id/pw fragment + show message
+                    else if(errorMessage == MESSAGE_ID_OVERLAP) {
+                        signInViewModel.signUpIdIsOverlap = true
+                        childFragmentManager.popBackStack()
+                    }
                     // if phone overlap + show message
-                    else if(errorMessage == MESSAGE_EMAIL_OVERLAP) {
-                        Log.d("test", errorMessage)
-                        signInViewModel.signUpEmailIsOverlap = true
+                    else if(errorMessage == MESSAGE_PHONE_OVERLAP) {
+                        signInViewModel.signUpPhoneIsOverlap = true
                         (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as SignUpUserInfoFragment)
                             .showOverlapMessage(signInViewModel)
                         setNextButtonToNormal()
@@ -281,7 +288,7 @@ class SignUpFragment : Fragment() {
         })
     }
 
-    private fun emailCodeIsValid(signInViewModel: SignInViewModel) {
+    private fun validateEmailCode(signInViewModel: SignInViewModel) {
         // create verify code request DTO
         val verifyAuthCodeRequestDto = VerifyAuthCodeRequestDto(signInViewModel.currentCodeRequestedEmail,
         signInViewModel.signUpEmailCodeEditText)
