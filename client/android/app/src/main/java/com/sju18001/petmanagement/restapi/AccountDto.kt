@@ -83,11 +83,3 @@ data class AccountFindPasswordRequestDto(
 data class AccountFindPasswordResponseDto(
     val message: String
 )
-
-data class AccountSendAuthCodeRequestDto(
-    val email: String
-)
-
-data class AccountSendAuthCodeResponseDto(
-    val message: String
-)
