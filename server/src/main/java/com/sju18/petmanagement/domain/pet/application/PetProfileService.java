@@ -70,7 +70,6 @@ public class PetProfileService {
         String username = getUserNameFromToken(authentication);
 
         // 받은 사용자 정보와 반려동물 id로 정보 삭제
-
         try {
             Pet pet = petRepository.findByUsernameAndId(username,requestDto.getId()).orElseThrow(() -> new IllegalArgumentException("Pet entity does not exists"));
             petRepository.delete(pet);

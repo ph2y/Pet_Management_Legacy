@@ -4,6 +4,8 @@ import com.sju18.petmanagement.domain.pet.dao.Pet;
 import lombok.Builder;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 public class PetProfileCreateRequestDto {
     private String name;
@@ -33,7 +35,7 @@ public class PetProfileCreateRequestDto {
                 .name(name)
                 .species(species)
                 .breed(breed)
-                .birth(birth)
+                .birth(LocalDate.parse(birth))
                 .gender(gender)
                 .feed_interval(feed_interval)
                 .memo(memo)

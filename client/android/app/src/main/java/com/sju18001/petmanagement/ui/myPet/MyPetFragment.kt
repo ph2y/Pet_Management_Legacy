@@ -1,11 +1,13 @@
 package com.sju18001.petmanagement.ui.myPet
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +21,7 @@ import com.sju18001.petmanagement.restapi.dto.PetProfileFetchResponseDto
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
 
 class MyPetFragment : Fragment() {
 
@@ -49,6 +52,7 @@ class MyPetFragment : Fragment() {
         val petList: ArrayList<MyPetListItem> = ArrayList()
         petProfileFetchApiCall = RetrofitBuilder.serverApi.petProfileFetchRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}")
         petProfileFetchApiCall!!.enqueue(object: Callback<List<PetProfileFetchResponseDto>> {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<List<PetProfileFetchResponseDto>>,
                 response: Response<List<PetProfileFetchResponseDto>>
@@ -58,7 +62,7 @@ class MyPetFragment : Fragment() {
                     item.setValues(
                         it.id,
                         it.name,
-                        it.birth,
+                        LocalDate.parse(it.birth),
                         it.species,
                         it.breed,
                         it.gender,

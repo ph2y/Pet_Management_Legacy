@@ -2,12 +2,14 @@ package com.sju18001.petmanagement.ui.myPet
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.sju18001.petmanagement.databinding.FragmentAddEditPetBinding
@@ -18,6 +20,9 @@ import com.sju18001.petmanagement.restapi.dto.PetProfileCreateResponseDto
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 class AddPetFragment : Fragment() {
 
@@ -62,6 +67,7 @@ class AddPetFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onStart() {
         super.onStart()
 
@@ -82,6 +88,8 @@ class AddPetFragment : Fragment() {
 
         // save the rest of the values when the confirm button is pressed
         binding.confirmButton.setOnClickListener {
+            lateinit var dateString: String
+
             petNameValue = binding.petNameInput.text.toString()
             petSpeciesValue = binding.petSpeciesInput.text.toString()
             petBreedValue = binding.petBreedInput.text.toString()
@@ -89,17 +97,26 @@ class AddPetFragment : Fragment() {
             if (!petBirthYearOnlyValue){
                 petBirthMonthValue = binding.petBirthInput.month
                 petBirthDateValue = binding.petBirthInput.dayOfMonth
+
+                if(petBirthMonthValue!! < 10) {
+                    dateString = "${petBirthYearValue}-0${petBirthMonthValue}-${petBirthDateValue}"
+                }
+                else {
+                    dateString = "${petBirthYearValue}-${petBirthMonthValue}-${petBirthDateValue}"
+                }
+
             }
             else {
                 petBirthMonthValue = null
                 petBirthDateValue = null
+                dateString = "${petBirthYearValue}-01-01"
             }
 
             var petProfileCreateRequestDto = PetProfileCreateRequestDto(
                 petNameValue.toString(),
                 petSpeciesValue.toString(),
                 petBreedValue.toString(),
-                petBirthYearValue.toString() + "-" + petBirthMonthValue?.toString() + "-" + petBirthDateValue?.toString(),
+                dateString,
                 petGenderValue,
                 "",
                 "",
