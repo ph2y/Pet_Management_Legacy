@@ -1,5 +1,7 @@
 package com.sju18001.petmanagement.restapi.dto
 
+import java.time.LocalDate
+
 // Create Dto
 data class PetProfileCreateRequestDto (
     val name: String,
