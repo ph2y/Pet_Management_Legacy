@@ -24,6 +24,8 @@ class FindPwFragment : Fragment() {
     private var _binding: FragmentFindPwBinding? = null
     private val binding get() = _binding!!
 
+    private var isViewDestroyed: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -58,6 +60,12 @@ class FindPwFragment : Fragment() {
             page = 2
         }
         outState.putInt("page", page)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        isViewDestroyed = true
     }
 
 
@@ -144,21 +152,25 @@ class FindPwFragment : Fragment() {
 
         ServerUtil.sendAuthCode(accountSendAuthCodeRequestDto,
             { response ->
-                // 버튼 로딩 상태 해제
-                setEmailInputButtonLoading(false)
+                if(!isViewDestroyed){
+                    // 버튼 로딩 상태 해제
+                    setEmailInputButtonLoading(false)
 
-                if(response.isSuccessful){
-                    // 코드 입력
-                    setViewForCodeInput()
-                }else{
-                    // 어떤 이메일이든 코드 전송은 하기 때문에, 보통 실패할 수 없다.
-                    Toast.makeText(context, "알 수 없는 에러가 발생하였습니다.", Toast.LENGTH_LONG).show()
+                    if(response.isSuccessful){
+                        // 코드 입력
+                        setViewForCodeInput()
+                    }else{
+                        // 어떤 이메일이든 코드 전송은 하기 때문에, 보통 실패할 수 없다.
+                        Toast.makeText(context, "알 수 없는 에러가 발생하였습니다.", Toast.LENGTH_LONG).show()
+                    }
                 }
             }, { t ->
-                // 버튼 로딩 상태 해제
-                setEmailInputButtonLoading(false)
+                if(!isViewDestroyed) {
+                    // 버튼 로딩 상태 해제
+                    setEmailInputButtonLoading(false)
 
-                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                }
             }
         )
     }
@@ -190,19 +202,23 @@ class FindPwFragment : Fragment() {
 
         ServerUtil.findPassword(accountFindPasswordRequestDto,
             { response ->
-                // 버튼 로딩 상태 해제
-                setCodeInputButtonLoading(false)
+                if(!isViewDestroyed) {
+                    // 버튼 로딩 상태 해제
+                    setCodeInputButtonLoading(false)
 
-                if(response.isSuccessful){
-                    setViewForResult()
-                }else{
-                    binding.codeMessage.visibility = View.VISIBLE
+                    if (response.isSuccessful) {
+                        setViewForResult()
+                    } else {
+                        binding.codeMessage.visibility = View.VISIBLE
+                    }
                 }
             }, { t ->
-                // 버튼 로딩 상태 해제
-                setCodeInputButtonLoading(false)
+                if(!isViewDestroyed) {
+                    // 버튼 로딩 상태 해제
+                    setCodeInputButtonLoading(false)
 
-                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                }
             }
         )
     }

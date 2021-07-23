@@ -28,6 +28,8 @@ class FindIdFragment : Fragment() {
     private val EMAIL = 0
     private val isValidInput: HashMap<Int, Boolean> = HashMap()
 
+    private var isViewDestroyed: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -86,6 +88,12 @@ class FindIdFragment : Fragment() {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        isViewDestroyed = true
+    }
+
 
     // * 유효성 검사
     private fun checkEmailValidation(s: CharSequence?){
@@ -130,23 +138,27 @@ class FindIdFragment : Fragment() {
                 call: Call<AccountFindUsernameResponseDto>,
                 response: Response<AccountFindUsernameResponseDto>
             ) {
-                // 버튼 로딩 상태 해제
-                setButtonLoading(false)
+                if(!isViewDestroyed){
+                    // 버튼 로딩 상태 해제
+                    setButtonLoading(false)
 
-                if(response.isSuccessful){
-                    response.body()?.let{
-                        setViewForResult(it.username)
+                    if(response.isSuccessful){
+                        response.body()?.let{
+                            setViewForResult(it.username)
+                        }
+                    }else{
+                        Toast.makeText(context, "해당 이메일을 찾을 수 없습니다.", Toast.LENGTH_LONG).show()
                     }
-                }else{
-                    Toast.makeText(context, "해당 이메일을 찾을 수 없습니다.", Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<AccountFindUsernameResponseDto>, t: Throwable) {
-                // 버튼 로딩 상태 해제
-                setButtonLoading(false)
+                if(!isViewDestroyed){
+                    // 버튼 로딩 상태 해제
+                    setButtonLoading(false)
 
-                Toast.makeText(context, "요청에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "요청에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                }
             }
         })
     }
