@@ -34,7 +34,7 @@ class SignUpUserInfoFragment : Fragment() {
     private val binding get() = _binding!!
 
     // variable for storing API call(for cancel)
-    private var codeRequestApiCall: Call<SendAuthCodeResponseDto>? = null
+    private var codeRequestApiCall: Call<AccountSendAuthCodeResponseDto>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -193,13 +193,13 @@ class SignUpUserInfoFragment : Fragment() {
     }
 
     private fun requestEmailCode(signInViewModel: SignInViewModel) {
-        val sendAuthCodeRequestDto = SendAuthCodeRequestDto(signInViewModel.signUpEmailEditText)
+        val sendAuthCodeRequestDto = AccountSendAuthCodeRequestDto(signInViewModel.signUpEmailEditText)
 
         codeRequestApiCall = RetrofitBuilder.getServerApi().sendAuthCodeRequest(sendAuthCodeRequestDto)
-        codeRequestApiCall!!.enqueue(object: Callback<SendAuthCodeResponseDto> {
+        codeRequestApiCall!!.enqueue(object: Callback<AccountSendAuthCodeResponseDto> {
             override fun onResponse(
-                call: Call<SendAuthCodeResponseDto>,
-                response: Response<SendAuthCodeResponseDto>
+                call: Call<AccountSendAuthCodeResponseDto>,
+                response: Response<AccountSendAuthCodeResponseDto>
             ) {
                 if(response.isSuccessful) {
                     // if success -> display a toast message
@@ -234,7 +234,7 @@ class SignUpUserInfoFragment : Fragment() {
                 codeRequestApiCall = null
             }
 
-            override fun onFailure(call: Call<SendAuthCodeResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<AccountSendAuthCodeResponseDto>, t: Throwable) {
                 // if the view was destroyed(API call canceled) -> do nothing
                 if(_binding == null) { return }
 

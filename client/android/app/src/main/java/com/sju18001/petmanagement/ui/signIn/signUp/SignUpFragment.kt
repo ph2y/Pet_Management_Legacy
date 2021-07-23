@@ -46,7 +46,7 @@ class SignUpFragment : Fragment() {
 
     // variables for storing API call(for cancel)
     private var signUpApiCall: Call<AccountSignUpResponseDto>? = null
-    private var verifyAuthCodeApiCall: Call<VerifyAuthCodeResponseDto>? = null
+    private var verifyAuthCodeApiCall: Call<AccountVerifyAuthCodeResponseDto>? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -290,17 +290,17 @@ class SignUpFragment : Fragment() {
 
     private fun validateEmailCode(signInViewModel: SignInViewModel) {
         // create verify code request DTO
-        val verifyAuthCodeRequestDto = VerifyAuthCodeRequestDto(signInViewModel.currentCodeRequestedEmail,
+        val verifyAuthCodeRequestDto = AccountVerifyAuthCodeRequestDto(signInViewModel.currentCodeRequestedEmail,
         signInViewModel.signUpEmailCodeEditText)
 
         // if not yet verified
         if(!signInViewModel.emailCodeValid) {
             // call API using Retrofit
             verifyAuthCodeApiCall = RetrofitBuilder.getServerApi().verifyAuthCodeRequest(verifyAuthCodeRequestDto)
-            verifyAuthCodeApiCall!!.enqueue(object: Callback<VerifyAuthCodeResponseDto> {
+            verifyAuthCodeApiCall!!.enqueue(object: Callback<AccountVerifyAuthCodeResponseDto> {
                 override fun onResponse(
-                    call: Call<VerifyAuthCodeResponseDto>,
-                    response: Response<VerifyAuthCodeResponseDto>
+                    call: Call<AccountVerifyAuthCodeResponseDto>,
+                    response: Response<AccountVerifyAuthCodeResponseDto>
                 ) {
                     if(response.isSuccessful) {
                         // set email code valid to true + lock email views
@@ -324,7 +324,7 @@ class SignUpFragment : Fragment() {
                     verifyAuthCodeApiCall = null
                 }
 
-                override fun onFailure(call: Call<VerifyAuthCodeResponseDto>, t: Throwable) {
+                override fun onFailure(call: Call<AccountVerifyAuthCodeResponseDto>, t: Throwable) {
                     // if the view was destroyed(API call canceled) -> set result to false + return
                     if(_binding == null) {
                         return

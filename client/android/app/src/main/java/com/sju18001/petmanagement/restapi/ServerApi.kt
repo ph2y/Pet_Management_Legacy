@@ -20,8 +20,8 @@ interface ServerApi {
     fun profileUpdateRequest(@Body accountProfileUpdateRequestDto: AccountProfileUpdateRequestDto): Call<AccountProfileUpdateResponseDto>
 
     @POST("api/account/sendauthcode")
-    fun sendAuthCodeRequest(@Body sendAuthCodeRequestDto: SendAuthCodeRequestDto): Call<SendAuthCodeResponseDto>
+    fun sendAuthCodeRequest(@Body accountSendAuthCodeRequestDto: AccountSendAuthCodeRequestDto): Call<AccountSendAuthCodeResponseDto>
 
     @POST("api/account/verifyauthcode")
-    fun verifyAuthCodeRequest(@Body verifyAuthCodeRequestDto: VerifyAuthCodeRequestDto): Call<VerifyAuthCodeResponseDto>
+    fun verifyAuthCodeRequest(@Body accountVerifyAuthCodeRequestDto: AccountVerifyAuthCodeRequestDto): Call<AccountVerifyAuthCodeResponseDto>
 }

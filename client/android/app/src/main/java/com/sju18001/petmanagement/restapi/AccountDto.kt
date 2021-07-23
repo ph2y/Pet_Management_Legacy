@@ -24,20 +24,20 @@ data class AccountSignUpResponseDto (
     val message: String
 )
 
-data class SendAuthCodeRequestDto(
+data class AccountSendAuthCodeRequestDto(
     val email: String
 )
 
-data class SendAuthCodeResponseDto(
+data class AccountSendAuthCodeResponseDto(
     val message: String
 )
 
-data class VerifyAuthCodeRequestDto(
+data class AccountVerifyAuthCodeRequestDto(
     val email: String,
     val code: String
 )
 
-data class VerifyAuthCodeResponseDto(
+data class AccountVerifyAuthCodeResponseDto(
     val message: String
 )
 
