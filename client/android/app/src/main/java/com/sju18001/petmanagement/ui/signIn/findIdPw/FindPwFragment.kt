@@ -24,6 +24,9 @@ class FindPwFragment : Fragment() {
     private var _binding: FragmentFindPwBinding? = null
     private val binding get() = _binding!!
 
+    // 정규식
+    private val patternUsername: Pattern = Pattern.compile("^[a-z0-9]{5,16}$")
+
     private var isViewDestroyed: Boolean = false
 
     override fun onCreateView(
@@ -40,14 +43,6 @@ class FindPwFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        // 뷰 초기화
-        checkEmailValidation(binding.emailEditText.text)
-        setMessageGone()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -81,11 +76,27 @@ class FindPwFragment : Fragment() {
         }
     }
 
+    private fun checkUsernameValidation(s: CharSequence?) {
+        if(patternUsername.matcher(s).matches()) {
+            binding.usernameMessage.visibility = View.GONE
+            binding.codeInputButton.isEnabled = true
+        }
+        else {
+            binding.usernameMessage.visibility = View.VISIBLE
+            binding.codeInputButton.isEnabled = false
+        }
+    }
+
     // 이메일 입력창
     private fun setViewForEmailInput(){
+        // 레이아웃 전환
         binding.emailInputLayout.visibility = View.VISIBLE
         binding.codeInputLayout.visibility = View.GONE
         binding.resultLayout.visibility = View.GONE
+        
+        // 정규식 검사
+        checkEmailValidation(binding.emailEditText.text)
+        setMessageGone()
 
         // 이메일 입력란 입력
         binding.emailEditText.addTextChangedListener(object: TextWatcher {
@@ -112,9 +123,23 @@ class FindPwFragment : Fragment() {
 
     // 코드 입력창
     private fun setViewForCodeInput() {
+        // 레이아웃 전환
         binding.emailInputLayout.visibility = View.GONE
         binding.codeInputLayout.visibility = View.VISIBLE
         binding.resultLayout.visibility = View.GONE
+
+        // 정규식 검사
+        checkUsernameValidation(binding.usernameEditText.text)
+        setMessageGone()
+
+        // 아이디 입력란 입력
+        binding.usernameEditText.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                checkUsernameValidation(s)
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
         // 버튼 클릭
         binding.codeInputButton.setOnClickListener{
@@ -132,6 +157,7 @@ class FindPwFragment : Fragment() {
 
     // 비밀번호 찾기 결과
     private fun setViewForResult(){
+        // 레이아웃 전환
         binding.emailInputLayout.visibility = View.GONE
         binding.codeInputLayout.visibility = View.GONE
         binding.resultLayout.visibility = View.VISIBLE
@@ -140,6 +166,7 @@ class FindPwFragment : Fragment() {
     // 에러 메시지 제거
     private fun setMessageGone() {
         binding.emailMessage.visibility = View.GONE
+        binding.usernameMessage.visibility = View.GONE
         binding.codeMessage.visibility = View.GONE
     }
 
