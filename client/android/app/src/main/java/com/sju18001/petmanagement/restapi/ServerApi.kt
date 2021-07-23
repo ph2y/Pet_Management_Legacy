@@ -24,4 +24,10 @@ interface ServerApi {
 
     @POST("api/account/verifyauthcode")
     fun verifyAuthCodeRequest(@Body accountVerifyAuthCodeRequestDto: AccountVerifyAuthCodeRequestDto): Call<AccountVerifyAuthCodeResponseDto>
+
+    @POST("api/account/findusername")
+    fun findUsernameRequest(@Body accountFindUsernameRequestDto: AccountFindUsernameRequestDto): Call<AccountFindUsernameResponseDto>
+
+    @POST("api/account/findpassword")
+    fun findPasswordRequest(@Body accountFindPasswordRequestDto: AccountFindPasswordRequestDto): Call<AccountFindPasswordResponseDto>
 }

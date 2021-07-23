@@ -65,3 +65,29 @@ data class AccountProfileUpdateRequestDto(
 data class AccountProfileUpdateResponseDto(
     val message: String
 )
+
+data class AccountFindUsernameRequestDto(
+    val email: String
+)
+
+data class AccountFindUsernameResponseDto(
+    val username: String?,
+    val message: String
+)
+
+data class AccountFindPasswordRequestDto(
+    val username: String,
+    val code: String
+)
+
+data class AccountFindPasswordResponseDto(
+    val message: String
+)
+
+data class AccountSendAuthCodeRequestDto(
+    val email: String
+)
+
+data class AccountSendAuthCodeResponseDto(
+    val message: String
+)

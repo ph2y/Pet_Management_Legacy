@@ -3,14 +3,22 @@ package com.sju18001.petmanagement.ui.signIn.findIdPw
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFindIdBinding
+import com.sju18001.petmanagement.restapi.AccountFindUsernameRequestDto
+import com.sju18001.petmanagement.restapi.AccountFindUsernameResponseDto
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class FindIdFragment : Fragment() {
     private var _binding: FragmentFindIdBinding? = null
@@ -20,12 +28,19 @@ class FindIdFragment : Fragment() {
     private val EMAIL = 0
     private val isValidInput: HashMap<Int, Boolean> = HashMap()
 
+    private var isViewDestroyed: Boolean = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentFindIdBinding.inflate(inflater, container, false)
+
+        if(savedInstanceState?.getBoolean("is_result_shown") == true){
+            val username = savedInstanceState.getString("result_username")
+            setViewForResult(username)
+        }
 
         return binding.root
     }
@@ -42,6 +57,8 @@ class FindIdFragment : Fragment() {
         // 아이디 찾기 버튼 클릭
         binding.findIdButton.setOnClickListener{
             activity?.let { Util().hideKeyboard(it) }
+
+            findUsername(binding.emailEditText.text.toString())
         }
 
         // 레이아웃 클릭
@@ -58,6 +75,23 @@ class FindIdFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        if(binding.resultLayout.visibility == View.VISIBLE){
+            outState.putBoolean("is_result_shown", true)
+            outState.putString("result_username", binding.resultUsername.text.toString())
+        }else{
+            outState.putBoolean("is_result_shown", false)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+
+        isViewDestroyed = true
     }
 
 
@@ -88,5 +122,67 @@ class FindIdFragment : Fragment() {
 
     private fun setMessageGone() {
         binding.emailMessage.visibility = View.GONE
+    }
+
+
+    // 아이디 찾기
+    private fun findUsername(email: String){
+        val reqBody = AccountFindUsernameRequestDto(email)
+        val call = RetrofitBuilder.getServerApi().findUsernameRequest(reqBody)
+        
+        // 버튼 로딩 상태
+        setButtonLoading(true)
+
+        call.enqueue(object: Callback<AccountFindUsernameResponseDto> {
+            override fun onResponse(
+                call: Call<AccountFindUsernameResponseDto>,
+                response: Response<AccountFindUsernameResponseDto>
+            ) {
+                if(!isViewDestroyed){
+                    // 버튼 로딩 상태 해제
+                    setButtonLoading(false)
+
+                    if(response.isSuccessful){
+                        response.body()?.let{
+                            setViewForResult(it.username)
+                        }
+                    }else{
+                        Toast.makeText(context, "해당 이메일을 찾을 수 없습니다.", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<AccountFindUsernameResponseDto>, t: Throwable) {
+                if(!isViewDestroyed){
+                    // 버튼 로딩 상태 해제
+                    setButtonLoading(false)
+
+                    Toast.makeText(context, "요청에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        })
+    }
+
+    private fun setButtonLoading(isLoading: Boolean){
+        if(isLoading){
+            binding.findIdButton.apply {
+                text = ""
+                isEnabled = false
+            }
+            binding.findIdProgressBar.visibility = View.VISIBLE
+        }else{
+            binding.findIdButton.apply {
+                text = context?.getText(R.string.find_username)
+                isEnabled = true
+            }
+            binding.findIdProgressBar.visibility = View.GONE
+        }
+    }
+
+    // 아이디 찾기 결과
+    private fun setViewForResult(username: String?){
+        binding.resultUsername.text = username
+        binding.findIdLayout.visibility = View.GONE
+        binding.resultLayout.visibility = View.VISIBLE
     }
 }
