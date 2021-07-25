@@ -123,7 +123,7 @@ class AddPetFragment : Fragment() {
                 petImageValue.toString()
             )
 
-            petProfileCreateRequest = RetrofitBuilder.serverApi.petProfileCreateRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}", petProfileCreateRequestDto)
+            petProfileCreateRequest = RetrofitBuilder.getServerApi().petProfileCreateRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}", petProfileCreateRequestDto)
             petProfileCreateRequest!!.enqueue(object: Callback<PetProfileCreateResponseDto> {
                 override fun onResponse(
                     call: Call<PetProfileCreateResponseDto>,

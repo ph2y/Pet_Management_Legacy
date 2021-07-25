@@ -10,6 +10,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sju18001.petmanagement.databinding.FragmentWelcomePageBinding
 import com.sju18001.petmanagement.restapi.AccountProfileUpdateRequestDto
+import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.ui.welcomePage.WelcomePageProfileFragment
 
 class WelcomePageFragment : Fragment() {
@@ -41,9 +42,7 @@ class WelcomePageFragment : Fragment() {
         
         // 스킵버튼
         binding.skipButton.setOnClickListener{
-            val token = requireActivity().intent.getStringExtra("token")
             val intent = Intent(context, MainActivity::class.java)
-            intent.putExtra("token", token)
 
             startActivity(intent)
             activity?.finish()

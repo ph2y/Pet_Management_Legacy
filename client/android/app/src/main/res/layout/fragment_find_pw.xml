@@ -6,7 +6,6 @@
     >
     <ScrollView
         android:layout_width="match_parent"
-<<<<<<< HEAD
         android:layout_height="wrap_content">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -148,83 +147,6 @@
                 </RelativeLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-=======
-        android:layout_height="match_parent"
-        >
-        <EditText
-            android:id="@+id/id_edit_text"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:inputType="textEmailAddress"
-            android:hint="ID를 입력하세요."
-            android:backgroundTint="@color/border_line"
-            android:theme="@style/onSelectedThemeCarrot"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-        <TextView
-            android:id="@+id/id_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/id_message"
-            android:textSize="12dp"
-            android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/id_edit_text"
-            app:layout_constraintStart_toStartOf="@id/id_edit_text"
-            />
-        <EditText
-            android:id="@+id/email_edit_text"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:hint="이메일을 입력하세요."
-            android:backgroundTint="@color/border_line"
-            android:theme="@style/onSelectedThemeCarrot"
-            app:layout_constraintTop_toBottomOf="@id/id_message"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-        <TextView
-            android:id="@+id/email_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/email_message"
-            android:textSize="12dp"
-            android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/email_edit_text"
-            app:layout_constraintStart_toStartOf="@id/email_edit_text"
-            />
-        <EditText
-            android:id="@+id/code_edit_text"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:inputType="textEmailAddress"
-            android:hint="인증코드 입력"
-            android:textSize="24dp"
-            android:backgroundTint="@color/border_line"
-            android:theme="@style/onSelectedThemeCarrot"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/email_message"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-        <Button
-            android:id="@+id/find_pw_button"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="비밀번호 찾기"
-            android:enabled="false"
-            app:layout_constraintTop_toBottomOf="@id/code_edit_text"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
->>>>>>> 0a617f3 (Add setViewForInputCode())
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/result_layout"

@@ -291,7 +291,7 @@ class SignUpFragment : Fragment() {
     private fun validateEmailCode(signInViewModel: SignInViewModel) {
         // create verify code request DTO
         val verifyAuthCodeRequestDto = AccountVerifyAuthCodeRequestDto(signInViewModel.currentCodeRequestedEmail,
-        signInViewModel.signUpEmailCodeEditText)
+            signInViewModel.signUpEmailCodeEditText)
 
         // if not yet verified
         if(!signInViewModel.emailCodeValid) {

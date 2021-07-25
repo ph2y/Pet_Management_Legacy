@@ -13,10 +13,7 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.sju18001.petmanagement.controller.ServerUtil
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
-import com.sju18001.petmanagement.restapi.AccountProfileLookupResponseDto
-import com.sju18001.petmanagement.restapi.AccountProfileUpdateRequestDto
-import com.sju18001.petmanagement.restapi.AccountSignInRequestDto
-import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.*
 import com.sju18001.petmanagement.ui.community.CommunityFragment
 import com.sju18001.petmanagement.ui.map.MapFragment
 import com.sju18001.petmanagement.ui.myPage.MyPageFragment
@@ -45,9 +42,14 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activeFragment: Fragment
     private var activeFragmentIndex: Int = 0
 
+    // session manager for user token
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // get session manager
+        sessionManager = SessionManager(context = applicationContext)
 
         // For welcome page
         checkIsFirstLogin()
@@ -185,7 +187,7 @@ class MainActivity : AppCompatActivity() {
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         // API 호출
-        val token:String? = intent.getStringExtra("token")
+        val token:String? = sessionManager.fetchUserToken()
         if(token == null){
             Log.e("MainActivity", "No token!")
             return
@@ -211,7 +213,6 @@ class MainActivity : AppCompatActivity() {
                         
                         // 웰컴 페이지 호출
                         val intent = Intent(baseContext, WelcomePageActivity::class.java)
-                        intent.putExtra("token", token)
 
                         startActivity(intent)
                         finish()

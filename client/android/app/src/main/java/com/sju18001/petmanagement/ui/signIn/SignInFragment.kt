@@ -31,14 +31,14 @@ class SignInFragment : Fragment() {
     private var _binding: FragmentSignInBinding? = null
     private val binding get() = _binding!!
 
+    // session manager for user token
+    private lateinit var sessionManager: SessionManager
+
     // variable for storing API call(for cancel)
     private var signInApiCall: Call<AccountSignInResponseDto>? = null
 
     // Snackbar variable(for dismiss)
     private var snackBar: Snackbar? = null
-
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

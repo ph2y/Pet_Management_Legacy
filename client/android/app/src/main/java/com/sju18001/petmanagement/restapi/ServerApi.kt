@@ -1,10 +1,7 @@
 package com.sju18001.petmanagement.restapi
 
 import com.sju18001.petmanagement.restapi.dto.*
-<<<<<<< HEAD
 import okhttp3.RequestBody
-=======
->>>>>>> f73ec52 (client api implemented)
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Header

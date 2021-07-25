@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-<<<<<<< HEAD
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -65,49 +64,6 @@
                         />
                 </RelativeLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
-=======
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/find_id_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-        <EditText
-            android:id="@+id/email_edit_text"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:inputType="textEmailAddress"
-            android:hint="이메일을 입력하세요."
-            android:backgroundTint="@color/border_line"
-            android:theme="@style/onSelectedThemeCarrot"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            />
-        <TextView
-            android:id="@+id/email_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/email_message"
-            android:textSize="12dp"
-            android:textColor="@android:color/holo_red_dark"
-            android:visibility="gone"
-            app:layout_constraintTop_toBottomOf="@id/email_edit_text"
-            app:layout_constraintStart_toStartOf="@id/email_edit_text"
-            />
-        <Button
-            android:id="@+id/find_id_button"
-            android:layout_width="280dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="아이디 찾기"
-            android:enabled="false"
-            app:layout_constraintTop_toBottomOf="@id/email_message"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
-    </androidx.constraintlayout.widget.ConstraintLayout>
->>>>>>> 19587a5 (Implement find id fragment)
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/result_layout"

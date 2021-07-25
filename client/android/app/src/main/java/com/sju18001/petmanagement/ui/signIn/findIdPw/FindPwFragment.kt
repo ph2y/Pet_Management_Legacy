@@ -36,15 +36,10 @@ class FindPwFragment : Fragment() {
     ): View? {
         _binding = FragmentFindPwBinding.inflate(inflater, container, false)
 
-<<<<<<< HEAD
         when(savedInstanceState?.getInt("page")){
             1 -> setViewForCodeInput()
             2 -> setViewForResult()
             else -> setViewForEmailInput()
-=======
-        if(savedInstanceState?.getBoolean("is_input_code_shown") == true){
-            setViewForInputCode()
->>>>>>> 167a893 (Fix error occurs for typed edit text when fragment restart in find id pw fragment)
         }
 
         return binding.root
@@ -103,7 +98,6 @@ class FindPwFragment : Fragment() {
         checkEmailValidation(binding.emailEditText.text)
         setMessageGone()
 
-<<<<<<< HEAD
         // 이메일 입력란 입력
         binding.emailEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -115,18 +109,6 @@ class FindPwFragment : Fragment() {
 
         // 버튼 클릭
         binding.emailInputButton.setOnClickListener{
-=======
-        // initialize valid input map
-        for(i in 0 until INPUT_LENGTH) { isValidInput[i] = false }
-
-        checkIdValidation(binding.idEditText.text)
-        checkEmailValidation(binding.emailEditText.text)
-        checkIsValid()
-        setMessageGone()
-
-        // 비밀번호 찾기 버튼 클릭
-        binding.findPwButton.setOnClickListener{
->>>>>>> 167a893 (Fix error occurs for typed edit text when fragment restart in find id pw fragment)
             activity?.let { Util().hideKeyboard(it) }
 
             // 인증코드 전송
@@ -153,18 +135,12 @@ class FindPwFragment : Fragment() {
         // 아이디 입력란 입력
         binding.usernameEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-<<<<<<< HEAD
                 checkUsernameValidation(s)
-=======
-                checkIdValidation(s)
-                checkIsValid()
->>>>>>> 167a893 (Fix error occurs for typed edit text when fragment restart in find id pw fragment)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
 
-<<<<<<< HEAD
         // 버튼 클릭
         binding.codeInputButton.setOnClickListener{
             activity?.let { Util().hideKeyboard(it) }
@@ -222,18 +198,10 @@ class FindPwFragment : Fragment() {
 
                     Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
                 }
-=======
-        // 이메일 입력란 입력
-        binding.emailEditText.addTextChangedListener(object: TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                checkEmailValidation(s)
-                checkIsValid()
->>>>>>> 167a893 (Fix error occurs for typed edit text when fragment restart in find id pw fragment)
             }
         )
     }
 
-<<<<<<< HEAD
     // 이메일 입력 버튼 프로그래스바
     private fun setEmailInputButtonLoading(isLoading: Boolean){
         if(isLoading){
@@ -246,43 +214,6 @@ class FindPwFragment : Fragment() {
             binding.emailInputButton.apply {
                 text = context?.getText(R.string.find_password_email_input_button)
                 isEnabled = true
-=======
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putBoolean("is_input_code_shown", binding.codeEditText.visibility == View.VISIBLE)
-    }
-
-
-    // * 유효성 검사
-    private fun checkIdValidation(s: CharSequence?) {
-        if(patternId.matcher(s).matches()) {
-            isValidInput[ID] = true
-            binding.idMessage.visibility = View.GONE
-        }
-        else {
-            isValidInput[ID] = false
-            binding.idMessage.visibility = View.VISIBLE
-        }
-    }
-
-    private fun checkEmailValidation(s: CharSequence?) {
-        if(Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
-            isValidInput[EMAIL] = true
-            binding.emailMessage.visibility = View.GONE
-        }
-        else {
-            isValidInput[EMAIL] = false
-            binding.emailMessage.visibility = View.VISIBLE
-        }
-    }
-
-    private fun checkIsValid() {
-        for(i in 0 until INPUT_LENGTH) {
-            if(!isValidInput[i]!!) {
-                // if not valid -> disable button + return
-                binding.findPwButton.isEnabled = false
-                return
->>>>>>> 167a893 (Fix error occurs for typed edit text when fragment restart in find id pw fragment)
             }
             binding.emailInputProgressBar.visibility = View.GONE
         }
@@ -319,7 +250,6 @@ class FindPwFragment : Fragment() {
         )
     }
 
-<<<<<<< HEAD
     // 코드 입력 버튼 프로그래스바
     private fun setCodeInputButtonLoading(isLoading: Boolean){
         if(isLoading){
@@ -332,24 +262,8 @@ class FindPwFragment : Fragment() {
             binding.codeInputButton.apply {
                 text = context?.getText(R.string.confirm)
                 isEnabled = true
-=======
-
-    private fun setViewForInputCode() {
-        binding.codeEditText.visibility = View.VISIBLE
-        binding.idEditText.visibility = View.GONE
-        binding.emailEditText.visibility = View.GONE
-        binding.findPwButton.apply{
-            text = "확인"
-            setOnClickListener{
-                // 코드 확인
->>>>>>> 167a893 (Fix error occurs for typed edit text when fragment restart in find id pw fragment)
             }
             binding.codeInputProgressBar.visibility = View.GONE
         }
-    }
-
-    private fun setMessageGone() {
-        binding.idMessage.visibility = View.GONE
-        binding.emailMessage.visibility = View.GONE
     }
 }
