@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPet
+package com.sju18001.petmanagement.ui.myPet.petManager
 
 import android.content.Intent
 import android.net.Uri
