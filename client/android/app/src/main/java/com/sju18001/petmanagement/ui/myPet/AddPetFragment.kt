@@ -119,7 +119,6 @@ class AddPetFragment : Fragment() {
                 dateString,
                 petGenderValue,
                 "",
-                "",
                 petImageValue.toString()
             )
 

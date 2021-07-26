@@ -13,33 +13,6 @@ public class PetProfileCreateRequestDto {
     private String breed;
     private String birth;
     private Boolean gender;
-    private String feed_interval;
-    private String memo;
+    private String message;
     private String photo_url;
-
-    @Builder
-    public PetProfileCreateRequestDto(String name, String species, String breed, String birth, Boolean gender, String feed_interval, String memo, String photo_url) {
-        this.name = name;
-        this.species = species;
-        this.breed = breed;
-        this.birth = birth;
-        this.gender = gender;
-        this.feed_interval = feed_interval;
-        this.memo = memo;
-        this.photo_url = photo_url;
-    }
-
-    public Pet toEntity(String username) {
-        return Pet.builder()
-                .username(username)
-                .name(name)
-                .species(species)
-                .breed(breed)
-                .birth(LocalDate.parse(birth))
-                .gender(gender)
-                .feed_interval(feed_interval)
-                .memo(memo)
-                .photo_url(photo_url)
-                .build();
-    }
 }

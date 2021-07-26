@@ -12,7 +12,6 @@ public class PetProfileUpdateRequestDto {
     private String breed;
     private LocalDate birth;
     private Boolean gender;
-    private String feed_interval;
-    private String memo;
+    private String message;
     private String photo_url;
 }

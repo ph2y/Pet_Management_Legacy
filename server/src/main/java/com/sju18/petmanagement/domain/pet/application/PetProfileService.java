@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +31,19 @@ public class PetProfileService {
 
         // 받은 사용자 정보와 새 입력 정보로 새 반려동물 정보 생성
         try {
-            petRepository.save(requestDto.toEntity(username));
+            Pet pet = Pet.builder()
+                    .username(username)
+                    .name(requestDto.getName())
+                    .species(requestDto.getSpecies())
+                    .breed(requestDto.getBreed())
+                    .birth(LocalDate.parse(requestDto.getBirth()))
+                    .gender(requestDto.getGender())
+                    .message(requestDto.getMessage())
+                    .photo_url(requestDto.getPhoto_url())
+                    .build();
+
+            petRepository.save(pet); // save(id가 없는 transient 상태의 객체) -> EntityManger.persist() => save
+
             return new PetProfileCreateResponseDto("Pet Profile Create Success");
         } catch (Exception e) {
             return new PetProfileCreateResponseDto(e.getMessage());
@@ -56,7 +69,16 @@ public class PetProfileService {
         // 받은 사용자 정보와 입력 정보로 반려동물 정보 업데이트
         try {
             Pet pet = petRepository.findByUsernameAndId(username,requestDto.getId()).orElseThrow(() -> new IllegalArgumentException("Pet entity does not exists"));
-            pet.update(requestDto);
+
+            pet.setName(requestDto.getName());
+            pet.setSpecies(requestDto.getSpecies());
+            pet.setBreed(requestDto.getBreed());
+            pet.setBirth(requestDto.getBirth());
+            pet.setGender(requestDto.getGender());
+            pet.setMessage(requestDto.getMessage());
+            pet.setPhoto_url(requestDto.getPhoto_url());
+
+            petRepository.save(pet); // save(id가 있는 detached 상태의 객체) -> EntityManger.merge() => update
 
             return new PetProfileUpdateResponseDto("Pet profile update success");
         } catch (Exception e) {
