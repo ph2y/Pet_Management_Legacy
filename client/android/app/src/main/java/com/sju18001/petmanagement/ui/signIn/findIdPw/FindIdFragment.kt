@@ -13,9 +13,9 @@ import android.widget.Toast
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFindIdBinding
-import com.sju18001.petmanagement.restapi.AccountFindUsernameRequestDto
-import com.sju18001.petmanagement.restapi.AccountFindUsernameResponseDto
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.dto.AccountFindUsernameRequestDto
+import com.sju18001.petmanagement.restapi.dto.AccountFindUsernameResponseDto
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

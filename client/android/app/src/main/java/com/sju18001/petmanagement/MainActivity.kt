@@ -13,7 +13,10 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.sju18001.petmanagement.controller.ServerUtil
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
-import com.sju18001.petmanagement.restapi.*
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.AccountProfileLookupResponseDto
+import com.sju18001.petmanagement.restapi.dto.AccountProfileUpdateRequestDto
 import com.sju18001.petmanagement.ui.community.CommunityFragment
 import com.sju18001.petmanagement.ui.map.MapFragment
 import com.sju18001.petmanagement.ui.myPage.MyPageFragment

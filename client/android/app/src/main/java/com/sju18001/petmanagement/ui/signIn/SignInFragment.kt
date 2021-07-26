@@ -8,7 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -17,7 +17,10 @@ import com.sju18001.petmanagement.MainActivity
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignInBinding
-import com.sju18001.petmanagement.restapi.*
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.AccountSignInRequestDto
+import com.sju18001.petmanagement.restapi.dto.AccountSignInResponseDto
 import com.sju18001.petmanagement.ui.signIn.signUp.SignUpFragment
 import com.sju18001.petmanagement.ui.signIn.findIdPw.FindIdPwFragment
 import okhttp3.OkHttpClient

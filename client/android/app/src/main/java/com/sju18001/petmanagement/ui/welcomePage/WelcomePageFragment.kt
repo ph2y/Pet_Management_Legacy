@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sju18001.petmanagement.databinding.FragmentWelcomePageBinding
-import com.sju18001.petmanagement.restapi.AccountProfileUpdateRequestDto
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.ui.welcomePage.WelcomePageProfileFragment
 

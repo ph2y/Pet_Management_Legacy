@@ -14,10 +14,8 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.ServerUtil
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFindPwBinding
-import com.sju18001.petmanagement.restapi.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.sju18001.petmanagement.restapi.dto.AccountFindPasswordRequestDto
+import com.sju18001.petmanagement.restapi.dto.AccountSendAuthCodeRequestDto
 import java.util.regex.Pattern
 
 class FindPwFragment : Fragment() {

@@ -17,7 +17,11 @@ import com.google.gson.Gson
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignUpBinding
-import com.sju18001.petmanagement.restapi.*
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.dto.AccountSignUpRequestDto
+import com.sju18001.petmanagement.restapi.dto.AccountSignUpResponseDto
+import com.sju18001.petmanagement.restapi.dto.AccountVerifyAuthCodeRequestDto
+import com.sju18001.petmanagement.restapi.dto.AccountVerifyAuthCodeResponseDto
 import com.sju18001.petmanagement.ui.signIn.SignInViewModel
 import org.json.JSONObject
 import okhttp3.OkHttpClient

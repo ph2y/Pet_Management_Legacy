@@ -1,7 +1,8 @@
 package com.sju18001.petmanagement.controller
 
 import android.util.Log
-import com.sju18001.petmanagement.restapi.*
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.dto.*
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback

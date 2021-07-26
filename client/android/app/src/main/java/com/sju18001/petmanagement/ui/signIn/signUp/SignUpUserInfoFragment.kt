@@ -15,7 +15,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentSignUpUserInfoBinding
-import com.sju18001.petmanagement.restapi.*
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.dto.AccountSendAuthCodeRequestDto
+import com.sju18001.petmanagement.restapi.dto.AccountSendAuthCodeResponseDto
 import com.sju18001.petmanagement.ui.signIn.SignInViewModel
 import org.json.JSONObject
 import retrofit2.Call
