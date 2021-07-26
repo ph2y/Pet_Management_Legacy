@@ -50,15 +50,15 @@ class FindIdPwFragment: Fragment() {
             activity?.supportFragmentManager?.popBackStack()
         }
     }
-}
 
-class FindIdPwCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
-    override fun getItemCount(): Int = 2
+    class FindIdPwCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
+        override fun getItemCount(): Int = 2
 
-    override fun createFragment(position: Int): Fragment {
-        return when(position) {
-            0 -> FindIdFragment()
-            else -> FindPwFragment()
+        override fun createFragment(position: Int): Fragment {
+            return when(position) {
+                0 -> FindIdFragment()
+                else -> FindPwFragment()
+            }
         }
     }
 }

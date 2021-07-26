@@ -47,12 +47,12 @@ class WelcomePageFragment : Fragment() {
             activity?.finish()
         }
     }
-}
 
-class WelcomePageCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
-    override fun getItemCount(): Int = 3
+    class WelcomePageCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
+        override fun getItemCount(): Int = 3
 
-    override fun createFragment(position: Int): Fragment {
-        return WelcomePageProfileFragment()
+        override fun createFragment(position: Int): Fragment {
+            return WelcomePageProfileFragment()
+        }
     }
 }
