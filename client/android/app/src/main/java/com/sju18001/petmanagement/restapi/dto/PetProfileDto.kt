@@ -6,11 +6,10 @@ import java.time.LocalDate
 data class PetProfileCreateRequestDto (
     val name: String,
     val species: String,
-    val breed: String?,
-    val birth: String?,
+    val breed: String,
+    val birth: String,
     val gender: Boolean?,
-    val feed_interval: String?,
-    val memo: String?,
+    val message: String?,
     val photo_url: String?
     )
 
@@ -23,11 +22,10 @@ data class PetProfileFetchResponseDto (
     val id: Long,
     val name: String,
     val species: String,
-    val breed: String?,
-    val birth: String?,
+    val breed: String,
+    val birth: String,
     val gender: Boolean?,
-    val feed_interval: String?,
-    val memo: String?,
+    val message: String?,
     val photo_url: String?
     )
 
@@ -36,11 +34,10 @@ data class PetProfileUpdateRequestDto (
     val id: Long,
     val name: String,
     val species: String,
-    val breed: String?,
-    val birth: String?,
+    val breed: String,
+    val birth: String,
     val gender: Boolean?,
-    val feed_interval: String?,
-    val memo: String?,
+    val message: String?,
     val photo_url: String?
     )
 
