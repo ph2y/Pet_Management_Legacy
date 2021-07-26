@@ -7,7 +7,6 @@ import com.sju18001.petmanagement.ui.myPet.petManager.AddPetFragment
 
 class MyPetActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_pet)
 
