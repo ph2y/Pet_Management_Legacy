@@ -18,8 +18,6 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.PetProfileFetchResponseDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
-import com.sju18001.petmanagement.ui.myPet.MyPetListAdapter
-import com.sju18001.petmanagement.ui.myPet.MyPetListItem
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,7 +31,7 @@ class PetManagerFragment : Fragment() {
     // variables for view binding
     private var _binding: FragmentPetManagerBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: MyPetListAdapter
+    private lateinit var adapter: PetListAdapter
 
     // variable for storing API call(for cancel)
     private var petProfileFetchApiCall: Call<List<PetProfileFetchResponseDto>>? = null
@@ -52,7 +50,7 @@ class PetManagerFragment : Fragment() {
         super.onResume()
 
         // call API using Retrofit
-        val petList: ArrayList<MyPetListItem> = ArrayList()
+        val petList: ArrayList<PetListItem> = ArrayList()
         petProfileFetchApiCall = RetrofitBuilder.getServerApi().petProfileFetchRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}")
         petProfileFetchApiCall!!.enqueue(object: Callback<List<PetProfileFetchResponseDto>> {
             @RequiresApi(Build.VERSION_CODES.O)
@@ -61,7 +59,7 @@ class PetManagerFragment : Fragment() {
                 response: Response<List<PetProfileFetchResponseDto>>
             ) {
                 response.body()?.map {
-                    val item = MyPetListItem()
+                    val item = PetListItem()
                     item.setValues(
                         it.id,
                         it.name,
@@ -102,7 +100,7 @@ class PetManagerFragment : Fragment() {
             startActivity(myPetActivityIntent)
         }
 
-        adapter = MyPetListAdapter()
+        adapter = PetListAdapter()
         binding.myPetListRecyclerView.adapter = adapter
         binding.myPetListRecyclerView.layoutManager = LinearLayoutManager(activity)
 
