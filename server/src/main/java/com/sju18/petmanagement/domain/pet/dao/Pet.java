@@ -24,14 +24,19 @@ public class Pet {
     @Column(name = "pet_id")
     private Long id;
 
-    @Column
+    @Column(unique = true, nullable = false)
     private String username;
+    @Column(nullable = false)
     private String name;
+
+    @Column
     private String species;
     private String breed;
     private LocalDate birth;
     private Boolean gender;
     private String message;
+
+    @Column(unique = true, nullable = false)
     private String photo_url;
 
     @Builder

@@ -1,7 +1,6 @@
 package com.sju18.petmanagement.domain.pet.dto;
 
 import lombok.Data;
-import java.time.LocalDate;
 
 @Data
 public class PetProfileUpdateRequestDto {
