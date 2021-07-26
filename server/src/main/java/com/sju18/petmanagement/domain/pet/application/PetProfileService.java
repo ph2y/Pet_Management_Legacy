@@ -73,7 +73,7 @@ public class PetProfileService {
             pet.setName(requestDto.getName());
             pet.setSpecies(requestDto.getSpecies());
             pet.setBreed(requestDto.getBreed());
-            pet.setBirth(requestDto.getBirth());
+            pet.setBirth(LocalDate.parse(requestDto.getBirth()));
             pet.setGender(requestDto.getGender());
             pet.setMessage(requestDto.getMessage());
             pet.setPhoto_url(requestDto.getPhoto_url());

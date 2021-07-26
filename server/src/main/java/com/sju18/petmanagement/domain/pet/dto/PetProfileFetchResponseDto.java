@@ -1,8 +1,6 @@
 package com.sju18.petmanagement.domain.pet.dto;
 
 import com.sju18.petmanagement.domain.pet.dao.Pet;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -13,7 +11,7 @@ public class PetProfileFetchResponseDto {
     private String name;
     private String species;
     private String breed;
-    private LocalDate birth;
+    private String birth;
     private Boolean gender;
     private String message;
     private String photo_url;
@@ -23,7 +21,7 @@ public class PetProfileFetchResponseDto {
         this.name = pet.getName();
         this.species = pet.getSpecies();
         this.breed = pet.getBreed();
-        this.birth = pet.getBirth();
+        this.birth = pet.getBirth().toString();
         this.gender = pet.getGender();
         this.message = pet.getMessage();
         this.photo_url = pet.getPhoto_url();
