@@ -54,9 +54,6 @@ class MainActivity : AppCompatActivity() {
         // get session manager
         sessionManager = SessionManager(context = applicationContext)
 
-        // For welcome page
-        checkIsFirstLogin()
-
         // for fragment reset(after activity destruction)
         fragmentManager.findFragmentByTag("myPet")?.let {
             fragmentManager.beginTransaction().remove(it).commitNow()
@@ -182,50 +179,5 @@ class MainActivity : AppCompatActivity() {
         } catch(e: Exception) {
             Log.e("Not found", e.toString())
         }
-    }
-
-
-    // 첫 로그인인지 체킹
-    private fun checkIsFirstLogin(){
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-
-        // API 호출
-        val token:String? = sessionManager.fetchUserToken()
-        if(token == null){
-            Log.e("MainActivity", "No token!")
-            return
-        }
-
-        val call = RetrofitBuilder.getServerApiWithToken(token).profileLookupRequest(body)
-        call.enqueue(object: Callback<AccountProfileLookupResponseDto> {
-            override fun onResponse(
-                call: Call<AccountProfileLookupResponseDto>,
-                response: Response<AccountProfileLookupResponseDto>
-            ) {
-                if(response.isSuccessful){
-                    // 첫 로그인일 시
-                    if(response.body()!!.photo.isNullOrEmpty()){
-                        // photo -> default, nickname -> username
-                        ServerUtil.updateProfile(
-                            token,
-                            AccountProfileUpdateRequestDto(
-                                response.body()!!.username, response.body()!!.email, response.body()!!.username, response.body()!!.phone,
-                                "default", response.body()!!.marketing, response.body()!!.userMessage
-                            )
-                        )
-                        
-                        // 웰컴 페이지 호출
-                        val intent = Intent(baseContext, WelcomePageActivity::class.java)
-
-                        startActivity(intent)
-                        finish()
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<AccountProfileLookupResponseDto>, t: Throwable) {
-                Log.e("error", t.message.toString())
-            }
-        })
     }
 }
