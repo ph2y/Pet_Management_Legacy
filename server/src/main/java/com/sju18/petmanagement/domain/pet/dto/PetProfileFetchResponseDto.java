@@ -3,8 +3,6 @@ package com.sju18.petmanagement.domain.pet.dto;
 import com.sju18.petmanagement.domain.pet.dao.Pet;
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
 public class PetProfileFetchResponseDto {
     private Long id;
