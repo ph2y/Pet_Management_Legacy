@@ -1,8 +1,8 @@
-package com.sju18001.petmanagement.ui.myPet
+package com.sju18001.petmanagement.ui.myPet.petManager
 
 import java.time.LocalDate
 
-class MyPetListItem {
+class PetListItem {
 
     // item elements
     private var mPetId: Long? = null
