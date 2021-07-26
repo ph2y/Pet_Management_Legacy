@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPet
+package com.sju18001.petmanagement.ui.myPet.petManager
 
 import android.content.Intent
 import android.net.Uri
@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -20,9 +19,6 @@ import com.sju18001.petmanagement.restapi.dto.PetProfileCreateResponseDto
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class AddPetFragment : Fragment() {
 
