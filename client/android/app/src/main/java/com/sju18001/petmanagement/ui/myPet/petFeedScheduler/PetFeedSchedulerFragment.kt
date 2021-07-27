@@ -34,7 +34,7 @@ class PetFeedSchedulerFragment : Fragment() {
 
         // 추가 버튼
         binding.addPetFeedScheduleFab.setOnClickListener{
-            val newItem = PetFeedScheduleListItem(LocalTime.of(9, 30), arrayListOf(1, 2), "밥 주기", true)
+            val newItem = PetFeedScheduleListItem(LocalTime.of(9, 0), arrayListOf(1, 2), "밥 주기", true)
             adapter.addItem(newItem)
             adapter.notifyDataSetChanged()
         }
