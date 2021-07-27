@@ -28,7 +28,19 @@ class EditPetFeedScheduleFragment : Fragment() {
             activity?.finish()
         }
 
+        // 취소 버튼
+        binding.cancelButton.setOnClickListener {
+            activity?.finish()
+        }
+
+        // 확인 버튼
+        binding.confirmButton.setOnClickListener {
+            // TODO: 현재 값들을 PetFeedSchedulerFragment.adapter 전달 & addItem(~)
+            activity?.finish()
+        }
+
         // 리싸이클러뷰
+        // TODO: 펫 리스트(name, id) 로드
         val dataSet = arrayListOf(PetNameListItem("냠냠미"), PetNameListItem("몀몀미"))
 
         adapter = PetNameListAdapter(dataSet)
