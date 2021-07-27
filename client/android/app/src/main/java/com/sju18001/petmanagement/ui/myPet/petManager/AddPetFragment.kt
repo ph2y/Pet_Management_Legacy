@@ -148,9 +148,9 @@ class AddPetFragment : Fragment() {
             // for birth value
             val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){
                 if(binding.petBirthInput.month < 10) {
-                    "${binding.petBirthInput.year}-0${binding.petBirthInput.month}-${binding.petBirthInput.dayOfMonth}"
+                    "${binding.petBirthInput.year}-0${binding.petBirthInput.month + 1}-${binding.petBirthInput.dayOfMonth}"
                 } else {
-                    "${binding.petBirthInput.year}-${binding.petBirthInput.month}-${binding.petBirthInput.dayOfMonth}"
+                    "${binding.petBirthInput.year}-${binding.petBirthInput.month + 1}-${binding.petBirthInput.dayOfMonth}"
                 }
             } else {
                 "${binding.petBirthInput.year}-01-01"
