@@ -31,11 +31,7 @@ class PetFeedScheduleListAdapter(private val dataSet: ArrayList<PetFeedScheduleL
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.noonTextView.text = if(dataSet[position].feedTime!!.hour <= 12) "오전" else "오후"
-        holder.feedTimeTextView.text = dataSet[position].feedTime!!.hour.toString() + ":" + dataSet[position].feedTime!!.minute.toString()
-        holder.isTurnedOnToggleButton.isChecked = dataSet[position].isTurnedOn!!
-        holder.petListTextView.text = dataSet[position].petList.toString()
-        holder.memoTextView.text = dataSet[position].memo
+        updateDataSetToViewHolder(holder, dataSet[position])
     }
 
     override fun getItemCount(): Int = dataSet.size
@@ -43,7 +39,7 @@ class PetFeedScheduleListAdapter(private val dataSet: ArrayList<PetFeedScheduleL
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateDataSetToViewHolder(holder: ViewHolder, data: PetFeedScheduleListItem){
         holder.noonTextView.text = if(data.feedTime!!.hour <= 12) "오전" else "오후"
-        holder.feedTimeTextView.text = data.feedTime!!.hour.toString() + ":" + data.feedTime!!.minute.toString()
+        holder.feedTimeTextView.text = data.feedTime!!.hour.toString().padStart(2, '0') + ":" + data.feedTime!!.minute.toString().padStart(2, '0')
         holder.isTurnedOnToggleButton.isChecked = data.isTurnedOn!!
         holder.petListTextView.text = data.petList.toString()
         holder.memoTextView.text = data.memo
