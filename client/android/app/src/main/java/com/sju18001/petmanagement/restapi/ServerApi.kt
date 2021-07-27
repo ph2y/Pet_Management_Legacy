@@ -46,4 +46,17 @@ interface ServerApi {
 
     @POST("api/pet/profile/delete")
     fun petProfileDeleteRequest(@Header("Authorization") token: String, @Body petProfileDeleteRequestDto: PetProfileDeleteRequestDto): Call<PetProfileDeleteResponseDto>
+
+    // Pet Feed Schedule CRUD API
+    @POST("api/pet/feed/create")
+    fun petFeedScheduleCreateRequest(@Header("Authorization") token: String, @Body petFeedScheduleCreateRequestDto: PetFeedScheduleCreateRequestDto): Call<PetFeedScheduleCreateResponseDto>
+
+    @POST("api/pet/feed/fetch")
+    fun petFeedScheduleFetchRequest(@Header("Authorization") token: String): Call<List<PetFeedScheduleFetchResponseDto>>
+
+    @POST("api/pet/feed/update")
+    fun petFeedScheduleUpdateRequest(@Header("Authorization") token: String, @Body petFeedScheduleUpdateRequestDto: PetFeedScheduleUpdateRequestDto): Call<PetFeedScheduleUpdateResponseDto>
+
+    @POST("api/pet/feed/delete")
+    fun petFeedScheduleDeleteRequest(@Header("Authorization") token: String, @Body petFeedScheduleDeleteRequestDto: PetFeedScheduleDeleteRequestDto): Call<PetFeedScheduleDeleteResponseDto>
 }
