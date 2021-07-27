@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -24,14 +24,16 @@ public class PetFeedSchedule {
     private Long pet_id;
 
     @Column
-    private LocalDateTime feed_time;
+    private LocalTime feed_time;
     private String memo;
+    private Boolean is_turned_on;
 
     @Builder
-    public PetFeedSchedule(String username, Long pet_id, LocalDateTime feed_time, String memo) {
+    public PetFeedSchedule(String username, Long pet_id, LocalTime feed_time, String memo, Boolean is_turned_on) {
         this.username = username;
         this.pet_id = pet_id;
         this.feed_time = feed_time;
         this.memo = memo;
+        this.is_turned_on = is_turned_on;
     }
 }

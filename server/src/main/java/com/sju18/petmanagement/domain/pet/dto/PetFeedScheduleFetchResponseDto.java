@@ -5,13 +5,17 @@ import lombok.Data;
 
 @Data
 public class PetFeedScheduleFetchResponseDto {
+    private Long id;
     private Long pet_id;
     private String feed_time;
     private String memo;
+    private Boolean is_turned_on;
 
     public PetFeedScheduleFetchResponseDto(PetFeedSchedule petFeedSchedule) {
+        this.id = petFeedSchedule.getId();
         this.pet_id = petFeedSchedule.getPet_id();
         this.feed_time = petFeedSchedule.getFeed_time().toString();
         this.memo = petFeedSchedule.getMemo();
+        this.is_turned_on = petFeedSchedule.getIs_turned_on();
     }
 }

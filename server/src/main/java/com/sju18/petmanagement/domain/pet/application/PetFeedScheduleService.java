@@ -8,7 +8,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.time.LocalDateTime;
+
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,8 +34,9 @@ public class PetFeedScheduleService {
             PetFeedSchedule petFeedSchedule = PetFeedSchedule.builder()
                     .username(username)
                     .pet_id(requestDto.getPet_id())
-                    .feed_time(LocalDateTime.parse(requestDto.getFeed_time()))
+                    .feed_time(LocalTime.parse(requestDto.getFeed_time()))
                     .memo(requestDto.getMemo())
+                    .is_turned_on(false)
                     .build();
 
             petFeedScheduleRepository.save(petFeedSchedule); // save(id가 없는 transient 상태의 객체) -> EntityManger.persist() => save
@@ -67,8 +69,9 @@ public class PetFeedScheduleService {
 
             petFeedSchedule.setUsername(username);
             petFeedSchedule.setPet_id(requestDto.getPet_id());
-            petFeedSchedule.setFeed_time(LocalDateTime.parse(requestDto.getFeed_time()));
+            petFeedSchedule.setFeed_time(LocalTime.parse(requestDto.getFeed_time()));
             petFeedSchedule.setMemo(requestDto.getMemo());
+            petFeedSchedule.setIs_turned_on(requestDto.getIs_turned_on());
 
             petFeedScheduleRepository.save(petFeedSchedule); // save(id가 있는 detached 상태의 객체) -> EntityManger.merge() => update
 
