@@ -48,6 +48,32 @@ class PetManagerFragment : Fragment() {
         sessionManager = context?.let { SessionManager(it) }!!
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        myPetViewModel =
+            ViewModelProvider(this).get(MyPetViewModel::class.java)
+
+        // view binding
+        _binding = FragmentPetManagerBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        // add pet fab -> start activity and set fragment to add pet
+        binding.addPetFab.setOnClickListener {
+            val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
+            myPetActivityIntent.putExtra("fragmentType", "add_pet")
+            startActivity(myPetActivityIntent)
+        }
+
+        adapter = MyPetListAdapter()
+        binding.myPetListRecyclerView.adapter = adapter
+        binding.myPetListRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+        return root
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -81,32 +107,6 @@ class PetManagerFragment : Fragment() {
                 TODO("Not yet implemented")
             }
         })
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        myPetViewModel =
-            ViewModelProvider(this).get(MyPetViewModel::class.java)
-
-        // view binding
-        _binding = FragmentPetManagerBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        // add pet fab -> start activity and set fragment to add pet
-        binding.addPetFab.setOnClickListener {
-            val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
-            myPetActivityIntent.putExtra("fragmentType", "add_pet")
-            startActivity(myPetActivityIntent)
-        }
-
-        adapter = MyPetListAdapter()
-        binding.myPetListRecyclerView.adapter = adapter
-        binding.myPetListRecyclerView.layoutManager = LinearLayoutManager(activity)
-
-        return root
     }
 
     override fun onDestroyView() {

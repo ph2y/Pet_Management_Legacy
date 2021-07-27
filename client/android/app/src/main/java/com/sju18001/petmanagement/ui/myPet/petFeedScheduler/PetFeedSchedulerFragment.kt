@@ -6,10 +6,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.sju18001.petmanagement.databinding.FragmentPetFeedSchedulerBinding
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleFetchResponseDto
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class PetFeedSchedulerFragment : Fragment() {
     private var _binding: FragmentPetFeedSchedulerBinding? = null
     private val binding get() = _binding!!
+
+    // variable for storing API call(for cancel)
+    private lateinit var petFeedScheduleFetchApiCall: Call<List<PetFeedScheduleFetchResponseDto>>
+
+    // session manager for user token
+    private lateinit var sessionManager: SessionManager
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -17,5 +29,31 @@ class PetFeedSchedulerFragment : Fragment() {
     ): View? {
         _binding = FragmentPetFeedSchedulerBinding.inflate(inflater, container, false)
         return binding.root
+
+        // get session manager
+        sessionManager = context?.let { SessionManager(it) }!!
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // call API using Retrofit
+        petFeedScheduleFetchApiCall = RetrofitBuilder.getServerApi().petFeedScheduleFetchRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}")
+        petFeedScheduleFetchApiCall!!.enqueue(object: Callback<List<PetFeedScheduleFetchResponseDto>> {
+            override fun onResponse(
+                call: Call<List<PetFeedScheduleFetchResponseDto>>,
+                response: Response<List<PetFeedScheduleFetchResponseDto>>
+            ) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onFailure(
+                call: Call<List<PetFeedScheduleFetchResponseDto>>,
+                t: Throwable
+            ) {
+                TODO("Not yet implemented")
+            }
+
+        })
     }
 }
