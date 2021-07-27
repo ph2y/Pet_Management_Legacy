@@ -22,7 +22,7 @@
     <string name="pet_breed_hint">예) 푸들</string>
     <string name="pet_birth_label">생년월일:</string>
     <string name="pet_birth_only_year_label">출생 연도만 알고 있어요!</string>
-    <string name="confirm_add_pet">펫 추가</string>
+    <string name="confirm_add_pet">확인</string>
 
     <string name="sign_in_button">로그인</string>
     <string name="divider">|</string>
