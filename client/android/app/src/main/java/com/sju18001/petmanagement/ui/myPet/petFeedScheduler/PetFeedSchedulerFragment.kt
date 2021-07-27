@@ -26,6 +26,7 @@ class PetFeedSchedulerFragment : Fragment() {
         _binding = FragmentPetFeedSchedulerBinding.inflate(inflater, container, false)
 
         // 리싸이클러뷰
+        // TODO: 스케줄 로드 & 시간에 따른 결합
         val dataSet = arrayListOf<PetFeedScheduleListItem>()
 
         adapter = PetFeedScheduleListAdapter(dataSet)

@@ -32,6 +32,11 @@ class PetFeedScheduleListAdapter(private val dataSet: ArrayList<PetFeedScheduleL
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         updateDataSetToViewHolder(holder, dataSet[position])
+
+        // 스위치
+        holder.isTurnedOnSwitch.setOnClickListener {
+            dataSet[position].isTurnedOn = !dataSet[position].isTurnedOn
+        }
     }
 
     override fun getItemCount(): Int = dataSet.size
