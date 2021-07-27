@@ -21,6 +21,8 @@ dependencies {
 	implementation 'javax.mail:mail:1.4.7'
 	implementation 'org.projectlombok:lombok'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	implementation 'commons-io:commons-io:2.11.0'
+	implementation 'org.json:json:20180813'
 	runtime 'io.jsonwebtoken:jjwt-impl:0.11.2'
 	runtime 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 	runtimeOnly 'mysql:mysql-connector-java'
