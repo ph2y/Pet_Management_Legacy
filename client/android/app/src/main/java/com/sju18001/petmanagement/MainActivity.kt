@@ -1,34 +1,21 @@
 package com.sju18001.petmanagement
 
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.sju18001.petmanagement.controller.ServerUtil
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
-import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.AccountProfileLookupResponseDto
-import com.sju18001.petmanagement.restapi.dto.AccountProfileUpdateRequestDto
 import com.sju18001.petmanagement.ui.community.CommunityFragment
 import com.sju18001.petmanagement.ui.map.MapFragment
 import com.sju18001.petmanagement.ui.myPage.MyPageFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetFragment
-import com.sju18001.petmanagement.ui.welcomePage.WelcomePageActivity
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import okhttp3.*
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
 import java.security.MessageDigest
 import java.util.*
 
