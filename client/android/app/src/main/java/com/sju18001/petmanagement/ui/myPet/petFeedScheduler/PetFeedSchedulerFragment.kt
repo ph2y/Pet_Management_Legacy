@@ -11,7 +11,6 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sju18001.petmanagement.databinding.FragmentPetFeedSchedulerBinding
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
-import java.time.LocalTime
 
 class PetFeedSchedulerFragment : Fragment() {
     private var _binding: FragmentPetFeedSchedulerBinding? = null
