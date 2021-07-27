@@ -8,4 +8,5 @@ public class PetFeedScheduleUpdateRequestDto {
     private Long pet_id;
     private String feed_time;
     private String memo;
+    private Boolean is_turned_on;
 }
