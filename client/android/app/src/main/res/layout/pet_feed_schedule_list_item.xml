@@ -19,6 +19,7 @@
             android:layout_height="wrap_content"
             android:text="오전"
             android:textColor="@color/black"
+            android:layout_marginBottom="4dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintBottom_toBottomOf="@id/feed_time_text_view"
             />
@@ -43,10 +44,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         >
-        <ToggleButton
-            android:id="@+id/is_turned_on_toggle_button"
+        <Switch
+            android:id="@+id/is_turned_on_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:track="@drawable/switch_track"
+            android:thumb="@drawable/switch_thumb"
+            android:switchMinWidth="0dp"
+            android:textOff=""
+            android:textOn=""
+            android:thumbTextPadding="15dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -56,8 +63,8 @@
             android:id="@+id/pet_memo_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
-            app:layout_constraintEnd_toStartOf="@id/is_turned_on_toggle_button"
+            android:layout_marginRight="12dp"
+            app:layout_constraintEnd_toStartOf="@id/is_turned_on_switch"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             >
@@ -65,7 +72,6 @@
                 android:id="@+id/pet_list_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
                 android:text="고먐미, 댕댕이"
                 android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -77,7 +83,6 @@
                 android:id="@+id/memo_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
                 android:text="캣츠비, 노브랜드 사료"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/pet_list_text_view"
