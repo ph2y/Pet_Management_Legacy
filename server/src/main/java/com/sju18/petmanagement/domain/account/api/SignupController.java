@@ -2,6 +2,7 @@ package com.sju18.petmanagement.domain.account.api;
 
 import com.sju18.petmanagement.domain.account.dto.SignupRequestDto;
 import com.sju18.petmanagement.domain.account.dto.SignupResponseDto;
+import com.sju18.petmanagement.global.util.media.FileService;
 import lombok.RequiredArgsConstructor;
 
 import com.sju18.petmanagement.domain.account.dao.Account;
@@ -22,6 +23,7 @@ public class SignupController {
 
     final AccountRepository accountRepository;
     final PasswordEncoder encode;
+    final FileService fileService;
 
     @PostMapping("/api/account/signup")
     public ResponseEntity<?> registerAccount(@RequestBody SignupRequestDto signupRequestDto) {
@@ -48,9 +50,10 @@ public class SignupController {
             return ResponseEntity.badRequest().body(new SignupResponseDto("Phone number already exists"));
         }
 
-        // DB에 계정정보 저장
+        // DB에 계정정보 저장 및 프로필 파일 저장소 생성
         try {
             accountRepository.save(newAccount);
+            fileService.createAccountFileStorage(newAccount.getId());
             return ResponseEntity.ok(new SignupResponseDto("Account register success"));
         } catch (Exception e) {
             logger.warn(e.getMessage());
