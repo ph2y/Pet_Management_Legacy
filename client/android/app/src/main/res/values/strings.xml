@@ -11,6 +11,7 @@
 
     <string name="add_pet_title">펫 추가</string>
     <string name="edit_pet_title">펫 정보 수정</string>
+    <string name="pet_message">상태메시지:</string>
     <string name="pet_name_label">이름:</string>
     <string name="pet_name_hint">예) 코코</string>
     <string name="pet_gender_label">성별:</string>
@@ -23,6 +24,7 @@
     <string name="pet_birth_label">생년월일:</string>
     <string name="pet_birth_only_year_label">출생 연도만 알고 있어요!</string>
     <string name="confirm_add_pet">확인</string>
+    <string name="add_pet_successful">펫을 추가했어요!</string>
 
     <string name="sign_in_button">로그인</string>
     <string name="divider">|</string>
