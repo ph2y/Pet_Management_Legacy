@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.sju18001.petmanagement.databinding.FragmentPetFeedSchedulerBinding
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
+import java.time.LocalTime
 
 class PetFeedSchedulerFragment : Fragment() {
     private var _binding: FragmentPetFeedSchedulerBinding? = null
@@ -37,7 +38,7 @@ class PetFeedSchedulerFragment : Fragment() {
 
         // 리싸이클러뷰
         // TODO: 스케줄 로드 & 시간에 따른 결합
-        val dataSet = arrayListOf<PetFeedScheduleListItem>()
+        val dataSet = arrayListOf<PetFeedScheduleListItem>(PetFeedScheduleListItem(LocalTime.of(9, 30), arrayListOf(1,2,3), "노브랜드 사료 주기", false))
 
         adapter = PetFeedScheduleListAdapter(dataSet)
         binding.petFeedScheduleListRecyclerView.adapter = adapter
