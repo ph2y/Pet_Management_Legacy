@@ -2,7 +2,7 @@ package com.sju18.petmanagement.domain.account.api;
 
 import com.sju18.petmanagement.domain.account.dto.SignupRequestDto;
 import com.sju18.petmanagement.domain.account.dto.SignupResponseDto;
-import com.sju18.petmanagement.global.util.media.FileService;
+import com.sju18.petmanagement.global.util.storage.FileService;
 import lombok.RequiredArgsConstructor;
 
 import com.sju18.petmanagement.domain.account.dao.Account;

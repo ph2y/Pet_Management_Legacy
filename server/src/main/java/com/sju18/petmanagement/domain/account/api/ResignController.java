@@ -3,7 +3,7 @@ package com.sju18.petmanagement.domain.account.api;
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.account.dto.ResignRequestDto;
 import com.sju18.petmanagement.domain.account.dto.ResignResponseDto;
-import com.sju18.petmanagement.global.util.media.FileService;
+import com.sju18.petmanagement.global.util.storage.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -33,6 +33,7 @@ public class ResignController {
             );
             accountRepository.deleteByUsername(currentUserName);
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.badRequest().body(new ResignResponseDto(e.getMessage()));
         }
 

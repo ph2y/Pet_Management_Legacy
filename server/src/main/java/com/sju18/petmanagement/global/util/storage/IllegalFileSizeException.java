@@ -1,4 +1,4 @@
-package com.sju18.petmanagement.global.util.media;
+package com.sju18.petmanagement.global.util.storage;
 
 public class IllegalFileSizeException extends Exception {
     public IllegalFileSizeException(String filename) {

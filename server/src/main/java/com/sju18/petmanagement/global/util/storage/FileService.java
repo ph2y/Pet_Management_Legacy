@@ -1,4 +1,4 @@
-package com.sju18.petmanagement.global.util.media;
+package com.sju18.petmanagement.global.util.storage;
 
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.pet.dao.PetRepository;
@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -57,7 +56,6 @@ public class FileService {
     public void deleteAccountFileStorage(Long accountId) throws Exception {
         Path accountProfileStorage = getAccountFileStoragePath(accountId);
         FileUtils.deleteDirectory(accountProfileStorage.toFile());
-        Files.delete(accountProfileStorage);
     }
 
     // 반려동물 폴더 생성
@@ -69,7 +67,6 @@ public class FileService {
     public void deletePetFileStorage(Long petId) throws Exception {
         Path petProfileStorage = getPetFileStoragePath(petId);
         FileUtils.deleteDirectory(petProfileStorage.toFile());
-        Files.delete(petProfileStorage);
     }
 
     // 게시물 데이터 폴더 생성
@@ -82,13 +79,12 @@ public class FileService {
     public void deletePostFileStorage(Long postId) throws Exception {
         Path postAttachedFileStorage = getPostFileStoragePath(postId);
         FileUtils.deleteDirectory(postAttachedFileStorage.toFile());
-        Files.delete(postAttachedFileStorage);
     }
 
     // 사용자 프로필 사진 저장
     public String saveAccountProfilePhoto(Long accountId, MultipartFile uploadedFile) throws Exception {
         // 업로드 파일 저장 파일명
-        String fileName = "profile_photo" + FilenameUtils.getExtension(uploadedFile.getOriginalFilename());
+        String fileName = "profile_photo." + FilenameUtils.getExtension(uploadedFile.getOriginalFilename());
         // 업로드 파일 저장 경로
         Path savePath = getAccountFileStoragePath(accountId);
         // 업로드 가능한 확장자
@@ -110,7 +106,7 @@ public class FileService {
     // 애완동물 프로필 사진 저장
     public String savePetProfilePhoto(Long petId, MultipartFile uploadedFile) throws Exception {
         // 업로드 파일 저장 파일명
-        String fileName = "pet_profile_photo" + FilenameUtils.getExtension(uploadedFile.getOriginalFilename());
+        String fileName = "pet_profile_photo." + FilenameUtils.getExtension(uploadedFile.getOriginalFilename());
         // 업로드 파일 저장 경로
         Path savePath = getPetFileStoragePath(petId);
         // 업로드 가능한 확장자
