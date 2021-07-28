@@ -147,11 +147,8 @@ class AddPetFragment : Fragment() {
 
             // for birth value
             val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){
-                if(binding.petBirthInput.month < 10) {
-                    "${binding.petBirthInput.year}-0${binding.petBirthInput.month + 1}-${binding.petBirthInput.dayOfMonth}"
-                } else {
-                    "${binding.petBirthInput.year}-${binding.petBirthInput.month + 1}-${binding.petBirthInput.dayOfMonth}"
-                }
+                "${binding.petBirthInput.year}-${(binding.petBirthInput.month + 1).toString().padStart(2, '0')}" +
+                        "-${binding.petBirthInput.dayOfMonth}"
             } else {
                 "${binding.petBirthInput.year}-01-01"
             }
@@ -170,7 +167,8 @@ class AddPetFragment : Fragment() {
                 null
             )
 
-            petProfileCreateApiCall = RetrofitBuilder.getServerApi().petProfileCreateRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}", petProfileCreateRequestDto)
+            petProfileCreateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                .petProfileCreateRequest(petProfileCreateRequestDto)
             petProfileCreateApiCall!!.enqueue(object: Callback<PetProfileCreateResponseDto> {
                 override fun onResponse(
                     call: Call<PetProfileCreateResponseDto>,
