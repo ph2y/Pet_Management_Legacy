@@ -65,10 +65,10 @@ class PetFeedSchedulerFragment : Fragment() {
         sessionManager = context?.let { SessionManager(it) }!!
     }
 
-    override fun onResume() {
-        super.onResume()
+    override fun onStart() {
+        super.onStart()
 
-        // 리싸이클러뷰
+        // 리싸이클러뷰 초기화
         setAdapterByPetFeedScheduleFetch()
     }
 
@@ -101,6 +101,7 @@ class PetFeedSchedulerFragment : Fragment() {
                     )
                 }
 
+                dataSet.sortBy{ it.feedTime }
                 adapter = PetFeedScheduleListAdapter(dataSet, myPetViewModel.petNameForId)
                 binding.petFeedScheduleListRecyclerView.adapter = adapter
                 binding.petFeedScheduleListRecyclerView.layoutManager = LinearLayoutManager(activity)
