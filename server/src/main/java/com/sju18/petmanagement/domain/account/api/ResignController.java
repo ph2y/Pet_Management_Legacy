@@ -33,7 +33,6 @@ public class ResignController {
             );
             accountRepository.deleteByUsername(currentUserName);
         } catch (Exception e) {
-            e.printStackTrace();
             return ResponseEntity.badRequest().body(new ResignResponseDto(e.getMessage()));
         }
 
