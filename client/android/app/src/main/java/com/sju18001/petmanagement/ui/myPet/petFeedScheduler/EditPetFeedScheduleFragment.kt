@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TimePicker
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +18,8 @@ import com.sju18001.petmanagement.databinding.FragmentAddEditPetBinding
 import com.sju18001.petmanagement.databinding.FragmentEditPetFeedScheduleBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleCreateRequestDto
+import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleCreateResponseDto
 import com.sju18001.petmanagement.restapi.dto.PetProfileFetchResponseDto
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import com.sju18001.petmanagement.ui.myPet.petManager.PetListItem
@@ -42,7 +46,10 @@ class EditPetFeedScheduleFragment : Fragment() {
     // 리싸이클러뷰
     private lateinit var adapter: PetNameListAdapter
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    // API Calls
+    private var petFeedScheduleCreateApiCall: Call<PetFeedScheduleCreateResponseDto>? = null
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -73,8 +80,29 @@ class EditPetFeedScheduleFragment : Fragment() {
 
         // 확인 버튼
         binding.confirmButton.setOnClickListener {
-            // TODO: 현재 값들로 Create API call
-            activity?.finish()
+            val petFeedScheduleCreateRequestDto = PetFeedScheduleCreateRequestDto(
+                1, LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(),"Default"
+            )
+
+            petFeedScheduleCreateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                .petFeedScheduleCreateRequest(petFeedScheduleCreateRequestDto)
+            Log.e("ASD", petFeedScheduleCreateRequestDto.toString())
+            petFeedScheduleCreateApiCall!!.enqueue(object: Callback<PetFeedScheduleCreateResponseDto> {
+                override fun onResponse(
+                    call: Call<PetFeedScheduleCreateResponseDto>,
+                    response: Response<PetFeedScheduleCreateResponseDto>
+                ) {
+                    if(response.isSuccessful){
+                        activity?.finish()
+                    }else{
+                        Log.e("ASD", response.body().toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<PetFeedScheduleCreateResponseDto>, t: Throwable) {
+                    Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
+                }
+            })
         }
 
         // 리싸이클러뷰
@@ -85,6 +113,13 @@ class EditPetFeedScheduleFragment : Fragment() {
         addPetNameList()
 
         return binding.root
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        petFeedScheduleCreateApiCall?.cancel()
+        petProfileFetchApiCall?.cancel()
     }
 
     @RequiresApi(Build.VERSION_CODES.M)

@@ -54,7 +54,7 @@ interface ServerApi {
     @POST("api/pet/feed/delete")
     fun petFeedScheduleDeleteRequest(@Body petFeedScheduleDeleteRequestDto: PetFeedScheduleDeleteRequestDto): Call<PetFeedScheduleDeleteResponseDto>
 
-    @POST("api/pet/feed/delete")
+    @POST("api/pet/feed/fetch")
     fun petFeedScheduleFetchRequest(): Call<PetFeedScheduleFetchResponseDto>
 
     @POST("api/pet/feed/update")

@@ -3,7 +3,7 @@ import java.time.LocalTime
 
 data class PetFeedScheduleCreateRequestDto(
     val pet_id: Long,
-    val feed_time: LocalTime,
+    val feed_time: String,
     val memo: String
 )
 
