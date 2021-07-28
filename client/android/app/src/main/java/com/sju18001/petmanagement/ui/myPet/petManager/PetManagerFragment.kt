@@ -51,7 +51,7 @@ class PetManagerFragment : Fragment() {
 
         // call API using Retrofit
         val petList: ArrayList<PetListItem> = ArrayList()
-        petProfileFetchApiCall = RetrofitBuilder.getServerApi().petProfileFetchRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}")
+        petProfileFetchApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).petProfileFetchRequest()
         petProfileFetchApiCall!!.enqueue(object: Callback<List<PetProfileFetchResponseDto>> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
