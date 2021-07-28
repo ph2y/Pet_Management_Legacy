@@ -1,2 +1,11 @@
-package com.sju18.petmanagement.domain.account.dto;public class UploadProfilePhotoResponseDto {
+package com.sju18.petmanagement.domain.account.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class UploadProfilePhotoResponseDto {
+    private String fileUrl;
+    private String message;
 }
