@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPet.petFeedScheduler
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,6 +10,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sju18001.petmanagement.databinding.FragmentPetFeedSchedulerBinding
+import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import java.time.LocalTime
 
 class PetFeedSchedulerFragment : Fragment() {
@@ -35,9 +37,9 @@ class PetFeedSchedulerFragment : Fragment() {
 
         // 추가 버튼
         binding.addPetFeedScheduleFab.setOnClickListener{
-            val newItem = PetFeedScheduleListItem(LocalTime.of(9, 0), arrayListOf(1, 2), "밥 주기", true)
-            adapter.addItem(newItem)
-            adapter.notifyDataSetChanged()
+            val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
+            myPetActivityIntent.putExtra("fragmentType", "edit_pet_feed_schedule")
+            startActivity(myPetActivityIntent)
         }
 
         return binding.root

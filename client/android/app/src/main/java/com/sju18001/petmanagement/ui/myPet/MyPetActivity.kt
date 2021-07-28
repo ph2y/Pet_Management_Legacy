@@ -6,7 +6,7 @@ import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.ActivityMyPetBinding
-import com.sju18001.petmanagement.databinding.ActivitySignInBinding
+import com.sju18001.petmanagement.ui.myPet.petFeedScheduler.EditPetFeedScheduleFragment
 import com.sju18001.petmanagement.ui.myPet.petManager.AddPetFragment
 import com.sju18001.petmanagement.ui.signIn.SignInViewModel
 
@@ -34,13 +34,14 @@ class MyPetActivity : AppCompatActivity() {
         val fragmentType = intent.getStringExtra("fragmentType")
 
         if(supportFragmentManager.findFragmentById(R.id.my_pet_activity_fragment_container) == null) {
-            if(fragmentType == "add_pet") {
-                val fragment = AddPetFragment()
-                supportFragmentManager
-                    .beginTransaction()
-                    .add(R.id.my_pet_activity_fragment_container, fragment)
-                    .commit()
+            val fragment = when(fragmentType){
+                "add_pet" -> AddPetFragment()
+                else -> EditPetFeedScheduleFragment()
             }
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.my_pet_activity_fragment_container, fragment)
+                .commit()
         }
     }
 }
