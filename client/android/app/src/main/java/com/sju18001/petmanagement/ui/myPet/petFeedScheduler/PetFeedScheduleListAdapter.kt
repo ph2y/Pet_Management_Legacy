@@ -10,7 +10,7 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 
-class PetFeedScheduleListAdapter(private val dataSet: ArrayList<PetFeedScheduleListItem>) : RecyclerView.Adapter<PetFeedScheduleListAdapter.ViewHolder>(){
+class PetFeedScheduleListAdapter(private val dataSet: ArrayList<PetFeedScheduleListItem>, private val petNameForId: HashMap<Long, String>) : RecyclerView.Adapter<PetFeedScheduleListAdapter.ViewHolder>(){
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         val noonTextView: TextView = view.findViewById(R.id.noon_text_view)
         val feedTimeTextView: TextView = view.findViewById(R.id.feed_time_text_view)
@@ -46,8 +46,22 @@ class PetFeedScheduleListAdapter(private val dataSet: ArrayList<PetFeedScheduleL
         holder.noonTextView.text = if(data.feedTime!!.hour <= 12) "오전" else "오후"
         holder.feedTimeTextView.text = data.feedTime!!.hour.toString().padStart(2, '0') + ":" + data.feedTime!!.minute.toString().padStart(2, '0')
         holder.isTurnedOnSwitch.isChecked = data.isTurnedOn!!
-        holder.petListTextView.text = data.petList.toString() // TODO: 펫 id에 해당하는 펫 name 가져오기
+        holder.petListTextView.text = setPetListString(data.petList)
         holder.memoTextView.text = data.memo
+    }
+
+    private fun setPetListString(petList: ArrayList<Long>): String{
+        var result = ""
+        val size = petList.size
+
+        for(i:Int in 0 until size-1){
+            val id = petList[i]
+            result += if(petNameForId[id] != null) petNameForId[id] else id.toString()
+            result += ", "
+        }
+        result += if(petNameForId[petList.last()] != null) petNameForId[petList.last()] else petList.last().toString()
+
+        return result
     }
 
     fun addItem(item: PetFeedScheduleListItem){
