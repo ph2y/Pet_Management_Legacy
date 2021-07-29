@@ -33,7 +33,7 @@ public class PetFeedScheduleService {
         try {
             PetFeedSchedule petFeedSchedule = PetFeedSchedule.builder()
                     .username(username)
-                    .pet_id(requestDto.getPet_id())
+                    .pet_id_list(requestDto.getPet_id_list())
                     .feed_time(LocalTime.parse(requestDto.getFeed_time()))
                     .memo(requestDto.getMemo())
                     .is_turned_on(false)
@@ -68,7 +68,7 @@ public class PetFeedScheduleService {
             PetFeedSchedule petFeedSchedule = petFeedScheduleRepository.findByUsernameAndId(username,requestDto.getId()).orElseThrow(() -> new IllegalArgumentException("PetFeedSchedule entity does not exists"));
 
             petFeedSchedule.setUsername(username);
-            petFeedSchedule.setPet_id(requestDto.getPet_id());
+            petFeedSchedule.setPet_id_list(requestDto.getPet_id_list());
             petFeedSchedule.setFeed_time(LocalTime.parse(requestDto.getFeed_time()));
             petFeedSchedule.setMemo(requestDto.getMemo());
             petFeedSchedule.setIs_turned_on(requestDto.getIs_turned_on());
