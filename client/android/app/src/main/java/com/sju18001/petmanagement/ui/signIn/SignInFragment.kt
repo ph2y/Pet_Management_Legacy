@@ -15,20 +15,15 @@ import androidx.fragment.app.setFragmentResultListener
 import com.google.android.material.snackbar.Snackbar
 import com.sju18001.petmanagement.MainActivity
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.controller.ServerUtil
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentSignInBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.AccountProfileLookupResponseDto
-import com.sju18001.petmanagement.restapi.dto.AccountProfileUpdateRequestDto
-import com.sju18001.petmanagement.restapi.dto.AccountSignInRequestDto
-import com.sju18001.petmanagement.restapi.dto.AccountSignInResponseDto
+import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.signIn.signUp.SignUpFragment
 import com.sju18001.petmanagement.ui.signIn.findIdPw.FindIdPwFragment
 import com.sju18001.petmanagement.ui.welcomePage.WelcomePageActivity
 import okhttp3.MediaType
-import okhttp3.OkHttpClient
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -197,13 +192,23 @@ class SignInFragment : Fragment() {
                     // 첫 로그인일 시
                     if(response.body()!!.photo.isNullOrEmpty()){
                         // photo -> default, nickname -> username
-                        ServerUtil.updateProfile(
-                            token,
-                            AccountProfileUpdateRequestDto(
-                                response.body()!!.username, response.body()!!.email, response.body()!!.username, response.body()!!.phone,
-                                "default", response.body()!!.marketing, response.body()!!.userMessage
-                            )
+                        val accountProfileUpdateRequestDto = AccountProfileUpdateRequestDto(
+                            response.body()!!.username, response.body()!!.email, response.body()!!.username, response.body()!!.phone,
+                            "default", response.body()!!.marketing, response.body()!!.userMessage
                         )
+
+                        val call = RetrofitBuilder.getServerApiWithToken(token).profileUpdateRequest(accountProfileUpdateRequestDto)
+                        call.enqueue(object: Callback<AccountProfileUpdateResponseDto> {
+                            override fun onResponse(
+                                call: Call<AccountProfileUpdateResponseDto>,
+                                response: Response<AccountProfileUpdateResponseDto>
+                            ) {
+                            }
+
+                            override fun onFailure(call: Call<AccountProfileUpdateResponseDto>, t: Throwable) {
+                                Log.e("ServerUtil", t.message.toString())
+                            }
+                        })
 
                         // 웰컴 페이지 호출
                         val intent = Intent(context, WelcomePageActivity::class.java)

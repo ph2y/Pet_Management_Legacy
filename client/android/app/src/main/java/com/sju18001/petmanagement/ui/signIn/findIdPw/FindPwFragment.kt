@@ -3,7 +3,6 @@ package com.sju18001.petmanagement.ui.signIn.findIdPw
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,11 +10,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.controller.ServerUtil
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFindPwBinding
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.dto.AccountFindPasswordRequestDto
+import com.sju18001.petmanagement.restapi.dto.AccountFindPasswordResponseDto
 import com.sju18001.petmanagement.restapi.dto.AccountSendAuthCodeRequestDto
+import com.sju18001.petmanagement.restapi.dto.AccountSendAuthCodeResponseDto
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.regex.Pattern
 
 class FindPwFragment : Fragment() {
@@ -175,8 +179,12 @@ class FindPwFragment : Fragment() {
         // 버튼 로딩 상태
         setEmailInputButtonLoading(true)
 
-        ServerUtil.sendAuthCode(accountSendAuthCodeRequestDto,
-            { response ->
+        val call = RetrofitBuilder.getServerApi().sendAuthCodeRequest(accountSendAuthCodeRequestDto)
+        call.enqueue(object: Callback<AccountSendAuthCodeResponseDto> {
+            override fun onResponse(
+                call: Call<AccountSendAuthCodeResponseDto>,
+                response: Response<AccountSendAuthCodeResponseDto>
+            ) {
                 if(!isViewDestroyed){
                     // 버튼 로딩 상태 해제
                     setEmailInputButtonLoading(false)
@@ -189,7 +197,9 @@ class FindPwFragment : Fragment() {
                         Toast.makeText(context, "알 수 없는 에러가 발생하였습니다.", Toast.LENGTH_LONG).show()
                     }
                 }
-            }, { t ->
+            }
+
+            override fun onFailure(call: Call<AccountSendAuthCodeResponseDto>, t: Throwable) {
                 if(!isViewDestroyed) {
                     // 버튼 로딩 상태 해제
                     setEmailInputButtonLoading(false)
@@ -197,7 +207,7 @@ class FindPwFragment : Fragment() {
                     Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
                 }
             }
-        )
+        })
     }
 
     // 이메일 입력 버튼 프로그래스바
@@ -225,8 +235,12 @@ class FindPwFragment : Fragment() {
         // 버튼 로딩 상태
         setCodeInputButtonLoading(true)
 
-        ServerUtil.findPassword(accountFindPasswordRequestDto,
-            { response ->
+        val call = RetrofitBuilder.getServerApi().findPasswordRequest(accountFindPasswordRequestDto)
+        call.enqueue(object: Callback<AccountFindPasswordResponseDto> {
+            override fun onResponse(
+                call: Call<AccountFindPasswordResponseDto>,
+                response: Response<AccountFindPasswordResponseDto>
+            ) {
                 if(!isViewDestroyed) {
                     // 버튼 로딩 상태 해제
                     setCodeInputButtonLoading(false)
@@ -237,7 +251,9 @@ class FindPwFragment : Fragment() {
                         binding.codeMessage.visibility = View.VISIBLE
                     }
                 }
-            }, { t ->
+            }
+
+            override fun onFailure(call: Call<AccountFindPasswordResponseDto>, t: Throwable) {
                 if(!isViewDestroyed) {
                     // 버튼 로딩 상태 해제
                     setCodeInputButtonLoading(false)
@@ -245,7 +261,7 @@ class FindPwFragment : Fragment() {
                     Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
                 }
             }
-        )
+        })
     }
 
     // 코드 입력 버튼 프로그래스바
