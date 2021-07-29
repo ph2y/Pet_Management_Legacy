@@ -80,9 +80,9 @@ class EditPetFeedScheduleFragment : Fragment() {
 
         // 확인 버튼
         binding.confirmButton.setOnClickListener {
-            // TODO: pet_id 리스트화하여 전달 + MEMO
+            // TODO: pet_id 리스트화하여 전달
             val petFeedScheduleCreateRequestDto = PetFeedScheduleCreateRequestDto(
-                1, LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(),"Default"
+                1, LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString()
             )
 
             petFeedScheduleCreateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)

@@ -1,5 +1,7 @@
 package com.sju18001.petmanagement.ui.myPet.petFeedScheduler
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -13,9 +15,12 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentPetFeedSchedulerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteRequestDto
+import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteResponseDto
 import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleFetchResponseDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
@@ -52,6 +57,9 @@ class PetFeedSchedulerFragment : Fragment() {
         // get session manager
         sessionManager = context?.let { SessionManager(it) }!!
 
+        // 어뎁터 초기화
+        initializeAdapter()
+
         // 추가 버튼
         binding.addPetFeedScheduleFab.setOnClickListener{
             val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
@@ -68,8 +76,7 @@ class PetFeedSchedulerFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        // 리싸이클러뷰 초기화
-        setAdapterByPetFeedScheduleFetch()
+        updateAdapterDataSetByPetFeedScheduleFetch()
     }
 
     override fun onDestroy() {
@@ -78,8 +85,51 @@ class PetFeedSchedulerFragment : Fragment() {
         petFeedScheduleFetchApiCall?.cancel()
     }
 
+    private fun initializeAdapter(){
+        adapter = PetFeedScheduleListAdapter(arrayListOf(), myPetViewModel.petNameForId)
+        adapter.petFeedScheduleListAdapterInterface = object: PetFeedScheduleListAdapterInterface {
+            override fun askForDeleteItem(position: Int, id: Long) {
+                val builder = AlertDialog.Builder(activity)
+                builder.setMessage("일정을 삭제하시겠습니까?")
+                    .setPositiveButton(
+                        R.string.confirm, DialogInterface.OnClickListener { _, _ ->
+                            deletePetFeedSchedule(id)
+                            adapter.removeItem(position)
+                            adapter.notifyDataSetChanged()
+                        }
+                    )
+                    .setNegativeButton(
+                        R.string.cancel, DialogInterface.OnClickListener { dialog, _ ->
+                            dialog.cancel()
+                        }
+                    )
+                    .create()
+                    .show()
+            }
 
-    private fun setAdapterByPetFeedScheduleFetch(){
+            override fun deletePetFeedSchedule(id: Long) {
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                    .petFeedScheduleDeleteRequest(PetFeedScheduleDeleteRequestDto(id))
+                call!!.enqueue(object: Callback<PetFeedScheduleDeleteResponseDto> {
+                    override fun onResponse(
+                        call: Call<PetFeedScheduleDeleteResponseDto>,
+                        response: Response<PetFeedScheduleDeleteResponseDto>
+                    ) {
+                        // Do nothing
+                    }
+
+                    override fun onFailure(call: Call<PetFeedScheduleDeleteResponseDto>, t: Throwable) {
+                        Log.e("ScheduleAdapter", t.message.toString())
+                    }
+                })
+            }
+        }
+
+        binding.petFeedScheduleListRecyclerView.adapter = adapter
+        binding.petFeedScheduleListRecyclerView.layoutManager = LinearLayoutManager(activity)
+    }
+
+    private fun updateAdapterDataSetByPetFeedScheduleFetch(){
         val dataSet = arrayListOf<PetFeedScheduleListItem>()
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
@@ -91,8 +141,10 @@ class PetFeedSchedulerFragment : Fragment() {
                 call: Call<List<PetFeedScheduleFetchResponseDto>>,
                 response: Response<List<PetFeedScheduleFetchResponseDto>>
             ) {
+                // dataSet에 값 저장
                 response.body()?.map{
                     dataSet.add(PetFeedScheduleListItem(
+                            it.id,
                             LocalTime.parse(it.feed_time),
                             arrayListOf(it.pet_id),
                             it.memo,
@@ -100,11 +152,10 @@ class PetFeedSchedulerFragment : Fragment() {
                         )
                     )
                 }
-
                 dataSet.sortBy{ it.feedTime }
-                adapter = PetFeedScheduleListAdapter(dataSet, myPetViewModel.petNameForId)
-                binding.petFeedScheduleListRecyclerView.adapter = adapter
-                binding.petFeedScheduleListRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+                adapter.setDataSet(dataSet)
+                adapter.notifyDataSetChanged()
             }
 
             override fun onFailure(call: Call<List<PetFeedScheduleFetchResponseDto>>, t: Throwable) {

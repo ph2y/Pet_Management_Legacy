@@ -1,6 +1,10 @@
 package com.sju18001.petmanagement.ui.myPet.petFeedScheduler
 
+import android.app.AlertDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +13,23 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteRequestDto
+import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteResponseDto
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.coroutines.coroutineContext
 
-class PetFeedScheduleListAdapter(private val dataSet: ArrayList<PetFeedScheduleListItem>, private val petNameForId: HashMap<Long, String>) : RecyclerView.Adapter<PetFeedScheduleListAdapter.ViewHolder>(){
+interface PetFeedScheduleListAdapterInterface{
+    fun askForDeleteItem(position: Int, id: Long)
+    fun deletePetFeedSchedule(id: Long)
+}
+
+class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleListItem>, private val petNameForId: HashMap<Long, String>) : RecyclerView.Adapter<PetFeedScheduleListAdapter.ViewHolder>(){
+    lateinit var petFeedScheduleListAdapterInterface: PetFeedScheduleListAdapterInterface
+
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         val noonTextView: TextView = view.findViewById(R.id.noon_text_view)
         val feedTimeTextView: TextView = view.findViewById(R.id.feed_time_text_view)
@@ -32,6 +51,12 @@ class PetFeedScheduleListAdapter(private val dataSet: ArrayList<PetFeedScheduleL
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         updateDataSetToViewHolder(holder, dataSet[position])
+
+        // 아이템 Long click
+        holder.itemView.setOnLongClickListener { _ ->
+            petFeedScheduleListAdapterInterface.askForDeleteItem(position, dataSet[position].id)
+            true
+        }
 
         // 스위치
         holder.isTurnedOnSwitch.setOnClickListener {
@@ -70,5 +95,9 @@ class PetFeedScheduleListAdapter(private val dataSet: ArrayList<PetFeedScheduleL
 
     fun removeItem(index: Int){
         dataSet.removeAt(index)
+    }
+
+    fun setDataSet(_dataSet: ArrayList<PetFeedScheduleListItem>){
+        dataSet = _dataSet
     }
 }
