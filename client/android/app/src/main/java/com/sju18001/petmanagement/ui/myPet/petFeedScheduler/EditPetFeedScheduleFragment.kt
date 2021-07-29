@@ -80,6 +80,7 @@ class EditPetFeedScheduleFragment : Fragment() {
 
         // 확인 버튼
         binding.confirmButton.setOnClickListener {
+            // TODO: pet_id 리스트화하여 전달 + MEMO
             val petFeedScheduleCreateRequestDto = PetFeedScheduleCreateRequestDto(
                 1, LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(),"Default"
             )
