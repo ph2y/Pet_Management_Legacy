@@ -14,8 +14,8 @@ class PetListItem {
     private var mPetPhotoUrl: Int? = null
 
     // set values for the item
-    public fun setValues(petId: Long, petName: String, petBirth: LocalDate?, petSpecies: String,
-                         petBreed: String?, petGender: Boolean?, petPhotoUrl: Int) {
+    public fun setValues(petId: Long, petName: String, petBirth: LocalDate?, petSpecies: String?,
+                         petBreed: String?, petGender: Boolean?, petPhotoUrl: Int?) {
         mPetId = petId
         mPetName = petName
         mPetBirth = petBirth
