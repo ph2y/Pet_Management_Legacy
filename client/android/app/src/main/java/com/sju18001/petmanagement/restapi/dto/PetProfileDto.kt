@@ -3,9 +3,9 @@ package com.sju18001.petmanagement.restapi.dto
 // Create Dto
 data class PetProfileCreateRequestDto (
     val name: String,
-    val species: String,
-    val breed: String,
-    val birth: String,
+    val species: String?,
+    val breed: String?,
+    val birth: String?,
     val gender: Boolean?,
     val message: String?,
     val photo_url: String?
@@ -19,9 +19,9 @@ data class PetProfileCreateResponseDto (
 data class PetProfileFetchResponseDto (
     val id: Long,
     val name: String,
-    val species: String,
-    val breed: String,
-    val birth: String,
+    val species: String?,
+    val breed: String?,
+    val birth: String?,
     val gender: Boolean?,
     val message: String?,
     val photo_url: String?
@@ -31,9 +31,9 @@ data class PetProfileFetchResponseDto (
 data class PetProfileUpdateRequestDto (
     val id: Long,
     val name: String,
-    val species: String,
-    val breed: String,
-    val birth: String,
+    val species: String?,
+    val breed: String?,
+    val birth: String?,
     val gender: Boolean?,
     val message: String?,
     val photo_url: String?

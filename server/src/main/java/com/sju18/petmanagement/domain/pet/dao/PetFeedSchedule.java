@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -21,7 +23,8 @@ public class PetFeedSchedule {
     private String username;
 
     @Column(nullable = false)
-    private Long pet_id;
+    @ElementCollection
+    private Set<Long> pet_id = new HashSet<>();
 
     @Column
     private LocalTime feed_time;
@@ -29,7 +32,7 @@ public class PetFeedSchedule {
     private Boolean is_turned_on;
 
     @Builder
-    public PetFeedSchedule(String username, Long pet_id, LocalTime feed_time, String memo, Boolean is_turned_on) {
+    public PetFeedSchedule(String username, Set<Long> pet_id, LocalTime feed_time, String memo, Boolean is_turned_on) {
         this.username = username;
         this.pet_id = pet_id;
         this.feed_time = feed_time;

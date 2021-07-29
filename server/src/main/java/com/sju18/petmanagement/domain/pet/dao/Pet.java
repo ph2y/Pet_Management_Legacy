@@ -18,7 +18,7 @@ public class Pet {
     @Column(name = "pet_id")
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String username;
     @Column(nullable = false)
     private String name;
@@ -29,8 +29,6 @@ public class Pet {
     private LocalDate birth;
     private Boolean gender;
     private String message;
-
-    @Column(unique = true, nullable = false)
     private String photo_url;
 
     @Builder

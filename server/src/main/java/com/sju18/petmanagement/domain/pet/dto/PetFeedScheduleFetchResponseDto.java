@@ -2,11 +2,12 @@ package com.sju18.petmanagement.domain.pet.dto;
 
 import com.sju18.petmanagement.domain.pet.dao.PetFeedSchedule;
 import lombok.Data;
+import java.util.Set;
 
 @Data
 public class PetFeedScheduleFetchResponseDto {
     private Long id;
-    private Long pet_id;
+    private Set<Long> pet_id;
     private String feed_time;
     private String memo;
     private Boolean is_turned_on;
