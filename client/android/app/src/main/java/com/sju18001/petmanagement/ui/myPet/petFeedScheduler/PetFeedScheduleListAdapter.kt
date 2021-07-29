@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
@@ -18,16 +19,20 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteRequestDto
 import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteResponseDto
+import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleUpdateRequestDto
+import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleUpdateResponseDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalTime
 import kotlin.coroutines.coroutineContext
 
 interface PetFeedScheduleListAdapterInterface{
     fun startEditPetFeedScheduleFragmentForUpdate(data: PetFeedScheduleListItem)
     fun askForDeleteItem(position: Int, id: Long)
     fun deletePetFeedSchedule(id: Long)
+    fun updatePetFeedSchedule(data: PetFeedScheduleListItem)
 }
 
 class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleListItem>, private val petNameForId: HashMap<Long, String>) : RecyclerView.Adapter<PetFeedScheduleListAdapter.ViewHolder>(){
@@ -68,7 +73,10 @@ class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleL
 
         // 스위치
         holder.isTurnedOnSwitch.setOnClickListener {
+            petFeedScheduleListAdapterInterface.updatePetFeedSchedule(dataSet[position])
+
             dataSet[position].isTurnedOn = !dataSet[position].isTurnedOn
+            notifyDataSetChanged()
         }
     }
 

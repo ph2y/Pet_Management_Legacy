@@ -19,9 +19,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentPetFeedSchedulerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteRequestDto
-import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteResponseDto
-import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleFetchResponseDto
+import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import okhttp3.MediaType
@@ -133,6 +131,32 @@ class PetFeedSchedulerFragment : Fragment() {
 
                     override fun onFailure(call: Call<PetFeedScheduleDeleteResponseDto>, t: Throwable) {
                         Log.e("ScheduleAdapter", t.message.toString())
+                    }
+                })
+            }
+
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun updatePetFeedSchedule(data: PetFeedScheduleListItem){
+                val petFeedScheduleUpdateRequestDto = PetFeedScheduleUpdateRequestDto(
+                    data.id, 1, data.feedTime.toString(), data.memo, !data.isTurnedOn
+                )
+
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                    .petFeedScheduleUpdateRequest(petFeedScheduleUpdateRequestDto)
+                call!!.enqueue(object: Callback<PetFeedScheduleUpdateResponseDto> {
+                    override fun onResponse(
+                        call: Call<PetFeedScheduleUpdateResponseDto>,
+                        response: Response<PetFeedScheduleUpdateResponseDto>
+                    ) {
+                        if(response.isSuccessful){
+                            // Do nothing
+                        }else{
+                            Toast.makeText(context, "데이터 저장에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<PetFeedScheduleUpdateResponseDto>, t: Throwable) {
+                        Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
                     }
                 })
             }

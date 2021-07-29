@@ -88,7 +88,7 @@ class EditPetFeedScheduleFragment : Fragment() {
             if(intent.getStringExtra("fragmentType") == "create_pet_feed_schedule"){
                 createPetFeedSchedule()
             }else{
-                updatePetFeedSchedule(intent.getLongExtra("id", 0), intent.getBooleanExtra("is_turned_on", false))
+                updatePetFeedSchedule(intent.getLongExtra("id", 0), intent.getBooleanExtra("isTurnedOn", false))
             }
         }
 
