@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface PetRepository extends JpaRepository<Pet, Long> {
     List<Pet> findAllByUsername(String username);
     Optional<Pet> findByUsernameAndId(String username, Long id);
+    Optional<Pet> findById(Long Id);
 }

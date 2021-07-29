@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPet
+package com.sju18001.petmanagement.ui.myPet.petManager
 
 import android.os.Build
 import android.view.LayoutInflater
@@ -13,9 +13,9 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 
-class MyPetListAdapter : RecyclerView.Adapter<MyPetListAdapter.HistoryListViewHolder>() {
+class PetListAdapter : RecyclerView.Adapter<PetListAdapter.HistoryListViewHolder>() {
 
-    private var resultList = emptyList<MyPetListItem>()
+    private var resultList = emptyList<PetListItem>()
 
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val petImage: ImageView = itemView.findViewById(R.id.pet_image)
@@ -54,7 +54,7 @@ class MyPetListAdapter : RecyclerView.Adapter<MyPetListAdapter.HistoryListViewHo
 
     override fun getItemCount() = resultList.size
 
-    fun setResult(result: List<MyPetListItem>){
+    fun setResult(result: List<PetListItem>){
         this.resultList = result
         notifyDataSetChanged()
     }

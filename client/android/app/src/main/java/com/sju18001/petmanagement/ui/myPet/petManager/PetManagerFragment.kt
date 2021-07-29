@@ -18,8 +18,6 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.PetProfileFetchResponseDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
-import com.sju18001.petmanagement.ui.myPet.MyPetListAdapter
-import com.sju18001.petmanagement.ui.myPet.MyPetListItem
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -33,7 +31,7 @@ class PetManagerFragment : Fragment() {
     // variables for view binding
     private var _binding: FragmentPetManagerBinding? = null
     private val binding get() = _binding!!
-    private lateinit var adapter: MyPetListAdapter
+    private lateinit var adapter: PetListAdapter
 
     // variable for storing API call(for cancel)
     private var petProfileFetchApiCall: Call<List<PetProfileFetchResponseDto>>? = null
@@ -78,8 +76,8 @@ class PetManagerFragment : Fragment() {
         super.onResume()
 
         // call API using Retrofit
-        val petList: ArrayList<MyPetListItem> = ArrayList()
-        petProfileFetchApiCall = RetrofitBuilder.getServerApi().petProfileFetchRequest(token = "Bearer ${sessionManager.fetchUserToken()!!}")
+        val petList: ArrayList<PetListItem> = ArrayList()
+        petProfileFetchApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).petProfileFetchRequest()
         petProfileFetchApiCall!!.enqueue(object: Callback<List<PetProfileFetchResponseDto>> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
@@ -87,7 +85,7 @@ class PetManagerFragment : Fragment() {
                 response: Response<List<PetProfileFetchResponseDto>>
             ) {
                 response.body()?.map {
-                    val item = MyPetListItem()
+                    val item = PetListItem()
                     item.setValues(
                         it.id,
                         it.name,
@@ -107,6 +105,32 @@ class PetManagerFragment : Fragment() {
                 TODO("Not yet implemented")
             }
         })
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        myPetViewModel =
+            ViewModelProvider(this).get(MyPetViewModel::class.java)
+
+        // view binding
+        _binding = FragmentPetManagerBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        // add pet fab -> start activity and set fragment to add pet
+        binding.addPetFab.setOnClickListener {
+            val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
+            myPetActivityIntent.putExtra("fragmentType", "add_pet")
+            startActivity(myPetActivityIntent)
+        }
+
+        adapter = PetListAdapter()
+        binding.myPetListRecyclerView.adapter = adapter
+        binding.myPetListRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+        return root
     }
 
     override fun onDestroyView() {

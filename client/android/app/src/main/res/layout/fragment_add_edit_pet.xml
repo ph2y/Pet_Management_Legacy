@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/back_button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -18,24 +18,59 @@
             android:id="@+id/back_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:src="@drawable/ic_baseline_arrow_back_36"
             android:background="?selectableItemBackgroundBorderless"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/back_button"
+            android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
-            android:layout_gravity="center"
             android:textSize="20dp"
             android:textStyle="bold"
             android:text="@string/add_pet_title"/>
 
-    </LinearLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/confirm_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:padding="4dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:enabled="false"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:text="@string/confirm_add_pet"
+                android:background="?attr/selectableItemBackground"/>
+
+            <ProgressBar
+                android:id="@+id/add_pet_progress_bar"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:visibility="gone"
+                android:indeterminateTint="@color/carrot"
+                android:layout_centerInParent="true"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/back_button_layout">
+        android:layout_below="@id/back_button_layout"
+        android:layout_alignParentBottom="true"
+        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -43,8 +78,8 @@
 
             <RelativeLayout
                 android:id="@+id/pet_image_input_layout"
-                android:layout_width="175dp"
-                android:layout_height="175dp"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toTopOf="@id/pet_info_layout"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -78,14 +113,34 @@
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="@id/confirm_button"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/pet_image_input_layout">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pet_message"/>
+
+                    <EditText
+                        android:id="@+id/pet_message_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:theme="@style/onSelectedThemeCarrot" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -233,18 +288,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-
-            <Button
-                android:id="@+id/confirm_button"
-                android:layout_width="280dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:text="@string/confirm_add_pet"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/pet_info_layout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

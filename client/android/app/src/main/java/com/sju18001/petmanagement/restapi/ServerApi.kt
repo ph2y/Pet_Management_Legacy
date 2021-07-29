@@ -36,10 +36,10 @@ interface ServerApi {
 
     // Pet Profile CRUD API
     @POST("api/pet/profile/create")
-    fun petProfileCreateRequest(@Header("Authorization") token: String, @Body petProfileCreateRequestDto: PetProfileCreateRequestDto): Call<PetProfileCreateResponseDto>
+    fun petProfileCreateRequest(@Body petProfileCreateRequestDto: PetProfileCreateRequestDto): Call<PetProfileCreateResponseDto>
 
     @POST("api/pet/profile/fetch")
-    fun petProfileFetchRequest(@Header("Authorization") token: String): Call<List<PetProfileFetchResponseDto>>
+    fun petProfileFetchRequest(): Call<List<PetProfileFetchResponseDto>>
 
     @POST("api/pet/profile/update")
     fun petProfileUpdateRequest(@Header("Authorization") token: String, @Body petProfileUpdateRequestDto: PetProfileUpdateRequestDto): Call<PetProfileUpdateResponseDto>
