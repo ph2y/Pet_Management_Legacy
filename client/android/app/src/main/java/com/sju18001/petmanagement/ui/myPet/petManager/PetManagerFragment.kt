@@ -12,7 +12,9 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentPetManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -27,7 +29,7 @@ import retrofit2.Response
 import java.time.LocalDate
 
 
-class PetManagerFragment : Fragment() {
+class PetManagerFragment : Fragment(), OnStartDragListener {
 
     // variable for ViewModel
     val myPetViewModel: MyPetViewModel by activityViewModels()
@@ -39,6 +41,7 @@ class PetManagerFragment : Fragment() {
     // variables for RecyclerView
     private lateinit var adapter: PetListAdapter
     private var petList: MutableList<PetListItem> = mutableListOf()
+    lateinit var touchHelper: ItemTouchHelper
 
     // variable for storing API call(for cancel)
     private var petProfileFetchApiCall: Call<List<PetProfileFetchResponseDto>>? = null
@@ -53,6 +56,10 @@ class PetManagerFragment : Fragment() {
         sessionManager = context?.let { SessionManager(it) }!!
     }
 
+    override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
+        touchHelper.startDrag(viewHolder)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -63,9 +70,12 @@ class PetManagerFragment : Fragment() {
         val root: View = binding.root
 
         // initialize RecyclerView
-        adapter = PetListAdapter()
+        adapter = PetListAdapter(this)
         binding.myPetListRecyclerView.adapter = adapter
         binding.myPetListRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+        touchHelper = ItemTouchHelper(PetListDragAdapter(adapter))
+        touchHelper.attachToRecyclerView(binding.myPetListRecyclerView)
 
         return root
     }
