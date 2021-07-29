@@ -3,6 +3,7 @@ package com.sju18001.petmanagement.ui.myPet.petFeedScheduler
 import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -17,12 +18,14 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteRequestDto
 import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteResponseDto
+import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlin.coroutines.coroutineContext
 
 interface PetFeedScheduleListAdapterInterface{
+    fun startEditPetFeedScheduleFragmentForUpdate(data: PetFeedScheduleListItem)
     fun askForDeleteItem(position: Int, id: Long)
     fun deletePetFeedSchedule(id: Long)
 }
@@ -51,6 +54,11 @@ class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleL
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         updateDataSetToViewHolder(holder, dataSet[position])
+
+        // 아이템 click
+        holder.itemView.setOnClickListener {
+            petFeedScheduleListAdapterInterface.startEditPetFeedScheduleFragmentForUpdate(dataSet[position])
+        }
 
         // 아이템 Long click
         holder.itemView.setOnLongClickListener { _ ->

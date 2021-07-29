@@ -30,7 +30,7 @@ data class PetFeedScheduleFetchResponseDto(
 data class PetFeedScheduleUpdateRequestDto(
     val id: Long,
     val pet_id: Long,
-    val feed_time: LocalTime,
+    val feed_time: String,
     val memo: String,
     val is_turned_on: Boolean
 )

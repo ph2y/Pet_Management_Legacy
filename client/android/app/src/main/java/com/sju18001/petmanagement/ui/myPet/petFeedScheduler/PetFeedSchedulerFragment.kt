@@ -63,7 +63,7 @@ class PetFeedSchedulerFragment : Fragment() {
         // 추가 버튼
         binding.addPetFeedScheduleFab.setOnClickListener{
             val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
-            myPetActivityIntent.putExtra("fragmentType", "edit_pet_feed_schedule")
+            myPetActivityIntent.putExtra("fragmentType", "create_pet_feed_schedule")
             startActivity(myPetActivityIntent)
         }
 
@@ -88,6 +88,19 @@ class PetFeedSchedulerFragment : Fragment() {
     private fun initializeAdapter(){
         adapter = PetFeedScheduleListAdapter(arrayListOf(), myPetViewModel.petNameForId)
         adapter.petFeedScheduleListAdapterInterface = object: PetFeedScheduleListAdapterInterface {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun startEditPetFeedScheduleFragmentForUpdate(data: PetFeedScheduleListItem) {
+                val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
+                myPetActivityIntent
+                    .putExtra("fragmentType", "update_pet_feed_schedule")
+                    .putExtra("id", data.id)
+                    .putExtra("feedTimeHour", data.feedTime.hour)
+                    .putExtra("feedTimeMinute", data.feedTime.minute)
+                    .putExtra("memo", data.memo)
+                    .putExtra("isTurnedOn", data.isTurnedOn)
+                startActivity(myPetActivityIntent)
+            }
+
             override fun askForDeleteItem(position: Int, id: Long) {
                 val builder = AlertDialog.Builder(activity)
                 builder.setMessage("일정을 삭제하시겠습니까?")
