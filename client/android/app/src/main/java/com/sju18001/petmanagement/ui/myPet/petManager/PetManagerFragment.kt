@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sju18001.petmanagement.R
@@ -25,9 +26,11 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDate
 
+
 class PetManagerFragment : Fragment() {
 
-    private lateinit var myPetViewModel: MyPetViewModel
+    // variable for ViewModel
+    val myPetViewModel: MyPetViewModel by activityViewModels()
 
     // variables for view binding
     private var _binding: FragmentPetManagerBinding? = null
@@ -55,9 +58,6 @@ class PetManagerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        myPetViewModel =
-            ViewModelProvider(this).get(MyPetViewModel::class.java)
-
         // view binding
         _binding = FragmentPetManagerBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -109,10 +109,12 @@ class PetManagerFragment : Fragment() {
                         petListApi.add(item)
                     }
 
-                    // if RecyclerView items not yet added -> set result
+                    // if RecyclerView items not yet added -> set result + restore RecycleView scroll state
                     if(adapter.itemCount == 0) {
                         petList.addAll(petListApi)
                         adapter.setResult(petList)
+
+                        binding.myPetListRecyclerView.scrollToPosition(myPetViewModel.lastScrolledIndex)
                     }
                     // check for difference in lists(current RecyclerView vs API response)
                     else {
@@ -183,6 +185,14 @@ class PetManagerFragment : Fragment() {
         // if there are multiple differences -> update list + no animation
         petList = apiResponse.toMutableList()
         adapter.setResult(petList)
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // save RecyclerView scroll position
+        myPetViewModel.lastScrolledIndex = (binding.myPetListRecyclerView.layoutManager as LinearLayoutManager)
+            .findFirstVisibleItemPosition()
     }
 
     override fun onDestroyView() {
