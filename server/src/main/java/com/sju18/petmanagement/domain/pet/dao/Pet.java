@@ -27,17 +27,19 @@ public class Pet {
     private String species;
     private String breed;
     private LocalDate birth;
+    private Boolean year_only;
     private Boolean gender;
     private String message;
     private String photo_url;
 
     @Builder
-    public Pet(String username, String name, String species, String breed, LocalDate birth, Boolean gender, String message, String photo_url) {
+    public Pet(String username, String name, String species, String breed, LocalDate birth, Boolean year_only, Boolean gender, String message, String photo_url) {
         this.username = username;
         this.name = name;
         this.species = species;
         this.breed = breed;
         this.birth = birth;
+        this.year_only = year_only;
         this.gender = gender;
         this.message = message;
         this.photo_url = photo_url;

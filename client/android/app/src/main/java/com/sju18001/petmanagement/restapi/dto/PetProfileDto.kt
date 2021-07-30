@@ -6,6 +6,7 @@ data class PetProfileCreateRequestDto (
     val species: String?,
     val breed: String?,
     val birth: String?,
+    val year_only: Boolean?,
     val gender: Boolean?,
     val message: String?,
     val photo_url: String?
@@ -22,6 +23,7 @@ data class PetProfileFetchResponseDto (
     val species: String?,
     val breed: String?,
     val birth: String?,
+    val year_only: Boolean?,
     val gender: Boolean?,
     val message: String?,
     val photo_url: String?
@@ -34,6 +36,7 @@ data class PetProfileUpdateRequestDto (
     val species: String?,
     val breed: String?,
     val birth: String?,
+    val year_only: Boolean?,
     val gender: Boolean?,
     val message: String?,
     val photo_url: String?

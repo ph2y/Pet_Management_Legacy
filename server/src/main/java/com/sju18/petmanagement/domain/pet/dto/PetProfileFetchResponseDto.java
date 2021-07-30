@@ -10,6 +10,7 @@ public class PetProfileFetchResponseDto {
     private String species;
     private String breed;
     private String birth;
+    private Boolean year_only;
     private Boolean gender;
     private String message;
     private String photo_url;
@@ -20,6 +21,7 @@ public class PetProfileFetchResponseDto {
         this.species = pet.getSpecies();
         this.breed = pet.getBreed();
         this.birth = pet.getBirth().toString();
+        this.year_only = pet.getYear_only();
         this.gender = pet.getGender();
         this.message = pet.getMessage();
         this.photo_url = pet.getPhoto_url();

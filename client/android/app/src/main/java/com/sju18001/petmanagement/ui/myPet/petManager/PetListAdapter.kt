@@ -43,8 +43,15 @@ class PetListAdapter : RecyclerView.Adapter<PetListAdapter.HistoryListViewHolder
             holder.itemView.context.getString(R.string.pet_gender_male) + "/"  + period.years.toString() + "세)"
         }
 
+
         var petBirth = ""
-        petBirth += currentItem.getPetBirth()?.format(DateTimeFormatter.ISO_DATE) + '생'
+        if(currentItem.getPetYearOnly()!!) {
+            petBirth += currentItem.getPetBirth()?.year.toString() + "년생"
+        }
+        else {
+            petBirth += currentItem.getPetBirth()?.format(DateTimeFormatter.ISO_DATE) + "생"
+        }
+
 
         // set values to views
         currentItem.getPetPhotoUrl()?.let { holder.petImage.setImageResource(it) }

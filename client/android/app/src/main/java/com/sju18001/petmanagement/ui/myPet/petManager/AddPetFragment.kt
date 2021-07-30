@@ -153,16 +153,14 @@ class AddPetFragment : Fragment() {
                 "${binding.petBirthInput.year}-01-01"
             }
 
-            // for gender value
-            val petGenderValue = binding.genderFemale.isChecked
-
             // create DTO
             val petProfileCreateRequestDto = PetProfileCreateRequestDto(
                 binding.petNameInput.text.toString(),
                 binding.petSpeciesInput.text.toString(),
                 binding.petBreedInput.text.toString(),
                 petBirthStringValue,
-                petGenderValue,
+                binding.yearOnlyCheckbox.isChecked,
+                binding.genderFemale.isChecked,
                 binding.petMessageInput.text.toString(),
                 null
             )
