@@ -2,6 +2,7 @@ package com.sju18001.petmanagement.ui.myPet.petFeedScheduler
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -153,7 +154,7 @@ class EditPetFeedScheduleFragment : Fragment() {
                 response: Response<List<PetProfileFetchResponseDto>>
             ) {
                 response.body()?.map {
-                    adapter.addItem(PetNameListItem(it.name))
+                    adapter.addItem(PetNameListItem(it.name, it.id))
                 }
                 adapter.notifyDataSetChanged()
 
@@ -171,7 +172,7 @@ class EditPetFeedScheduleFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createPetFeedSchedule(){
         val petFeedScheduleCreateRequestDto = PetFeedScheduleCreateRequestDto(
-            "1,2", LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString()
+            getCheckedPetIdList(), LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString()
         )
 
         petFeedScheduleCreateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
@@ -197,7 +198,7 @@ class EditPetFeedScheduleFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updatePetFeedSchedule(id: Long, isTurnedOn: Boolean){
         val petFeedScheduleUpdateRequestDto = PetFeedScheduleUpdateRequestDto(
-            id,"1,2", LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString(), isTurnedOn
+            id, getCheckedPetIdList(), LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString(), isTurnedOn
         )
 
         petFeedScheduleUpdateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
@@ -224,5 +225,20 @@ class EditPetFeedScheduleFragment : Fragment() {
         if(target == null) return false
 
         return adapter.itemCount == target.size
+    }
+
+    private fun getCheckedPetIdList(): String{
+        var checkedPetIdList = ""
+
+        myPetViewModel.isPetChecked?.let{
+            for(i in it.indices){
+                if(it[i]){
+                    checkedPetIdList += "${adapter.getItem(i).id},"
+                }
+            }
+            checkedPetIdList = checkedPetIdList.dropLast(1)
+        }
+
+        return checkedPetIdList
     }
 }

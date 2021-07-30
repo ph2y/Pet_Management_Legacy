@@ -138,7 +138,7 @@ class PetFeedSchedulerFragment : Fragment() {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun updatePetFeedSchedule(data: PetFeedScheduleListItem){
                 val petFeedScheduleUpdateRequestDto = PetFeedScheduleUpdateRequestDto(
-                    data.id, "1,2", data.feedTime.toString(), data.memo, !data.isTurnedOn
+                    data.id, data.petIdList, data.feedTime.toString(), data.memo, !data.isTurnedOn
                 )
 
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)

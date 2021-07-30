@@ -1,9 +1,5 @@
 package com.sju18001.petmanagement.ui.myPet.petFeedScheduler
 
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,22 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
 import android.widget.TextView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.restapi.RetrofitBuilder
-import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteRequestDto
-import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleDeleteResponseDto
-import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleUpdateRequestDto
-import com.sju18001.petmanagement.restapi.dto.PetFeedScheduleUpdateResponseDto
-import com.sju18001.petmanagement.ui.myPet.MyPetActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.time.LocalTime
-import kotlin.coroutines.coroutineContext
 
 interface PetFeedScheduleListAdapterInterface{
     fun startEditPetFeedScheduleFragmentForUpdate(data: PetFeedScheduleListItem)
@@ -92,26 +75,23 @@ class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleL
     }
 
     private fun getPetNamesFromPetIdList(petIdList: String?): String{
-        if(petIdList == null) return ""
+        if(petIdList.isNullOrEmpty()) return ""
 
-        val petIdListAsList: List<String> = petIdList.split(",")
         var petNames = ""
-        val size = petIdListAsList.size
 
-        for(i:Int in 0 until size-1){
-            val id = petIdListAsList[i].toLong()
-            petNames += if(petNameForId[id] != null) petNameForId[id] else id.toString()
-            petNames += ", "
+        val petIdListOfString: List<String> = petIdList.split(",")
+
+        for(id in petIdListOfString) {
+            id.toLongOrNull()?.let{
+                petNames += petNameForId[it] ?: id
+                petNames += ", "
+            }
         }
-        petIdListAsList.last().toLong()?.let{
-            petNames += if(petNameForId[it] != null) petNameForId[it] else it.toString()
+        if(petNames.length >= 2){
+            petNames = petNames.dropLast(2)
         }
 
         return petNames
-    }
-
-    fun addItem(item: PetFeedScheduleListItem){
-        dataSet.add(item)
     }
 
     fun removeItem(index: Int){

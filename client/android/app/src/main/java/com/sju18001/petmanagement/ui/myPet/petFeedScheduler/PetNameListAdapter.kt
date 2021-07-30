@@ -55,7 +55,7 @@ class PetNameListAdapter(private val dataSet: ArrayList<PetNameListItem>) : Recy
         dataSet.add(item)
     }
 
-    fun removeItem(index: Int){
-        dataSet.removeAt(index)
+    fun getItem(position: Int): PetNameListItem{
+        return dataSet[position]
     }
 }
