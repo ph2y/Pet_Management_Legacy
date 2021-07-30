@@ -1,6 +1,8 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
+import android.content.Context
 import android.os.Build
+import android.preference.PreferenceManager
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
@@ -11,9 +13,11 @@ import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.prefs.Preferences
+import kotlin.coroutines.coroutineContext
 
-class PetListAdapter(private val startDragListener: OnStartDragListener) : RecyclerView.Adapter<PetListAdapter.HistoryListViewHolder>(),
-    PetListDragAdapter.Listener {
+class PetListAdapter(private val startDragListener: OnStartDragListener, private val context: Context) :
+    RecyclerView.Adapter<PetListAdapter.HistoryListViewHolder>(), PetListDragAdapter.Listener {
 
     private var resultList = emptyList<PetListItem>()
 
@@ -82,6 +86,13 @@ class PetListAdapter(private val startDragListener: OnStartDragListener) : Recyc
             }
         }
         notifyItemMoved(fromPosition, toPosition)
+
+        // save order to device
+        val petListIdOrder: MutableList<Long> = mutableListOf()
+        resultList.map {
+            petListIdOrder.add(it.getPetId()!!)
+        }
+        PetManagerFragment().savePetListOrder(PetManagerFragment().PET_LIST_ORDER, petListIdOrder, context)
     }
     override fun onRowSelected(itemViewHolder: HistoryListViewHolder) {}
     override fun onRowClear(itemViewHolder: HistoryListViewHolder) {}
