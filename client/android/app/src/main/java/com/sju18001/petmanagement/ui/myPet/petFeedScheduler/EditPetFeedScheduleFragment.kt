@@ -86,7 +86,6 @@ class EditPetFeedScheduleFragment : Fragment() {
 
             petFeedScheduleCreateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
                 .petFeedScheduleCreateRequest(petFeedScheduleCreateRequestDto)
-            Log.e("ASD", petFeedScheduleCreateRequestDto.toString())
             petFeedScheduleCreateApiCall!!.enqueue(object: Callback<PetFeedScheduleCreateResponseDto> {
                 override fun onResponse(
                     call: Call<PetFeedScheduleCreateResponseDto>,
@@ -95,7 +94,7 @@ class EditPetFeedScheduleFragment : Fragment() {
                     if(response.isSuccessful){
                         activity?.finish()
                     }else{
-                        Log.e("ASD", response.body().toString())
+                        Toast.makeText(context, "데이터 저장에 실패했습니다.", Toast.LENGTH_SHORT).show()
                     }
                 }
 
