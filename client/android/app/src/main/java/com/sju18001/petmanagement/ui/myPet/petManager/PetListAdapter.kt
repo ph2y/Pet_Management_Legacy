@@ -1,14 +1,10 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
 import android.os.Build
-import android.view.LayoutInflater
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
-import androidx.core.view.DragStartHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import java.time.LocalDate
@@ -63,13 +59,11 @@ class PetListAdapter(private val startDragListener: OnStartDragListener) : Recyc
         holder.petName.text = petNameInfo
         holder.petBirth.text = petBirth
 
-        // handle button for moving
-        holder.dragHandle.setOnTouchListener { _, event ->
-            if(event.action == MotionEvent.ACTION_DOWN) {
-                this.startDragListener.onStartDrag(holder)
-            }
-            return@setOnTouchListener true
-        }
+        // handle button for dragging
+        holder.dragHandle.setOnLongClickListener(View.OnLongClickListener {
+            this.startDragListener.onStartDrag(holder)
+            return@OnLongClickListener false
+        })
     }
 
     override fun getItemCount() = resultList.size

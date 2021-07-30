@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +26,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalDate
-
 
 class PetManagerFragment : Fragment(), OnStartDragListener {
 
@@ -177,7 +175,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         if(addedId.size == 1 && deletedId.isEmpty()) {
             petList.add(petList.size, apiResponse[apiResponse.size - 1])
             adapter.notifyItemInserted(petList.size)
-            binding.myPetListRecyclerView.scrollToPosition(petList.size - 1)
+            binding.myPetListRecyclerView.smoothScrollToPosition(petList.size - 1)
             return
         }
             // if deleted
