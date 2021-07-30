@@ -92,6 +92,7 @@ class PetFeedSchedulerFragment : Fragment() {
                 myPetActivityIntent
                     .putExtra("fragmentType", "update_pet_feed_schedule")
                     .putExtra("id", data.id)
+                    .putExtra("petIdList", data.petIdList)
                     .putExtra("feedTimeHour", data.feedTime.hour)
                     .putExtra("feedTimeMinute", data.feedTime.minute)
                     .putExtra("memo", data.memo)

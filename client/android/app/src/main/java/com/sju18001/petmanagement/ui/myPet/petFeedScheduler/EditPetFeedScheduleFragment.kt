@@ -158,8 +158,14 @@ class EditPetFeedScheduleFragment : Fragment() {
                 }
                 adapter.notifyDataSetChanged()
 
-                if(!isSameLengthWithAdapter(myPetViewModel.isPetChecked)){
-                    myPetViewModel.isPetChecked = Array(adapter.itemCount){ false }
+                // isPetChecked 초기화 로직
+                if(!isSameLengthWithAdapter(myPetViewModel.isPetChecked)) {
+
+                    // false 배열로 초기화
+                    myPetViewModel.isPetChecked = Array(adapter.itemCount) { false }
+
+                    // intent - extra
+                    setViewModelForUpdate()
                 }
             }
 
@@ -226,6 +232,25 @@ class EditPetFeedScheduleFragment : Fragment() {
 
         return adapter.itemCount == target.size
     }
+
+    private fun setViewModelForUpdate(){
+        val intent = requireActivity().intent
+        if(intent.getStringExtra("fragmentType") == "update_pet_feed_schedule"){
+            // Initialize ViewModel for PetIdList
+            intent.getStringExtra("petIdList")?.let{
+                val petIdListOfString = it.split(",")
+
+                // Set item(id) in petIdList true
+                for (i in 0 until adapter.itemCount) {
+                    if(adapter.getItem(i).id.toString() in petIdListOfString){
+                        myPetViewModel.isPetChecked!![i] = true
+                    }
+                }
+                intent.removeExtra("petIdList")
+            }
+        }
+    }
+
 
     private fun getCheckedPetIdList(): String{
         var checkedPetIdList = ""

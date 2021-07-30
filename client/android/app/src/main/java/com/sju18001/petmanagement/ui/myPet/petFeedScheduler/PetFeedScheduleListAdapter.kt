@@ -78,15 +78,17 @@ class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleL
         if(petIdList.isNullOrEmpty()) return ""
 
         var petNames = ""
-
         val petIdListOfString: List<String> = petIdList.split(",")
 
+        // "이름, 이름, " 식으로 String 추가함
         for(id in petIdListOfString) {
             id.toLongOrNull()?.let{
                 petNames += petNameForId[it] ?: id
                 petNames += ", "
             }
         }
+        
+        // ", " 제거
         if(petNames.length >= 2){
             petNames = petNames.dropLast(2)
         }
