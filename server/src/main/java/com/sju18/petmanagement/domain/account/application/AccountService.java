@@ -3,15 +3,12 @@ package com.sju18.petmanagement.domain.account.application;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.account.dto.CreateAccountReqDto;
-import com.sju18.petmanagement.global.exception.DbException;
 import com.sju18.petmanagement.global.exception.DtoValidityException;
-import com.sju18.petmanagement.global.exception.StorageException;
 import com.sju18.petmanagement.global.util.message.MessageConfig;
 import com.sju18.petmanagement.global.util.storage.FileService;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,21 +40,13 @@ public class AccountService {
                 .build();
 
         // DB에 계정정보 저장
-        try {
-            accountRepository.save(newAccount);
-        } catch (Exception e) {
-            throw new DbException(e.getMessage());
-        }
+        accountRepository.save(newAccount);
 
         // 프로필 파일 저장소 생성
-        try {
-            fileService.createAccountFileStorage(newAccount.getId());
-        } catch (Exception e) {
-            throw new StorageException(e.getMessage());
-        }
+        fileService.createAccountFileStorage(newAccount.getId());
     }
 
-    private void checkDuplication(CreateAccountReqDto reqDto) throws Exception {
+    private void checkDuplication(CreateAccountReqDto reqDto) throws DtoValidityException {
         // 중복 확인
         if (accountRepository.existsByEmail(reqDto.getEmail())) {
             throw new DtoValidityException(

@@ -28,14 +28,9 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
-    // 비회원 유저도 접속 허용하는 URL List
     private static final List<String> EXCLUDE_URL =
             Collections.unmodifiableList(
-                    Arrays.asList(
-                            "/api/account/signup",
-                            "/api/account/login"
-                    ));
+                    Arrays.asList());
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,

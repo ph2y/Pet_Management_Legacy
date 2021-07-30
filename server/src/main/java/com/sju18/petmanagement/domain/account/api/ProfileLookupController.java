@@ -5,7 +5,7 @@ import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.account.dto.ProfileLookupRequestDto;
 import com.sju18.petmanagement.domain.account.dto.ProfileLookupResponseDto;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.IOUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +43,7 @@ public class ProfileLookupController {
                     currentUserProfile.getEmail(),
                     currentUserProfile.getNickname(),
                     currentUserProfile.getPhone(),
-                    currentUserProfile.getPhoto(),
+                    currentUserProfile.getPhotoUrl(),
                     currentUserProfile.getMarketing(),
                     currentUserProfile.getUserMessage()
             ));
@@ -62,8 +62,8 @@ public class ProfileLookupController {
         try {
             Account currentUserProfile = accountRepository.findByUsername(currentUserName)
                     .orElseThrow(() -> new UsernameNotFoundException(currentUserName));
-            InputStream imageStream = new FileInputStream(currentUserProfile.getPhoto());
-            byte[] imageByteArray = IOUtils.toByteArray(imageStream);
+            InputStream imageStream = new FileInputStream(currentUserProfile.getPhotoUrl());
+            byte[] imageByteArray = IOUtil.toByteArray(imageStream);
             imageStream.close();
             return ResponseEntity.ok(imageByteArray);
         } catch (Exception e) {

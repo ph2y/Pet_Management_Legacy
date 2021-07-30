@@ -6,9 +6,10 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-@ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

@@ -33,7 +33,8 @@ public class MessageConfig implements WebMvcConfigurer {
     public static MessageSource getValidationMessageSource() {
         ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
         msgSrc.setBasenames(
-                "classpath:/static/messages/validation"
+                "static/messages/account/validation",
+                "static/messages/pet/validation"
         );
         return msgSrc;
     }
@@ -42,9 +43,9 @@ public class MessageConfig implements WebMvcConfigurer {
     public static MessageSource getAccountMessageSource() {
         ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
         msgSrc.setBasenames(
-                "classpath:/static/messages/error",
-                "classpath:/static/messages/response",
-                "classpath:/static/messages/validation"
+                "static/messages/account/error",
+                "static/messages/account/response",
+                "static/messages/account/validation"
         );
         return msgSrc;
     }
@@ -52,7 +53,7 @@ public class MessageConfig implements WebMvcConfigurer {
     @Bean
     public static MessageSource getPetMessageSource() {
         ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
-        msgSrc.setBasename("classpath:/static/messages/pet");
+        msgSrc.setBasename("static/messages/pet/error");
         return msgSrc;
     }
 }
