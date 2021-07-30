@@ -45,7 +45,7 @@ public class ProfileUpdateController {
             fileUrl = fileService.saveAccountProfilePhoto(currentUserProfile.getId() ,uploadedFile);
 
             // DB 데이터 업데이트
-            currentUserProfile.setPhoto(fileUrl);
+            currentUserProfile.setPhotoUrl(fileUrl);
             accountRepository.save(currentUserProfile);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new UploadProfilePhotoResponseDto("null", e.getMessage()));
@@ -84,7 +84,7 @@ public class ProfileUpdateController {
         }
         // 프로필 사진 변경 기능은 파일을 다루어야 함으로 장래 변경해야됨.
         if (profileUpdateRequestDto.getPhoto() != null) {
-            currentUserProfile.setPhoto(profileUpdateRequestDto.getPhoto());
+            currentUserProfile.setPhotoUrl(profileUpdateRequestDto.getPhoto());
         }
 
         // 기존 사용자 정보 변경사항 적용
