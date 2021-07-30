@@ -44,7 +44,6 @@ class PetListAdapter(private val startDragListener: OnStartDragListener) : Recyc
             holder.itemView.context.getString(R.string.pet_gender_male) + "/"  + period.years.toString() + "세)"
         }
 
-
         var petBirth = ""
         if(currentItem.getPetYearOnly()!!) {
             petBirth += currentItem.getPetBirth()?.year.toString() + "년생"
@@ -52,7 +51,6 @@ class PetListAdapter(private val startDragListener: OnStartDragListener) : Recyc
         else {
             petBirth += currentItem.getPetBirth()?.format(DateTimeFormatter.ISO_DATE) + "생"
         }
-
 
         // set values to views
         currentItem.getPetPhotoUrl()?.let { holder.petImage.setImageResource(it) }
