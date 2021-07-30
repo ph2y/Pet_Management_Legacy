@@ -183,7 +183,7 @@ class PetFeedSchedulerFragment : Fragment() {
                     dataSet.add(PetFeedScheduleListItem(
                             it.id,
                             LocalTime.parse(it.feed_time),
-                            arrayListOf(it.pet_id_list),
+                            it.pet_id_list,
                             it.memo,
                             it.is_turned_on
                         )

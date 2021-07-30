@@ -87,24 +87,27 @@ class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleL
         holder.noonTextView.text = if(data.feedTime!!.hour <= 12) "오전" else "오후"
         holder.feedTimeTextView.text = data.feedTime!!.hour.toString().padStart(2, '0') + ":" + data.feedTime!!.minute.toString().padStart(2, '0')
         holder.isTurnedOnSwitch.isChecked = data.isTurnedOn!!
-        holder.petListTextView.text = setPetListString(data.petIdList)
+        holder.petListTextView.text = getPetNamesFromPetIdList(data.petIdList)
         holder.memoTextView.text = data.memo
     }
 
-    private fun setPetListString(petIdList: ArrayList<String>): String{
-        return petIdList.toString()
-        /*
-        var result = ""
-        val size = petList.size
+    private fun getPetNamesFromPetIdList(petIdList: String?): String{
+        if(petIdList == null) return ""
+
+        val petIdListAsList: List<String> = petIdList.split(",")
+        var petNames = ""
+        val size = petIdListAsList.size
 
         for(i:Int in 0 until size-1){
-            val id = petList[i]
-            result += if(petNameForId[id] != null) petNameForId[id] else id.toString()
-            result += ", "
+            val id = petIdListAsList[i].toLong()
+            petNames += if(petNameForId[id] != null) petNameForId[id] else id.toString()
+            petNames += ", "
         }
-        result += if(petNameForId[petList.last()] != null) petNameForId[petList.last()] else petList.last().toString()
+        petIdListAsList.last().toLong()?.let{
+            petNames += if(petNameForId[it] != null) petNameForId[it] else it.toString()
+        }
 
-        return result*/
+        return petNames
     }
 
     fun addItem(item: PetFeedScheduleListItem){
