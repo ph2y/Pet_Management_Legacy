@@ -55,11 +55,9 @@ class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleL
         }
 
         // 스위치
-        holder.isTurnedOnSwitch.setOnClickListener {
+        holder.isTurnedOnSwitch.setOnCheckedChangeListener { _, isChecked ->
+            dataSet[position].isTurnedOn = isChecked
             petFeedScheduleListAdapterInterface.updatePetFeedSchedule(dataSet[position])
-
-            dataSet[position].isTurnedOn = !dataSet[position].isTurnedOn
-            notifyDataSetChanged()
         }
     }
 
