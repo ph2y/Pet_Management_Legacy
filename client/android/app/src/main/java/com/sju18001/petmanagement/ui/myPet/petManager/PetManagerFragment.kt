@@ -90,6 +90,7 @@ class PetManagerFragment : Fragment() {
                         it.id,
                         it.name,
                         LocalDate.parse(it.birth),
+                        it.year_only,
                         it.species,
                         it.breed,
                         it.gender,

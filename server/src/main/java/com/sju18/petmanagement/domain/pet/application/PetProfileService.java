@@ -37,6 +37,7 @@ public class PetProfileService {
                     .species(requestDto.getSpecies())
                     .breed(requestDto.getBreed())
                     .birth(LocalDate.parse(requestDto.getBirth()))
+                    .year_only(requestDto.getYear_only())
                     .gender(requestDto.getGender())
                     .message(requestDto.getMessage())
                     .photo_url(requestDto.getPhoto_url())
@@ -74,6 +75,7 @@ public class PetProfileService {
             pet.setSpecies(requestDto.getSpecies());
             pet.setBreed(requestDto.getBreed());
             pet.setBirth(LocalDate.parse(requestDto.getBirth()));
+            pet.setYear_only(requestDto.getYear_only());
             pet.setGender(requestDto.getGender());
             pet.setMessage(requestDto.getMessage());
             pet.setPhoto_url(requestDto.getPhoto_url());
