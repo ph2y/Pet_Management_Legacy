@@ -157,7 +157,7 @@ class EditPetFeedScheduleFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createPetFeedSchedule(){
         val petFeedScheduleCreateRequestDto = PetFeedScheduleCreateRequestDto(
-            1, LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString()
+            "1,2", LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString()
         )
 
         petFeedScheduleCreateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
@@ -183,7 +183,7 @@ class EditPetFeedScheduleFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updatePetFeedSchedule(id: Long, isTurnedOn: Boolean){
         val petFeedScheduleUpdateRequestDto = PetFeedScheduleUpdateRequestDto(
-            id,1, LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString(), isTurnedOn
+            id,"1,2", LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString(), isTurnedOn
         )
 
         petFeedScheduleUpdateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)

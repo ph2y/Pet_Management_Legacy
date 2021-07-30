@@ -87,11 +87,13 @@ class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleL
         holder.noonTextView.text = if(data.feedTime!!.hour <= 12) "오전" else "오후"
         holder.feedTimeTextView.text = data.feedTime!!.hour.toString().padStart(2, '0') + ":" + data.feedTime!!.minute.toString().padStart(2, '0')
         holder.isTurnedOnSwitch.isChecked = data.isTurnedOn!!
-        holder.petListTextView.text = setPetListString(data.petList)
+        holder.petListTextView.text = setPetListString(data.petIdList)
         holder.memoTextView.text = data.memo
     }
 
-    private fun setPetListString(petList: ArrayList<Long>): String{
+    private fun setPetListString(petIdList: ArrayList<String>): String{
+        return petIdList.toString()
+        /*
         var result = ""
         val size = petList.size
 
@@ -102,7 +104,7 @@ class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleL
         }
         result += if(petNameForId[petList.last()] != null) petNameForId[petList.last()] else petList.last().toString()
 
-        return result
+        return result*/
     }
 
     fun addItem(item: PetFeedScheduleListItem){

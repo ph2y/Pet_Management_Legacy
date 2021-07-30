@@ -93,9 +93,9 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             field = value
         }
 
-    var petList = handle.get<ArrayList<Long>>("petList")?: arrayListOf()
+    var petIdList = handle.get<ArrayList<Long>>("petIdList")?: arrayListOf()
         set(value){
-            handle.set("petList", value)
+            handle.set("petIdList", value)
             field = value
         }
 

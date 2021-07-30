@@ -1,10 +1,9 @@
 package com.sju18001.petmanagement.restapi.dto
-import java.time.LocalTime
 
 data class PetFeedScheduleCreateRequestDto(
-    val pet_id: Long,
+    val pet_id_list: String,
     val feed_time: String,
-    val memo: String
+    val memo: String?
 )
 
 data class PetFeedScheduleCreateResponseDto(
@@ -21,17 +20,17 @@ data class PetFeedScheduleDeleteResponseDto(
 
 data class PetFeedScheduleFetchResponseDto(
     val id: Long,
-    val pet_id: Long,
+    val pet_id_list: String,
     val feed_time: String,
-    val memo: String,
+    val memo: String?,
     val is_turned_on: Boolean
 )
 
 data class PetFeedScheduleUpdateRequestDto(
     val id: Long,
-    val pet_id: Long,
+    val pet_id_list: String,
     val feed_time: String,
-    val memo: String,
+    val memo: String?,
     val is_turned_on: Boolean
 )
 
