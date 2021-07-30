@@ -6,10 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
+
+interface PetNameListAdapterInterface{
+    fun setViewModelForCheckBox(position: Int)
+    fun setCheckBoxForViewModel(checkBox: CheckBox, position: Int)
+}
 
 class PetNameListAdapter(private val dataSet: ArrayList<PetNameListItem>) : RecyclerView.Adapter<PetNameListAdapter.ViewHolder>(){
+    lateinit var petNameListAdapterInterface: PetNameListAdapterInterface
+
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         val petNameCheckBox: CheckBox = view.findViewById(R.id.pet_name_check_box)
     }
@@ -27,6 +36,12 @@ class PetNameListAdapter(private val dataSet: ArrayList<PetNameListItem>) : Recy
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         updateDataSetToViewHolder(holder, dataSet[position])
+
+        petNameListAdapterInterface.setCheckBoxForViewModel(holder.petNameCheckBox, position)
+
+        holder.petNameCheckBox.setOnClickListener {
+            petNameListAdapterInterface.setViewModelForCheckBox(position)
+        }
     }
 
     override fun getItemCount(): Int = dataSet.size
