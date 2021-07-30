@@ -4,7 +4,7 @@ import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.account.dto.CreateAccountReqDto;
 import com.sju18.petmanagement.global.exception.DtoValidityException;
-import com.sju18.petmanagement.global.util.message.MessageService;
+import com.sju18.petmanagement.global.util.message.MessageConfig;
 import com.sju18.petmanagement.global.util.storage.FileService;
 
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 @Service
 public class AccountService {
-    private final MessageSource msgSrc = MessageService.getAccountMessageSource();
+    private final MessageSource msgSrc = MessageConfig.getAccountMessageSource();
     private final AccountRepository accountRepository;
     private final PasswordEncoder pwEncoder;
     private final FileService fileService;
