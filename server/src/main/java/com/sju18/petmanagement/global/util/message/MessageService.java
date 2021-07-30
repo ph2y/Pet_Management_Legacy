@@ -20,15 +20,13 @@ public class MessageService implements WebMvcConfigurer {
         return localResolver;
     }
 
-    @Bean
-    public MessageSource accountMsgSrc() {
+    public static MessageSource getAccountMessageSource() {
         ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
         msgSrc.setBasename("classpath:/static/messages/account");
         return msgSrc;
     }
 
-    @Bean
-    public MessageSource petMsgSrc() {
+    public static MessageSource getPetMessageSource() {
         ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
         msgSrc.setBasename("classpath:/static/messages/pet");
         return msgSrc;

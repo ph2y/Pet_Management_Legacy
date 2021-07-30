@@ -12,27 +12,32 @@ repositories {
 	mavenCentral()
 }
 
+dependencyLocking {
+	lockAllConfigurations()
+}
+
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-devtools'
-	implementation 'org.springframework:spring-context-support:5.2.0.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-web:2.5.3'
+	implementation 'org.springframework.boot:spring-boot-starter-security:2.5.3'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa:2.5.3'
+	implementation 'org.springframework.boot:spring-boot-starter-validation:2.5.3'
+	implementation 'org.springframework.boot:spring-boot-devtools:2.5.3'
+	implementation 'org.springframework:spring-context-support:5.3.9'
 	implementation 'javax.mail:mail:1.4.7'
-	implementation 'org.projectlombok:lombok'
+	implementation 'org.projectlombok:lombok:1.18.20'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-	implementation 'commons-io:commons-io:2.11.0'
-	implementation 'org.json:json:20180813'
+	implementation 'commons-io:commons-io:20030203.000550'
+	implementation 'org.json:json:20210307'
 	runtime 'io.jsonwebtoken:jjwt-impl:0.11.2'
 	runtime 'io.jsonwebtoken:jjwt-jackson:0.11.2'
-	runtimeOnly 'mysql:mysql-connector-java'
-	implementation 'javax.xml.bind:jaxb-api'
-	implementation 'com.h2database:h2'
-	implementation 'junit:junit:4.12'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.springframework.security:spring-security-test'
+	runtimeOnly 'mysql:mysql-connector-java:8.0.25'
+	implementation 'javax.xml.bind:jaxb-api:2.4.0-b180830.0359'
+	implementation 'com.h2database:h2:1.4.200'
+	implementation 'junit:junit:4.13.2'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test:2.5.3'
+	testImplementation 'org.springframework.security:spring-security-test:5.5.1'
 
-	annotationProcessor('org.projectlombok:lombok')
+	annotationProcessor('org.projectlombok:lombok:1.18.20')
 }
 
 test {
