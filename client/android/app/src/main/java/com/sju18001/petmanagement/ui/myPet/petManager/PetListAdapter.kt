@@ -40,14 +40,12 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         // create strings to display
         val period = Period.between(currentItem.getPetBirth(), LocalDate.now())
 
-        var petNameInfo = ""
-        petNameInfo += currentItem.getPetName() + " [" + currentItem.getPetBreed() + " "
+        var petNameInfo = currentItem.getPetName() + " ["
         petNameInfo += if(currentItem.getPetGender()!!) {
             holder.itemView.context.getString(R.string.pet_gender_female_symbol) + ' ' + period.years.toString() + "세]"
         } else {
             holder.itemView.context.getString(R.string.pet_gender_male_symbol) + ' ' + period.years.toString() + "세]"
         }
-
 
         var petBirth = ""
         petBirth += if(currentItem.getPetYearOnly()!!) {
