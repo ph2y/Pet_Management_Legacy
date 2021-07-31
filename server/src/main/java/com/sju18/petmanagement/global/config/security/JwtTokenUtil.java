@@ -3,7 +3,6 @@ package com.sju18.petmanagement.global.config.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.io.Encoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -18,9 +17,7 @@ import java.util.function.Function;
 public class JwtTokenUtil {
 
     // 토큰 생성용 난수 시드값
-    private static final String secret = "newcentury1234567890";
-    private SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
-    String base64SecretKey = Encoders.BASE64.encode(secretKey.getEncoded());
+    private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
     // 인증 토큰 유효기간 (6시간)
     public static final long JWT_TOKEN_VALIDITY = 6 * 60 * 60;

@@ -8,7 +8,7 @@ import com.sju18.petmanagement.global.exception.DtoValidityException;
 import com.sju18.petmanagement.global.util.message.MessageConfig;
 import com.sju18.petmanagement.global.util.storage.FileService;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,9 +21,9 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.Locale;
 
-@RequiredArgsConstructor
 @Service
-public class AccountService {
+@AllArgsConstructor
+public class AccountProfileService {
     private final MessageSource msgSrc = MessageConfig.getAccountMessageSource();
     private final AccountRepository accountRepository;
     private final PasswordEncoder pwEncoder;
@@ -32,7 +32,9 @@ public class AccountService {
     @Transactional
     public void createAccount(CreateAccountReqDto reqDto) throws Exception {
         // 중복 확인
-        this.checkDuplication(reqDto.getUsername(), reqDto.getEmail(), reqDto.getPhone());
+        this.checkUsernameDuplication(reqDto.getUsername());
+        this.checkEmailDuplication(reqDto.getEmail());
+        this.checkPhoneDuplication(reqDto.getPhone());
 
         // Account 객체 생성
         Account newAccount = Account.builder()
@@ -52,18 +54,26 @@ public class AccountService {
         fileService.createAccountFileStorage(newAccount.getId());
     }
 
-    private void checkDuplication(String username, String email, String phone) throws DtoValidityException {
-        // 중복 확인
+    private void checkUsernameDuplication(String username) throws Exception {
+        // 닉네임 중복 확인
         if (username != null && accountRepository.existsByUsername(username)) {
             throw new DtoValidityException(
                     msgSrc.getMessage("error.dup.username",null,Locale.ENGLISH)
             );
         }
+    }
+
+    private void checkEmailDuplication(String email) throws Exception {
+        // 이메일 중복 확인
         if (email != null && accountRepository.existsByEmail(email)) {
             throw new DtoValidityException(
                     msgSrc.getMessage("error.dup.email",null, Locale.ENGLISH)
             );
         }
+    }
+
+    private void checkPhoneDuplication(String phone) throws Exception {
+        // 전화번호 중복 확인
         if (phone != null && accountRepository.existsByPhone(phone)) {
             throw new DtoValidityException(
                     msgSrc.getMessage("error.dup.phone",null,Locale.ENGLISH)
@@ -76,23 +86,24 @@ public class AccountService {
         // 기존 사용자 프로필 로드
         Account currentAccount = this.fetchCurrentAccount(auth);
 
-        // 중복 확인
-        this.checkDuplication(null, reqDto.getEmail(), reqDto.getPhone());
-
         // 기존 사용자 프로필 중 변경사항이 있는 필드 업데이트
-        if (reqDto.getEmail() != null) {
+        if (reqDto.getEmail() != null && !reqDto.getEmail().equals(currentAccount.getEmail())) {
+            // 중복 확인
+            this.checkEmailDuplication(reqDto.getEmail());
             currentAccount.setEmail(reqDto.getEmail());
         }
-        if (reqDto.getPhone() != null) {
+        if (reqDto.getPhone() != null && !reqDto.getPhone().equals(currentAccount.getPhone())) {
+            // 중복 확인
+            this.checkPhoneDuplication(reqDto.getPhone());
             currentAccount.setPhone(reqDto.getPhone());
         }
-        if (reqDto.getMarketing() != null) {
+        if (reqDto.getMarketing() != null && !reqDto.getMarketing().equals(currentAccount.getMarketing())) {
             currentAccount.setMarketing(reqDto.getMarketing());
         }
-        if (reqDto.getNickname() != null) {
+        if (reqDto.getNickname() != null && !reqDto.getNickname().equals(currentAccount.getNickname())) {
             currentAccount.setNickname(reqDto.getNickname());
         }
-        if (reqDto.getUserMessage() != null) {
+        if (reqDto.getUserMessage() != null && !reqDto.getUserMessage().equals(currentAccount.getUserMessage())) {
             currentAccount.setUserMessage(reqDto.getUserMessage());
         }
 

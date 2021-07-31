@@ -1,11 +1,14 @@
 package com.sju18.petmanagement.domain.account.api;
 
-import com.sju18.petmanagement.domain.account.application.AccountService;
+import com.sju18.petmanagement.domain.account.application.AccountProfileService;
+import com.sju18.petmanagement.domain.account.application.AccountLoginService;
+import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dto.*;
 import com.sju18.petmanagement.global.common.DtoMetadata;
+import com.sju18.petmanagement.global.config.security.JwtTokenUtil;
 import com.sju18.petmanagement.global.util.message.MessageConfig;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
@@ -20,12 +23,13 @@ import javax.validation.Valid;
 import java.util.Locale;
 
 @RestController
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class AccountController {
     private static final Logger logger = LogManager.getLogger();
     private final MessageSource msgSrc = MessageConfig.getAccountMessageSource();
-    private final AccountService accountServ;
-
+    private final AccountProfileService accountServ;
+    private AccountLoginService accountLoginServ;
+    private JwtTokenUtil tokenUtil;
 
     @PostMapping("/api/account/create")
     public ResponseEntity<?> createAccount(@Valid @RequestBody CreateAccountReqDto reqDto) {
@@ -55,8 +59,8 @@ public class AccountController {
         return ResponseEntity.ok(new UpdateAccountResDto(dtoMetadata));
     }
 
-    @PostMapping("/api/account/uploadprofilephoto")
-    public ResponseEntity<?> uploadProfilePhoto(Authentication auth, MultipartHttpServletRequest fileReq) {
+    @PostMapping("/api/account/updatephoto")
+    public ResponseEntity<?> updateAccountPhoto(Authentication auth, MultipartHttpServletRequest fileReq) {
         DtoMetadata dtoMetadata;
         String fileUrl;
         try {
@@ -69,6 +73,13 @@ public class AccountController {
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.updatePhoto.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new UpdateAccountPhotoResDto(dtoMetadata, fileUrl));
     }
+
+    @PostMapping("/api/account/login")
+    public ResponseEntity<?> loginAccount(@RequestBody LoginReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        final Account account = accountLoginServ.loginByCredential(reqDto.getUsername(), reqDto.getPassword());
+        final String token = tokenUtil.generateToken(account.getUsername());
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.login.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new LoginResDto(dtoMetadata, token));
+    }
 }
-
-

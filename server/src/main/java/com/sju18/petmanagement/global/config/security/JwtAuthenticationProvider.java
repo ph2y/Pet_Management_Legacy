@@ -3,7 +3,7 @@ package com.sju18.petmanagement.global.config.security;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -14,22 +14,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
+@AllArgsConstructor
 public class JwtAuthenticationProvider implements AuthenticationProvider {
-
-    @Autowired
     private AccountRepository accountRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private PasswordEncoder pwEncoder;
 
     @Override
+    // 들어오는 모든 요청에 대한 로그인 여부 검증 (WebSecurityConfig 예외 url 제외)
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
         Account account = accountRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
 
-        if(passwordEncoder.matches(account.getPassword(), password)) {
+        if(pwEncoder.matches(account.getPassword(), password)) {
             throw new BadCredentialsException("UnAuthorized");
         }
 

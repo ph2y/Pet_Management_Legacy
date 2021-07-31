@@ -1,8 +1,7 @@
 package com.sju18.petmanagement.global.config.security;
 
-import com.sju18.petmanagement.domain.account.application.JwtUserDetailsService;
+import com.sju18.petmanagement.domain.account.application.AccountLoginService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,23 +15,23 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+    private final AccountLoginService accountLoginServ;
+    private final JwtTokenUtil jwtTokenUtil;
+    private static final List<String> EXCLUDE_URL = Collections.emptyList();
 
-    @Autowired
-    private JwtUserDetailsService jwtUserDetailService;
-
-    @Autowired
-    private JwtTokenUtil jwtTokenUtil;
-    private static final List<String> EXCLUDE_URL =
-            Collections.unmodifiableList(
-                    Arrays.asList());
+    // 의존성 주입용 생성자
+    public JwtRequestFilter(AccountLoginService accountLoginServ, JwtTokenUtil jwtTokenUtil) {
+        this.accountLoginServ = accountLoginServ;
+        this.jwtTokenUtil = jwtTokenUtil;
+    }
 
     @Override
+    // 로그인이 요구되는 엔드포인트에 대한 Authorization 검출
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
@@ -56,7 +55,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             try {
-                UserDetails userDetails = this.jwtUserDetailService.loadUserByUsername(username);
+                UserDetails userDetails = this.accountLoginServ.loadUserByUsername(username);
                 if(jwtTokenUtil.validateToken(jwtToken, userDetails)) {
                     UsernamePasswordAuthenticationToken authenticationToken =
                             new UsernamePasswordAuthenticationToken(userDetails, null ,userDetails.getAuthorities());
@@ -72,7 +71,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    // 검증하지 않을 예외 조건
+    protected boolean shouldNotFilter(HttpServletRequest request) {
         return EXCLUDE_URL.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
     }
 
