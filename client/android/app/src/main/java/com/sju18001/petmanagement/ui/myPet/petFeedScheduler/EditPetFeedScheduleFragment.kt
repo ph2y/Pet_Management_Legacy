@@ -75,7 +75,6 @@ class EditPetFeedScheduleFragment : Fragment() {
 
         // 확인 버튼
         binding.confirmButton.setOnClickListener {
-            // TODO: pet_id 리스트화하여 전달
             val intent = requireActivity().intent
 
             if(intent.getStringExtra("fragmentType") == "create_pet_feed_schedule"){
@@ -119,6 +118,11 @@ class EditPetFeedScheduleFragment : Fragment() {
         petFeedScheduleCreateApiCall?.cancel()
         petFeedScheduleUpdateApiCall?.cancel()
         petProfileFetchApiCall?.cancel()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
@@ -170,7 +174,7 @@ class EditPetFeedScheduleFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<List<PetProfileFetchResponseDto>>, t: Throwable) {
-                TODO("Not yet implemented")
+                // Do nothing
             }
         })
     }

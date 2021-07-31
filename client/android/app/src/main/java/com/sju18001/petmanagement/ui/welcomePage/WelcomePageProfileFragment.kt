@@ -37,4 +37,9 @@ class WelcomePageProfileFragment : Fragment() {
             activity?.finish()
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

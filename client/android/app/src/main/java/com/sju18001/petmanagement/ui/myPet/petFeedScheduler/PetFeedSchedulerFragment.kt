@@ -83,6 +83,11 @@ class PetFeedSchedulerFragment : Fragment() {
         petFeedScheduleFetchApiCall?.cancel()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun initializeAdapter(){
         adapter = PetFeedScheduleListAdapter(arrayListOf(), myPetViewModel.petNameForId)
         adapter.petFeedScheduleListAdapterInterface = object: PetFeedScheduleListAdapterInterface {

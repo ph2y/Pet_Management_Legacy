@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement
+package com.sju18001.petmanagement.ui.welcomePage
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,9 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.sju18001.petmanagement.MainActivity
 import com.sju18001.petmanagement.databinding.FragmentWelcomePageBinding
-import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.ui.welcomePage.WelcomePageProfileFragment
 
 class WelcomePageFragment : Fragment() {
     private var _binding: FragmentWelcomePageBinding? = null
@@ -46,6 +45,11 @@ class WelcomePageFragment : Fragment() {
             startActivity(intent)
             activity?.finish()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     class WelcomePageCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
