@@ -1,20 +1,19 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
 import android.content.Context
+import android.content.Intent
 import android.os.Build
-import android.preference.PreferenceManager
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.prefs.Preferences
-import kotlin.coroutines.coroutineContext
 
 class PetListAdapter(private val startDragListener: OnStartDragListener, private val context: Context) :
     RecyclerView.Adapter<PetListAdapter.HistoryListViewHolder>(), PetListDragAdapter.Listener {
@@ -64,14 +63,34 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
             this.startDragListener.onStartDrag(holder)
             return@OnLongClickListener false
         })
+
+        // click -> open pet profile
+        holder.itemView.setOnClickListener {
+            // set pet values to Intent
+            val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
+            petProfileIntent.putExtra("petImage", currentItem.getPetPhotoUrl())
+            petProfileIntent.putExtra("petName", currentItem.getPetName())
+            petProfileIntent.putExtra("petBirth", petBirth)
+            petProfileIntent.putExtra("petSpecies", currentItem.getPetSpecies())
+            petProfileIntent.putExtra("petBreed", currentItem.getPetBreed())
+            val petGender = if(currentItem.getPetGender()!!) {
+                holder.itemView.context.getString(R.string.pet_gender_female_symbol)
+            }
+            else {
+                holder.itemView.context.getString(R.string.pet_gender_male_symbol)
+            }
+            val petAge = Period.between(currentItem.getPetBirth(), LocalDate.now()).years.toString()
+            petProfileIntent.putExtra("petGender", petGender)
+            petProfileIntent.putExtra("petAge", petAge)
+            petProfileIntent.putExtra("petMessage", currentItem.getPetMessage())
+
+            // open activity
+            petProfileIntent.putExtra("fragmentType", "pet_profile_pet_manager")
+            holder.itemView.context.startActivity(petProfileIntent)
+        }
     }
 
     override fun getItemCount() = resultList.size
-
-    fun setResult(result: List<PetListItem>){
-        this.resultList = result
-        notifyDataSetChanged()
-    }
 
     override fun onRowMoved(fromPosition: Int, toPosition: Int) {
         if (fromPosition < toPosition) {
@@ -94,4 +113,9 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
     }
     override fun onRowSelected(itemViewHolder: HistoryListViewHolder) {}
     override fun onRowClear(itemViewHolder: HistoryListViewHolder) {}
+
+    public fun setResult(result: List<PetListItem>){
+        this.resultList = result
+        notifyDataSetChanged()
+    }
 }
