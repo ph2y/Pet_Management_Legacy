@@ -79,52 +79,60 @@
                     app:civ_border_color="@color/carrot"/>
 
                 <LinearLayout
-                    android:id="@+id/pet_name_and_birth_layout"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_toEndOf="@id/pet_image"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="12dp"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/pet_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:paddingBottom="6dp"
-                        android:textSize="24dp"
-                        android:textStyle="bold"/>
-
-                    <TextView
-                        android:id="@+id/pet_birth"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="16dp"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/pet_name_and_birth_layout"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/pet_species_and_breed"
+                    <RelativeLayout
+                        android:id="@+id/pet_name_species_breed_layout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="6dp"
-                        android:gravity="end"
-                        android:textSize="16dp"/>
+                        android:layout_marginBottom="6dp">
 
-                    <TextView
-                        android:id="@+id/pet_gender_and_age"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="end"
-                        android:textSize="16dp"/>
+                        <TextView
+                            android:id="@+id/pet_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:textSize="24dp"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/pet_species_and_breed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toEndOf="@id/pet_name"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="end"
+                            android:textSize="16dp"/>
+
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/pet_birth"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:textSize="16dp"/>
+
+                        <TextView
+                            android:id="@+id/pet_gender_and_age"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_toEndOf="@id/pet_birth"
+                            android:layout_alignParentEnd="true"
+                            android:gravity="end"
+                            android:textSize="16dp"/>
+
+                    </RelativeLayout>
 
                 </LinearLayout>
 

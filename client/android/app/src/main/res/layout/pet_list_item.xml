@@ -36,7 +36,7 @@
                 <TextView
                     android:id="@+id/pet_name"
                     android:layout_width="match_parent"
-                    android:paddingBottom="2dp"
+                    android:paddingBottom="4dp"
                     android:textSize="18dp"
                     android:singleLine="true"
                     android:layout_height="wrap_content" />
@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_baseline_drag_handle_36"/>
+            android:src="@drawable/ic_baseline_drag_handle_30"/>
 
     </RelativeLayout>
 
