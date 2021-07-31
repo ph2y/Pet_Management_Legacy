@@ -54,7 +54,7 @@ public class PetProfileService {
     }
 
     @Transactional(readOnly = true)
-    public Pet fetchPetById(Authentication auth, Long petId) {
+    public Pet fetchPetById(Long petId) {
         // 반려동물 고유번호로 반려동물 인출
         return petRepository.findById(petId)
                 .orElseThrow(() -> new IllegalArgumentException(

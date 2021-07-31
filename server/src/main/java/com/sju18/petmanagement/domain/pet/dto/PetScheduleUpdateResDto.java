@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PetFeedScheduleCreateResponseDto {
+public class PetScheduleUpdateResDto {
     private String message;
 }
