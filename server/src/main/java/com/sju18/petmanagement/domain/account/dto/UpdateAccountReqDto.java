@@ -12,7 +12,7 @@ public class UpdateAccountReqDto {
     @Size(max = 50, message = "valid.account.email.size")
     private String email;
     @Size(min = 12, max = 13, message = "valid.account.phone.size")
-    @Pattern(regexp = "/(^02|^\\d{3})-(\\d{3}|\\d{4})-\\d{4}/", message = "valid.account.phone.phone")
+    @Pattern(regexp = "(^02|^\\d{3})-(\\d{3}|\\d{4})-\\d{4}", message = "valid.account.phone.phone")
     private String phone;
     @Size(max = 20, message = "valid.account.nickname.size")
     private String nickname;

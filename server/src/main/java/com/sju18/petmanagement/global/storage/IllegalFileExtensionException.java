@@ -1,4 +1,4 @@
-package com.sju18.petmanagement.global.util.storage;
+package com.sju18.petmanagement.global.storage;
 
 public class IllegalFileExtensionException extends Exception {
     public IllegalFileExtensionException(String filename) {

@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -46,20 +46,28 @@ public class PetProfileService {
 
     // READ
     @Transactional(readOnly = true)
-    public List<Pet> fetchPet(Authentication auth) {
+    public List<Pet> fetchPetList(Authentication auth) {
         String ownername = accountProfileServ.fetchCurrentAccount(auth).getUsername();
 
         // 사용자 정보로 반려동물 리스트 인출
-        return petRepository.findAllByUsername(ownername).stream()
-                .map(PetFetchResponseDto::new)
-                .collect(Collectors.toList());
+        return new ArrayList<>(petRepository.findAllByOwnername(ownername));
+    }
+
+    @Transactional(readOnly = true)
+    public Pet fetchPetById(Authentication auth, Long petId) {
+        // 반려동물 고유번호로 반려동물 인출
+        return petRepository.findById(petId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                ));
     }
 
     // UPDATE
     @Transactional
     public void updatePet(Authentication auth, PetUpdateReqDto reqDto) {
+        // 받은 사용자 정보와 입력 정보로 반려동물 정보 업데이트
         String ownername = accountProfileServ.fetchCurrentAccount(auth).getUsername();
-        Pet currentPet = petRepository.findByUsernameAndId(ownername,reqDto.getId())
+        Pet currentPet = petRepository.findByOwnernameAndId(ownername, reqDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
                 ));
@@ -88,29 +96,17 @@ public class PetProfileService {
 
         // save(id가 있는 detached 상태의 객체) -> EntityManger.merge() => update
         petRepository.save(currentPet);
-
-        // 받은 사용자 정보와 입력 정보로 반려동물 정보 업데이트
-        try {
-
-            return new PetUpdateResponseDto("");
-        } catch (Exception e) {
-            return new PetUpdateResponseDto(e.getMessage());
-        }
     }
 
     // DELETE
     @Transactional
-    public PetDeleteResponseDto deletePet(Authentication auth, PetDeleteReqDto reqDto) {
-        String ownername = accountProfileServ.fetchCurrentAccount(auth).getUsername();
-
+    public void deletePet(Authentication auth, PetDeleteReqDto reqDto) {
         // 받은 사용자 정보와 반려동물 id로 반려동물 정보 삭제
-        try {
-            Pet pet = petRepository.findByUsernameAndId(ownername,reqDto.getId()).orElseThrow(() -> new IllegalArgumentException("Pet entity does not exists"));
-            petRepository.delete(pet);
-
-            return new PetDeleteResponseDto("Pet profile delete success");
-        } catch (Exception e) {
-            return new PetDeleteResponseDto(e.getMessage());
-        }
+        String ownername = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        Pet pet = petRepository.findByOwnernameAndId(ownername, reqDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                ));
+        petRepository.delete(pet);
     }
 }
