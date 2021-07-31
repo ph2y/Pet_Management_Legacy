@@ -9,6 +9,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class FetchAccountResDto {
     private DtoMetadata _metadata;
+    private Long id;
     private String username;
     private String email;
     private String phone;
@@ -20,6 +21,7 @@ public class FetchAccountResDto {
     // 정상 조회시 사용할 생성자
     public FetchAccountResDto(DtoMetadata dtoMetadata, Account account) {
         this._metadata = dtoMetadata;
+        this.id = account.getId();
         this.username = account.getUsername();
         this.email = account.getEmail();
         this.phone = account.getPhone();
@@ -32,6 +34,7 @@ public class FetchAccountResDto {
     // 오류시 사용할 생성자
     public FetchAccountResDto(DtoMetadata dtoMetadata) {
         this._metadata = dtoMetadata;
+        this.id = null;
         this.username = null;
         this.email = null;
         this.phone = null;
