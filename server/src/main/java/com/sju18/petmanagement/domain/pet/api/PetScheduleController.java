@@ -82,7 +82,16 @@ public class PetScheduleController {
 
     // DELETE
     @PostMapping("/api/pet/schedule/delete")
-    public ResponseEntity<?> deletePetSchedule(Authentication auth, @RequestBody PetScheduleDeleteReqDto reqDto) {
-        return ResponseEntity.ok(petScheduleServ.deletePetSchedule(auth, reqDto));
+    public ResponseEntity<?> deletePetSchedule(Authentication auth, @Valid @RequestBody PetScheduleDeleteReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        try {
+            petScheduleServ.deletePetSchedule(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new PetScheduleDeleteResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.petSchedule.delete.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new PetScheduleDeleteResDto(dtoMetadata));
     }
 }
