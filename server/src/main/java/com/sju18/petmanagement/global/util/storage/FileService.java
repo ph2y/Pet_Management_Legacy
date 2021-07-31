@@ -24,7 +24,7 @@ public class FileService {
     // TODO: Repository에 직접 억세스하지 않도록 accountService, petService 리팩토링
     private final AccountRepository accountRepository;
     private final PetRepository petRepository;
-    private final String storageRootPath = "C:\\Users\\fchop\\Development\\tmp\\Pet-Management\\storage";
+    private final String storageRootPath = "E:\\TempDev\\Pet-Management\\storage";
 
     // 특정 사용자 데이터 폴더 경로 조회
     public Path getAccountFileStoragePath(Long accountId) {
