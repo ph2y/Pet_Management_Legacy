@@ -16,7 +16,9 @@
     <string name="pet_name_hint">예) 코코</string>
     <string name="pet_gender_label">성별:</string>
     <string name="pet_gender_female">암</string>
+    <string name="pet_gender_female_symbol">♀</string>
     <string name="pet_gender_male">수</string>
+    <string name="pet_gender_male_symbol">♂</string>
     <string name="pet_species_label">동물 종:</string>
     <string name="pet_species_hint">예) 강아지</string>
     <string name="pet_breed_label">품종:</string>

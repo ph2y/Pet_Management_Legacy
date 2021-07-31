@@ -41,19 +41,18 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         val period = Period.between(currentItem.getPetBirth(), LocalDate.now())
 
         var petNameInfo = ""
-        petNameInfo += currentItem.getPetName() + '(' + currentItem.getPetBreed() + ", "
+        petNameInfo += currentItem.getPetName() + " [" + currentItem.getPetBreed() + " "
         petNameInfo += if(currentItem.getPetGender()!!) {
-            holder.itemView.context.getString(R.string.pet_gender_female) + "/" + period.years.toString() + "세)"
+            holder.itemView.context.getString(R.string.pet_gender_female_symbol) + ' ' + period.years.toString() + "세]"
         } else {
-            holder.itemView.context.getString(R.string.pet_gender_male) + "/"  + period.years.toString() + "세)"
+            holder.itemView.context.getString(R.string.pet_gender_male_symbol) + ' ' + period.years.toString() + "세]"
         }
 
         var petBirth = ""
-        if(currentItem.getPetYearOnly()!!) {
-            petBirth += currentItem.getPetBirth()?.year.toString() + "년생"
-        }
-        else {
-            petBirth += currentItem.getPetBirth()?.format(DateTimeFormatter.ISO_DATE) + "생"
+        petBirth += if(currentItem.getPetYearOnly()!!) {
+            currentItem.getPetBirth()?.year.toString() + "년생"
+        } else {
+            currentItem.getPetBirth()?.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + "생"
         }
 
         // set values to views

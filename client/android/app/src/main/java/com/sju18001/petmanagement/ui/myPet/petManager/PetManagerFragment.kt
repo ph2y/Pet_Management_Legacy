@@ -131,7 +131,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                     if(adapter.itemCount == 0) {
                         // update list order + reorder
                         updatePetListOrder(petListApi)
-                        reOrder(petListApi)
+                        reorderPetList(petListApi)
 
                         // set result + restore last scrolled index
                         adapter.setResult(petList)
@@ -203,7 +203,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     }
 
     // reorder pet list
-    private fun reOrder(apiResponse: ArrayList<PetListItem>) {
+    private fun reorderPetList(apiResponse: ArrayList<PetListItem>) {
         // get saved pet list order
         val petListOrder = getPetListOrder(PET_LIST_ORDER)
 
@@ -259,7 +259,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
 
         // if there are multiple/no differences -> update list with all changes + no animation
         updatePetListOrder(apiResponse)
-        reOrder(apiResponse)
+        reorderPetList(apiResponse)
         adapter.setResult(petList)
     }
 
