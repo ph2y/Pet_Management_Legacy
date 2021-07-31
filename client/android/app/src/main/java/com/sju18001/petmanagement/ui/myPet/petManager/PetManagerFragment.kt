@@ -88,10 +88,10 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     override fun onStart() {
         super.onStart()
 
-        // add pet fab -> start activity and set fragment to add pet
-        binding.addPetFab.setOnClickListener {
+        // create pet fab -> start activity and set fragment to create pet
+        binding.createPetFab.setOnClickListener {
             val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
-            myPetActivityIntent.putExtra("fragmentType", "add_pet")
+            myPetActivityIntent.putExtra("fragmentType", "create_pet")
             startActivity(myPetActivityIntent)
         }
     }

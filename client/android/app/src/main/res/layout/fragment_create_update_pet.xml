@@ -32,7 +32,7 @@
             android:layout_marginStart="12dp"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:text="@string/add_pet_title"/>
+            android:text="@string/create_pet_title"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -51,11 +51,11 @@
                 android:enabled="false"
                 android:textSize="20dp"
                 android:textStyle="bold"
-                android:text="@string/confirm_add_pet"
+                android:text="@string/confirm_create_pet"
                 android:background="?attr/selectableItemBackground"/>
 
             <ProgressBar
-                android:id="@+id/add_pet_progress_bar"
+                android:id="@+id/create_pet_progress_bar"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:visibility="gone"

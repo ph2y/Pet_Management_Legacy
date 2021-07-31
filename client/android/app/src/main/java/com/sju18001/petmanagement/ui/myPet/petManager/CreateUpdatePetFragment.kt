@@ -15,7 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.databinding.FragmentAddEditPetBinding
+import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePetBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.PetProfileCreateRequestDto
@@ -30,13 +30,13 @@ import retrofit2.Response
 import java.time.LocalDate
 import java.util.*
 
-class AddPetFragment : Fragment() {
+class CreateUpdatePetFragment : Fragment() {
 
     // constant variables
     private val PICK_IMAGE = 0
 
     // variables for view binding
-    private var _binding: FragmentAddEditPetBinding? = null
+    private var _binding: FragmentCreateUpdatePetBinding? = null
     private val binding get() = _binding!!
 
     // variable for ViewModel
@@ -62,7 +62,7 @@ class AddPetFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // view binding
-        _binding = FragmentAddEditPetBinding.inflate(inflater, container, false)
+        _binding = FragmentCreateUpdatePetBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -205,7 +205,7 @@ class AddPetFragment : Fragment() {
                     myPetViewModel.createUpdatePetApiIsLoading = false
                     setButtonToNormal()
 
-                    Toast.makeText(context, context?.getText(R.string.add_pet_successful), Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context?.getText(R.string.create_pet_successful), Toast.LENGTH_LONG).show()
                     activity?.finish()
                 }
                 else {
@@ -317,13 +317,13 @@ class AddPetFragment : Fragment() {
     // set button to loading
     private fun setButtonToLoading() {
         binding.confirmButton.visibility = View.GONE
-        binding.addPetProgressBar.visibility = View.VISIBLE
+        binding.createPetProgressBar.visibility = View.VISIBLE
     }
 
     // set button to normal
     private fun setButtonToNormal() {
         binding.confirmButton.visibility = View.VISIBLE
-        binding.addPetProgressBar.visibility = View.GONE
+        binding.createPetProgressBar.visibility = View.GONE
     }
 
     // for valid check
@@ -348,7 +348,7 @@ class AddPetFragment : Fragment() {
     private fun restoreState() {
         // for title
         if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
-            binding.backButtonTitle.text = context?.getText(R.string.edit_pet_title)
+            binding.backButtonTitle.text = context?.getText(R.string.update_pet_title)
         }
 
         if(myPetViewModel.petImageValue != null) {
