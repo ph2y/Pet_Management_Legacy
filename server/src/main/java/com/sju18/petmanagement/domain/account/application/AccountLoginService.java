@@ -3,8 +3,10 @@ package com.sju18.petmanagement.domain.account.application;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.account.dao.Permission;
+import com.sju18.petmanagement.global.util.message.MessageConfig;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -16,43 +18,37 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 @Service
-public class JwtUserDetailsService implements UserDetailsService {
+@AllArgsConstructor
+public class AccountLoginService implements UserDetailsService {
+    private final AccountRepository accountRepository;
+    private final PasswordEncoder pwEncoder;
+    private final MessageSource msgSrc = MessageConfig.getAccountMessageSource();
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private AccountRepository accountRepository;
-
-    // 스프링 시큐리티 유저 정보 로드
+    // 스프링 시큐리티 유저 권한 정보 로드
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
         grantedAuthorities.add(new SimpleGrantedAuthority(Permission.USER.getValue()));
-//        아래 소스는 특정 조건에서 어드민 계정으로 넣고 싶을 때 조건을 수정하여 사용하면 됨.
-//        아래 예시는 username이 "sju18"인 경우에 admin권한을 준다는것임.
-//        if (username.equals("sju18")) {
-//            grantedAuthorities.add(new SimpleGrantedAuthority(Permission.ADMIN.getValue()));
-//        }
 
         return new User(account.getUsername(), account.getPassword(), grantedAuthorities);
     }
 
     // 유저네임과 비밀번호로 스프링 시큐리티 인증
-    public Account authenticateByUsernameAndPassword(String username, String password) {
+    public Account loginByCredential(String username, String password) {
         Account account = accountRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-
-        if(!passwordEncoder.matches(password, account.getPassword())) {
-            throw new BadCredentialsException("Password not matched");
+        
+        // 비밀번호 확인
+        if(!pwEncoder.matches(password, account.getPassword())) {
+            throw new BadCredentialsException(msgSrc.getMessage("error.login.fail", null, Locale.ENGLISH));
         }
 
         return account;
     }
-
 }
