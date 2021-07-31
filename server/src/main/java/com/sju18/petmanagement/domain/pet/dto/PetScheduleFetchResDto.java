@@ -1,23 +1,28 @@
 package com.sju18.petmanagement.domain.pet.dto;
 
 import com.sju18.petmanagement.domain.pet.dao.PetSchedule;
+import com.sju18.petmanagement.global.common.DtoMetadata;
+
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 public class PetScheduleFetchResDto {
-    private Long id;
-    private String pet_id_list;
-    private String feed_time;
-    private String memo;
-    private Boolean is_turned_on;
+    private DtoMetadata _metadata;
+    private List<PetSchedule> petScheduleList;
 
-    public PetScheduleFetchResDto(PetSchedule petFeedSchedule) {
-        this.id = petFeedSchedule.getId();
-        this.pet_id_list = petFeedSchedule.getPetList().toString();
-        this.feed_time = petFeedSchedule.getTime().toString()
-                .replace("[", "")
-                .replace("]", "");
-        this.memo = petFeedSchedule.getMemo();
-        this.is_turned_on = petFeedSchedule.getEnable();
+    // 정상 조회시 사용할 생성자
+    public PetScheduleFetchResDto(DtoMetadata metadata, List<PetSchedule> petScheduleList) {
+        List<Long> applyPetIdList = new ArrayList<>();
+        this._metadata = metadata;
+        this.petScheduleList = petScheduleList;
+    }
+
+    // 오류시 사용할 생성자
+    public PetScheduleFetchResDto(DtoMetadata metadata) {
+        this._metadata = metadata;
+        this.petScheduleList = null;
     }
 }
