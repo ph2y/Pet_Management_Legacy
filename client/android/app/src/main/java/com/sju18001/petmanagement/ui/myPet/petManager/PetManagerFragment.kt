@@ -93,9 +93,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
             myPetActivityIntent.putExtra("fragmentType", "add_pet")
             startActivity(myPetActivityIntent)
-
-            // for testing TODO: remove this
-            Log.d("list order", getPetListOrder(PET_LIST_ORDER).toString())
         }
     }
 

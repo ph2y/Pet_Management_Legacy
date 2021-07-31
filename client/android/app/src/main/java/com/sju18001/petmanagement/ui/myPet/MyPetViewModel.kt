@@ -12,6 +12,53 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             field = value
         }
 
+    // variables for pet profile
+    var loadedFromIntent = handle.get<Boolean>("loadedFromIntent")?: false
+        set(value){
+            handle.set("loadedFromIntent", value)
+            field = value
+        }
+    var petImageValueProfile = handle.get<Int>("petImageValueProfile")
+        set(value){
+            handle.set("petImageValueProfile", value)
+            field = value
+        }
+    var petNameValueProfile = handle.get<String>("petNameValueProfile")?: ""
+        set(value){
+            handle.set("petNameValueProfile", value)
+            field = value
+        }
+    var petBirthValueProfile = handle.get<String>("petBirthValueProfile")?: ""
+        set(value){
+            handle.set("petBirthValueProfile", value)
+            field = value
+        }
+    var petSpeciesValueProfile = handle.get<String>("petSpeciesValueProfile")?: ""
+        set(value){
+            handle.set("petSpeciesValueProfile", value)
+            field = value
+        }
+    var petBreedValueProfile = handle.get<String>("petBreedValueProfile")?: ""
+        set(value){
+            handle.set("petBreedValueProfile", value)
+            field = value
+        }
+    var petGenderValueProfile = handle.get<String>("petGenderValueProfile")?: ""
+        set(value){
+            handle.set("petGenderValueProfile", value)
+            field = value
+        }
+    var petAgeValueProfile = handle.get<String>("petAgeValueProfile")?: ""
+        set(value){
+            handle.set("petAgeValueProfile", value)
+            field = value
+        }
+    var petMessageValueProfile = handle.get<String>("petMessageValueProfile")?: ""
+        set(value){
+            handle.set("petMessageValueProfile", value)
+            field = value
+        }
+
     // variables for pet id - name
     var petNameForId = handle.get<HashMap<Long, String>>("petNameForId")?: HashMap()
         set(value){
@@ -23,7 +70,12 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
         petNameForId[id] = name
     }
 
-    // variables for add/edit pet
+    // variables for add/update pet
+    var petIdValue = handle.get<Long>("petIdValue")
+        set(value) {
+            handle.set("petIdValue", value)
+            field = value
+        }
     var petImageValue = handle.get<Uri>("petImageValue")
         set(value){
             handle.set("petImageValue", value)
@@ -74,9 +126,9 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("petBirthIsYearOnlyValue", value)
             field = value
         }
-    var addPetApiIsLoading = handle.get<Boolean>("addPetApiIsLoading")?: false
+    var createUpdatePetApiIsLoading = handle.get<Boolean>("createUpdatePetApiIsLoading")?: false
         set(value) {
-            handle.set("addPetApiIsLoading", value)
+            handle.set("createUpdatePetApiIsLoading", value)
         }
 
     // variables for scheduler

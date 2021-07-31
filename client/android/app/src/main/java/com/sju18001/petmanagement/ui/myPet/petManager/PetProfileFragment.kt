@@ -16,6 +16,9 @@ class PetProfileFragment : Fragment(){
     private var _binding: FragmentPetProfileBinding? = null
     private val binding get() = _binding!!
 
+    // variable for ViewModel
+    private val myPetViewModel: MyPetViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -25,27 +28,71 @@ class PetProfileFragment : Fragment(){
         _binding = FragmentPetProfileBinding.inflate(inflater, container, false)
         val view = binding.root
 
-        // set views
-        setViewsWithPetData()
+        // save pet data to ViewModel(for pet profile) if not already loaded
+        if(!myPetViewModel.loadedFromIntent) { savePetDataForPetProfile() }
 
         return view
     }
 
     override fun onStart() {
         super.onStart()
+
+        // for pet update button
+        binding.updatePetButton.setOnClickListener {
+            // save pet data to ViewModel(for pet update)
+            savePetDataForPetUpdate()
+
+            // open update pet fragment
+            activity?.supportFragmentManager?.beginTransaction()!!
+                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                .replace(R.id.my_pet_activity_fragment_container, AddPetFragment())
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // set views with data from ViewModel
+        setViewsWithPetData()
+    }
+
+    private fun savePetDataForPetProfile() {
+        myPetViewModel.loadedFromIntent = true
+        myPetViewModel.petImageValueProfile = requireActivity().intent.getIntExtra("petImage", R.drawable.sample1)
+        myPetViewModel.petNameValueProfile = requireActivity().intent.getStringExtra("petName").toString()
+        myPetViewModel.petBirthValueProfile = requireActivity().intent.getStringExtra("petBirth").toString()
+        myPetViewModel.petSpeciesValueProfile = requireActivity().intent.getStringExtra("petSpecies").toString()
+        myPetViewModel.petBreedValueProfile = requireActivity().intent.getStringExtra("petBreed").toString()
+        myPetViewModel.petGenderValueProfile = requireActivity().intent.getStringExtra("petGender").toString()
+        myPetViewModel.petAgeValueProfile = requireActivity().intent.getStringExtra("petAge").toString()
+        myPetViewModel.petMessageValueProfile = requireActivity().intent.getStringExtra("petMessage").toString()
     }
 
     private fun setViewsWithPetData() {
-        binding.petImage.setImageResource(requireActivity().intent.getIntExtra("petImage", R.drawable.sample1))
-        binding.petName.text = requireActivity().intent.getStringExtra("petName")
-        binding.petBirth.text = requireActivity().intent.getStringExtra("petBirth")
-        val speciesAndBreed = requireActivity().intent.getStringExtra("petSpecies") +
-                requireActivity().intent.getStringExtra("petBreed")
-        binding.petSpeciesAndBreed.text = speciesAndBreed
-        val genderAndAge = requireActivity().intent.getStringExtra("petGender") +
-                requireActivity().intent.getStringExtra("petAge")
-        binding.petGenderAndAge.text = genderAndAge
-        binding.petMessage.text = requireActivity().intent.getStringExtra("petMessage")
+        myPetViewModel.petImageValueProfile?.let { binding.petImage.setImageResource(it) }
+        binding.petName.text = myPetViewModel.petNameValueProfile
+        binding.petBirth.text = myPetViewModel.petBirthValueProfile
+        binding.petSpeciesAndBreed.text = myPetViewModel.petSpeciesValueProfile + myPetViewModel.petBreedValueProfile
+        binding.petGenderAndAge.text = myPetViewModel.petGenderValueProfile + myPetViewModel.petAgeValueProfile
+        binding.petMessage.text = myPetViewModel.petMessageValueProfile
+    }
+
+    private fun savePetDataForPetUpdate() {
+        myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
+        myPetViewModel.petImageValue = null
+        myPetViewModel.petMessageValue = myPetViewModel.petMessageValueProfile
+        myPetViewModel.petNameValue = myPetViewModel.petNameValueProfile
+        myPetViewModel.petGenderValue = myPetViewModel.petGenderValueProfile == "♀"
+        myPetViewModel.petSpeciesValue = myPetViewModel.petSpeciesValueProfile
+        myPetViewModel.petBreedValue = myPetViewModel.petBreedValueProfile
+        myPetViewModel.petBirthIsYearOnlyValue = myPetViewModel.petBirthValueProfile.length == 6
+        myPetViewModel.petBirthYearValue = myPetViewModel.petBirthValueProfile.substring(0, 4).toInt()
+        if(!myPetViewModel.petBirthIsYearOnlyValue) {
+            myPetViewModel.petBirthMonthValue = myPetViewModel.petBirthValueProfile.substring(6, 8).toInt()
+            myPetViewModel.petBirthDateValue = myPetViewModel.petBirthValueProfile.substring(10, 12).toInt()
+        }
     }
 
     override fun onDestroyView() {
