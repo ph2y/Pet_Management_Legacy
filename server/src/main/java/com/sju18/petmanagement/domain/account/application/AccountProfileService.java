@@ -5,8 +5,8 @@ import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.account.dto.CreateAccountReqDto;
 import com.sju18.petmanagement.domain.account.dto.UpdateAccountReqDto;
 import com.sju18.petmanagement.global.exception.DtoValidityException;
-import com.sju18.petmanagement.global.util.message.MessageConfig;
-import com.sju18.petmanagement.global.util.storage.FileService;
+import com.sju18.petmanagement.global.message.MessageConfig;
+import com.sju18.petmanagement.global.storage.FileService;
 
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtil;
