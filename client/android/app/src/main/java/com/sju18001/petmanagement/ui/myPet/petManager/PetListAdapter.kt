@@ -68,6 +68,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         holder.itemView.setOnClickListener {
             // set pet values to Intent
             val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
+            petProfileIntent.putExtra("petId", currentItem.getPetId())
             petProfileIntent.putExtra("petImage", currentItem.getPetPhotoUrl())
             petProfileIntent.putExtra("petName", currentItem.getPetName())
             petProfileIntent.putExtra("petBirth", petBirth)

@@ -24,6 +24,7 @@
             android:background="?selectableItemBackgroundBorderless"/>
 
         <TextView
+            android:id="@+id/back_button_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/back_button"

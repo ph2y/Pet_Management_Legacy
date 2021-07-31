@@ -20,11 +20,14 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.PetProfileCreateRequestDto
 import com.sju18001.petmanagement.restapi.dto.PetProfileCreateResponseDto
+import com.sju18001.petmanagement.restapi.dto.PetProfileUpdateRequestDto
+import com.sju18001.petmanagement.restapi.dto.PetProfileUpdateResponseDto
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.time.LocalDate
 import java.util.*
 
 class AddPetFragment : Fragment() {
@@ -39,8 +42,9 @@ class AddPetFragment : Fragment() {
     // variable for ViewModel
     val myPetViewModel: MyPetViewModel by activityViewModels()
 
-    // variable for storing API call(for cancel)
+    // variables for storing API call(for cancel)
     private var petProfileCreateApiCall: Call<PetProfileCreateResponseDto>? = null
+    private var petProfileUpdateApiCall: Call<PetProfileUpdateResponseDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -69,7 +73,10 @@ class AddPetFragment : Fragment() {
         // for DatePicker
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
-        binding.petBirthInput.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)
+        if(myPetViewModel.petBirthYearValue == null) { myPetViewModel.petBirthYearValue = calendar.get(Calendar.YEAR) }
+        if(myPetViewModel.petBirthMonthValue == null) { myPetViewModel.petBirthMonthValue = calendar.get(Calendar.MONTH) }
+        if(myPetViewModel.petBirthDateValue == null) { myPetViewModel.petBirthDateValue = calendar.get(Calendar.DAY_OF_MONTH) }
+        binding.petBirthInput.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
         ) { _, year, monthOfYear, dayOfMonth ->
             myPetViewModel.petBirthYearValue = year
             myPetViewModel.petBirthMonthValue = monthOfYear
@@ -141,80 +148,170 @@ class AddPetFragment : Fragment() {
 
         // for confirm button
         binding.confirmButton.setOnClickListener {
-            // set api state/button to loading
-            myPetViewModel.addPetApiIsLoading = true
-            setButtonToLoading()
-
-            // for birth value
-            val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){
-                "${binding.petBirthInput.year}-${(binding.petBirthInput.month + 1).toString().padStart(2, '0')}" +
-                        "-${binding.petBirthInput.dayOfMonth}"
-            } else {
-                "${binding.petBirthInput.year}-01-01"
+            if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+                updatePet()
             }
-
-            // create DTO
-            val petProfileCreateRequestDto = PetProfileCreateRequestDto(
-                binding.petNameInput.text.toString(),
-                binding.petSpeciesInput.text.toString(),
-                binding.petBreedInput.text.toString(),
-                petBirthStringValue,
-                binding.yearOnlyCheckbox.isChecked,
-                binding.genderFemale.isChecked,
-                binding.petMessageInput.text.toString(),
-                null
-            )
-
-            petProfileCreateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-                .petProfileCreateRequest(petProfileCreateRequestDto)
-            petProfileCreateApiCall!!.enqueue(object: Callback<PetProfileCreateResponseDto> {
-                override fun onResponse(
-                    call: Call<PetProfileCreateResponseDto>,
-                    response: Response<PetProfileCreateResponseDto>
-                ) {
-                    if(response.isSuccessful) {
-                        // set api state/button to normal
-                        myPetViewModel.addPetApiIsLoading = false
-                        setButtonToNormal()
-
-                        Toast.makeText(context, context?.getText(R.string.add_pet_successful), Toast.LENGTH_LONG).show()
-                        activity?.finish()
-                    }
-                    else {
-                        // set api state/button to normal
-                        myPetViewModel.addPetApiIsLoading = false
-                        setButtonToNormal()
-
-                        // get error message + show(Toast)
-                        val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                        // log error message
-                        Log.d("error", errorMessage)
-                    }
-                }
-
-                override fun onFailure(call: Call<PetProfileCreateResponseDto>, t: Throwable) {
-                    // if the view was destroyed(API call canceled) -> return
-                    if(_binding == null) {
-                        return
-                    }
-
-                    // set api state/button to normal
-                    myPetViewModel.addPetApiIsLoading = false
-                    setButtonToNormal()
-
-                    // show(Toast)/log error message
-                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                    Log.d("error", t.message.toString())
-                }
-            })
+            else {
+                createPet()
+            }
         }
 
         // for back button
         binding.backButton.setOnClickListener {
-            activity?.finish()
+            if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+                fragmentManager?.popBackStack()
+            }
+            else {
+                activity?.finish()
+            }
         }
+    }
+
+    // create pet
+    private fun createPet() {
+        // set api state/button to loading
+        myPetViewModel.createUpdatePetApiIsLoading = true
+        setButtonToLoading()
+
+        // for birth value
+        val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){
+            "${binding.petBirthInput.year}-${(binding.petBirthInput.month + 1).toString().padStart(2, '0')}" +
+                    "-${binding.petBirthInput.dayOfMonth.toString().padStart(2, '0')}"
+        } else {
+            "${binding.petBirthInput.year}-01-01"
+        }
+
+        // create DTO
+        val petProfileCreateRequestDto = PetProfileCreateRequestDto(
+            binding.petNameInput.text.toString(),
+            binding.petSpeciesInput.text.toString(),
+            binding.petBreedInput.text.toString(),
+            petBirthStringValue,
+            binding.yearOnlyCheckbox.isChecked,
+            binding.genderFemale.isChecked,
+            binding.petMessageInput.text.toString(),
+            null
+        )
+
+        petProfileCreateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .petProfileCreateRequest(petProfileCreateRequestDto)
+        petProfileCreateApiCall!!.enqueue(object: Callback<PetProfileCreateResponseDto> {
+            override fun onResponse(
+                call: Call<PetProfileCreateResponseDto>,
+                response: Response<PetProfileCreateResponseDto>
+            ) {
+                if(response.isSuccessful) {
+                    // set api state/button to normal
+                    myPetViewModel.createUpdatePetApiIsLoading = false
+                    setButtonToNormal()
+
+                    Toast.makeText(context, context?.getText(R.string.add_pet_successful), Toast.LENGTH_LONG).show()
+                    activity?.finish()
+                }
+                else {
+                    // set api state/button to normal
+                    myPetViewModel.createUpdatePetApiIsLoading = false
+                    setButtonToNormal()
+
+                    // get error message + show(Toast)
+                    val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<PetProfileCreateResponseDto>, t: Throwable) {
+                // if the view was destroyed(API call canceled) -> return
+                if(_binding == null) {
+                    return
+                }
+
+                // set api state/button to normal
+                myPetViewModel.createUpdatePetApiIsLoading = false
+                setButtonToNormal()
+
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
+    // update pet
+    private fun updatePet() {
+        // set api state/button to loading
+        myPetViewModel.createUpdatePetApiIsLoading = true
+        setButtonToLoading()
+
+        // for birth value
+        val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){
+            "${binding.petBirthInput.year}-${(binding.petBirthInput.month + 1).toString().padStart(2, '0')}" +
+                    "-${binding.petBirthInput.dayOfMonth.toString().padStart(2, '0')}"
+        } else {
+            "${binding.petBirthInput.year}-01-01"
+        }
+
+        // create DTO
+        val petProfileUpdateRequestDto = PetProfileUpdateRequestDto(
+            myPetViewModel.petIdValue!!,
+            binding.petNameInput.text.toString(),
+            binding.petSpeciesInput.text.toString(),
+            binding.petBreedInput.text.toString(),
+            petBirthStringValue,
+            binding.yearOnlyCheckbox.isChecked,
+            binding.genderFemale.isChecked,
+            binding.petMessageInput.text.toString(),
+            null
+        )
+
+        petProfileUpdateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .petProfileUpdateRequest(petProfileUpdateRequestDto)
+        petProfileUpdateApiCall!!.enqueue(object: Callback<PetProfileUpdateResponseDto> {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(
+                call: Call<PetProfileUpdateResponseDto>,
+                response: Response<PetProfileUpdateResponseDto>
+            ) {
+                if(response.isSuccessful) {
+                    // set api state/button to normal
+                    myPetViewModel.createUpdatePetApiIsLoading = false
+                    setButtonToNormal()
+
+                    Toast.makeText(context, context?.getText(R.string.update_pet_successful), Toast.LENGTH_LONG).show()
+                    savePetDataForPetProfile()
+                    fragmentManager?.popBackStack()
+                }
+                else {
+                    // set api state/button to normal
+                    myPetViewModel.createUpdatePetApiIsLoading = false
+                    setButtonToNormal()
+
+                    // get error message + show(Toast)
+                    val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<PetProfileUpdateResponseDto>, t: Throwable) {
+                // if the view was destroyed(API call canceled) -> return
+                if(_binding == null) {
+                    return
+                }
+
+                // set api state/button to normal
+                myPetViewModel.createUpdatePetApiIsLoading = false
+                setButtonToNormal()
+
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
     }
 
     // set button to loading
@@ -239,7 +336,7 @@ class AddPetFragment : Fragment() {
     // for loading check
     private fun checkIsLoading() {
         // if loading -> set button to loading
-        if(myPetViewModel.addPetApiIsLoading) {
+        if(myPetViewModel.createUpdatePetApiIsLoading) {
             setButtonToLoading()
         }
         else {
@@ -249,6 +346,11 @@ class AddPetFragment : Fragment() {
 
     // for restoring views
     private fun restoreState() {
+        // for title
+        if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+            binding.backButtonTitle.text = context?.getText(R.string.edit_pet_title)
+        }
+
         if(myPetViewModel.petImageValue != null) {
             binding.petImageInput.setImageURI(myPetViewModel.petImageValue)
         }
@@ -256,24 +358,42 @@ class AddPetFragment : Fragment() {
         binding.petMessageInput.setText(myPetViewModel.petMessageValue)
         if(myPetViewModel.petGenderValue != null) {
             if(myPetViewModel.petGenderValue == true) {
-                binding.genderFemale.isSelected = true
-                binding.genderMale.isSelected = false
+                binding.genderFemale.isChecked = true
+                binding.genderMale.isChecked = false
             }
             else {
-                binding.genderFemale.isSelected = false
-                binding.genderMale.isSelected = true
+                binding.genderFemale.isChecked = false
+                binding.genderMale.isChecked = true
             }
         }
         binding.petSpeciesInput.setText(myPetViewModel.petSpeciesValue)
         binding.petBreedInput.setText(myPetViewModel.petBreedValue)
         if(myPetViewModel.petBirthYearValue != null) {
             binding.petBirthInput.updateDate(myPetViewModel.petBirthYearValue!!,
-                myPetViewModel.petBirthMonthValue!!, myPetViewModel.petBirthDateValue!!)
+                myPetViewModel.petBirthMonthValue!! - 1, myPetViewModel.petBirthDateValue!!)
         }
         binding.yearOnlyCheckbox.isChecked = myPetViewModel.petBirthIsYearOnlyValue
 
         checkIsValid()
         checkIsLoading()
+    }
+
+    // save pet data to ViewModel(for pet profile)
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun savePetDataForPetProfile() {
+        myPetViewModel.petNameValueProfile = binding.petNameInput.text.toString()
+        val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){
+            "${binding.petBirthInput.year}년 ${(binding.petBirthInput.month + 1).toString().padStart(2, '0')}" +
+                    "월 ${binding.petBirthInput.dayOfMonth.toString().padStart(2, '0')}일생"
+        } else {
+            "${binding.petBirthInput.year}년생"
+        }
+        myPetViewModel.petBirthValueProfile = petBirthStringValue
+        myPetViewModel.petSpeciesValueProfile = binding.petSpeciesInput.text.toString()
+        myPetViewModel.petBreedValueProfile = binding.petBreedInput.text.toString()
+        myPetViewModel.petGenderValueProfile = if(binding.genderFemale.isChecked) { "♀" } else { "♂" }
+        myPetViewModel.petAgeValueProfile = (LocalDate.now().year - binding.petBirthInput.year).toString()
+        myPetViewModel.petMessageValueProfile = binding.petMessageInput.text.toString()
     }
 
     // for image select
@@ -295,6 +415,7 @@ class AddPetFragment : Fragment() {
 
         // stop api call when fragment is destroyed
         petProfileCreateApiCall?.cancel()
-        myPetViewModel.addPetApiIsLoading = false
+        petProfileUpdateApiCall?.cancel()
+        myPetViewModel.createUpdatePetApiIsLoading = false
     }
 }
