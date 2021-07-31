@@ -125,6 +125,8 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                             R.drawable.sample1
                         )
                         petListApi.add(item)
+
+                        myPetViewModel.addPetNameForId(it.id, it.name)
                     }
 
                     // if RecyclerView items not yet added
