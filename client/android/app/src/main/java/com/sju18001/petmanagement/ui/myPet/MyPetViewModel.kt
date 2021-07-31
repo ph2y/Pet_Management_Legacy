@@ -5,6 +5,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
 class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
+    // variables for pet manager
+    var lastScrolledIndex = handle.get<Int>("lastScrolledIndex")?: 0
+        set(value){
+            handle.set("lastScrolledIndex", value)
+            field = value
+        }
+
     // variables for add/edit pet
     var petImageValue = handle.get<Uri>("petImageValue")
         set(value){

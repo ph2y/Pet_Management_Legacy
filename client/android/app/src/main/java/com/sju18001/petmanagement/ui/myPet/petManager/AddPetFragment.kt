@@ -185,10 +185,11 @@ class AddPetFragment : Fragment() {
                         myPetViewModel.addPetApiIsLoading = false
                         setButtonToNormal()
 
-                        // get error message(overlap)
+                        // get error message + show(Toast)
                         val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
 
-                        // show error message(toast)
+                        // log error message
                         Log.d("error", errorMessage)
                     }
                 }
@@ -203,6 +204,8 @@ class AddPetFragment : Fragment() {
                     myPetViewModel.addPetApiIsLoading = false
                     setButtonToNormal()
 
+                    // show(Toast)/log error message
+                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
                     Log.d("error", t.message.toString())
                 }
             })
