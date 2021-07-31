@@ -9,6 +9,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.ActivityMyPetBinding
 import com.sju18001.petmanagement.ui.myPet.petFeedScheduler.EditPetFeedScheduleFragment
 import com.sju18001.petmanagement.ui.myPet.petManager.AddPetFragment
+import com.sju18001.petmanagement.ui.myPet.petManager.PetProfileFragment
 import com.sju18001.petmanagement.ui.signIn.SignInViewModel
 
 class MyPetActivity : AppCompatActivity() {
@@ -37,6 +38,7 @@ class MyPetActivity : AppCompatActivity() {
         if(supportFragmentManager.findFragmentById(R.id.my_pet_activity_fragment_container) == null) {
             val fragment = when(fragmentType){
                 "add_pet" -> AddPetFragment()
+                "pet_profile_pet_manager" -> PetProfileFragment()
                 else -> EditPetFeedScheduleFragment()
             }
             supportFragmentManager

@@ -1,6 +1,5 @@
 package com.sju18001.petmanagement.ui.myPet
 
-import android.content.ClipData
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
