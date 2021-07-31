@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,6 +73,44 @@ public class AccountController {
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.updatePhoto.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new UpdateAccountPhotoResDto(dtoMetadata, fileUrl));
+    }
+
+    @PostMapping("/api/account/fetch")
+    public ResponseEntity<?> fetchAccount(Authentication auth, @Valid @RequestBody FetchAccountReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        final Account account;
+        try {
+            if (reqDto.getId() != null) {
+                // 해당 id를 가진 계정 정보 조회
+                account = accountServ.fetchAccountById(reqDto.getId());
+            } else if (reqDto.getUsername() != null && !reqDto.getUsername().isEmpty()) {
+                // 해당 username 가진 계정 정보 조회
+                account = accountServ.fetchAccountByUsername(reqDto.getUsername());
+            } else {
+                // 현재 로그인된 계정 정보 조회
+                account = accountServ.fetchCurrentAccount(auth);
+            }
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new FetchAccountResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.fetch.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new FetchAccountResDto(dtoMetadata, account));
+    }
+
+    @GetMapping("/api/account/fetchphoto")
+    public ResponseEntity<?> fetchAccountPhoto(Authentication auth) {
+        DtoMetadata dtoMetadata;
+        byte[] fileBinData;
+        try {
+            fileBinData = accountServ.fetchAccountPhoto(auth);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new FetchAccountPhotoResDto(dtoMetadata));
+        }
+        return ResponseEntity.ok(fileBinData);
     }
 
     @PostMapping("/api/account/login")
