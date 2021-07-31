@@ -6,7 +6,7 @@ import javax.validation.constraints.PositiveOrZero;
 
 @Data
 public class FetchAccountReqDto {
-    @PositiveOrZero(message = "valid.id.notNegative")
+    @PositiveOrZero(message = "valid.account.id.notNegative")
     private Long id;
     private String username;
 }

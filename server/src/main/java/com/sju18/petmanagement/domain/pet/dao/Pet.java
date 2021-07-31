@@ -18,7 +18,7 @@ public class Pet {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private String ownername;
     @Column(nullable = false)
     private String name;
 
@@ -26,8 +26,8 @@ public class Pet {
     private String species;
     private String breed;
     private LocalDate birth;
-    private Boolean year_only;
+    private Boolean yearOnly;
     private Boolean gender;
     private String message;
-    private String photo_url;
+    private String photoUrl;
 }
