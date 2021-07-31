@@ -1,6 +1,5 @@
 package com.sju18.petmanagement.domain.pet.api;
 
-import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.pet.application.PetProfileService;
 import com.sju18.petmanagement.domain.pet.dao.Pet;
 import com.sju18.petmanagement.domain.pet.dto.*;
@@ -17,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -45,12 +45,17 @@ public class PetProfileController {
 
     // READ
     @PostMapping("/api/pet/profile/fetch")
-    public ResponseEntity<?> fetchPet(Authentication auth) {
+    public ResponseEntity<?> fetchPet(Authentication auth, @Valid @RequestBody PetFetchReqDto reqDto) {
         DtoMetadata dtoMetadata;
         final List<Pet> petList;
 
         try {
-            petList = petServ.fetchPet(auth);
+            if (reqDto.getId() != null) {
+                petList = new ArrayList<>();
+                petList.add(petServ.fetchPetById(auth, reqDto.getId()));
+            } else {
+                petList = petServ.fetchPetList(auth);
+            }
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
@@ -62,7 +67,7 @@ public class PetProfileController {
 
     // UPDATE
     @PostMapping("/api/pet/profile/update")
-    public ResponseEntity<?> updatePet(Authentication auth, @RequestBody PetUpdateReqDto reqDto) {
+    public ResponseEntity<?> updatePet(Authentication auth, @Valid @RequestBody PetUpdateReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
             petServ.updatePet(auth, reqDto);
@@ -77,7 +82,16 @@ public class PetProfileController {
 
     // DELETE
     @PostMapping("/api/pet/profile/delete")
-    public ResponseEntity<?> deletePet(Authentication auth, @RequestBody PetDeleteReqDto reqDto) {
-        return ResponseEntity.ok(petServ.deletePet(auth, reqDto));
+    public ResponseEntity<?> deletePet(Authentication auth, @Valid @RequestBody PetDeleteReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        try {
+            petServ.deletePet(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new PetDeleteResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.pet.delete.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new PetDeleteResDto(dtoMetadata));
     }
 }

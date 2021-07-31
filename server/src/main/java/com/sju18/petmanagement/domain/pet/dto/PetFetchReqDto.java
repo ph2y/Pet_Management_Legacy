@@ -8,5 +8,4 @@ import javax.validation.constraints.PositiveOrZero;
 public class PetFetchReqDto {
     @PositiveOrZero(message = "valid.pet.id.notNegative")
     private Long id;
-    private String name;
 }

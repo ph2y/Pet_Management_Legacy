@@ -53,7 +53,11 @@ public class MessageConfig implements WebMvcConfigurer {
     @Bean
     public static MessageSource getPetMessageSource() {
         ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
-        msgSrc.setBasename("static/messages/pet/error");
+        msgSrc.setBasenames(
+                "static/messages/pet/error",
+                "static/messages/pet/response",
+                "static/messages/pet/validation"
+        );
         return msgSrc;
     }
 }

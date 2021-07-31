@@ -1,10 +1,9 @@
-package com.sju18.petmanagement.global.util.storage;
+package com.sju18.petmanagement.global.storage;
 
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.pet.dao.PetRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.aspectj.util.FileUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -35,7 +34,7 @@ public class FileService {
         Long accountId = accountRepository.findByUsername(
                 petRepository.findById(petId)
                         .orElseThrow(() -> new Exception("Pet entity not found"))
-                        .getUsername()
+                        .getOwnername()
         ).orElseThrow(() -> new Exception("Account entity not found")).getId();
         return Paths.get(getAccountFileStoragePath(accountId).toString(), "pets", "pet_" + petId);
     }
@@ -84,7 +83,7 @@ public class FileService {
     // 사용자 프로필 사진 저장
     public String saveAccountProfilePhoto(Long accountId, MultipartFile uploadedFile) throws Exception {
         // 업로드 파일 저장 파일명
-        String fileName = "profile_photo." + FilenameUtils.getExtension(uploadedFile.getOriginalFilename());
+        String fileName = "profile_photo." + FileUtils.getExtension(uploadedFile.getOriginalFilename());
         // 업로드 파일 저장 경로
         Path savePath = getAccountFileStoragePath(accountId);
         // 업로드 가능한 확장자
@@ -106,7 +105,7 @@ public class FileService {
     // 애완동물 프로필 사진 저장
     public String savePetProfilePhoto(Long petId, MultipartFile uploadedFile) throws Exception {
         // 업로드 파일 저장 파일명
-        String fileName = "pet_profile_photo." + FilenameUtils.getExtension(uploadedFile.getOriginalFilename());
+        String fileName = "pet_profile_photo." + FileUtils.getExtension(uploadedFile.getOriginalFilename());
         // 업로드 파일 저장 경로
         Path savePath = getPetFileStoragePath(petId);
         // 업로드 가능한 확장자
@@ -185,12 +184,12 @@ public class FileService {
             throw new EmptyFileException(originalFileName);
         }
         // 확장자 없는 파일 검사
-        else if (FilenameUtils.getExtension(originalFileName) == null) {
+        else if (FileUtils.getExtension(originalFileName) == null) {
             throw new IllegalFileExtensionException(null);
         }
         // 파일 확장자 적합성 검사
         else if (Arrays.stream(acceptableExtensions).noneMatch(
-                extension -> FilenameUtils.getExtension(originalFileName).equals(extension)
+                extension -> FileUtils.getExtension(originalFileName).equals(extension)
         )) {
             throw new IllegalFileExtensionException(originalFileName);
         }
