@@ -9,6 +9,7 @@ import com.sju18.petmanagement.global.util.message.MessageConfig;
 import com.sju18.petmanagement.global.util.storage.FileService;
 
 import lombok.AllArgsConstructor;
+import org.apache.commons.io.IOUtil;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Locale;
 
 @Service
@@ -129,13 +132,37 @@ public class AccountProfileService {
         return fileUrl;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Account fetchCurrentAccount(Authentication auth) throws UsernameNotFoundException {
         // 로그인된 현재 사용자 정보 조회
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
         String currentUsername = userDetails.getUsername();
         return accountRepository.findByUsername(currentUsername)
                 .orElseThrow(() -> new UsernameNotFoundException(currentUsername));
+    }
+
+    @Transactional(readOnly = true)
+    public Account fetchAccountById(Long id) throws Exception {
+        // 해당 id 가진 계정 정보 조회
+        return accountRepository.findById(id)
+                .orElseThrow(() -> new Exception(msgSrc.getMessage("error.notExist", null, Locale.ENGLISH)));
+    }
+
+    @Transactional(readOnly = true)
+    public Account fetchAccountByUsername(String username) throws Exception {
+        // 해당 username 가진 계정 정보 조회
+        return accountRepository.findByUsername(username)
+                .orElseThrow(() -> new Exception(msgSrc.getMessage("error.notExist", null, Locale.ENGLISH)));
+    }
+
+    public byte[] fetchAccountPhoto(Authentication auth) throws Exception {
+        Account currentAccount = this.fetchCurrentAccount(auth);
+
+        // 사진 파일 인출
+        InputStream imageStream = new FileInputStream(currentAccount.getPhotoUrl());
+        byte[] fileBinData = IOUtil.toByteArray(imageStream);
+        imageStream.close();
+        return fileBinData;
     }
 
 }
