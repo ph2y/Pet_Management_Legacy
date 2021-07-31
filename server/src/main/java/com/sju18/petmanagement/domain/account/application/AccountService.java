@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.Locale;
 
@@ -71,17 +73,11 @@ public class AccountService {
 
     @Transactional
     public void updateAccount(Authentication auth, UpdateAccountReqDto reqDto) throws Exception {
-        // 로그인된 현재 사용자 정보 조회
-        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        String currentUsername = userDetails.getUsername();
-        Account currentAccount;
+        // 기존 사용자 프로필 로드
+        Account currentAccount = this.fetchCurrentAccount(auth);
 
         // 중복 확인
         this.checkDuplication(null, reqDto.getEmail(), reqDto.getPhone());
-
-        // 기존 사용자 프로필 로드
-        currentAccount = accountRepository.findByUsername(currentUsername)
-                .orElseThrow(() -> new UsernameNotFoundException(currentUsername));
 
         // 기존 사용자 프로필 중 변경사항이 있는 필드 업데이트
         if (reqDto.getEmail() != null) {
@@ -104,8 +100,31 @@ public class AccountService {
         accountRepository.save(currentAccount);
     }
 
-    public Long getCurrentAccountId(Authentication auth) {
+    @Transactional
+    public String updateAccountPhoto(Authentication auth, MultipartHttpServletRequest fileReq) throws Exception {
+        // 기존 사용자 프로필 로드
+        Account currentAccount = this.fetchCurrentAccount(auth);
+
+        // 첨부파일 인출
+        MultipartFile uploadedFile = fileReq.getFile("file");
+
+        // 해당 유저의 계정 스토리지에 프로필 사진 저장
+        String fileUrl = fileService.saveAccountProfilePhoto(currentAccount.getId(), uploadedFile);
+
+        // 파일정보 DB 데이터 업데이트
+        currentAccount.setPhotoUrl(fileUrl);
+        accountRepository.save(currentAccount);
+
+        return fileUrl;
+    }
+
+    @Transactional
+    public Account fetchCurrentAccount(Authentication auth) throws UsernameNotFoundException {
+        // 로그인된 현재 사용자 정보 조회
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        String currentUsername = userDetails.getUsername();
+        return accountRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new UsernameNotFoundException(currentUsername));
     }
 
 }

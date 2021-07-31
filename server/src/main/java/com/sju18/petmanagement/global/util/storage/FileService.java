@@ -82,8 +82,6 @@ public class FileService {
 
     // 사용자 프로필 사진 저장
     public String saveAccountProfilePhoto(Long accountId, MultipartFile uploadedFile) throws Exception {
-        // 업로드 파일 저장 파일명
-        String fileName = "profile_photo." + FileUtils.getExtension(uploadedFile.getOriginalFilename());
         // 업로드 파일 저장 경로
         Path savePath = getAccountFileStoragePath(accountId);
         // 업로드 가능한 확장자
@@ -95,6 +93,9 @@ public class FileService {
 
         // 파일 유효성 검사
         checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
+
+        // 업로드 파일 저장 파일명
+        String fileName = "profile_photo." + FileUtils.getExtension(uploadedFile.getOriginalFilename());
 
         // 파일 저장
         uploadedFile.transferTo(savePath.resolve(fileName));
@@ -178,6 +179,10 @@ public class FileService {
         // 저장할 데이터 디렉토리 존재 여부 검사
         if (!savePath.toFile().exists()) {
             throw new FileNotFoundException("Directory not exist");
+        }
+        // 파일 없음 검사
+        if (uploadedFile == null) {
+            throw new EmptyFileException("null");
         }
         // 빈 파일 검사
         if (uploadedFile.isEmpty()) {
