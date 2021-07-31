@@ -52,7 +52,7 @@ public class PetProfileController {
         try {
             if (reqDto.getId() != null) {
                 petList = new ArrayList<>();
-                petList.add(petServ.fetchPetById(auth, reqDto.getId()));
+                petList.add(petServ.fetchPetById(reqDto.getId()));
             } else {
                 petList = petServ.fetchPetList(auth);
             }

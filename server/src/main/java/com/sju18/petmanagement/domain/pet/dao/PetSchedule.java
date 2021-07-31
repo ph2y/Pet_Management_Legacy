@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -11,20 +12,25 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PetFeedSchedule {
+public class PetSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "feed_schedule_id")
+    @Column(name = "pet_schedule_id")
     private Long id;
 
     @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
-    private String pet_id_list;
+    @ManyToMany
+    @JoinTable(name="PetSchedulePetIdList",
+            joinColumns = @JoinColumn(name="pet_schedule_id"),
+            inverseJoinColumns = @JoinColumn(name="pet_id")
+    )
+    private List<Pet> petList;
 
     @Column
-    private LocalTime feed_time;
+    private LocalTime time;
     private String memo;
-    private Boolean is_turned_on;
+    private Boolean enable;
 }
