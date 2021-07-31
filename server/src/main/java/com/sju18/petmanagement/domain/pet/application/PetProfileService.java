@@ -4,13 +4,16 @@ import com.sju18.petmanagement.domain.account.application.AccountProfileService;
 import com.sju18.petmanagement.domain.pet.dao.Pet;
 import com.sju18.petmanagement.domain.pet.dao.PetRepository;
 import com.sju18.petmanagement.domain.pet.dto.*;
+import com.sju18.petmanagement.global.message.MessageConfig;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ import java.util.stream.Collectors;
 public class PetProfileService {
     private final PetRepository petRepository;
     private final AccountProfileService accountProfileServ;
+    private final MessageSource msgSrc = MessageConfig.getPetMessageSource();
 
     // CREATE
     @Transactional
@@ -42,7 +46,7 @@ public class PetProfileService {
 
     // READ
     @Transactional(readOnly = true)
-    public List<PetFetchResponseDto> fetchPet(Authentication auth) {
+    public List<Pet> fetchPet(Authentication auth) {
         String ownername = accountProfileServ.fetchCurrentAccount(auth).getUsername();
 
         // 사용자 정보로 반려동물 리스트 인출
@@ -53,25 +57,42 @@ public class PetProfileService {
 
     // UPDATE
     @Transactional
-    public PetUpdateResponseDto updatePet(Authentication auth, PetUpdateRequestDto reqDto) {
+    public void updatePet(Authentication auth, PetUpdateReqDto reqDto) {
         String ownername = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        Pet currentPet = petRepository.findByUsernameAndId(ownername,reqDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                ));
+
+        if (reqDto.getName() != null && !reqDto.getName().isEmpty() && !reqDto.getName().equals(currentPet.getName())) {
+            currentPet.setName(reqDto.getName());
+        }
+        if (reqDto.getSpecies() != null && !reqDto.getSpecies().equals(currentPet.getSpecies())) {
+            currentPet.setSpecies(reqDto.getSpecies());
+        }
+        if (reqDto.getBreed() != null && !reqDto.getBreed().equals(currentPet.getBreed())) {
+            currentPet.setBreed(reqDto.getBreed());
+        }
+        if (reqDto.getBirth() != null && !reqDto.getBirth().equals(currentPet.getBirth().toString())) {
+            currentPet.setBirth(LocalDate.parse(reqDto.getBirth()));
+        }
+        if (reqDto.getYearOnly() != null && !reqDto.getYearOnly().equals(currentPet.getYearOnly())) {
+            currentPet.setYearOnly(reqDto.getYearOnly());
+        }
+        if (reqDto.getGender() != null && !reqDto.getGender().equals(currentPet.getGender())) {
+            currentPet.setGender(reqDto.getGender());
+        }
+        if (reqDto.getMessage() != null && !reqDto.getMessage().equals(currentPet.getMessage())) {
+            currentPet.setMessage(reqDto.getMessage());
+        }
+
+        // save(id가 있는 detached 상태의 객체) -> EntityManger.merge() => update
+        petRepository.save(currentPet);
 
         // 받은 사용자 정보와 입력 정보로 반려동물 정보 업데이트
         try {
-            Pet pet = petRepository.findByUsernameAndId(ownername,reqDto.getId()).orElseThrow(() -> new IllegalArgumentException("Pet entity does not exists"));
 
-            pet.setName(reqDto.getName());
-            pet.setSpecies(reqDto.getSpecies());
-            pet.setBreed(reqDto.getBreed());
-            pet.setBirth(LocalDate.parse(reqDto.getBirth()));
-            pet.setYearOnly(reqDto.getYear_only());
-            pet.setGender(reqDto.getGender());
-            pet.setMessage(reqDto.getMessage());
-            pet.setPhotoUrl(reqDto.getPhoto_url());
-
-            petRepository.save(pet); // save(id가 있는 detached 상태의 객체) -> EntityManger.merge() => update
-
-            return new PetUpdateResponseDto("Pet profile update success");
+            return new PetUpdateResponseDto("");
         } catch (Exception e) {
             return new PetUpdateResponseDto(e.getMessage());
         }
