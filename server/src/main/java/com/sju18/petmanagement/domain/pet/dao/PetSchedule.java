@@ -22,7 +22,12 @@ public class PetSchedule {
     private String username;
 
     @Column(nullable = false)
-    @ManyToMany
+    @ManyToMany(cascade = {
+            CascadeType.DETACH,
+            CascadeType.MERGE,
+            CascadeType.REFRESH,
+            CascadeType.PERSIST
+    })
     @JoinTable(name="PetSchedulePetIdList",
             joinColumns = @JoinColumn(name="pet_schedule_id"),
             inverseJoinColumns = @JoinColumn(name="pet_id")

@@ -29,29 +29,35 @@ public class PetScheduleService {
 
     // CREATE
     @Transactional
-    public void createPetSchedule(Authentication auth, PetScheduleCreateReqDto requestDto) {
+    public void createPetSchedule(Authentication auth, PetScheduleCreateReqDto reqDto) {
         // 받은 사용자 정보와 새 입력 정보로 새 반려동물 사료 시간(스케줄) 정보 생성
         String username = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        // 스케줄을 적용할 반려동물 id 목록 스트링을 통해 스케줄을 적용할 반려동물 객체 목록 인출
+        List<Pet> applyPetList = this.getApplyPetListFromApplyPetIdList(reqDto.getPetIdList());
+        
+        // 스케줄 객체 생성
+        PetSchedule petSchedule = PetSchedule.builder()
+                .username(username)
+                .petList(applyPetList)
+                .time(LocalTime.parse(reqDto.getTime()))
+                .memo(reqDto.getMemo())
+                .enable(false)
+                .build();
+
+        // save(id가 없는 transient 상태의 객체) -> EntityManger.persist() => save
+        petScheduleRepository.save(petSchedule);
+    }
+
+    private List<Pet> getApplyPetListFromApplyPetIdList(String petIdList) {
         // 스케줄을 적용할 반려동물 id 목록
-        List<Long> applyPetIdList = Stream.of(requestDto.getPetIdList().split(","))
+        List<Long> applyPetIdList = Stream.of(petIdList.split(","))
                 .map(Long::valueOf).collect(Collectors.toList());
         // 스케줄을 적용할 반려동물 목록 인출
         List<Pet> applyPetList = new ArrayList<>();
         for (Long petId : applyPetIdList) {
             applyPetList.add(petProfileServ.fetchPetById(petId));
         }
-        
-        // 스케줄 객체 생성
-        PetSchedule petFeedSchedule = PetSchedule.builder()
-                .username(username)
-                .petList(applyPetList)
-                .time(LocalTime.parse(requestDto.getTime()))
-                .memo(requestDto.getMemo())
-                .enable(false)
-                .build();
-
-        // save(id가 없는 transient 상태의 객체) -> EntityManger.persist() => save
-        petScheduleRepository.save(petFeedSchedule);
+        return applyPetList;
     }
 
     // READ
@@ -88,37 +94,43 @@ public class PetScheduleService {
 
     // UPDATE
     @Transactional
-    public PetScheduleUpdateResDto updatePetSchedule(Authentication auth, PetScheduleUpdateReqDto requestDto) {
+    public void updatePetSchedule(Authentication auth, PetScheduleUpdateReqDto reqDto) {
         String username = accountProfileServ.fetchCurrentAccount(auth).getUsername();
-        List<Pet> ownerPetList = petProfileServ.fetchPetList(auth);
 
         // 받은 사용자 정보와 입력 정보로 반려동물 사료 시간(스케줄) 정보 업데이트
-        try {
-            PetSchedule petFeedSchedule = petScheduleRepository.findByUsernameAndId(username,requestDto.getId()).orElseThrow(() -> new IllegalArgumentException("PetSchedule entity does not exists"));
+        PetSchedule petSchedule = petScheduleRepository.findByUsernameAndId(username,reqDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                ));
 
-            petFeedSchedule.setUsername(username);
-            petFeedSchedule.setPetList(ownerPetList);
-            petFeedSchedule.setTime(LocalTime.parse(requestDto.getFeed_time()));
-            petFeedSchedule.setMemo(requestDto.getMemo());
-            petFeedSchedule.setEnable(requestDto.getIs_turned_on());
-
-            petScheduleRepository.save(petFeedSchedule); // save(id가 있는 detached 상태의 객체) -> EntityManger.merge() => update
-
-            return new PetScheduleUpdateResDto("Pet feed schedule update success");
-        } catch (Exception e) {
-            return new PetScheduleUpdateResDto(e.getMessage());
+        if (reqDto.getPetIdList() != null) {
+            // 스케줄을 적용할 반려동물 id 목록 스트링을 통해 스케줄을 적용할 반려동물 객체 목록 인출
+            List<Pet> applyPetList = this.getApplyPetListFromApplyPetIdList(reqDto.getPetIdList());
+            petSchedule.setPetList(applyPetList);
         }
+        if (reqDto.getTime() != null && !reqDto.getTime().equals(petSchedule.getTime().toString())) {
+            petSchedule.setTime(LocalTime.parse(reqDto.getTime()));
+        }
+        if (reqDto.getMemo() != null && !reqDto.getMemo().equals(petSchedule.getMemo())) {
+            petSchedule.setMemo(reqDto.getMemo());
+        }
+        if (reqDto.getEnable() != null && !reqDto.getEnable().equals(petSchedule.getEnable())) {
+            petSchedule.setEnable(reqDto.getEnable());
+        }
+
+        // save(id가 있는 detached 상태의 객체) -> EntityManger.merge() => update
+        petScheduleRepository.save(petSchedule);
     }
 
     // DELETE
     @Transactional
-    public PetScheduleDeleteResDto deletePetSchedule(Authentication auth, PetScheduleDeleteReqDto requestDto) {
+    public PetScheduleDeleteResDto deletePetSchedule(Authentication auth, PetScheduleDeleteReqDto reqDto) {
         String username = accountProfileServ.fetchCurrentAccount(auth).getUsername();
 
         // 받은 사용자 정보와 반려동물 id로 반려동물 사료 시간(스케줄) 정보 삭제
         try {
-            PetSchedule petFeedSchedule = petScheduleRepository.findByUsernameAndId(username,requestDto.getId()).orElseThrow(() -> new IllegalArgumentException("PetSchedule entity does not exists"));
-            petScheduleRepository.delete(petFeedSchedule);
+            PetSchedule petSchedule = petScheduleRepository.findByUsernameAndId(username,reqDto.getId()).orElseThrow(() -> new IllegalArgumentException("PetSchedule entity does not exists"));
+            petScheduleRepository.delete(petSchedule);
 
             return new PetScheduleDeleteResDto("Pet feed schedule delete success");
         } catch (Exception e) {
