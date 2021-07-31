@@ -113,6 +113,20 @@ public class AccountController {
         return ResponseEntity.ok(fileBinData);
     }
 
+    @PostMapping("/api/account/delete")
+    public ResponseEntity<?> deleteAccount(Authentication auth) {
+        DtoMetadata dtoMetadata;
+        try {
+            accountServ.deleteAccount(auth);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new DeleteAccountResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.delete.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new DeleteAccountResDto(dtoMetadata));
+    }
+
     @PostMapping("/api/account/login")
     public ResponseEntity<?> loginAccount(@RequestBody LoginReqDto reqDto) {
         DtoMetadata dtoMetadata;

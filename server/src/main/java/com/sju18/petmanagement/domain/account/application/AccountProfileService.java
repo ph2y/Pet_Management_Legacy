@@ -165,4 +165,11 @@ public class AccountProfileService {
         return fileBinData;
     }
 
+    @Transactional
+    public void deleteAccount(Authentication auth) throws Exception {
+        Account currentAccount = this.fetchCurrentAccount(auth);
+        fileService.deleteAccountFileStorage(currentAccount.getId());
+        accountRepository.deleteById(currentAccount.getId());
+    }
+
 }
