@@ -61,14 +61,23 @@ public class PetScheduleController {
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
             return ResponseEntity.status(400).body(new PetScheduleFetchResDto(dtoMetadata));
         }
-        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.pet.fetch.success", null, Locale.ENGLISH));
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.petSchedule.fetch.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new PetScheduleFetchResDto(dtoMetadata, petScheduleList));
     }
 
     // UPDATE
     @PostMapping("/api/pet/schedule/update")
-    public ResponseEntity<?> updatePetSchedule(Authentication auth, @RequestBody PetScheduleUpdateReqDto reqDto) {
-        return ResponseEntity.ok(petScheduleServ.updatePetSchedule(auth, reqDto));
+    public ResponseEntity<?> updatePetSchedule(Authentication auth, @Valid @RequestBody PetScheduleUpdateReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        try {
+            petScheduleServ.updatePetSchedule(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new PetScheduleUpdateResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.petSchedule.update.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new PetScheduleUpdateResDto(dtoMetadata));
     }
 
     // DELETE
