@@ -4,7 +4,7 @@ import com.sju18.petmanagement.domain.pet.dao.Pet;
 import lombok.Data;
 
 @Data
-public class PetProfileFetchResponseDto {
+public class PetFetchResDto {
     private Long id;
     private String name;
     private String species;
@@ -15,7 +15,7 @@ public class PetProfileFetchResponseDto {
     private String message;
     private String photo_url;
 
-    public PetProfileFetchResponseDto(Pet pet) {
+    public PetFetchResDto(Pet pet) {
         this.id = pet.getId();
         this.name = pet.getName();
         this.species = pet.getSpecies();
