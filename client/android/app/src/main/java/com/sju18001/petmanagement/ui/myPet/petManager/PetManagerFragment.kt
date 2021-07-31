@@ -98,7 +98,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             Log.d("list order", getPetListOrder(PET_LIST_ORDER).toString())
         }
     }
-
+    
     override fun onResume() {
         super.onResume()
 

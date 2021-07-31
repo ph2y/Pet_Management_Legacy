@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPet
 
+import android.content.ClipData
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -11,6 +12,17 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("lastScrolledIndex", value)
             field = value
         }
+
+    // variables for pet id - name
+    var petNameForId = handle.get<HashMap<Long, String>>("petNameForId")?: HashMap()
+        set(value){
+            handle.set("petNameForId", value)
+            field = value
+        }
+
+    fun addPetNameForId(id: Long, name: String){
+        petNameForId[id] = name
+    }
 
     // variables for add/edit pet
     var petImageValue = handle.get<Uri>("petImageValue")

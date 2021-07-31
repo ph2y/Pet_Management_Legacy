@@ -28,7 +28,7 @@ class PetFeedSchedulerFragment : Fragment() {
     private val binding get() = _binding!!
 
     // ViewModel
-    lateinit var myPetViewModel: MyPetViewModel
+    private val myPetViewModel: MyPetViewModel by activityViewModels()
 
     // 리싸이클러뷰
     private lateinit var adapter: PetFeedScheduleListAdapter
@@ -44,8 +44,6 @@ class PetFeedSchedulerFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentPetFeedSchedulerBinding.inflate(inflater, container, false)
-
-        myPetViewModel = ViewModelProvider(this).get(MyPetViewModel::class.java)
 
         // 리싸이클러뷰
         // TODO: 스케줄 로드 & 시간에 따른 결합
