@@ -126,9 +126,9 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("petBirthIsYearOnlyValue", value)
             field = value
         }
-    var createUpdatePetApiIsLoading = handle.get<Boolean>("createUpdatePetApiIsLoading")?: false
+    var createUpdateDeletePetApiIsLoading = handle.get<Boolean>("createUpdateDeletePetApiIsLoading")?: false
         set(value) {
-            handle.set("createUpdatePetApiIsLoading", value)
+            handle.set("createUpdateDeletePetApiIsLoading", value)
         }
 
     // variables for scheduler

@@ -170,7 +170,7 @@ class CreateUpdatePetFragment : Fragment() {
     // create pet
     private fun createPet() {
         // set api state/button to loading
-        myPetViewModel.createUpdatePetApiIsLoading = true
+        myPetViewModel.createUpdateDeletePetApiIsLoading = true
         setButtonToLoading()
 
         // for birth value
@@ -202,7 +202,7 @@ class CreateUpdatePetFragment : Fragment() {
             ) {
                 if(response.isSuccessful) {
                     // set api state/button to normal
-                    myPetViewModel.createUpdatePetApiIsLoading = false
+                    myPetViewModel.createUpdateDeletePetApiIsLoading = false
                     setButtonToNormal()
 
                     Toast.makeText(context, context?.getText(R.string.create_pet_successful), Toast.LENGTH_LONG).show()
@@ -210,7 +210,7 @@ class CreateUpdatePetFragment : Fragment() {
                 }
                 else {
                     // set api state/button to normal
-                    myPetViewModel.createUpdatePetApiIsLoading = false
+                    myPetViewModel.createUpdateDeletePetApiIsLoading = false
                     setButtonToNormal()
 
                     // get error message + show(Toast)
@@ -229,7 +229,7 @@ class CreateUpdatePetFragment : Fragment() {
                 }
 
                 // set api state/button to normal
-                myPetViewModel.createUpdatePetApiIsLoading = false
+                myPetViewModel.createUpdateDeletePetApiIsLoading = false
                 setButtonToNormal()
 
                 // show(Toast)/log error message
@@ -242,7 +242,7 @@ class CreateUpdatePetFragment : Fragment() {
     // update pet
     private fun updatePet() {
         // set api state/button to loading
-        myPetViewModel.createUpdatePetApiIsLoading = true
+        myPetViewModel.createUpdateDeletePetApiIsLoading = true
         setButtonToLoading()
 
         // for birth value
@@ -276,7 +276,7 @@ class CreateUpdatePetFragment : Fragment() {
             ) {
                 if(response.isSuccessful) {
                     // set api state/button to normal
-                    myPetViewModel.createUpdatePetApiIsLoading = false
+                    myPetViewModel.createUpdateDeletePetApiIsLoading = false
                     setButtonToNormal()
 
                     Toast.makeText(context, context?.getText(R.string.update_pet_successful), Toast.LENGTH_LONG).show()
@@ -285,7 +285,7 @@ class CreateUpdatePetFragment : Fragment() {
                 }
                 else {
                     // set api state/button to normal
-                    myPetViewModel.createUpdatePetApiIsLoading = false
+                    myPetViewModel.createUpdateDeletePetApiIsLoading = false
                     setButtonToNormal()
 
                     // get error message + show(Toast)
@@ -304,7 +304,7 @@ class CreateUpdatePetFragment : Fragment() {
                 }
 
                 // set api state/button to normal
-                myPetViewModel.createUpdatePetApiIsLoading = false
+                myPetViewModel.createUpdateDeletePetApiIsLoading = false
                 setButtonToNormal()
 
                 // show(Toast)/log error message
@@ -336,7 +336,7 @@ class CreateUpdatePetFragment : Fragment() {
     // for loading check
     private fun checkIsLoading() {
         // if loading -> set button to loading
-        if(myPetViewModel.createUpdatePetApiIsLoading) {
+        if(myPetViewModel.createUpdateDeletePetApiIsLoading) {
             setButtonToLoading()
         }
         else {
@@ -416,6 +416,6 @@ class CreateUpdatePetFragment : Fragment() {
         // stop api call when fragment is destroyed
         petProfileCreateApiCall?.cancel()
         petProfileUpdateApiCall?.cancel()
-        myPetViewModel.createUpdatePetApiIsLoading = false
+        myPetViewModel.createUpdateDeletePetApiIsLoading = false
     }
 }
