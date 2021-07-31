@@ -28,7 +28,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
-        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.my_pet_list_item, parent, false)
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.pet_list_item, parent, false)
         return HistoryListViewHolder(itemView)
     }
 
