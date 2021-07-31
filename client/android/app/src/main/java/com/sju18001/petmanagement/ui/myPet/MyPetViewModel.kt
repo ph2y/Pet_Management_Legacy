@@ -70,7 +70,7 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
         petNameForId[id] = name
     }
 
-    // variables for add/update pet
+    // variables for create/update pet
     var petIdValue = handle.get<Long>("petIdValue")
         set(value) {
             handle.set("petIdValue", value)
