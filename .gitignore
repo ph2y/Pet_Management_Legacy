@@ -4,3 +4,7 @@
 *.bak
 *.sql
 *.github
+
+## 미디어 파일
+storage/
+storage/*
