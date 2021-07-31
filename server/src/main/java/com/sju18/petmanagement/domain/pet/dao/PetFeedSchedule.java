@@ -1,16 +1,16 @@
 package com.sju18.petmanagement.domain.pet.dao;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+
 import javax.persistence.*;
 import java.time.LocalTime;
 
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
-@Entity
+@AllArgsConstructor
+@Builder
 public class PetFeedSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,13 +27,4 @@ public class PetFeedSchedule {
     private LocalTime feed_time;
     private String memo;
     private Boolean is_turned_on;
-
-    @Builder
-    public PetFeedSchedule(String username, String pet_id_list, LocalTime feed_time, String memo, Boolean is_turned_on) {
-        this.username = username;
-        this.pet_id_list = pet_id_list;
-        this.feed_time = feed_time;
-        this.memo = memo;
-        this.is_turned_on = is_turned_on;
-    }
 }
