@@ -33,4 +33,7 @@ public class PetSchedule {
     private LocalTime time;
     private String memo;
     private Boolean enable;
+
+    @Transient
+    private String petIdList;
 }

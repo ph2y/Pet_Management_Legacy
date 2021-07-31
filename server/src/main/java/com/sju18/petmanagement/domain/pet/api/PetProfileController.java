@@ -29,7 +29,7 @@ public class PetProfileController {
 
     // CREATE
     @PostMapping("/api/pet/profile/create")
-    public ResponseEntity<?> createPetProfile(Authentication auth, @Valid @RequestBody PetCreateReqDto reqDto) {
+    public ResponseEntity<?> createPet(Authentication auth, @Valid @RequestBody PetCreateReqDto reqDto) {
         DtoMetadata dtoMetadata;
 
         try {
