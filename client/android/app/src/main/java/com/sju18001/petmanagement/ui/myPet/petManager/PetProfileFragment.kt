@@ -31,6 +31,11 @@ class PetProfileFragment : Fragment(){
         // save pet data to ViewModel(for pet profile) if not already loaded
         if(!myPetViewModel.loadedFromIntent) { savePetDataForPetProfile() }
 
+        // if fragment type is pet_profile_pet_manager -> hide username_and_pets_layout
+        if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+            binding.usernameAndPetsLayout.visibility = View.GONE
+        }
+
         return view
     }
 
