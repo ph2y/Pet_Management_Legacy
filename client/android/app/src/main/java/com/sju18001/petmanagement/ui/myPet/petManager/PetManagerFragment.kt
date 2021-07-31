@@ -93,6 +93,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
             myPetActivityIntent.putExtra("fragmentType", "create_pet")
             startActivity(myPetActivityIntent)
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
     }
 

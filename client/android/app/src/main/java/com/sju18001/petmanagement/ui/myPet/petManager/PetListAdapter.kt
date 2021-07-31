@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -88,6 +89,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
             // open activity
             petProfileIntent.putExtra("fragmentType", "pet_profile_pet_manager")
             holder.itemView.context.startActivity(petProfileIntent)
+            (context as Activity).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
     }
 

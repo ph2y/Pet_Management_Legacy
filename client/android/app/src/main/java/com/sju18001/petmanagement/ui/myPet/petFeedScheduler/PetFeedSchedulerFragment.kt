@@ -63,6 +63,7 @@ class PetFeedSchedulerFragment : Fragment() {
             val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
             myPetActivityIntent.putExtra("fragmentType", "create_pet_feed_schedule")
             startActivity(myPetActivityIntent)
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
 
         return binding.root
@@ -103,6 +104,7 @@ class PetFeedSchedulerFragment : Fragment() {
                     .putExtra("memo", data.memo)
                     .putExtra("isTurnedOn", data.isTurnedOn)
                 startActivity(myPetActivityIntent)
+                requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
 
             override fun askForDeleteItem(position: Int, id: Long) {
