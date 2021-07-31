@@ -2,11 +2,13 @@ package com.sju18.petmanagement.global.storage;
 
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.pet.dao.PetRepository;
+import com.sju18.petmanagement.global.message.MessageConfig;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.aspectj.util.FileUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,13 +18,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 @RequiredArgsConstructor
 @Service
 public class FileService {
-    // TODO: Repository에 직접 억세스하지 않도록 accountService, petService 리팩토링
+    // TODO: Repository에 직접 억세스하지 않을 방법 찾기
     private final AccountRepository accountRepository;
     private final PetRepository petRepository;
+    private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
     private final String storageRootPath = "E:\\TempDev\\Pet-Management\\storage";
 
     // 특정 사용자 데이터 폴더 경로 조회
@@ -83,7 +88,7 @@ public class FileService {
     // 사용자 프로필 사진 저장
     public String saveAccountProfilePhoto(Long accountId, MultipartFile uploadedFile) throws Exception {
         // 업로드 파일 저장 파일명
-        String fileName = "profile_photo." + FileUtils.getExtension(uploadedFile.getOriginalFilename());
+        String fileName = "profile_photo." + FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
         // 업로드 파일 저장 경로
         Path savePath = getAccountFileStoragePath(accountId);
         // 업로드 가능한 확장자
@@ -105,7 +110,7 @@ public class FileService {
     // 애완동물 프로필 사진 저장
     public String savePetProfilePhoto(Long petId, MultipartFile uploadedFile) throws Exception {
         // 업로드 파일 저장 파일명
-        String fileName = "pet_profile_photo." + FileUtils.getExtension(uploadedFile.getOriginalFilename());
+        String fileName = "pet_profile_photo." + FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
         // 업로드 파일 저장 경로
         Path savePath = getPetFileStoragePath(petId);
         // 업로드 가능한 확장자
@@ -140,7 +145,7 @@ public class FileService {
         JSONArray fileMetaDataList = new JSONArray();
 
         if (uploadedFiles.size() > fileCountLimit) {
-            throw new IllegalFileCountException(fileCountLimit, uploadedFiles.size());
+            throw new Exception(msgSrc.getMessage("error.file.count", null, Locale.ENGLISH));
         }
 
         for (MultipartFile uploadedFile : uploadedFiles) {
@@ -177,25 +182,21 @@ public class FileService {
 
         // 저장할 데이터 디렉토리 존재 여부 검사
         if (!savePath.toFile().exists()) {
-            throw new FileNotFoundException("Directory not exist");
+            throw new FileNotFoundException(msgSrc.getMessage("error.dir.notExist", null, Locale.ENGLISH));
         }
         // 빈 파일 검사
         if (uploadedFile.isEmpty()) {
-            throw new EmptyFileException(originalFileName);
-        }
-        // 확장자 없는 파일 검사
-        else if (FileUtils.getExtension(originalFileName) == null) {
-            throw new IllegalFileExtensionException(null);
+            throw new Exception(msgSrc.getMessage("error.file.empty", new String[]{originalFileName}, Locale.ENGLISH));
         }
         // 파일 확장자 적합성 검사
         else if (Arrays.stream(acceptableExtensions).noneMatch(
-                extension -> FileUtils.getExtension(originalFileName).equals(extension)
+                extension -> FileUtils.getExtension(Objects.requireNonNull(originalFileName)).equals(extension)
         )) {
-            throw new IllegalFileExtensionException(originalFileName);
+            throw new Exception(msgSrc.getMessage("error.file.extension.valid", new String[]{originalFileName}, Locale.ENGLISH));
         }
         // 파일 크기 적합성 검사
         else if (uploadedFile.getSize() > fileSizeLimit) {
-            throw new IllegalFileSizeException(originalFileName);
+            throw new Exception(msgSrc.getMessage("error.file.size", new String[]{originalFileName}, Locale.ENGLISH));
         }
     }
 }

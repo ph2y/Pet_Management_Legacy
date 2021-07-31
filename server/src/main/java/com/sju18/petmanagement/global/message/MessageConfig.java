@@ -40,6 +40,15 @@ public class MessageConfig implements WebMvcConfigurer {
     }
 
     @Bean
+    public static MessageSource getStorageMessageSource() {
+        ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
+        msgSrc.setBasenames(
+                "static/messages/storage/error"
+        );
+        return msgSrc;
+    }
+
+    @Bean
     public static MessageSource getAccountMessageSource() {
         ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
         msgSrc.setBasenames(
