@@ -124,17 +124,14 @@ public class PetScheduleService {
 
     // DELETE
     @Transactional
-    public PetScheduleDeleteResDto deletePetSchedule(Authentication auth, PetScheduleDeleteReqDto reqDto) {
+    public void deletePetSchedule(Authentication auth, PetScheduleDeleteReqDto reqDto) {
         String username = accountProfileServ.fetchCurrentAccount(auth).getUsername();
 
-        // 받은 사용자 정보와 반려동물 id로 반려동물 사료 시간(스케줄) 정보 삭제
-        try {
-            PetSchedule petSchedule = petScheduleRepository.findByUsernameAndId(username,reqDto.getId()).orElseThrow(() -> new IllegalArgumentException("PetSchedule entity does not exists"));
-            petScheduleRepository.delete(petSchedule);
-
-            return new PetScheduleDeleteResDto("Pet feed schedule delete success");
-        } catch (Exception e) {
-            return new PetScheduleDeleteResDto(e.getMessage());
-        }
+        // 받은 사용자 정보와 반려동물 스케줄 id로 반려동물 사료 시간(스케줄) 정보 삭제
+        PetSchedule petSchedule = petScheduleRepository.findByUsernameAndId(username,reqDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH))
+                );
+        petScheduleRepository.delete(petSchedule);
     }
 }
