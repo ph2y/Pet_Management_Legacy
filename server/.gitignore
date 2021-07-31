@@ -42,4 +42,4 @@ out/
 
 ### 미디어 파일 저장 디렉토리 ###
 storage/
-storage/**
+storage/*
