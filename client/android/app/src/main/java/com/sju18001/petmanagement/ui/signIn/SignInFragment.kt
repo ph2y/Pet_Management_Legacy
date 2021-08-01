@@ -212,6 +212,7 @@ class SignInFragment : Fragment() {
 
                         // 웰컴 페이지 호출
                         val intent = Intent(context, WelcomePageActivity::class.java)
+                        sessionManager.saveUserToken(token)
 
                         startActivity(intent)
                         activity?.finish()
