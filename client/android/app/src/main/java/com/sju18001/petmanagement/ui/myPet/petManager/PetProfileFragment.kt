@@ -158,19 +158,15 @@ class PetProfileFragment : Fragment(){
                 call: Call<PetProfileDeleteResponseDto>,
                 response: Response<PetProfileDeleteResponseDto>
             ) {
-                if(response.isSuccessful) {
-                    // set api state/button to normal
-                    myPetViewModel.createUpdateDeletePetApiIsLoading = false
-                    enableButton()
+                // set api state/button to normal
+                myPetViewModel.createUpdateDeletePetApiIsLoading = false
+                enableButton()
 
+                if(response.isSuccessful) {
                     Toast.makeText(context, context?.getText(R.string.delete_pet_successful), Toast.LENGTH_LONG).show()
                     activity?.finish()
                 }
                 else {
-                    // set api state/button to normal
-                    myPetViewModel.createUpdateDeletePetApiIsLoading = false
-                    enableButton()
-
                     // get error message + show(Toast)
                     val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
