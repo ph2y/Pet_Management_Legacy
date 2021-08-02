@@ -26,7 +26,7 @@ public class EmailService {
         MimeMessage  message = emailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to); //보내는 대상
-        message.setSubject("Pet Management 서비스 회원가입 인증 코드: " + currentAuthCode); //제목
+        message.setSubject("Pet Management 서비스 인증 코드: " + currentAuthCode); //제목
 
         String verificationMessage="";
         verificationMessage += "<h1 style=\"font-size: 30px; padding-right: 30px; padding-left: 30px;\">이메일 주소 확인</h1>";
