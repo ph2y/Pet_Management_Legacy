@@ -132,6 +132,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPersonName"
+                        android:maxLength="60"
                         android:theme="@style/onSelectedThemeCarrot" />
 
                 </LinearLayout>
@@ -159,6 +160,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_name_hint"
                             android:inputType="textPersonName"
+                            android:maxLength="20"
                             android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
@@ -221,12 +223,14 @@
                             android:layout_height="wrap_content"
                             android:text="@string/pet_species_label" />
 
+                        <!--TODO: remove maxLength + create spinner for species type-->
                         <EditText
                             android:id="@+id/pet_species_input"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_species_hint"
                             android:inputType="textPersonName"
+                            android:maxLength="8"
                             android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
@@ -243,12 +247,14 @@
                             android:layout_height="wrap_content"
                             android:text="@string/pet_breed_label" />
 
+                        <!--TODO: remove maxLength + create spinner for breed type-->
                         <EditText
                             android:id="@+id/pet_breed_input"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_breed_hint"
                             android:inputType="textPersonName"
+                            android:maxLength="8"
                             android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
