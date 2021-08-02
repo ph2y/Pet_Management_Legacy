@@ -7,7 +7,7 @@ import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 @Data
-public class PetScheduleUpdateReqDto {
+public class UpdatePetScheduleReqDto {
     @PositiveOrZero(message = "valid.pet.id.notNegative")
     private Long id;
     @Pattern(regexp = "^(0,|[1-9][0-9]{0,9},)*(0|[1-9][0-9]{0,9})$", message = "valid.petSchedule.idList.id")

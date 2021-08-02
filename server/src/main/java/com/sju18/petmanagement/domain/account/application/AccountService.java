@@ -148,6 +148,20 @@ public class AccountService {
     }
 
     @Transactional
+    public void updateAccountPassword(Authentication auth, String password) {
+        // 기존 사용자 프로필 로드
+        Account currentAccount = this.fetchCurrentAccount(auth);
+
+        // 새로운 비밀번호가 기존 비밀번호와 다르면 업데이트
+        if (!pwEncoder.encode(password).equals(currentAccount.getPassword())) {
+            currentAccount.setPassword(pwEncoder.encode(password));
+        }
+
+        // 기존 사용자 정보 변경사항 적용
+        accountRepository.save(currentAccount);
+    }
+
+    @Transactional
     public String updateAccountPhoto(Authentication auth, MultipartHttpServletRequest fileReq) throws Exception {
         // 기존 사용자 프로필 로드
         Account currentAccount = this.fetchCurrentAccount(auth);

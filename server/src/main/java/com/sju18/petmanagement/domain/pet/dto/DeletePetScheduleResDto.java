@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PetScheduleDeleteResDto {
+public class DeletePetScheduleResDto {
     private DtoMetadata dtoMetadata;
 }

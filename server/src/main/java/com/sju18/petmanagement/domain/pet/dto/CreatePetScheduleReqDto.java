@@ -7,7 +7,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
-public class PetScheduleCreateReqDto {
+public class CreatePetScheduleReqDto {
     @NotBlank(message = "valid.petSchedule.idList.blank")
     @Pattern(regexp = "^(0,|[1-9][0-9]{0,9},)*(0|[1-9][0-9]{0,9})$", message = "valid.petSchedule.idList.id")
     private String petIdList;

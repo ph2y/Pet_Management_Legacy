@@ -29,7 +29,7 @@ public class PetScheduleController {
 
     // CREATE
     @PostMapping("/api/pet/schedule/create")
-    public ResponseEntity<?> createPetSchedule(Authentication auth, @Valid @RequestBody PetScheduleCreateReqDto reqDto) {
+    public ResponseEntity<?> createPetSchedule(Authentication auth, @Valid @RequestBody CreatePetScheduleReqDto reqDto) {
         DtoMetadata dtoMetadata;
 
         try {
@@ -37,15 +37,15 @@ public class PetScheduleController {
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new PetScheduleCreateResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new CreatePetScheduleResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.petSchedule.create.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new PetScheduleCreateResDto(dtoMetadata));
+        return ResponseEntity.ok(new CreatePetScheduleResDto(dtoMetadata));
     }
 
     // READ
     @PostMapping("/api/pet/schedule/fetch")
-    public ResponseEntity<?> fetchPetSchedule(Authentication auth, @Valid @RequestBody PetScheduleFetchReqDto reqDto) {
+    public ResponseEntity<?> fetchPetSchedule(Authentication auth, @Valid @RequestBody FetchPetScheduleReqDto reqDto) {
         DtoMetadata dtoMetadata;
         final List<PetSchedule> petScheduleList;
 
@@ -59,39 +59,39 @@ public class PetScheduleController {
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new PetScheduleFetchResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new FetchPetScheduleResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.petSchedule.fetch.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new PetScheduleFetchResDto(dtoMetadata, petScheduleList));
+        return ResponseEntity.ok(new FetchPetScheduleResDto(dtoMetadata, petScheduleList));
     }
 
     // UPDATE
     @PostMapping("/api/pet/schedule/update")
-    public ResponseEntity<?> updatePetSchedule(Authentication auth, @Valid @RequestBody PetScheduleUpdateReqDto reqDto) {
+    public ResponseEntity<?> updatePetSchedule(Authentication auth, @Valid @RequestBody UpdatePetScheduleReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
             petScheduleServ.updatePetSchedule(auth, reqDto);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new PetScheduleUpdateResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new UpdatePetScheduleResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.petSchedule.update.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new PetScheduleUpdateResDto(dtoMetadata));
+        return ResponseEntity.ok(new UpdatePetScheduleResDto(dtoMetadata));
     }
 
     // DELETE
     @PostMapping("/api/pet/schedule/delete")
-    public ResponseEntity<?> deletePetSchedule(Authentication auth, @Valid @RequestBody PetScheduleDeleteReqDto reqDto) {
+    public ResponseEntity<?> deletePetSchedule(Authentication auth, @Valid @RequestBody DeletePetScheduleReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
             petScheduleServ.deletePetSchedule(auth, reqDto);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new PetScheduleDeleteResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new DeletePetScheduleResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.petSchedule.delete.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new PetScheduleDeleteResDto(dtoMetadata));
+        return ResponseEntity.ok(new DeletePetScheduleResDto(dtoMetadata));
     }
 }
