@@ -66,7 +66,7 @@ public class AccountController {
         return ResponseEntity.ok(new FetchAccountResDto(dtoMetadata, account));
     }
 
-    @GetMapping("/api/account/fetchphoto")
+    @GetMapping("/api/account/photo/fetch")
     public ResponseEntity<?> fetchAccountPhoto(Authentication auth) {
         DtoMetadata dtoMetadata;
         byte[] fileBinData;
@@ -94,7 +94,7 @@ public class AccountController {
         return ResponseEntity.ok(new UpdateAccountResDto(dtoMetadata));
     }
 
-    @PostMapping("/api/account/updatephoto")
+    @PostMapping("/api/account/photo/update")
     public ResponseEntity<?> updateAccountPhoto(Authentication auth, MultipartHttpServletRequest fileReq) {
         DtoMetadata dtoMetadata;
         String fileUrl;
@@ -105,7 +105,7 @@ public class AccountController {
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
             return ResponseEntity.status(400).body(new UpdateAccountPhotoResDto(dtoMetadata, null));
         }
-        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.updatePhoto.success", null, Locale.ENGLISH));
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.photo.update.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new UpdateAccountPhotoResDto(dtoMetadata, fileUrl));
     }
 
