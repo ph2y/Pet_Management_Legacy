@@ -213,8 +213,9 @@ class PetProfileFragment : Fragment(){
         myPetViewModel.petImageValueProfile?.let { binding.petImage.setImageResource(it) }
         binding.petName.text = myPetViewModel.petNameValueProfile
         binding.petBirth.text = myPetViewModel.petBirthValueProfile
-        val petSpeciesAndBreed = myPetViewModel.petSpeciesValueProfile + " / " + myPetViewModel.petBreedValueProfile
-        binding.petSpeciesAndBreed.text = petSpeciesAndBreed
+        binding.petSpecies.text = myPetViewModel.petSpeciesValueProfile
+        val petBreed = '(' + myPetViewModel.petBreedValueProfile + ')'
+        binding.petBreed.text = petBreed
         val petGenderAndAge = myPetViewModel.petGenderValueProfile + " / " + myPetViewModel.petAgeValueProfile + '세'
         binding.petGenderAndAge.text = petGenderAndAge
         binding.petMessage.text = myPetViewModel.petMessageValueProfile
