@@ -1,16 +1,22 @@
 package com.sju18.petmanagement.domain.pet.application;
 
 import com.sju18.petmanagement.domain.account.application.AccountService;
+import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.pet.dao.Pet;
 import com.sju18.petmanagement.domain.pet.dao.PetRepository;
 import com.sju18.petmanagement.domain.pet.dto.*;
 import com.sju18.petmanagement.global.message.MessageConfig;
+import com.sju18.petmanagement.global.storage.FileService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.io.IOUtil;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,18 +25,19 @@ import java.util.Locale;
 @RequiredArgsConstructor
 @Service
 public class PetService {
+    private final MessageSource msgSrc = MessageConfig.getPetMessageSource();
     private final PetRepository petRepository;
     private final AccountService accountServ;
-    private final MessageSource msgSrc = MessageConfig.getPetMessageSource();
+    private final FileService fileService;
 
     // CREATE
     @Transactional
-    public void createPet(Authentication auth, PetCreateReqDto reqDto) {
-        String ownername = accountServ.fetchCurrentAccount(auth).getUsername();
+    public void createPet(Authentication auth, PetCreateReqDto reqDto) throws Exception {
+        Account owner = accountServ.fetchCurrentAccount(auth);
 
         // 받은 사용자 정보와 새 입력 정보로 새 반려동물 정보 생성
         Pet pet = Pet.builder()
-                .ownername(ownername)
+                .ownername(owner.getUsername())
                 .name(reqDto.getName())
                 .species(reqDto.getSpecies())
                 .breed(reqDto.getBreed())
@@ -42,6 +49,9 @@ public class PetService {
 
         // save(id가 없는 transient 상태의 객체) -> EntityManger.persist() => save
         petRepository.save(pet);
+
+        // 반려동물 파일 저장소 생성
+        fileService.createPetFileStorage(owner.getId(), pet.getId());
     }
 
     // READ
@@ -60,6 +70,20 @@ public class PetService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
                 ));
+    }
+
+    public byte[] fetchPetPhoto(Authentication auth, Long petId) throws Exception {
+        Account currentAccount = accountServ.fetchCurrentAccount(auth);
+        Pet currentPet = petRepository.findByOwnernameAndId(currentAccount.getUsername(), petId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                ));
+
+        // 사진 파일 인출
+        InputStream imageStream = new FileInputStream(currentPet.getPhotoUrl());
+        byte[] fileBinData = IOUtil.toByteArray(imageStream);
+        imageStream.close();
+        return fileBinData;
     }
 
     // UPDATE
@@ -98,15 +122,41 @@ public class PetService {
         petRepository.save(currentPet);
     }
 
-    // DELETE
     @Transactional
-    public void deletePet(Authentication auth, PetDeleteReqDto reqDto) {
-        // 받은 사용자 정보와 반려동물 id로 반려동물 정보 삭제
-        String ownername = accountServ.fetchCurrentAccount(auth).getUsername();
-        Pet pet = petRepository.findByOwnernameAndId(ownername, reqDto.getId())
+    public String updatePetPhoto(Authentication auth, UpdatePetPhotoReqDto reqDto) throws Exception {
+        // 기존 반려동물 프로필 로드
+        Account currentAccount = accountServ.fetchCurrentAccount(auth);
+        Pet currentPet = petRepository.findByOwnernameAndId(currentAccount.getUsername(), reqDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
                 ));
+
+        // 첨부파일 인출
+        MultipartFile uploadedFile = reqDto.getFile();
+
+        // 해당 유저의 계정 스토리지에 프로필 사진 저장
+        String fileUrl = null;
+        if (uploadedFile != null) {
+            fileUrl = fileService.savePetPhoto(currentAccount.getId(), currentPet.getId(), uploadedFile);
+
+            // 파일정보 DB 데이터 업데이트
+            currentPet.setPhotoUrl(fileUrl);
+            petRepository.save(currentPet);
+        }
+
+        return fileUrl;
+    }
+
+    // DELETE
+    @Transactional
+    public void deletePet(Authentication auth, PetDeleteReqDto reqDto) throws Exception {
+        // 받은 사용자 정보와 반려동물 id로 반려동물 정보 삭제
+        Account owner = accountServ.fetchCurrentAccount(auth);
+        Pet pet = petRepository.findByOwnernameAndId(owner.getUsername(), reqDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                ));
+        fileService.deletePetFileStorage(owner.getId(), pet.getId());
         petRepository.delete(pet);
     }
 }

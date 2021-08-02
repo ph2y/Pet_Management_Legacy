@@ -29,8 +29,8 @@ import java.util.Locale;
 public class AccountService {
     private final MessageSource msgSrc = MessageConfig.getAccountMessageSource();
     private final AccountRepository accountRepository;
-    private final PasswordEncoder pwEncoder;
     private final FileService fileService;
+    private final PasswordEncoder pwEncoder;
 
     @Transactional
     public void createAccount(CreateAccountReqDto reqDto) throws Exception {
@@ -84,6 +84,39 @@ public class AccountService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public Account fetchCurrentAccount(Authentication auth) throws UsernameNotFoundException {
+        // 로그인된 현재 사용자 정보 조회
+        UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        String currentUsername = userDetails.getUsername();
+        return accountRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new UsernameNotFoundException(currentUsername));
+    }
+
+    @Transactional(readOnly = true)
+    public Account fetchAccountById(Long id) throws Exception {
+        // 해당 id 가진 계정 정보 조회
+        return accountRepository.findById(id)
+                .orElseThrow(() -> new Exception(msgSrc.getMessage("error.notExist", null, Locale.ENGLISH)));
+    }
+
+    @Transactional(readOnly = true)
+    public Account fetchAccountByUsername(String username) throws Exception {
+        // 해당 username 가진 계정 정보 조회
+        return accountRepository.findByUsername(username)
+                .orElseThrow(() -> new Exception(msgSrc.getMessage("error.notExist", null, Locale.ENGLISH)));
+    }
+
+    public byte[] fetchAccountPhoto(Authentication auth) throws Exception {
+        Account currentAccount = this.fetchCurrentAccount(auth);
+
+        // 사진 파일 인출
+        InputStream imageStream = new FileInputStream(currentAccount.getPhotoUrl());
+        byte[] fileBinData = IOUtil.toByteArray(imageStream);
+        imageStream.close();
+        return fileBinData;
+    }
+
     @Transactional
     public void updateAccount(Authentication auth, UpdateAccountReqDto reqDto) throws Exception {
         // 기존 사용자 프로필 로드
@@ -133,39 +166,6 @@ public class AccountService {
         }
 
         return fileUrl;
-    }
-
-    @Transactional(readOnly = true)
-    public Account fetchCurrentAccount(Authentication auth) throws UsernameNotFoundException {
-        // 로그인된 현재 사용자 정보 조회
-        UserDetails userDetails = (UserDetails) auth.getPrincipal();
-        String currentUsername = userDetails.getUsername();
-        return accountRepository.findByUsername(currentUsername)
-                .orElseThrow(() -> new UsernameNotFoundException(currentUsername));
-    }
-
-    @Transactional(readOnly = true)
-    public Account fetchAccountById(Long id) throws Exception {
-        // 해당 id 가진 계정 정보 조회
-        return accountRepository.findById(id)
-                .orElseThrow(() -> new Exception(msgSrc.getMessage("error.notExist", null, Locale.ENGLISH)));
-    }
-
-    @Transactional(readOnly = true)
-    public Account fetchAccountByUsername(String username) throws Exception {
-        // 해당 username 가진 계정 정보 조회
-        return accountRepository.findByUsername(username)
-                .orElseThrow(() -> new Exception(msgSrc.getMessage("error.notExist", null, Locale.ENGLISH)));
-    }
-
-    public byte[] fetchAccountPhoto(Authentication auth) throws Exception {
-        Account currentAccount = this.fetchCurrentAccount(auth);
-
-        // 사진 파일 인출
-        InputStream imageStream = new FileInputStream(currentAccount.getPhotoUrl());
-        byte[] fileBinData = IOUtil.toByteArray(imageStream);
-        imageStream.close();
-        return fileBinData;
     }
 
     @Transactional

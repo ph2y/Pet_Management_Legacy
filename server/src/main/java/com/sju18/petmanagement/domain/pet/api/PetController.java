@@ -11,9 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -65,6 +63,20 @@ public class PetController {
         return ResponseEntity.ok(new PetFetchResDto(dtoMetadata, petList));
     }
 
+    @PostMapping("/api/pet/photo/fetch")
+    public ResponseEntity<?> fetchPetPhoto(Authentication auth, @Valid @RequestBody FetchPetPhotoReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        byte[] fileBinData;
+        try {
+            fileBinData = petServ.fetchPetPhoto(auth, reqDto.getId());
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new FetchPetPhotoResDto(dtoMetadata));
+        }
+        return ResponseEntity.ok(fileBinData);
+    }
+
     // UPDATE
     @PostMapping("/api/pet/update")
     public ResponseEntity<?> updatePet(Authentication auth, @Valid @RequestBody PetUpdateReqDto reqDto) {
@@ -78,6 +90,21 @@ public class PetController {
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.pet.update.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new PetUpdateResDto(dtoMetadata));
+    }
+
+    @PostMapping("/api/pet/photo/update")
+    public ResponseEntity<?> updatePetPhoto(Authentication auth, @ModelAttribute UpdatePetPhotoReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        String fileUrl;
+        try {
+            fileUrl = petServ.updatePetPhoto(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new UpdatePetPhotoResDto(dtoMetadata, null));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.petPhoto.update.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new UpdatePetPhotoResDto(dtoMetadata, fileUrl));
     }
 
     // DELETE
