@@ -32,7 +32,7 @@ public class PetService {
 
     // CREATE
     @Transactional
-    public void createPet(Authentication auth, PetCreateReqDto reqDto) throws Exception {
+    public void createPet(Authentication auth, CreatePetReqDto reqDto) throws Exception {
         Account owner = accountServ.fetchCurrentAccount(auth);
 
         // 받은 사용자 정보와 새 입력 정보로 새 반려동물 정보 생성
@@ -88,7 +88,7 @@ public class PetService {
 
     // UPDATE
     @Transactional
-    public void updatePet(Authentication auth, PetUpdateReqDto reqDto) {
+    public void updatePet(Authentication auth, UpdatePetReqDto reqDto) {
         // 받은 사용자 정보와 입력 정보로 반려동물 정보 업데이트
         String ownername = accountServ.fetchCurrentAccount(auth).getUsername();
         Pet currentPet = petRepository.findByOwnernameAndId(ownername, reqDto.getId())
@@ -149,7 +149,7 @@ public class PetService {
 
     // DELETE
     @Transactional
-    public void deletePet(Authentication auth, PetDeleteReqDto reqDto) throws Exception {
+    public void deletePet(Authentication auth, DeletePetReqDto reqDto) throws Exception {
         // 받은 사용자 정보와 반려동물 id로 반려동물 정보 삭제
         Account owner = accountServ.fetchCurrentAccount(auth);
         Pet pet = petRepository.findByOwnernameAndId(owner.getUsername(), reqDto.getId())

@@ -94,6 +94,20 @@ public class AccountController {
         return ResponseEntity.ok(new UpdateAccountResDto(dtoMetadata));
     }
 
+    @PostMapping("/api/account/password/update")
+    public ResponseEntity<?> updatePasswordAccount(Authentication auth, @Valid @RequestBody UpdateAccountPasswordReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        try {
+            accountServ.updateAccountPassword(auth, reqDto.getPassword());
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new UpdateAccountPasswordResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.password.update.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new UpdateAccountPasswordResDto(dtoMetadata));
+    }
+
     @PostMapping("/api/account/photo/update")
     public ResponseEntity<?> updateAccountPhoto(Authentication auth, MultipartHttpServletRequest fileReq) {
         DtoMetadata dtoMetadata;

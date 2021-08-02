@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class PetUpdateResDto {
+public class UpdatePetResDto {
     private DtoMetadata _metadata;
 }

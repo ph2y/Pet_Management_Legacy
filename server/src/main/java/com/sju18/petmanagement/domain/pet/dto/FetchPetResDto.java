@@ -7,18 +7,18 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class PetFetchResDto {
+public class FetchPetResDto {
     private DtoMetadata _metadata;
     private List<Pet> petList;
 
     // 정상 조회시 사용할 생성자
-    public PetFetchResDto(DtoMetadata dtoMetadata, List<Pet> petList) {
+    public FetchPetResDto(DtoMetadata dtoMetadata, List<Pet> petList) {
         this._metadata = dtoMetadata;
         this.petList = petList;
     }
 
     // 오류시 사용할 생성자
-    public PetFetchResDto(DtoMetadata dtoMetadata) {
+    public FetchPetResDto(DtoMetadata dtoMetadata) {
         this._metadata = dtoMetadata;
         this.petList = null;
     }

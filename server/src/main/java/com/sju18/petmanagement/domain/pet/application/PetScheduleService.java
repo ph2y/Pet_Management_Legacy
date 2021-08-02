@@ -29,7 +29,7 @@ public class PetScheduleService {
 
     // CREATE
     @Transactional
-    public void createPetSchedule(Authentication auth, PetScheduleCreateReqDto reqDto) {
+    public void createPetSchedule(Authentication auth, CreatePetScheduleReqDto reqDto) {
         // 받은 사용자 정보와 새 입력 정보로 새 반려동물 사료 시간(스케줄) 정보 생성
         String username = accountServ.fetchCurrentAccount(auth).getUsername();
         // 스케줄을 적용할 반려동물 id 목록 스트링을 통해 스케줄을 적용할 반려동물 객체 목록 인출
@@ -94,7 +94,7 @@ public class PetScheduleService {
 
     // UPDATE
     @Transactional
-    public void updatePetSchedule(Authentication auth, PetScheduleUpdateReqDto reqDto) {
+    public void updatePetSchedule(Authentication auth, UpdatePetScheduleReqDto reqDto) {
         String username = accountServ.fetchCurrentAccount(auth).getUsername();
 
         // 받은 사용자 정보와 입력 정보로 반려동물 사료 시간(스케줄) 정보 업데이트
@@ -124,7 +124,7 @@ public class PetScheduleService {
 
     // DELETE
     @Transactional
-    public void deletePetSchedule(Authentication auth, PetScheduleDeleteReqDto reqDto) {
+    public void deletePetSchedule(Authentication auth, DeletePetScheduleReqDto reqDto) {
         String username = accountServ.fetchCurrentAccount(auth).getUsername();
 
         // 받은 사용자 정보와 반려동물 스케줄 id로 반려동물 사료 시간(스케줄) 정보 삭제

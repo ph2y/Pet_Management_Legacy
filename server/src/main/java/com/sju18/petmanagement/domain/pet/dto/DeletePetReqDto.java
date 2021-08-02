@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.PositiveOrZero;
 
 @Data
-public class PetFetchReqDto {
+public class DeletePetReqDto {
     @PositiveOrZero(message = "valid.pet.id.notNegative")
     private Long id;
 }

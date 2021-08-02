@@ -27,7 +27,7 @@ public class PetController {
 
     // CREATE
     @PostMapping("/api/pet/create")
-    public ResponseEntity<?> createPet(Authentication auth, @Valid @RequestBody PetCreateReqDto reqDto) {
+    public ResponseEntity<?> createPet(Authentication auth, @Valid @RequestBody CreatePetReqDto reqDto) {
         DtoMetadata dtoMetadata;
 
         try {
@@ -35,15 +35,15 @@ public class PetController {
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new PetCreateResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new CreatePetResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.pet.create.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new PetCreateResDto(dtoMetadata));
+        return ResponseEntity.ok(new CreatePetResDto(dtoMetadata));
     }
 
     // READ
     @PostMapping("/api/pet/fetch")
-    public ResponseEntity<?> fetchPet(Authentication auth, @Valid @RequestBody PetFetchReqDto reqDto) {
+    public ResponseEntity<?> fetchPet(Authentication auth, @Valid @RequestBody FetchPetReqDto reqDto) {
         DtoMetadata dtoMetadata;
         final List<Pet> petList;
 
@@ -57,10 +57,10 @@ public class PetController {
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new PetFetchResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new FetchPetResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.pet.fetch.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new PetFetchResDto(dtoMetadata, petList));
+        return ResponseEntity.ok(new FetchPetResDto(dtoMetadata, petList));
     }
 
     @PostMapping("/api/pet/photo/fetch")
@@ -79,17 +79,17 @@ public class PetController {
 
     // UPDATE
     @PostMapping("/api/pet/update")
-    public ResponseEntity<?> updatePet(Authentication auth, @Valid @RequestBody PetUpdateReqDto reqDto) {
+    public ResponseEntity<?> updatePet(Authentication auth, @Valid @RequestBody UpdatePetReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
             petServ.updatePet(auth, reqDto);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new PetUpdateResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new UpdatePetResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.pet.update.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new PetUpdateResDto(dtoMetadata));
+        return ResponseEntity.ok(new UpdatePetResDto(dtoMetadata));
     }
 
     @PostMapping("/api/pet/photo/update")
@@ -109,16 +109,16 @@ public class PetController {
 
     // DELETE
     @PostMapping("/api/pet/delete")
-    public ResponseEntity<?> deletePet(Authentication auth, @Valid @RequestBody PetDeleteReqDto reqDto) {
+    public ResponseEntity<?> deletePet(Authentication auth, @Valid @RequestBody DeletePetReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
             petServ.deletePet(auth, reqDto);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new PetDeleteResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new DeletePetResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.pet.delete.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new PetDeleteResDto(dtoMetadata));
+        return ResponseEntity.ok(new DeletePetResDto(dtoMetadata));
     }
 }
