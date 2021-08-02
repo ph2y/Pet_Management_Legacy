@@ -52,25 +52,25 @@ public class FileService {
 
     // 사용자 데이터 폴더 생성
     public void createAccountFileStorage(Long accountId) throws Exception {
-        Path accountProfileStorage = getAccountFileStoragePath(accountId);
-        Files.createDirectories(accountProfileStorage);
-        FileUtil.makeNewChildDir(accountProfileStorage.toFile(), "pets");
+        Path accountStorage = getAccountFileStoragePath(accountId);
+        Files.createDirectories(accountStorage);
+        FileUtil.makeNewChildDir(accountStorage.toFile(), "pets");
     }
     // 사용자 데이터 폴더 삭제
     public void deleteAccountFileStorage(Long accountId) throws Exception {
-        Path accountProfileStorage = getAccountFileStoragePath(accountId);
-        FileUtils.deleteDirectory(accountProfileStorage.toFile());
+        Path accountStorage = getAccountFileStoragePath(accountId);
+        FileUtils.deleteDirectory(accountStorage.toFile());
     }
 
     // 반려동물 폴더 생성
     public void createPetFileStorage(Long petId) throws Exception {
-        Path petProfileStorage = getPetFileStoragePath(petId);
-        Files.createDirectories(petProfileStorage);
+        Path petStorage = getPetFileStoragePath(petId);
+        Files.createDirectories(petStorage);
     }
     // 반려동물 폴더 삭제
     public void deletePetFileStorage(Long petId) throws Exception {
-        Path petProfileStorage = getPetFileStoragePath(petId);
-        FileUtils.deleteDirectory(petProfileStorage.toFile());
+        Path petStorage = getPetFileStoragePath(petId);
+        FileUtils.deleteDirectory(petStorage.toFile());
     }
 
     // 게시물 데이터 폴더 생성
@@ -86,9 +86,9 @@ public class FileService {
     }
 
     // 사용자 프로필 사진 저장
-    public String saveAccountProfilePhoto(Long accountId, MultipartFile uploadedFile) throws Exception {
+    public String saveAccountPhoto(Long accountId, MultipartFile uploadedFile) throws Exception {
         // 업로드 파일 저장 파일명
-        String fileName = "profile_photo." + FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
+        String fileName = "account_profile_photo." + FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
         // 업로드 파일 저장 경로
         Path savePath = getAccountFileStoragePath(accountId);
         // 업로드 가능한 확장자
@@ -108,7 +108,7 @@ public class FileService {
     }
     
     // 애완동물 프로필 사진 저장
-    public String savePetProfilePhoto(Long petId, MultipartFile uploadedFile) throws Exception {
+    public String savePetPhoto(Long petId, MultipartFile uploadedFile) throws Exception {
         // 업로드 파일 저장 파일명
         String fileName = "pet_profile_photo." + FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
         // 업로드 파일 저장 경로

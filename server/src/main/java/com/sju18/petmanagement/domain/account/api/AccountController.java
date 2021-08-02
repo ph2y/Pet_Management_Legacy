@@ -1,6 +1,6 @@
 package com.sju18.petmanagement.domain.account.api;
 
-import com.sju18.petmanagement.domain.account.application.AccountProfileService;
+import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dto.*;
 import com.sju18.petmanagement.global.common.DtoMetadata;
@@ -23,16 +23,16 @@ import java.util.Locale;
 
 @RestController
 @AllArgsConstructor
-public class AccountProfileController {
+public class AccountController {
     private static final Logger logger = LogManager.getLogger();
     private final MessageSource msgSrc = MessageConfig.getAccountMessageSource();
-    private final AccountProfileService accountProfileServ;
+    private final AccountService accountServ;
 
     @PostMapping("/api/account/create")
     public ResponseEntity<?> createAccount(@Valid @RequestBody CreateAccountReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
-            accountProfileServ.createAccount(reqDto);
+            accountServ.createAccount(reqDto);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
@@ -49,13 +49,13 @@ public class AccountProfileController {
         try {
             if (reqDto.getId() != null) {
                 // 해당 id를 가진 계정 정보 조회
-                account = accountProfileServ.fetchAccountById(reqDto.getId());
+                account = accountServ.fetchAccountById(reqDto.getId());
             } else if (reqDto.getUsername() != null && !reqDto.getUsername().isEmpty()) {
                 // 해당 username 가진 계정 정보 조회
-                account = accountProfileServ.fetchAccountByUsername(reqDto.getUsername());
+                account = accountServ.fetchAccountByUsername(reqDto.getUsername());
             } else {
                 // 현재 로그인된 계정 정보 조회
-                account = accountProfileServ.fetchCurrentAccount(auth);
+                account = accountServ.fetchCurrentAccount(auth);
             }
         } catch (Exception e) {
             logger.warn(e.toString());
@@ -71,7 +71,7 @@ public class AccountProfileController {
         DtoMetadata dtoMetadata;
         byte[] fileBinData;
         try {
-            fileBinData = accountProfileServ.fetchAccountPhoto(auth);
+            fileBinData = accountServ.fetchAccountPhoto(auth);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
@@ -84,7 +84,7 @@ public class AccountProfileController {
     public ResponseEntity<?> updateAccount(Authentication auth, @Valid @RequestBody UpdateAccountReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
-            accountProfileServ.updateAccount(auth, reqDto);
+            accountServ.updateAccount(auth, reqDto);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
@@ -99,7 +99,7 @@ public class AccountProfileController {
         DtoMetadata dtoMetadata;
         String fileUrl;
         try {
-            fileUrl = accountProfileServ.updateAccountPhoto(auth, fileReq);
+            fileUrl = accountServ.updateAccountPhoto(auth, fileReq);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
@@ -113,7 +113,7 @@ public class AccountProfileController {
     public ResponseEntity<?> deleteAccount(Authentication auth) {
         DtoMetadata dtoMetadata;
         try {
-            accountProfileServ.deleteAccount(auth);
+            accountServ.deleteAccount(auth);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());

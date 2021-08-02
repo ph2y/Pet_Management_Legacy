@@ -1,6 +1,6 @@
 package com.sju18.petmanagement.domain.pet.api;
 
-import com.sju18.petmanagement.domain.pet.application.PetProfileService;
+import com.sju18.petmanagement.domain.pet.application.PetService;
 import com.sju18.petmanagement.domain.pet.dao.Pet;
 import com.sju18.petmanagement.domain.pet.dto.*;
 import com.sju18.petmanagement.global.common.DtoMetadata;
@@ -22,13 +22,13 @@ import java.util.Locale;
 
 @RequiredArgsConstructor
 @RestController
-public class PetProfileController {
+public class PetController {
     private static final Logger logger = LogManager.getLogger();
     private final MessageSource msgSrc = MessageConfig.getPetMessageSource();
-    private final PetProfileService petServ;
+    private final PetService petServ;
 
     // CREATE
-    @PostMapping("/api/pet/profile/create")
+    @PostMapping("/api/pet/create")
     public ResponseEntity<?> createPet(Authentication auth, @Valid @RequestBody PetCreateReqDto reqDto) {
         DtoMetadata dtoMetadata;
 
@@ -44,7 +44,7 @@ public class PetProfileController {
     }
 
     // READ
-    @PostMapping("/api/pet/profile/fetch")
+    @PostMapping("/api/pet/fetch")
     public ResponseEntity<?> fetchPet(Authentication auth, @Valid @RequestBody PetFetchReqDto reqDto) {
         DtoMetadata dtoMetadata;
         final List<Pet> petList;
@@ -66,7 +66,7 @@ public class PetProfileController {
     }
 
     // UPDATE
-    @PostMapping("/api/pet/profile/update")
+    @PostMapping("/api/pet/update")
     public ResponseEntity<?> updatePet(Authentication auth, @Valid @RequestBody PetUpdateReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
@@ -81,7 +81,7 @@ public class PetProfileController {
     }
 
     // DELETE
-    @PostMapping("/api/pet/profile/delete")
+    @PostMapping("/api/pet/delete")
     public ResponseEntity<?> deletePet(Authentication auth, @Valid @RequestBody PetDeleteReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {

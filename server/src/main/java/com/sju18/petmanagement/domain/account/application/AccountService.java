@@ -26,7 +26,7 @@ import java.util.Locale;
 
 @Service
 @AllArgsConstructor
-public class AccountProfileService {
+public class AccountService {
     private final MessageSource msgSrc = MessageConfig.getAccountMessageSource();
     private final AccountRepository accountRepository;
     private final PasswordEncoder pwEncoder;
@@ -123,7 +123,7 @@ public class AccountProfileService {
         MultipartFile uploadedFile = fileReq.getFile("file");
 
         // 해당 유저의 계정 스토리지에 프로필 사진 저장
-        String fileUrl = fileService.saveAccountProfilePhoto(currentAccount.getId(), uploadedFile);
+        String fileUrl = fileService.saveAccountPhoto(currentAccount.getId(), uploadedFile);
 
         // 파일정보 DB 데이터 업데이트
         currentAccount.setPhotoUrl(fileUrl);
