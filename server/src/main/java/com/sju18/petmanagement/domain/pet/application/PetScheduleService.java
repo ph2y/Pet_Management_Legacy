@@ -1,6 +1,6 @@
 package com.sju18.petmanagement.domain.pet.application;
 
-import com.sju18.petmanagement.domain.account.application.AccountProfileService;
+import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.pet.dao.Pet;
 import com.sju18.petmanagement.domain.pet.dao.PetSchedule;
 import com.sju18.petmanagement.domain.pet.dao.PetScheduleRepository;
@@ -23,22 +23,22 @@ import java.util.stream.Stream;
 @Service
 public class PetScheduleService {
     private final PetScheduleRepository petScheduleRepository;
-    private final AccountProfileService accountProfileServ;
-    private final PetProfileService petProfileServ;
+    private final AccountService accountServ;
+    private final PetService petServ;
     private final MessageSource msgSrc = MessageConfig.getPetMessageSource();
 
     // CREATE
     @Transactional
     public void createPetSchedule(Authentication auth, PetScheduleCreateReqDto reqDto) {
         // 받은 사용자 정보와 새 입력 정보로 새 반려동물 사료 시간(스케줄) 정보 생성
-        String username = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        String username = accountServ.fetchCurrentAccount(auth).getUsername();
         // 스케줄을 적용할 반려동물 id 목록 스트링을 통해 스케줄을 적용할 반려동물 객체 목록 인출
-        List<Pet> applyPetList = this.getApplyPetListFromApplyPetIdList(reqDto.getPetIdList());
+        List<Pet> appliedPetList = this.getAppliedPetListFromApplyPetIdList(reqDto.getPetIdList());
         
         // 스케줄 객체 생성
         PetSchedule petSchedule = PetSchedule.builder()
                 .username(username)
-                .petList(applyPetList)
+                .petList(appliedPetList)
                 .time(LocalTime.parse(reqDto.getTime()))
                 .memo(reqDto.getMemo())
                 .enable(false)
@@ -48,29 +48,29 @@ public class PetScheduleService {
         petScheduleRepository.save(petSchedule);
     }
 
-    private List<Pet> getApplyPetListFromApplyPetIdList(String petIdList) {
+    private List<Pet> getAppliedPetListFromApplyPetIdList(String petIdList) {
         // 스케줄을 적용할 반려동물 id 목록
         List<Long> applyPetIdList = Stream.of(petIdList.split(","))
                 .map(Long::valueOf).collect(Collectors.toList());
         // 스케줄을 적용할 반려동물 목록 인출
-        List<Pet> applyPetList = new ArrayList<>();
+        List<Pet> appliedPetList = new ArrayList<>();
         for (Long petId : applyPetIdList) {
-            applyPetList.add(petProfileServ.fetchPetById(petId));
+            appliedPetList.add(petServ.fetchPetById(petId));
         }
-        return applyPetList;
+        return appliedPetList;
     }
 
     // READ
     @Transactional(readOnly = true)
     public List<PetSchedule> fetchPetScheduleList(Authentication auth) {
-        String username = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        String username = accountServ.fetchCurrentAccount(auth).getUsername();
         List<PetSchedule> petScheduleList = new ArrayList<>(petScheduleRepository.findAllByUsername(username));
 
         // toString 변환된 PetIdList 산출 및 제공
         for (PetSchedule petSchedule : petScheduleList) {
-            List<Pet> applyPetList = petSchedule.getPetList();
+            List<Pet> appliedPetList = petSchedule.getPetList();
             List<Long> applyPetIdList = new ArrayList<>();
-            for (Pet applyPet : applyPetList) {
+            for (Pet applyPet : appliedPetList) {
                 applyPetIdList.add(applyPet.getId());
             }
             petSchedule.setPetIdList(applyPetIdList.toString()
@@ -95,7 +95,7 @@ public class PetScheduleService {
     // UPDATE
     @Transactional
     public void updatePetSchedule(Authentication auth, PetScheduleUpdateReqDto reqDto) {
-        String username = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        String username = accountServ.fetchCurrentAccount(auth).getUsername();
 
         // 받은 사용자 정보와 입력 정보로 반려동물 사료 시간(스케줄) 정보 업데이트
         PetSchedule petSchedule = petScheduleRepository.findByUsernameAndId(username,reqDto.getId())
@@ -105,8 +105,8 @@ public class PetScheduleService {
 
         if (reqDto.getPetIdList() != null) {
             // 스케줄을 적용할 반려동물 id 목록 스트링을 통해 스케줄을 적용할 반려동물 객체 목록 인출
-            List<Pet> applyPetList = this.getApplyPetListFromApplyPetIdList(reqDto.getPetIdList());
-            petSchedule.setPetList(applyPetList);
+            List<Pet> appliedPetList = this.getAppliedPetListFromApplyPetIdList(reqDto.getPetIdList());
+            petSchedule.setPetList(appliedPetList);
         }
         if (reqDto.getTime() != null && !reqDto.getTime().equals(petSchedule.getTime().toString())) {
             petSchedule.setTime(LocalTime.parse(reqDto.getTime()));
@@ -125,7 +125,7 @@ public class PetScheduleService {
     // DELETE
     @Transactional
     public void deletePetSchedule(Authentication auth, PetScheduleDeleteReqDto reqDto) {
-        String username = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        String username = accountServ.fetchCurrentAccount(auth).getUsername();
 
         // 받은 사용자 정보와 반려동물 스케줄 id로 반려동물 사료 시간(스케줄) 정보 삭제
         PetSchedule petSchedule = petScheduleRepository.findByUsernameAndId(username,reqDto.getId())

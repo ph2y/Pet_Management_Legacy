@@ -1,6 +1,6 @@
 package com.sju18.petmanagement.domain.pet.application;
 
-import com.sju18.petmanagement.domain.account.application.AccountProfileService;
+import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.pet.dao.Pet;
 import com.sju18.petmanagement.domain.pet.dao.PetRepository;
 import com.sju18.petmanagement.domain.pet.dto.*;
@@ -18,15 +18,15 @@ import java.util.Locale;
 
 @RequiredArgsConstructor
 @Service
-public class PetProfileService {
+public class PetService {
     private final PetRepository petRepository;
-    private final AccountProfileService accountProfileServ;
+    private final AccountService accountServ;
     private final MessageSource msgSrc = MessageConfig.getPetMessageSource();
 
     // CREATE
     @Transactional
     public void createPet(Authentication auth, PetCreateReqDto reqDto) {
-        String ownername = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        String ownername = accountServ.fetchCurrentAccount(auth).getUsername();
 
         // 받은 사용자 정보와 새 입력 정보로 새 반려동물 정보 생성
         Pet pet = Pet.builder()
@@ -47,7 +47,7 @@ public class PetProfileService {
     // READ
     @Transactional(readOnly = true)
     public List<Pet> fetchPetList(Authentication auth) {
-        String ownername = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        String ownername = accountServ.fetchCurrentAccount(auth).getUsername();
 
         // 사용자 정보로 반려동물 리스트 인출
         return new ArrayList<>(petRepository.findAllByOwnername(ownername));
@@ -66,7 +66,7 @@ public class PetProfileService {
     @Transactional
     public void updatePet(Authentication auth, PetUpdateReqDto reqDto) {
         // 받은 사용자 정보와 입력 정보로 반려동물 정보 업데이트
-        String ownername = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        String ownername = accountServ.fetchCurrentAccount(auth).getUsername();
         Pet currentPet = petRepository.findByOwnernameAndId(ownername, reqDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
@@ -102,7 +102,7 @@ public class PetProfileService {
     @Transactional
     public void deletePet(Authentication auth, PetDeleteReqDto reqDto) {
         // 받은 사용자 정보와 반려동물 id로 반려동물 정보 삭제
-        String ownername = accountProfileServ.fetchCurrentAccount(auth).getUsername();
+        String ownername = accountServ.fetchCurrentAccount(auth).getUsername();
         Pet pet = petRepository.findByOwnernameAndId(ownername, reqDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
                         msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)

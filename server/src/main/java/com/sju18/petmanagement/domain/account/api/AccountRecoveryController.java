@@ -26,7 +26,7 @@ public class AccountRecoveryController {
     private final MessageSource msgSrc = MessageConfig.getAccountMessageSource();
     private final AccountRecoveryService accountRecoServ;
 
-    @PostMapping("/api/account/recover/username")
+    @PostMapping("/api/account/recoverUsername")
     public ResponseEntity<?> recoverUsername(@RequestBody RecoverUsernameReqDto reqDto) {
         // 이메일을 통해 계정 세부정보 조회 및 유저네임 반환
         DtoMetadata dtoMetadata;
@@ -42,7 +42,7 @@ public class AccountRecoveryController {
         return ResponseEntity.ok(new RecoverUsernameResDto(dtoMetadata, foundUsername));
     }
 
-    @PostMapping("/api/account/recover/password")
+    @PostMapping("/api/account/recoverPassword")
     public ResponseEntity<?> recoverPassword(@RequestBody RecoverPasswordReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
