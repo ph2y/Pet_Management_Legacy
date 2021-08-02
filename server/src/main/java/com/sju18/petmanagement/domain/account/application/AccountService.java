@@ -123,11 +123,14 @@ public class AccountService {
         MultipartFile uploadedFile = fileReq.getFile("file");
 
         // 해당 유저의 계정 스토리지에 프로필 사진 저장
-        String fileUrl = fileService.saveAccountPhoto(currentAccount.getId(), uploadedFile);
+        String fileUrl = null;
+        if (uploadedFile != null) {
+            fileUrl = fileService.saveAccountPhoto(currentAccount.getId(), uploadedFile);
 
-        // 파일정보 DB 데이터 업데이트
-        currentAccount.setPhotoUrl(fileUrl);
-        accountRepository.save(currentAccount);
+            // 파일정보 DB 데이터 업데이트
+            currentAccount.setPhotoUrl(fileUrl);
+            accountRepository.save(currentAccount);
+        }
 
         return fileUrl;
     }

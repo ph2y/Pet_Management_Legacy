@@ -1,7 +1,5 @@
 package com.sju18.petmanagement.global.storage;
 
-import com.sju18.petmanagement.domain.account.dao.AccountRepository;
-import com.sju18.petmanagement.domain.pet.dao.PetRepository;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
@@ -24,9 +22,6 @@ import java.util.Objects;
 @RequiredArgsConstructor
 @Service
 public class FileService {
-    // TODO: Repository에 직접 억세스하지 않을 방법 찾기
-    private final AccountRepository accountRepository;
-    private final PetRepository petRepository;
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
     private final String storageRootPath = "E:\\TempDev\\Pet-Management\\storage";
 
@@ -35,13 +30,8 @@ public class FileService {
         return Paths.get(storageRootPath, "accounts", "account_" + accountId);
     }
     // 특정 반려동물 데이터 폴더 경로 조회
-    public Path getPetFileStoragePath(Long petId) throws Exception {
-        Long accountId = accountRepository.findByUsername(
-                petRepository.findById(petId)
-                        .orElseThrow(() -> new Exception("Pet entity not found"))
-                        .getOwnername()
-        ).orElseThrow(() -> new Exception("Account entity not found")).getId();
-        return Paths.get(getAccountFileStoragePath(accountId).toString(), "pets", "pet_" + petId);
+    public Path getPetFileStoragePath(Long ownerAccountId, Long petId) {
+        return Paths.get(getAccountFileStoragePath(ownerAccountId).toString(), "pets", "pet_" + petId);
     }
     // 특정 게시물 데이터 폴더 경로 조회
     public Path getPostFileStoragePath(Long postId) {
@@ -63,13 +53,13 @@ public class FileService {
     }
 
     // 반려동물 폴더 생성
-    public void createPetFileStorage(Long petId) throws Exception {
-        Path petStorage = getPetFileStoragePath(petId);
+    public void createPetFileStorage(Long ownerAccountId, Long petId) throws Exception {
+        Path petStorage = getPetFileStoragePath(ownerAccountId, petId);
         Files.createDirectories(petStorage);
     }
     // 반려동물 폴더 삭제
-    public void deletePetFileStorage(Long petId) throws Exception {
-        Path petStorage = getPetFileStoragePath(petId);
+    public void deletePetFileStorage(Long ownerAccountId, Long petId) throws Exception {
+        Path petStorage = getPetFileStoragePath(ownerAccountId, petId);
         FileUtils.deleteDirectory(petStorage.toFile());
     }
 
@@ -108,11 +98,11 @@ public class FileService {
     }
     
     // 애완동물 프로필 사진 저장
-    public String savePetPhoto(Long petId, MultipartFile uploadedFile) throws Exception {
+    public String savePetPhoto(Long ownerAccountId, Long petId, MultipartFile uploadedFile) throws Exception {
         // 업로드 파일 저장 파일명
         String fileName = "pet_profile_photo." + FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
         // 업로드 파일 저장 경로
-        Path savePath = getPetFileStoragePath(petId);
+        Path savePath = getPetFileStoragePath(ownerAccountId, petId);
         // 업로드 가능한 확장자
         String[] acceptableExtensions = new String[]{
                 "jpg","png","jpeg", "gif", "webp"
