@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPet.petFeedScheduler
+package com.sju18001.petmanagement.ui.myPet.petScheduleManager
 
 import android.os.Build
 import android.view.LayoutInflater
@@ -6,10 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 
 interface PetNameListAdapterInterface{
     fun setViewModelForCheckBox(position: Int)

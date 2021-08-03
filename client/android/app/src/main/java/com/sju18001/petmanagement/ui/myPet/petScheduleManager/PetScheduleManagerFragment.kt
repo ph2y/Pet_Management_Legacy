@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPet.petFeedScheduler
+package com.sju18001.petmanagement.ui.myPet.petScheduleManager
 
 import android.app.AlertDialog
 import android.content.DialogInterface
@@ -13,12 +13,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.databinding.FragmentPetFeedSchedulerBinding
+import com.sju18001.petmanagement.databinding.FragmentPetScheduleManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.PetSchedule
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
@@ -29,15 +29,15 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalTime
 
-class PetFeedSchedulerFragment : Fragment() {
-    private var _binding: FragmentPetFeedSchedulerBinding? = null
+class PetScheduleManagerFragment : Fragment() {
+    private var _binding: FragmentPetScheduleManagerBinding? = null
     private val binding get() = _binding!!
 
     // ViewModel
     private val myPetViewModel: MyPetViewModel by activityViewModels()
 
     // 리싸이클러뷰
-    private lateinit var adapter: PetFeedScheduleListAdapter
+    private lateinit var adapter: PetScheduleListAdapter
 
     // API Calls
     private var fetchPetScheduleApiCall: Call<FetchPetScheduleResDto>? = null
@@ -50,7 +50,7 @@ class PetFeedSchedulerFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentPetFeedSchedulerBinding.inflate(inflater, container, false)
+        _binding = FragmentPetScheduleManagerBinding.inflate(inflater, container, false)
 
         // get session manager
         sessionManager = context?.let { SessionManager(it) }!!
@@ -59,9 +59,9 @@ class PetFeedSchedulerFragment : Fragment() {
         initializeAdapter()
 
         // 추가 버튼
-        binding.addPetFeedScheduleFab.setOnClickListener{
+        binding.addPetScheduleFab.setOnClickListener{
             val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
-            myPetActivityIntent.putExtra("fragmentType", "create_pet_feed_schedule")
+            myPetActivityIntent.putExtra("fragmentType", "create_pet_schedule")
             startActivity(myPetActivityIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
@@ -90,19 +90,18 @@ class PetFeedSchedulerFragment : Fragment() {
     }
 
     private fun initializeAdapter(){
-        adapter = PetFeedScheduleListAdapter(arrayListOf(), myPetViewModel.petNameForId)
-        adapter.petFeedScheduleListAdapterInterface = object: PetFeedScheduleListAdapterInterface {
+        adapter = PetScheduleListAdapter(arrayListOf(), myPetViewModel.petNameForId)
+        adapter.petScheduleListAdapterInterface = object: PetScheduleListAdapterInterface {
             @RequiresApi(Build.VERSION_CODES.O)
-            override fun startEditPetFeedScheduleFragmentForUpdate(data: PetFeedScheduleListItem) {
+            override fun startPetScheduleEditFragmentForUpdate(data: PetSchedule) {
                 val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
                 myPetActivityIntent
-                    .putExtra("fragmentType", "update_pet_feed_schedule")
+                    .putExtra("fragmentType", "update_pet_schedule")
                     .putExtra("id", data.id)
                     .putExtra("petIdList", data.petIdList)
-                    .putExtra("feedTimeHour", data.feedTime.hour)
-                    .putExtra("feedTimeMinute", data.feedTime.minute)
+                    .putExtra("time", data.time)
                     .putExtra("memo", data.memo)
-                    .putExtra("isTurnedOn", data.isTurnedOn)
+                    .putExtra("enable", data.enable)
                 startActivity(myPetActivityIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
@@ -144,9 +143,9 @@ class PetFeedSchedulerFragment : Fragment() {
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
-            override fun updatePetSchedule(data: PetFeedScheduleListItem){
+            override fun updatePetSchedule(data: PetSchedule){
                 val updatePetScheduleReqDto = UpdatePetScheduleReqDto(
-                    data.id, data.petIdList, data.feedTime.toString(), data.memo, data.isTurnedOn
+                    data.id, data.petIdList, data.time, data.memo, data.enable
                 )
 
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
@@ -170,12 +169,12 @@ class PetFeedSchedulerFragment : Fragment() {
             }
         }
 
-        binding.petFeedScheduleListRecyclerView.adapter = adapter
-        binding.petFeedScheduleListRecyclerView.layoutManager = LinearLayoutManager(activity)
+        binding.petScheduleListRecyclerView.adapter = adapter
+        binding.petScheduleListRecyclerView.layoutManager = LinearLayoutManager(activity)
     }
 
     private fun updateAdapterDataSetByFetchPetSchedule(){
-        val dataSet = arrayListOf<PetFeedScheduleListItem>()
+        val dataSet = arrayListOf<PetSchedule>()
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         fetchPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
@@ -188,16 +187,9 @@ class PetFeedSchedulerFragment : Fragment() {
             ) {
                 // dataSet에 값 저장
                 response.body()?.petScheduleList?.map{
-                    dataSet.add(PetFeedScheduleListItem(
-                            it.id,
-                            LocalTime.parse(it.time),
-                            it.petIdList,
-                            it.memo,
-                            it.enable
-                        )
-                    )
+                    dataSet.add(it)
                 }
-                dataSet.sortBy{ it.feedTime }
+                dataSet.sortBy{ it.time }
 
                 adapter.setDataSet(dataSet)
                 adapter.notifyDataSetChanged()

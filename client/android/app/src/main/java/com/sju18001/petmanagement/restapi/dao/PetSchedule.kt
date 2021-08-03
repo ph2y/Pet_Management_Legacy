@@ -4,8 +4,8 @@ data class PetSchedule (
     val id: Long,
     val username: String,
     val petList: List<Pet>,
-    val time: String?,
+    val time: String,
     val memo: String?,
-    val enable: Boolean,
+    var enable: Boolean,
     val petIdList: String
 )

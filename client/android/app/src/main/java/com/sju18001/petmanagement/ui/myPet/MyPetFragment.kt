@@ -10,7 +10,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sju18001.petmanagement.databinding.FragmentMyPetBinding
 import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
-import com.sju18001.petmanagement.ui.myPet.petFeedScheduler.PetFeedSchedulerFragment
+import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleManagerFragment
 
 private val TAB_ELEMENTS = listOf("반려동물 관리", "스케쥴러")
 
@@ -57,7 +57,7 @@ class MyPetFragment : Fragment() {
         override fun createFragment(position: Int): Fragment {
             return when(position) {
                 0 -> PetManagerFragment()
-                else -> PetFeedSchedulerFragment()
+                else -> PetScheduleManagerFragment()
             }
         }
     }

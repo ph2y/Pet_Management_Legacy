@@ -6,7 +6,7 @@ import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.ActivityMyPetBinding
-import com.sju18001.petmanagement.ui.myPet.petFeedScheduler.EditPetFeedScheduleFragment
+import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleEditFragment
 import com.sju18001.petmanagement.ui.myPet.petManager.CreateUpdatePetFragment
 import com.sju18001.petmanagement.ui.myPet.petManager.PetProfileFragment
 
@@ -37,7 +37,7 @@ class MyPetActivity : AppCompatActivity() {
             val fragment = when(fragmentType){
                 "create_pet" -> CreateUpdatePetFragment()
                 "pet_profile_pet_manager" -> PetProfileFragment()
-                else -> EditPetFeedScheduleFragment()
+                else -> PetScheduleEditFragment()
             }
             supportFragmentManager
                 .beginTransaction()

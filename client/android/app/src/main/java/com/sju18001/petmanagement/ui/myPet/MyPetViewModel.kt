@@ -131,16 +131,10 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("createUpdateDeletePetApiIsLoading", value)
         }
 
-    // variables for scheduler
-    var feedTimeHour = handle.get<Int>("feedTimeHour")?: 0
+    // variables for schedule manager
+    var time = handle.get<String>("time")?: 0
         set(value){
-            handle.set("feedTimeHour", value)
-            field = value
-        }
-
-    var feedTimeMinute = handle.get<Int>("feedTimeMinute")?: 0
-        set(value){
-            handle.set("feedTimeMinute", value)
+            handle.set("time", value)
             field = value
         }
 

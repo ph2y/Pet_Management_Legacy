@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPet.petFeedScheduler
+package com.sju18001.petmanagement.ui.myPet.petScheduleManager
 
 import android.os.Build
 import android.os.Bundle
@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.sju18001.petmanagement.databinding.FragmentEditPetFeedScheduleBinding
+import com.sju18001.petmanagement.databinding.FragmentPetScheduleEditBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
@@ -24,8 +24,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalTime
 
-class EditPetFeedScheduleFragment : Fragment() {
-    private var _binding: FragmentEditPetFeedScheduleBinding? = null
+class PetScheduleEditFragment : Fragment() {
+    private var _binding: FragmentPetScheduleEditBinding? = null
     private val binding get() = _binding!!
 
     private val myPetViewModel: MyPetViewModel by activityViewModels()
@@ -48,21 +48,20 @@ class EditPetFeedScheduleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentEditPetFeedScheduleBinding.inflate(inflater, container, false)
+        _binding = FragmentPetScheduleEditBinding.inflate(inflater, container, false)
 
         // get session manager
         sessionManager = context?.let { SessionManager(it) }!!
 
-        // for update_pet_feed_schedule
+        // for update_pet_schedule
         setViewForUpdate()
 
         // 상태 로드
         loadState(myPetViewModel)
 
         // Timepicker
-        binding.feedTimePicker.setOnTimeChangedListener { _, hour, minute ->
-            myPetViewModel.feedTimeHour = hour
-            myPetViewModel.feedTimeMinute = minute
+        binding.timePicker.setOnTimeChangedListener { _, hour, minute ->
+            myPetViewModel.time = LocalTime.of(hour, minute).toString()
         }
 
         // 뒤로가기 버튼
@@ -79,10 +78,10 @@ class EditPetFeedScheduleFragment : Fragment() {
         binding.confirmButton.setOnClickListener {
             val intent = requireActivity().intent
 
-            if(intent.getStringExtra("fragmentType") == "create_pet_feed_schedule"){
+            if(intent.getStringExtra("fragmentType") == "create_pet_schedule"){
                 createPetSchedule()
             }else{
-                updatePetSchedule(intent.getLongExtra("id", 0), intent.getBooleanExtra("isTurnedOn", false))
+                updatePetSchedule(intent.getLongExtra("id", 0), intent.getBooleanExtra("enable", false))
             }
         }
 
@@ -132,9 +131,9 @@ class EditPetFeedScheduleFragment : Fragment() {
         // 스케줄 데이터 불러오기
         val intent = requireActivity().intent
 
-        if(intent.getStringExtra("fragmentType") == "update_pet_feed_schedule"){
-            binding.feedTimePicker.hour = intent.getIntExtra("hour", 0)
-            binding.feedTimePicker.minute = intent.getIntExtra("minute", 0)
+        if(intent.getStringExtra("fragmentType") == "update_pet_schedule"){
+            binding.timePicker.hour = intent.getIntExtra("hour", 0)
+            binding.timePicker.minute = intent.getIntExtra("minute", 0)
             binding.memoEditText.setText(intent.getStringExtra("memo"))
         }
 
@@ -142,11 +141,15 @@ class EditPetFeedScheduleFragment : Fragment() {
         binding.actionTitle.text = "일정 편집"
     }
 
-    @RequiresApi(Build.VERSION_CODES.M)
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun loadState(myPetViewModel: MyPetViewModel){
         // Timepicker
-        binding.feedTimePicker.hour = myPetViewModel.feedTimeHour?.let{ it }
-        binding.feedTimePicker.minute = myPetViewModel.feedTimeMinute?.let{ it }
+        if(myPetViewModel.time != 0){
+            LocalTime.parse(myPetViewModel.time.toString())?.let{
+                binding.timePicker.hour = it.hour
+                binding.timePicker.minute = it.minute
+            }
+        }
 
         // Memo
         binding.memoEditText.setText(myPetViewModel.memo?.let{ it })
@@ -186,7 +189,7 @@ class EditPetFeedScheduleFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createPetSchedule(){
         val createPetScheduleReqDto = CreatePetScheduleReqDto(
-            getCheckedPetIdList(), LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString()
+            getCheckedPetIdList(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(), binding.memoEditText.text.toString()
         )
 
         createPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
@@ -210,9 +213,9 @@ class EditPetFeedScheduleFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun updatePetSchedule(id: Long, isTurnedOn: Boolean){
+    private fun updatePetSchedule(id: Long, enable: Boolean){
         val updatePetScheduleReqDto = UpdatePetScheduleReqDto(
-            id, getCheckedPetIdList(), LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString(), isTurnedOn
+            id, getCheckedPetIdList(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(), binding.memoEditText.text.toString(), enable
         )
 
         updatePetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
@@ -243,7 +246,7 @@ class EditPetFeedScheduleFragment : Fragment() {
 
     private fun setViewModelForUpdate(){
         val intent = requireActivity().intent
-        if(intent.getStringExtra("fragmentType") == "update_pet_feed_schedule"){
+        if(intent.getStringExtra("fragmentType") == "update_pet_schedule"){
             // Initialize ViewModel for PetIdList
             intent.getStringExtra("petIdList")?.let{
                 val petIdListOfString = it.split(",")

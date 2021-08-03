@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPet.petFeedScheduler
+package com.sju18001.petmanagement.ui.myPet.petScheduleManager
 
 
 class PetNameListItem (_name: String, _id: Long) {

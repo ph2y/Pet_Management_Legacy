@@ -60,7 +60,7 @@
             android:layout_height="match_parent"
             >
             <TimePicker
-                android:id="@+id/feed_time_picker"
+                android:id="@+id/time_picker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:scaleX="1.25"
@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:background="@drawable/pet_name_list_layout"
-                app:layout_constraintTop_toBottomOf="@id/feed_time_picker"
+                app:layout_constraintTop_toBottomOf="@id/time_picker"
                 app:layout_constraintStart_toStartOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout

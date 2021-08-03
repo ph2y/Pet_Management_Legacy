@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/pet_feed_schedule_list_item"
+    android:id="@+id/pet_schedule_list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"
@@ -22,10 +22,10 @@
             android:textColor="@color/black"
             android:layout_marginBottom="4dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/feed_time_text_view"
+            app:layout_constraintBottom_toBottomOf="@id/time_text_view"
             />
         <TextView
-            android:id="@+id/feed_time_text_view"
+            android:id="@+id/time_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
