@@ -44,10 +44,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     val BASE_URL = "https://dapi.kakao.com/"
 
     private lateinit var mapViewModel: MapViewModel
-    private var _binding: FragmentMapBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
     // 지도 관련
@@ -88,7 +86,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
-
+        
         navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
 
         // 맵 권한
@@ -96,7 +94,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
         // MavView 초기화
         val mapView = MapView(this.activity)
-        val mapViewContainer = root?.findViewById<ViewGroup>(R.id.map_view)!!
+        val mapViewContainer = binding.mapView
         mapViewContainer.addView(mapView)
 
         mapView.setCurrentLocationEventListener(this)
@@ -117,7 +115,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
 
         // 현재 위치 버튼
-        currentLocationButton = root.findViewById<FloatingActionButton>(R.id.currentLocationButton).apply{
+        currentLocationButton = binding.currentLocationButton.apply{
             setOnClickListener{
                 setMapCenterPointToCurrentLocation(mapView)
             }
@@ -129,9 +127,9 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
 
         // 검색바
-        searchTextInput = root.findViewById<EditText>(R.id.search_text_input).apply {
+        searchTextInput = binding.searchTextInput.apply {
             // 취소 버튼
-            var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel).apply {
+            var searchTextCancel = binding.searchTextCancel.apply {
                 setOnClickListener{
                     searchTextInput!!.setText("")
                     Util.hideKeyboard(requireActivity())
@@ -139,19 +137,19 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             }
 
             // 검색 바로가기
-            root.findViewById<ConstraintLayout>(R.id.search_shortcut_cafe).apply {
+            binding.searchShortcutCafe.apply {
                 setOnClickListener{ doSearch("애견카페", mapView, this) }
             }
 
-            root.findViewById<ConstraintLayout>(R.id.search_shortcut_grooming).apply {
+            binding.searchShortcutGrooming.apply {
                 setOnClickListener{ doSearch("애견미용", mapView, this) }
             }
 
-            root.findViewById<ConstraintLayout>(R.id.search_shortcut_supply).apply {
+            binding.searchShortcutSupply.apply {
                 setOnClickListener{ doSearch("애견용품", mapView, this) }
             }
 
-            root.findViewById<ConstraintLayout>(R.id.search_shortcut_hospital).apply {
+            binding.searchShortcutHospital.apply {
                 setOnClickListener{ doSearch("동물병원", mapView, this) }
             }
 
@@ -364,9 +362,9 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     private fun setLocationInformationTexts(document: Place){
-        val locationPlaceName = requireActivity().findViewById<TextView>(R.id.location_place_name)
-        val locationCategoryName = requireActivity().findViewById<TextView>(R.id.location_category_name)
-        val locationDistance = requireActivity().findViewById<TextView>(R.id.location_distance)
+        val locationPlaceName = binding.locationPlaceName
+        val locationCategoryName = binding.locationCategoryName
+        val locationDistance = binding.locationDistance
 
         locationPlaceName.text = document.place_name
         locationCategoryName.text = document.category_group_name
@@ -394,7 +392,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             .create()
 
         // 버튼 이벤트
-        val pathfindingButton = requireActivity().findViewById<ImageButton>(R.id.pathfinding_button)
+        val pathfindingButton = binding.pathfindingButton
         pathfindingButton.setOnClickListener{ _ ->
             builder.show()
         }
@@ -438,7 +436,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                 .create()
             
             // 버튼 이벤트
-            val callButton = requireActivity().findViewById<ImageButton>(R.id.call_button)
+            val callButton = binding.callButton
             callButton.setOnClickListener{ _ ->
                 builder.show()
             }
@@ -446,7 +444,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     private fun setCallButtonHorizontalWeight(weight: Float){
-        val locationInformationButtons = requireActivity().findViewById<ConstraintLayout>(R.id.location_information_buttons)
+        val locationInformationButtons = binding.locationInformationButtons
         val constraintSet = ConstraintSet()
 
         constraintSet.clone(locationInformationButtons)
@@ -456,7 +454,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
     private fun setLocationInformationShareButton(document: Place){
         // 버튼 이벤트
-        val shareButton = requireActivity().findViewById<ImageButton>(R.id.share_button)
+        val shareButton = binding.shareButton
         shareButton.setOnClickListener{ _ ->
             Util.shareText(requireActivity(), document.place_url)
         }
@@ -539,7 +537,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         showingLocationInformationAnim = ValueAnimator.ofInt(1, Util.convertDpToPixel(LOCATION_INFORMATION_HEIGHT))
         showingLocationInformationAnim!!.addUpdateListener { valueAnimator ->
             val value = valueAnimator.animatedValue as Int
-            if(locationInformation == null) locationInformation = requireActivity().findViewById<ConstraintLayout>(R.id.location_information)
+            if(locationInformation == null) locationInformation = binding.locationInformation
 
             locationInformation!!.layoutParams.height = value
             locationInformation!!.requestLayout()
@@ -549,7 +547,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         hidingLocationInformationAnim = ValueAnimator.ofInt(Util.convertDpToPixel(LOCATION_INFORMATION_HEIGHT), 1)
         hidingLocationInformationAnim!!.addUpdateListener { valueAnimator ->
             val value = valueAnimator.animatedValue as Int
-            if(locationInformation == null) locationInformation = requireActivity().findViewById<ConstraintLayout>(R.id.location_information)
+            if(locationInformation == null) locationInformation = binding.locationInformation
 
             locationInformation!!.layoutParams.height = value
             locationInformation!!.requestLayout()
