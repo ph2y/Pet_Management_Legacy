@@ -14,8 +14,8 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFindIdBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
-import com.sju18001.petmanagement.restapi.dto.AccountFindUsernameRequestDto
-import com.sju18001.petmanagement.restapi.dto.AccountFindUsernameResponseDto
+import com.sju18001.petmanagement.restapi.dto.RecoverUsernameReqDto
+import com.sju18001.petmanagement.restapi.dto.RecoverUsernameResDto
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -128,16 +128,16 @@ class FindIdFragment : Fragment() {
 
     // 아이디 찾기
     private fun findUsername(email: String){
-        val reqBody = AccountFindUsernameRequestDto(email)
-        val call = RetrofitBuilder.getServerApi().findUsernameRequest(reqBody)
+        val recoverUsernameReqDto = RecoverUsernameReqDto(email)
+        val call = RetrofitBuilder.getServerApi().recoverUsernameReq(recoverUsernameReqDto)
 
         // 버튼 로딩 상태
         setButtonLoading(true)
 
-        call.enqueue(object: Callback<AccountFindUsernameResponseDto> {
+        call.enqueue(object: Callback<RecoverUsernameResDto> {
             override fun onResponse(
-                call: Call<AccountFindUsernameResponseDto>,
-                response: Response<AccountFindUsernameResponseDto>
+                call: Call<RecoverUsernameResDto>,
+                response: Response<RecoverUsernameResDto>
             ) {
                 if(!isViewDestroyed){
                     // 버튼 로딩 상태 해제
@@ -153,7 +153,7 @@ class FindIdFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<AccountFindUsernameResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<RecoverUsernameResDto>, t: Throwable) {
                 if(!isViewDestroyed){
                     // 버튼 로딩 상태 해제
                     setButtonLoading(false)

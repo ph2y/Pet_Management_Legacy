@@ -16,8 +16,8 @@ import androidx.fragment.app.setFragmentResultListener
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentSignUpUserInfoBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
-import com.sju18001.petmanagement.restapi.dto.AccountSendAuthCodeRequestDto
-import com.sju18001.petmanagement.restapi.dto.AccountSendAuthCodeResponseDto
+import com.sju18001.petmanagement.restapi.dto.SendAuthCodeReqDto
+import com.sju18001.petmanagement.restapi.dto.SendAuthCodeResDto
 import com.sju18001.petmanagement.ui.signIn.SignInViewModel
 import org.json.JSONObject
 import retrofit2.Call
@@ -36,7 +36,7 @@ class SignUpUserInfoFragment : Fragment() {
     private val binding get() = _binding!!
 
     // variable for storing API call(for cancel)
-    private var codeRequestApiCall: Call<AccountSendAuthCodeResponseDto>? = null
+    private var codeRequestApiCall: Call<SendAuthCodeResDto>? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -195,13 +195,13 @@ class SignUpUserInfoFragment : Fragment() {
     }
 
     private fun requestEmailCode(signInViewModel: SignInViewModel) {
-        val sendAuthCodeRequestDto = AccountSendAuthCodeRequestDto(signInViewModel.signUpEmailEditText)
-
-        codeRequestApiCall = RetrofitBuilder.getServerApi().sendAuthCodeRequest(sendAuthCodeRequestDto)
-        codeRequestApiCall!!.enqueue(object: Callback<AccountSendAuthCodeResponseDto> {
+        val sendAuthCodeReqDto = SendAuthCodeReqDto(signInViewModel.signUpEmailEditText)
+        // TODO: Merge 시 HanJuK님의 코드로 변경(컴파일 오류 때문에 타입들을 바꾸었음)
+        codeRequestApiCall = RetrofitBuilder.getServerApi().sendAuthCodeReq(sendAuthCodeReqDto)
+        codeRequestApiCall!!.enqueue(object: Callback<SendAuthCodeResDto> {
             override fun onResponse(
-                call: Call<AccountSendAuthCodeResponseDto>,
-                response: Response<AccountSendAuthCodeResponseDto>
+                call: Call<SendAuthCodeResDto>,
+                response: Response<SendAuthCodeResDto>
             ) {
                 if(response.isSuccessful) {
                     // if success -> display a toast message
@@ -236,7 +236,7 @@ class SignUpUserInfoFragment : Fragment() {
                 codeRequestApiCall = null
             }
 
-            override fun onFailure(call: Call<AccountSendAuthCodeResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<SendAuthCodeResDto>, t: Throwable) {
                 // if the view was destroyed(API call canceled) -> do nothing
                 if(_binding == null) { return }
 

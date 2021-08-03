@@ -21,17 +21,17 @@ interface ServerApi {
     @POST("api/account/update")
     fun updateAccountReq(@Body updateAccountReqDto: UpdateAccountReqDto): Call<UpdateAccountResDto>
 
-    @POST("api/account/sendauthcode")
-    fun sendAuthCodeRequest(@Body accountSendAuthCodeRequestDto: AccountSendAuthCodeRequestDto): Call<AccountSendAuthCodeResponseDto>
+    @POST("api/account/authcode/send")
+    fun sendAuthCodeReq(@Body sendAuthCodeReqDto: SendAuthCodeReqDto): Call<SendAuthCodeResDto>
 
     @POST("api/account/verifyauthcode")
     fun verifyAuthCodeRequest(@Body accountVerifyAuthCodeRequestDto: AccountVerifyAuthCodeRequestDto): Call<AccountVerifyAuthCodeResponseDto>
 
-    @POST("api/account/findusername")
-    fun findUsernameRequest(@Body accountFindUsernameRequestDto: AccountFindUsernameRequestDto): Call<AccountFindUsernameResponseDto>
+    @POST("api/account/recoverUsername")
+    fun recoverUsernameReq(@Body recoverUsernameReqDto: RecoverUsernameReqDto): Call<RecoverUsernameResDto>
 
-    @POST("api/account/findpassword")
-    fun findPasswordRequest(@Body accountFindPasswordRequestDto: AccountFindPasswordRequestDto): Call<AccountFindPasswordResponseDto>
+    @POST("api/account/recoverPassword")
+    fun recoverPasswordReq(@Body recoverPasswordReqDto: RecoverPasswordReqDto): Call<RecoverPasswordResDto>
 
     // Pet Profile CRUD API
     @POST("api/pet/profile/create")

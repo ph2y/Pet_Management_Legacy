@@ -25,12 +25,12 @@ data class AccountSignUpResponseDto (
     val message: String
 )
 
-data class AccountSendAuthCodeRequestDto(
+data class SendAuthCodeReqDto(
     val email: String
 )
 
-data class AccountSendAuthCodeResponseDto(
-    val message: String
+data class SendAuthCodeResDto(
+    val _metadata: DtoMetadata
 )
 
 data class AccountVerifyAuthCodeRequestDto(
@@ -66,20 +66,20 @@ data class UpdateAccountResDto(
     val _metadata: DtoMetadata
 )
 
-data class AccountFindUsernameRequestDto(
+data class RecoverUsernameReqDto(
     val email: String
 )
 
-data class AccountFindUsernameResponseDto(
-    val username: String?,
-    val message: String
+data class RecoverUsernameResDto(
+    val _metadata: DtoMetadata,
+    val username: String?
 )
 
-data class AccountFindPasswordRequestDto(
+data class RecoverPasswordReqDto(
     val username: String,
     val code: String
 )
 
-data class AccountFindPasswordResponseDto(
-    val message: String
+data class RecoverPasswordResDto(
+    val _metadata: DtoMetadata
 )
