@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetScheduleManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
@@ -158,7 +159,7 @@ class PetScheduleManagerFragment : Fragment() {
                         if(response.isSuccessful){
                             // Do nothing
                         }else{
-                            Toast.makeText(context, "데이터 저장에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
                         }
                     }
 
@@ -185,14 +186,18 @@ class PetScheduleManagerFragment : Fragment() {
                 call: Call<FetchPetScheduleResDto>,
                 response: Response<FetchPetScheduleResDto>
             ) {
-                // dataSet에 값 저장
-                response.body()?.petScheduleList?.map{
-                    dataSet.add(it)
-                }
-                dataSet.sortBy{ it.time }
+                if(response.isSuccessful){
+                    // dataSet에 값 저장
+                    response.body()?.petScheduleList?.map{
+                        dataSet.add(it)
+                    }
+                    dataSet.sortBy{ it.time }
 
-                adapter.setDataSet(dataSet)
-                adapter.notifyDataSetChanged()
+                    adapter.setDataSet(dataSet)
+                    adapter.notifyDataSetChanged()
+                }else{
+                    Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun onFailure(call: Call<FetchPetScheduleResDto>, t: Throwable) {

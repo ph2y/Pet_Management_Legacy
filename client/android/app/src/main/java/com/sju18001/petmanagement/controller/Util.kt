@@ -18,13 +18,15 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.restapi.Place
+import okhttp3.ResponseBody
+import org.json.JSONObject
 
 class Util {
-    public fun convertDpToPixel(pixel: Int): Int{
+    fun convertDpToPixel(pixel: Int): Int{
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixel.toFloat(), Resources.getSystem().displayMetrics).toInt()
     }
 
-    public fun hideKeyboard(activity: Activity){
+    fun hideKeyboard(activity: Activity){
         activity.currentFocus?.let{
             val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
@@ -34,7 +36,7 @@ class Util {
     }
 
     // * Location Information
-    public fun openWebPage(activity: Activity, url: String){
+    fun openWebPage(activity: Activity, url: String){
         val intent = Intent(Intent.ACTION_VIEW).apply {
             data = Uri.parse(url)
         }
@@ -42,7 +44,7 @@ class Util {
         activity.startActivity(intent)
     }
 
-    public fun doCall(activity: Activity, phone: String){
+    fun doCall(activity: Activity, phone: String){
         val intent = Intent(Intent.ACTION_DIAL).apply {
             data = Uri.parse("tel:$phone")
         }
@@ -50,7 +52,7 @@ class Util {
         activity.startActivity(intent)
     }
 
-    public fun insertContactsContract(activity: Activity, document: Place) {
+    fun insertContactsContract(activity: Activity, document: Place) {
         val intent = Intent(ContactsContract.Intents.Insert.ACTION).apply {
             type = ContactsContract.RawContacts.CONTENT_TYPE
 
@@ -61,7 +63,7 @@ class Util {
         activity.startActivity(intent)
     }
 
-    public fun doCopy(context: Context, str: String){
+    fun doCopy(context: Context, str: String){
         // 복사
         val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clipData: ClipData = ClipData.newPlainText("A phone number", str)
@@ -72,7 +74,7 @@ class Util {
         Toast.makeText(context, "클립보드에 복사되었습니다.", Toast.LENGTH_LONG).show()
     }
 
-    public fun shareText(activity: Activity, value: String){
+    fun shareText(activity: Activity, value: String){
         val sendIntent: Intent = Intent().apply{
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, value)
@@ -81,5 +83,10 @@ class Util {
 
         val shareIntent = Intent.createChooser(sendIntent, null)
         activity.startActivity(shareIntent)
+    }
+
+    fun getMessageFromErrorBody(errorBody: ResponseBody): String{
+        val metadata = JSONObject(errorBody.string().trim()).getString("_metadata")
+        return JSONObject(metadata).getString("message")
     }
 }

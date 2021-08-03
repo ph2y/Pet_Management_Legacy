@@ -12,6 +12,9 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetScheduleEditBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
@@ -19,8 +22,11 @@ import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.Converter
 import retrofit2.Response
 import java.time.LocalTime
 
@@ -202,7 +208,7 @@ class PetScheduleEditFragment : Fragment() {
                 if(response.isSuccessful){
                     activity?.finish()
                 }else{
-                    Toast.makeText(context, "데이터 저장에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -228,7 +234,7 @@ class PetScheduleEditFragment : Fragment() {
                 if(response.isSuccessful){
                     activity?.finish()
                 }else{
-                    Toast.makeText(context, "데이터 저장에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
                 }
             }
 

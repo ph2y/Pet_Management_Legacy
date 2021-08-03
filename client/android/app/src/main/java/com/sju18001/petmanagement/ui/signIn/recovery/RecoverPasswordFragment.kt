@@ -192,7 +192,7 @@ class RecoverPasswordFragment : Fragment() {
                         setViewForCodeInput()
                     }else{
                         // 어떤 이메일이든 코드 전송은 하기 때문에, 보통 실패할 수 없다.
-                        Toast.makeText(context, "알 수 없는 에러가 발생하였습니다.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -247,6 +247,7 @@ class RecoverPasswordFragment : Fragment() {
                         setViewForResult()
                     } else {
                         binding.codeMessage.visibility = View.VISIBLE
+                        Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                     }
                 }
             }

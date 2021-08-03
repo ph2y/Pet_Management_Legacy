@@ -147,7 +147,7 @@ class RecoverUsernameFragment : Fragment() {
                             setViewForResult(it.username)
                         }
                     }else{
-                        Toast.makeText(context, "해당 이메일을 찾을 수 없습니다.", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                     }
                 }
             }

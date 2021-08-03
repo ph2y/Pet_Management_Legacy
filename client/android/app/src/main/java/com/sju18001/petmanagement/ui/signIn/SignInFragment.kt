@@ -202,7 +202,6 @@ class SignInFragment : Fragment() {
                                     call: Call<UpdateAccountResDto>,
                                     response: Response<UpdateAccountResDto>
                                 ) {
-                                    Log.e("변경 성공", "ㅁㄴㅇ")
                                     // Do nothing
                                 }
 
