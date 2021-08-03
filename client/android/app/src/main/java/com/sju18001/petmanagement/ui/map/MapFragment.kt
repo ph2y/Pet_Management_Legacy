@@ -86,7 +86,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
         _binding = FragmentMapBinding.inflate(inflater, container, false)
         val root: View = binding.root
-        
+
         navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
 
         // 맵 권한
