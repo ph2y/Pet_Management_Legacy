@@ -7,7 +7,7 @@ data class LoginReqDto (
 
 data class LoginResDto (
     val _metadata: DtoMetadata,
-    val token: String
+    val token: String?
 )
 
 data class AccountSignUpRequestDto (
@@ -42,29 +42,28 @@ data class AccountVerifyAuthCodeResponseDto(
     val message: String
 )
 
-data class AccountProfileLookupResponseDto(
-    val message: String,
+data class FetchAccountResDto(
+    val _metadata: DtoMetadata,
+    val id: Long,
     val username: String,
     val email: String,
-    val nickname: String?,
     val phone: String,
-    val photo: String?,
+    val marketing: Boolean?,
+    val nickname: String?,
+    val photoUrl: String?,
+    val userMessage: String?
+)
+
+data class UpdateAccountReqDto(
+    val email: String,
+    val phone: String,
+    val nickname: String?,
     val marketing: Boolean?,
     val userMessage: String?
 )
 
-data class AccountProfileUpdateRequestDto(
-    val username: String,
-    val email: String,
-    val nickname: String?,
-    val phone: String,
-    val photo: String?,
-    val marketing: Boolean?,
-    val userMessage: String?
-)
-
-data class AccountProfileUpdateResponseDto(
-    val message: String
+data class UpdateAccountResDto(
+    val _metadata: DtoMetadata
 )
 
 data class AccountFindUsernameRequestDto(

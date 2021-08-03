@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
@@ -40,7 +41,7 @@ class SignInFragment : Fragment() {
 
     // variable for storing API call(for cancel)
     private var loginApiCall: Call<LoginResDto>? = null
-    private var profileLookupApiCall: Call<AccountProfileLookupResponseDto>? = null
+    private var fetchAccountApiCall: Call<FetchAccountResDto>? = null
 
     // Snackbar variable(for dismiss)
     private var snackBar: Snackbar? = null
@@ -149,17 +150,15 @@ class SignInFragment : Fragment() {
                 call: Call<LoginResDto>,
                 response: Response<LoginResDto>
             ) {
-                response.body()?.let(){
-                    if(it._metadata.status) {
-                        checkIsFirstLoginAndSwitchActivity(it.token)
-                    }
-                    else {
-                        // create custom snack bar to display error message
-                        displayErrorMessage(context?.getText(R.string.sign_in_failed)!!.toString())
+                if(response.isSuccessful) {
+                    checkIsFirstLoginAndSwitchActivity(response.body()!!.token!!)
+                }
+                else {
+                    // create custom snack bar to display error message
+                    displayErrorMessage(context?.getText(R.string.sign_in_failed)!!.toString())
 
-                        // enable buttons
-                        enableButtons()
-                    }
+                    // enable buttons
+                    enableButtons()
                 }
             }
 
@@ -183,55 +182,57 @@ class SignInFragment : Fragment() {
     private fun checkIsFirstLoginAndSwitchActivity(token: String){
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
-        profileLookupApiCall = RetrofitBuilder.getServerApiWithToken(token).profileLookupRequest(body)
-        profileLookupApiCall!!.enqueue(object: Callback<AccountProfileLookupResponseDto> {
+        fetchAccountApiCall = RetrofitBuilder.getServerApiWithToken(token).fetchAccountReq(body)
+        fetchAccountApiCall!!.enqueue(object: Callback<FetchAccountResDto> {
             override fun onResponse(
-                call: Call<AccountProfileLookupResponseDto>,
-                response: Response<AccountProfileLookupResponseDto>
+                call: Call<FetchAccountResDto>,
+                response: Response<FetchAccountResDto>
             ) {
-                if(response.isSuccessful){
-                    // 첫 로그인일 시
-                    if(response.body()!!.photo.isNullOrEmpty()){
-                        // photo -> default, nickname -> username
-                        val accountProfileUpdateRequestDto = AccountProfileUpdateRequestDto(
-                            response.body()!!.username, response.body()!!.email, response.body()!!.username, response.body()!!.phone,
-                            "default", response.body()!!.marketing, response.body()!!.userMessage
-                        )
+                response.body()?.let{
+                    // 조회 성공
+                    if(it._metadata.status){
+                        // 첫 로그인일 시
+                        if(it.nickname == "#"){
+                            // nickname => username 변경
+                            val updateAccountReqDto = UpdateAccountReqDto(it.email, it.phone, it.username, it.marketing, it.userMessage)
 
-                        val call = RetrofitBuilder.getServerApiWithToken(token).profileUpdateRequest(accountProfileUpdateRequestDto)
-                        call.enqueue(object: Callback<AccountProfileUpdateResponseDto> {
-                            override fun onResponse(
-                                call: Call<AccountProfileUpdateResponseDto>,
-                                response: Response<AccountProfileUpdateResponseDto>
-                            ) {
-                            }
+                            val call = RetrofitBuilder.getServerApiWithToken(token).updateAccountReq(updateAccountReqDto)
+                            call.enqueue(object: Callback<UpdateAccountResDto> {
+                                override fun onResponse(
+                                    call: Call<UpdateAccountResDto>,
+                                    response: Response<UpdateAccountResDto>
+                                ) {
+                                    Log.e("변경 성공", "ㅁㄴㅇ")
+                                    // Do nothing
+                                }
 
-                            override fun onFailure(call: Call<AccountProfileUpdateResponseDto>, t: Throwable) {
-                                Log.e("ServerUtil", t.message.toString())
-                            }
-                        })
+                                override fun onFailure(call: Call<UpdateAccountResDto>, t: Throwable) {
+                                    Log.e("ServerUtil", t.message.toString())
+                                }
+                            })
 
-                        // 웰컴 페이지 호출
-                        val intent = Intent(context, WelcomePageActivity::class.java)
-                        sessionManager.saveUserToken(token)
+                            // 웰컴 페이지 호출
+                            val intent = Intent(context, WelcomePageActivity::class.java)
+                            sessionManager.saveUserToken(token)
 
-                        startActivity(intent)
-                        activity?.finish()
+                            startActivity(intent)
+                            activity?.finish()
+                        } // 첫 로그인이 아닐 시
+                        else{
+                            // start main activity + send token
+                            val intent = Intent(context, MainActivity::class.java)
+                            sessionManager.saveUserToken(token)
+
+                            startActivity(intent)
+                            activity?.finish()
+                        }
                     }else{
-                        // 첫 로그인이 아닐 시
-                        // start main activity + send token
-                        val intent = Intent(context, MainActivity::class.java)
-                        // token is now stored in session
-                        // intent.putExtra("token", response.body()?.token)
-                        sessionManager.saveUserToken(token)
-
-                        startActivity(intent)
-                        activity?.finish()
+                        Toast.makeText(context, it._metadata.toString(), Toast.LENGTH_LONG).show()
                     }
                 }
             }
 
-            override fun onFailure(call: Call<AccountProfileLookupResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
                 // if the view was destroyed(API call canceled) -> do nothing
                 if(_binding == null) { return }
 
@@ -300,6 +301,6 @@ class SignInFragment : Fragment() {
 
         // stop api call when fragment is destroyed
         loginApiCall?.cancel()
-        profileLookupApiCall?.cancel()
+        fetchAccountApiCall?.cancel()
     }
 }

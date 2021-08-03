@@ -144,12 +144,14 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                     }
                 }
                 else {
+                    /* TODO: MERGE할 때 주석 제거
                     // get error message + show(Toast)
                     val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
 
                     // log error message
                     Log.d("error", errorMessage)
+                    */
                 }
             }
 

@@ -15,11 +15,11 @@ interface ServerApi {
     @POST("api/account/signup")
     fun signUpRequest(@Body accountSignUpRequestDto: AccountSignUpRequestDto): Call<AccountSignUpResponseDto>
 
-    @POST("api/account/profilelookup")
-    fun profileLookupRequest(@Body body: RequestBody): Call<AccountProfileLookupResponseDto>
+    @POST("api/account/fetch")
+    fun fetchAccountReq(@Body body: RequestBody): Call<FetchAccountResDto>
 
-    @POST("api/account/profileupdate")
-    fun profileUpdateRequest(@Body accountProfileUpdateRequestDto: AccountProfileUpdateRequestDto): Call<AccountProfileUpdateResponseDto>
+    @POST("api/account/update")
+    fun updateAccountReq(@Body updateAccountReqDto: UpdateAccountReqDto): Call<UpdateAccountResDto>
 
     @POST("api/account/sendauthcode")
     fun sendAuthCodeRequest(@Body accountSendAuthCodeRequestDto: AccountSendAuthCodeRequestDto): Call<AccountSendAuthCodeResponseDto>

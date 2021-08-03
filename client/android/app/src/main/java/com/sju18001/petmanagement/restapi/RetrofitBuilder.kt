@@ -20,8 +20,13 @@ class RetrofitBuilder {
                 response.newBuilder().build()
             }
 
+            // For Logging
+            val hlt = HttpLoggingInterceptor()
+            hlt.level = HttpLoggingInterceptor.Level.BODY
+
             // OkHttpClient 빌드
             val client = OkHttpClient.Builder()
+                .addNetworkInterceptor(hlt)
                 .addNetworkInterceptor(networkInterceptor)
                 .build()
 
@@ -35,9 +40,18 @@ class RetrofitBuilder {
         }
 
         fun getServerApi(): ServerApi{
+            // For Logging
+            val hlt = HttpLoggingInterceptor()
+            hlt.level = HttpLoggingInterceptor.Level.BODY
+
+            // OkHttpClient 빌드
+            val client = OkHttpClient.Builder()
+                .addNetworkInterceptor(hlt)
+                .build()
+
             val retrofit = Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080/")
-                .client(OkHttpClient())
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
 
