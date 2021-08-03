@@ -11,7 +11,7 @@
 
     <string name="sign_in_button">로그인</string>
     <string name="divider">|</string>
-    <string name="find_id_pw_button">ID/PW 찾기</string>
+    <string name="recovery_button">ID/PW 찾기</string>
 
     <string name="sign_in_failed">아이디 또는 비밀번호가 일치하지 않아요!</string>
     <string name="sign_up_success">회원가입 성공~ 로그인 후 이용해 주세요!</string>
@@ -57,9 +57,9 @@
     <string name="email_message_request">이메일 인증을 해주세요!</string>
     <string name="email_code_chronometer_label">남은 시간:</string>
 
-    <string name="find_username">아이디 찾기</string>
-    <string name="find_password">비밀번호 찾기</string>
-    <string name="find_password_email_input_button">인증코드 전송</string>
+    <string name="recover_username">아이디 찾기</string>
+    <string name="recover_password">비밀번호 찾기</string>
+    <string name="recover_password_email_input_button">인증코드 전송</string>
 
     <string name="create_pet_title">펫 추가</string>
     <string name="update_pet_title">펫 정보 수정</string>

@@ -22,7 +22,7 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.signIn.signUp.SignUpFragment
-import com.sju18001.petmanagement.ui.signIn.findIdPw.FindIdPwFragment
+import com.sju18001.petmanagement.ui.signIn.recovery.RecoveryFragment
 import com.sju18001.petmanagement.ui.welcomePage.WelcomePageActivity
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -126,12 +126,12 @@ class SignInFragment : Fragment() {
                 .commit()
         }
 
-        // for find id pw button
-        binding.findIdPwButton.setOnClickListener {
-            val findIdPwFragment = FindIdPwFragment()
+        // for recovery button
+        binding.recoveryButton.setOnClickListener {
+            val recoveryFragment = RecoveryFragment()
             activity?.supportFragmentManager?.beginTransaction()!!
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.sign_in_activity_fragment_container, findIdPwFragment)
+                .replace(R.id.sign_in_activity_fragment_container, recoveryFragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -255,9 +255,9 @@ class SignInFragment : Fragment() {
         binding.signInProgressBar.visibility = View.VISIBLE
         binding.signInButton.isEnabled = false
 
-        // disable sign up, find id/pw buttons
+        // disable sign up, recovery buttons
         binding.signUpButton.isEnabled = false
-        binding.findIdPwButton.isEnabled = false
+        binding.recoveryButton.isEnabled = false
     }
 
     // enable buttons
@@ -267,9 +267,9 @@ class SignInFragment : Fragment() {
         binding.signInProgressBar.visibility = View.GONE
         binding.signInButton.isEnabled = true
 
-        // enable sign up, find id/pw buttons
+        // enable sign up, recovery buttons
         binding.signUpButton.isEnabled = true
-        binding.findIdPwButton.isEnabled = true
+        binding.recoveryButton.isEnabled = true
     }
 
     // display error message(Snackbar)

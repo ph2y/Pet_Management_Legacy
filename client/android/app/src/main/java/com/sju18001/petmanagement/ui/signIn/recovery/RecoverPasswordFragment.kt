@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.signIn.findIdPw
+package com.sju18001.petmanagement.ui.signIn.recovery
 
 import android.os.Bundle
 import android.text.Editable
@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.databinding.FragmentFindPwBinding
+import com.sju18001.petmanagement.databinding.FragmentRecoverPasswordBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.dto.*
 import retrofit2.Call
@@ -19,8 +19,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.regex.Pattern
 
-class FindPwFragment : Fragment() {
-    private var _binding: FragmentFindPwBinding? = null
+class RecoverPasswordFragment : Fragment() {
+    private var _binding: FragmentRecoverPasswordBinding? = null
     private val binding get() = _binding!!
 
     // 정규식
@@ -33,7 +33,7 @@ class FindPwFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFindPwBinding.inflate(inflater, container, false)
+        _binding = FragmentRecoverPasswordBinding.inflate(inflater, container, false)
 
         when(savedInstanceState?.getInt("page")){
             1 -> setViewForCodeInput()
@@ -146,7 +146,7 @@ class FindPwFragment : Fragment() {
             activity?.let { Util().hideKeyboard(it) }
 
             // 코드 확인
-            findPassword(binding.usernameEditText.text.toString(), binding.codeEditText.text.toString())
+            recoverPassword(binding.usernameEditText.text.toString(), binding.codeEditText.text.toString())
         }
 
         // 레이아웃 클릭
@@ -218,7 +218,7 @@ class FindPwFragment : Fragment() {
             binding.emailInputProgressBar.visibility = View.VISIBLE
         }else{
             binding.emailInputButton.apply {
-                text = context?.getText(R.string.find_password_email_input_button)
+                text = context?.getText(R.string.recover_password_email_input_button)
                 isEnabled = true
             }
             binding.emailInputProgressBar.visibility = View.GONE
@@ -227,7 +227,7 @@ class FindPwFragment : Fragment() {
 
 
     // 코드를 통한 비밀번호 임시 변경
-    private fun findPassword(username: String, code: String){
+    private fun recoverPassword(username: String, code: String){
         val recoverPasswordReqDto = RecoverPasswordReqDto(username, code)
 
         // 버튼 로딩 상태

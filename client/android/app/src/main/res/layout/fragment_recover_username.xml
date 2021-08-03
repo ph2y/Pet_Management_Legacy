@@ -13,7 +13,7 @@
             android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/find_id_layout"
+                android:id="@+id/recover_username_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 >
@@ -49,13 +49,13 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toEndOf="parent">
                     <Button
-                        android:id="@+id/find_id_button"
+                        android:id="@+id/recover_username_button"
                         android:layout_width="280dp"
                         android:layout_height="wrap_content"
-                        android:text="@string/find_username"
+                        android:text="@string/recover_username"
                         android:enabled="false"/>
                     <ProgressBar
-                        android:id="@+id/find_id_progress_bar"
+                        android:id="@+id/recover_username_progress_bar"
                         android:layout_width="25dp"
                         android:layout_height="25dp"
                         android:indeterminateTint="@color/carrot"

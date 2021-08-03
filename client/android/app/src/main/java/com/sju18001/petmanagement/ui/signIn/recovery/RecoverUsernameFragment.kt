@@ -1,9 +1,8 @@
-package com.sju18001.petmanagement.ui.signIn.findIdPw
+package com.sju18001.petmanagement.ui.signIn.recovery
 
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.databinding.FragmentFindIdBinding
+import com.sju18001.petmanagement.databinding.FragmentRecoverUsernameBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.dto.RecoverUsernameReqDto
 import com.sju18001.petmanagement.restapi.dto.RecoverUsernameResDto
@@ -20,8 +19,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class FindIdFragment : Fragment() {
-    private var _binding: FragmentFindIdBinding? = null
+class RecoverUsernameFragment : Fragment() {
+    private var _binding: FragmentRecoverUsernameBinding? = null
     private val binding get() = _binding!!
 
     private val INPUT_LENGTH = 1
@@ -35,7 +34,7 @@ class FindIdFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFindIdBinding.inflate(inflater, container, false)
+        _binding = FragmentRecoverUsernameBinding.inflate(inflater, container, false)
 
         if(savedInstanceState?.getBoolean("is_result_shown") == true){
             val username = savedInstanceState.getString("result_username")
@@ -55,14 +54,14 @@ class FindIdFragment : Fragment() {
         setMessageGone()
 
         // 아이디 찾기 버튼 클릭
-        binding.findIdButton.setOnClickListener{
+        binding.recoverUsernameButton.setOnClickListener{
             activity?.let { Util().hideKeyboard(it) }
 
-            findUsername(binding.emailEditText.text.toString())
+            recoverUsername(binding.emailEditText.text.toString())
         }
 
         // 레이아웃 클릭
-        binding.findIdLayout.setOnClickListener{
+        binding.recoverUsernameLayout.setOnClickListener{
             activity?.let { Util().hideKeyboard(it) }
         }
 
@@ -112,13 +111,13 @@ class FindIdFragment : Fragment() {
         for(i in 0 until INPUT_LENGTH) {
             if(!isValidInput[i]!!) {
                 // if not valid -> disable button + return
-                binding.findIdButton.isEnabled = false
+                binding.recoverUsernameButton.isEnabled = false
                 return
             }
         }
 
         // if all is valid -> enable button
-        binding.findIdButton.isEnabled = true
+        binding.recoverUsernameButton.isEnabled = true
     }
 
     private fun setMessageGone() {
@@ -127,7 +126,7 @@ class FindIdFragment : Fragment() {
 
 
     // 아이디 찾기
-    private fun findUsername(email: String){
+    private fun recoverUsername(email: String){
         val recoverUsernameReqDto = RecoverUsernameReqDto(email)
         val call = RetrofitBuilder.getServerApi().recoverUsernameReq(recoverUsernameReqDto)
 
@@ -166,24 +165,24 @@ class FindIdFragment : Fragment() {
 
     private fun setButtonLoading(isLoading: Boolean){
         if(isLoading){
-            binding.findIdButton.apply {
+            binding.recoverUsernameButton.apply {
                 text = ""
                 isEnabled = false
             }
-            binding.findIdProgressBar.visibility = View.VISIBLE
+            binding.recoverUsernameProgressBar.visibility = View.VISIBLE
         }else{
-            binding.findIdButton.apply {
-                text = context?.getText(R.string.find_username)
+            binding.recoverUsernameButton.apply {
+                text = context?.getText(R.string.recover_username)
                 isEnabled = true
             }
-            binding.findIdProgressBar.visibility = View.GONE
+            binding.recoverUsernameProgressBar.visibility = View.GONE
         }
     }
 
     // 아이디 찾기 결과
     private fun setViewForResult(username: String?){
         binding.resultUsername.text = username
-        binding.findIdLayout.visibility = View.GONE
+        binding.recoverUsernameLayout.visibility = View.GONE
         binding.resultLayout.visibility = View.VISIBLE
     }
 }

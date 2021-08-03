@@ -1,24 +1,18 @@
-package com.sju18001.petmanagement.ui.signIn.findIdPw
+package com.sju18001.petmanagement.ui.signIn.recovery
 
-import android.content.Context
 import android.os.Bundle
-import android.os.PersistableBundle
-import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-import com.sju18001.petmanagement.databinding.FragmentFindIdPwBinding
-import java.util.*
+import com.sju18001.petmanagement.databinding.FragmentRecoveryBinding
 
 private val TAB_ELEMENTS = listOf("아이디 찾기", "비밀번호 찾기")
 
-class FindIdPwFragment: Fragment() {
-    private var _binding: FragmentFindIdPwBinding? = null
+class RecoveryFragment: Fragment() {
+    private var _binding: FragmentRecoveryBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -26,7 +20,7 @@ class FindIdPwFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentFindIdPwBinding.inflate(inflater, container, false)
+        _binding = FragmentRecoveryBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -35,7 +29,7 @@ class FindIdPwFragment: Fragment() {
 
         val tabLayout = binding.tabLayout
         val viewPager = binding.viewPager
-        viewPager.adapter = FindIdPwCollectionAdapter(this)
+        viewPager.adapter = RecoveryCollectionAdapter(this)
 
         TabLayoutMediator(tabLayout, viewPager){ tab, position ->
             tab.text = TAB_ELEMENTS[position]
@@ -56,13 +50,13 @@ class FindIdPwFragment: Fragment() {
         _binding = null
     }
 
-    class FindIdPwCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
+    class RecoveryCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
         override fun getItemCount(): Int = 2
 
         override fun createFragment(position: Int): Fragment {
             return when(position) {
-                0 -> FindIdFragment()
-                else -> FindPwFragment()
+                0 -> RecoverUsernameFragment()
+                else -> RecoverPasswordFragment()
             }
         }
     }
