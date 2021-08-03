@@ -37,8 +37,8 @@ interface ServerApi {
     @POST("api/pet/profile/create")
     fun petProfileCreateRequest(@Body petProfileCreateRequestDto: PetProfileCreateRequestDto): Call<PetProfileCreateResponseDto>
 
-    @POST("api/pet/profile/fetch")
-    fun petProfileFetchRequest(): Call<List<PetProfileFetchResponseDto>>
+    @POST("api/pet/fetch")
+    fun fetchPetReq(@Body body: RequestBody): Call<FetchPetResDto>
 
     @POST("api/pet/profile/update")
     fun petProfileUpdateRequest(@Body petProfileUpdateRequestDto: PetProfileUpdateRequestDto): Call<PetProfileUpdateResponseDto>

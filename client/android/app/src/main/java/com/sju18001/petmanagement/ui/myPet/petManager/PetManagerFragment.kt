@@ -23,9 +23,11 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentPetManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.PetProfileFetchResponseDto
+import com.sju18001.petmanagement.restapi.dto.FetchPetResDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -49,7 +51,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     public var PET_LIST_ORDER: String = "pet_list_id_order"
 
     // variable for storing API call(for cancel)
-    private var petProfileFetchApiCall: Call<List<PetProfileFetchResponseDto>>? = null
+    private var petProfileFetchApiCall: Call<FetchPetResDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -101,22 +103,25 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         super.onResume()
 
         // call API using Retrofit
-        petProfileFetchApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).petProfileFetchRequest()
-        petProfileFetchApiCall!!.enqueue(object: Callback<List<PetProfileFetchResponseDto>> {
+        // TODO: Merge할 때 HanJuK님의 코드로 변경
+        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+
+        petProfileFetchApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchPetReq(body)
+        petProfileFetchApiCall!!.enqueue(object: Callback<FetchPetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
-                call: Call<List<PetProfileFetchResponseDto>>,
-                response: Response<List<PetProfileFetchResponseDto>>
+                call: Call<FetchPetResDto>,
+                response: Response<FetchPetResDto>
             ) {
                 if(response.isSuccessful) {
                     val petListApi: ArrayList<PetListItem> = ArrayList()
-                    response.body()?.map {
+                    response.body()?.petList?.map {
                         val item = PetListItem()
                         item.setValues(
                             it.id,
                             it.name,
                             LocalDate.parse(it.birth),
-                            it.year_only,
+                            it.yearOnly,
                             it.species,
                             it.breed,
                             it.gender,
@@ -144,18 +149,16 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                     }
                 }
                 else {
-                    /* TODO: MERGE할 때 주석 제거
                     // get error message + show(Toast)
                     val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
 
                     // log error message
                     Log.d("error", errorMessage)
-                    */
                 }
             }
 
-            override fun onFailure(call: Call<List<PetProfileFetchResponseDto>>, t: Throwable) {
+            override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
                 // if the view was destroyed(API call canceled) -> return
                 if(_binding == null) {
                     return

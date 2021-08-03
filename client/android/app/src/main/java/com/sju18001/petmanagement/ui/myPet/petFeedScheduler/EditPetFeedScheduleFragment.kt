@@ -17,6 +17,8 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,7 +31,7 @@ class EditPetFeedScheduleFragment : Fragment() {
     private val myPetViewModel: MyPetViewModel by activityViewModels()
 
     // variable for storing API call(for cancel)
-    private var petProfileFetchApiCall: Call<List<PetProfileFetchResponseDto>>? = null
+    private var fetchPetApiCall: Call<FetchPetResDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -117,7 +119,7 @@ class EditPetFeedScheduleFragment : Fragment() {
 
         createPetScheduleApiCall?.cancel()
         updatePetScheduleApiCall?.cancel()
-        petProfileFetchApiCall?.cancel()
+        fetchPetApiCall?.cancel()
     }
 
     override fun onDestroyView() {
@@ -151,13 +153,15 @@ class EditPetFeedScheduleFragment : Fragment() {
     }
 
     private fun addPetNameList(){
-        petProfileFetchApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).petProfileFetchRequest()
-        petProfileFetchApiCall!!.enqueue(object: Callback<List<PetProfileFetchResponseDto>> {
+        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+
+        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchPetReq(body)
+        fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
             override fun onResponse(
-                call: Call<List<PetProfileFetchResponseDto>>,
-                response: Response<List<PetProfileFetchResponseDto>>
+                call: Call<FetchPetResDto>,
+                response: Response<FetchPetResDto>
             ) {
-                response.body()?.map {
+                response.body()?.petList?.map {
                     adapter.addItem(PetNameListItem(it.name, it.id))
                 }
                 adapter.notifyDataSetChanged()
@@ -173,7 +177,7 @@ class EditPetFeedScheduleFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<List<PetProfileFetchResponseDto>>, t: Throwable) {
+            override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
                 // Do nothing
             }
         })
