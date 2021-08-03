@@ -46,16 +46,16 @@ interface ServerApi {
     @POST("api/pet/profile/delete")
     fun petProfileDeleteRequest(@Body petProfileDeleteRequestDto: PetProfileDeleteRequestDto): Call<PetProfileDeleteResponseDto>
 
-    // PetFeedSchedule API
-    @POST("api/pet/feed/create")
-    fun petFeedScheduleCreateRequest(@Body petFeedScheduleCreateRequestDto: PetFeedScheduleCreateRequestDto): Call<PetFeedScheduleCreateResponseDto>
+    // PetSchedule API
+    @POST("api/pet/schedule/create")
+    fun createPetScheduleReq(@Body createPetScheduleReqDto: CreatePetScheduleReqDto): Call<CreatePetScheduleResDto>
 
-    @POST("api/pet/feed/delete")
-    fun petFeedScheduleDeleteRequest(@Body petFeedScheduleDeleteRequestDto: PetFeedScheduleDeleteRequestDto): Call<PetFeedScheduleDeleteResponseDto>
+    @POST("api/pet/schedule/delete")
+    fun deletePetScheduleReq(@Body deletePetScheduleReqDto: DeletePetScheduleReqDto): Call<DeletePetScheduleResDto>
 
-    @POST("api/pet/feed/fetch")
-    fun petFeedScheduleFetchRequest(@Body body: RequestBody): Call<List<PetFeedScheduleFetchResponseDto>>
+    @POST("api/pet/schedule/fetch")
+    fun fetchPetScheduleReq(@Body body: RequestBody): Call<FetchPetScheduleResDto>
 
-    @POST("api/pet/feed/update")
-    fun petFeedScheduleUpdateRequest(@Body petFeedScheduleUpdateRequestDto: PetFeedScheduleUpdateRequestDto): Call<PetFeedScheduleUpdateResponseDto>
+    @POST("api/pet/schedule/update")
+    fun updatePetScheduleReq(@Body updatePetScheduleReqDto: UpdatePetScheduleReqDto): Call<UpdatePetScheduleResDto>
 }

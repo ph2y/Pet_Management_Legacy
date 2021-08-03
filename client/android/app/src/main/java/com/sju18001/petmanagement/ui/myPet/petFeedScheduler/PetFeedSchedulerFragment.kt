@@ -40,7 +40,7 @@ class PetFeedSchedulerFragment : Fragment() {
     private lateinit var adapter: PetFeedScheduleListAdapter
 
     // API Calls
-    private var petFeedScheduleFetchApiCall: Call<List<PetFeedScheduleFetchResponseDto>>? = null
+    private var fetchPetScheduleApiCall: Call<FetchPetScheduleResDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -75,13 +75,13 @@ class PetFeedSchedulerFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        updateAdapterDataSetByPetFeedScheduleFetch()
+        updateAdapterDataSetByFetchPetSchedule()
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        petFeedScheduleFetchApiCall?.cancel()
+        fetchPetScheduleApiCall?.cancel()
     }
 
     override fun onDestroyView() {
@@ -112,7 +112,7 @@ class PetFeedSchedulerFragment : Fragment() {
                 builder.setMessage("일정을 삭제하시겠습니까?")
                     .setPositiveButton(
                         R.string.confirm, DialogInterface.OnClickListener { _, _ ->
-                            deletePetFeedSchedule(id)
+                            deletePetSchedule(id)
                             adapter.removeItem(position)
                             adapter.notifyDataSetChanged()
                         }
@@ -126,35 +126,35 @@ class PetFeedSchedulerFragment : Fragment() {
                     .show()
             }
 
-            override fun deletePetFeedSchedule(id: Long) {
+            override fun deletePetSchedule(id: Long) {
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-                    .petFeedScheduleDeleteRequest(PetFeedScheduleDeleteRequestDto(id))
-                call!!.enqueue(object: Callback<PetFeedScheduleDeleteResponseDto> {
+                    .deletePetScheduleReq(DeletePetScheduleReqDto(id))
+                call!!.enqueue(object: Callback<DeletePetScheduleResDto> {
                     override fun onResponse(
-                        call: Call<PetFeedScheduleDeleteResponseDto>,
-                        response: Response<PetFeedScheduleDeleteResponseDto>
+                        call: Call<DeletePetScheduleResDto>,
+                        response: Response<DeletePetScheduleResDto>
                     ) {
                         // Do nothing
                     }
 
-                    override fun onFailure(call: Call<PetFeedScheduleDeleteResponseDto>, t: Throwable) {
+                    override fun onFailure(call: Call<DeletePetScheduleResDto>, t: Throwable) {
                         Log.e("ScheduleAdapter", t.message.toString())
                     }
                 })
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
-            override fun updatePetFeedSchedule(data: PetFeedScheduleListItem){
-                val petFeedScheduleUpdateRequestDto = PetFeedScheduleUpdateRequestDto(
+            override fun updatePetSchedule(data: PetFeedScheduleListItem){
+                val updatePetScheduleReqDto = UpdatePetScheduleReqDto(
                     data.id, data.petIdList, data.feedTime.toString(), data.memo, data.isTurnedOn
                 )
 
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-                    .petFeedScheduleUpdateRequest(petFeedScheduleUpdateRequestDto)
-                call!!.enqueue(object: Callback<PetFeedScheduleUpdateResponseDto> {
+                    .updatePetScheduleReq(updatePetScheduleReqDto)
+                call!!.enqueue(object: Callback<UpdatePetScheduleResDto> {
                     override fun onResponse(
-                        call: Call<PetFeedScheduleUpdateResponseDto>,
-                        response: Response<PetFeedScheduleUpdateResponseDto>
+                        call: Call<UpdatePetScheduleResDto>,
+                        response: Response<UpdatePetScheduleResDto>
                     ) {
                         if(response.isSuccessful){
                             // Do nothing
@@ -163,7 +163,7 @@ class PetFeedSchedulerFragment : Fragment() {
                         }
                     }
 
-                    override fun onFailure(call: Call<PetFeedScheduleUpdateResponseDto>, t: Throwable) {
+                    override fun onFailure(call: Call<UpdatePetScheduleResDto>, t: Throwable) {
                         Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
                     }
                 })
@@ -174,26 +174,26 @@ class PetFeedSchedulerFragment : Fragment() {
         binding.petFeedScheduleListRecyclerView.layoutManager = LinearLayoutManager(activity)
     }
 
-    private fun updateAdapterDataSetByPetFeedScheduleFetch(){
+    private fun updateAdapterDataSetByFetchPetSchedule(){
         val dataSet = arrayListOf<PetFeedScheduleListItem>()
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
-        petFeedScheduleFetchApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .petFeedScheduleFetchRequest(body)
-        petFeedScheduleFetchApiCall!!.enqueue(object: Callback<List<PetFeedScheduleFetchResponseDto>> {
+        fetchPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPetScheduleReq(body)
+        fetchPetScheduleApiCall!!.enqueue(object: Callback<FetchPetScheduleResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
-                call: Call<List<PetFeedScheduleFetchResponseDto>>,
-                response: Response<List<PetFeedScheduleFetchResponseDto>>
+                call: Call<FetchPetScheduleResDto>,
+                response: Response<FetchPetScheduleResDto>
             ) {
                 // dataSet에 값 저장
-                response.body()?.map{
+                response.body()?.petScheduleList?.map{
                     dataSet.add(PetFeedScheduleListItem(
                             it.id,
-                            LocalTime.parse(it.feed_time),
-                            it.pet_id_list,
+                            LocalTime.parse(it.time),
+                            it.petIdList,
                             it.memo,
-                            it.is_turned_on
+                            it.enable
                         )
                     )
                 }
@@ -203,7 +203,7 @@ class PetFeedSchedulerFragment : Fragment() {
                 adapter.notifyDataSetChanged()
             }
 
-            override fun onFailure(call: Call<List<PetFeedScheduleFetchResponseDto>>, t: Throwable) {
+            override fun onFailure(call: Call<FetchPetScheduleResDto>, t: Throwable) {
                 Toast.makeText(context, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })

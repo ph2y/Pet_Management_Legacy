@@ -38,8 +38,8 @@ class EditPetFeedScheduleFragment : Fragment() {
     private lateinit var adapter: PetNameListAdapter
 
     // API Calls
-    private var petFeedScheduleCreateApiCall: Call<PetFeedScheduleCreateResponseDto>? = null
-    private var petFeedScheduleUpdateApiCall: Call<PetFeedScheduleUpdateResponseDto>? = null
+    private var createPetScheduleApiCall: Call<CreatePetScheduleResDto>? = null
+    private var updatePetScheduleApiCall: Call<UpdatePetScheduleResDto>? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -78,9 +78,9 @@ class EditPetFeedScheduleFragment : Fragment() {
             val intent = requireActivity().intent
 
             if(intent.getStringExtra("fragmentType") == "create_pet_feed_schedule"){
-                createPetFeedSchedule()
+                createPetSchedule()
             }else{
-                updatePetFeedSchedule(intent.getLongExtra("id", 0), intent.getBooleanExtra("isTurnedOn", false))
+                updatePetSchedule(intent.getLongExtra("id", 0), intent.getBooleanExtra("isTurnedOn", false))
             }
         }
 
@@ -115,8 +115,8 @@ class EditPetFeedScheduleFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
 
-        petFeedScheduleCreateApiCall?.cancel()
-        petFeedScheduleUpdateApiCall?.cancel()
+        createPetScheduleApiCall?.cancel()
+        updatePetScheduleApiCall?.cancel()
         petProfileFetchApiCall?.cancel()
     }
 
@@ -180,17 +180,17 @@ class EditPetFeedScheduleFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun createPetFeedSchedule(){
-        val petFeedScheduleCreateRequestDto = PetFeedScheduleCreateRequestDto(
+    private fun createPetSchedule(){
+        val createPetScheduleReqDto = CreatePetScheduleReqDto(
             getCheckedPetIdList(), LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString()
         )
 
-        petFeedScheduleCreateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .petFeedScheduleCreateRequest(petFeedScheduleCreateRequestDto)
-        petFeedScheduleCreateApiCall!!.enqueue(object: Callback<PetFeedScheduleCreateResponseDto> {
+        createPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .createPetScheduleReq(createPetScheduleReqDto)
+        createPetScheduleApiCall!!.enqueue(object: Callback<CreatePetScheduleResDto> {
             override fun onResponse(
-                call: Call<PetFeedScheduleCreateResponseDto>,
-                response: Response<PetFeedScheduleCreateResponseDto>
+                call: Call<CreatePetScheduleResDto>,
+                response: Response<CreatePetScheduleResDto>
             ) {
                 if(response.isSuccessful){
                     activity?.finish()
@@ -199,24 +199,24 @@ class EditPetFeedScheduleFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<PetFeedScheduleCreateResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<CreatePetScheduleResDto>, t: Throwable) {
                 Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
             }
         })
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun updatePetFeedSchedule(id: Long, isTurnedOn: Boolean){
-        val petFeedScheduleUpdateRequestDto = PetFeedScheduleUpdateRequestDto(
+    private fun updatePetSchedule(id: Long, isTurnedOn: Boolean){
+        val updatePetScheduleReqDto = UpdatePetScheduleReqDto(
             id, getCheckedPetIdList(), LocalTime.of(binding.feedTimePicker.hour, binding.feedTimePicker.minute).toString(), binding.memoEditText.text.toString(), isTurnedOn
         )
 
-        petFeedScheduleUpdateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .petFeedScheduleUpdateRequest(petFeedScheduleUpdateRequestDto)
-        petFeedScheduleUpdateApiCall!!.enqueue(object: Callback<PetFeedScheduleUpdateResponseDto> {
+        updatePetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .updatePetScheduleReq(updatePetScheduleReqDto)
+        updatePetScheduleApiCall!!.enqueue(object: Callback<UpdatePetScheduleResDto> {
             override fun onResponse(
-                call: Call<PetFeedScheduleUpdateResponseDto>,
-                response: Response<PetFeedScheduleUpdateResponseDto>
+                call: Call<UpdatePetScheduleResDto>,
+                response: Response<UpdatePetScheduleResDto>
             ) {
                 if(response.isSuccessful){
                     activity?.finish()
@@ -225,7 +225,7 @@ class EditPetFeedScheduleFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<PetFeedScheduleUpdateResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<UpdatePetScheduleResDto>, t: Throwable) {
                 Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
             }
         })

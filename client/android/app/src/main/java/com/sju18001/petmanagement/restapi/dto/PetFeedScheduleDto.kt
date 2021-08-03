@@ -1,39 +1,39 @@
 package com.sju18001.petmanagement.restapi.dto
 
-data class PetFeedScheduleCreateRequestDto(
-    val pet_id_list: String?,
-    val feed_time: String,
+import com.sju18001.petmanagement.restapi.dao.DtoMetadata
+import com.sju18001.petmanagement.restapi.dao.PetSchedule
+
+data class CreatePetScheduleReqDto(
+    val petIdList: String?,
+    val time: String,
     val memo: String?
 )
 
-data class PetFeedScheduleCreateResponseDto(
-    val message: String
+data class CreatePetScheduleResDto(
+    val _metadata: DtoMetadata
 )
 
-data class PetFeedScheduleDeleteRequestDto(
+data class DeletePetScheduleReqDto(
     val id: Long
 )
 
-data class PetFeedScheduleDeleteResponseDto(
-    val message: String
+data class DeletePetScheduleResDto(
+    val _metadata: DtoMetadata
 )
 
-data class PetFeedScheduleFetchResponseDto(
+data class FetchPetScheduleResDto(
+    val _metadata: DtoMetadata,
+    val petScheduleList: List<PetSchedule>
+)
+
+data class UpdatePetScheduleReqDto(
     val id: Long,
-    val pet_id_list: String?,
-    val feed_time: String,
+    val petIdList: String?,
+    val time: String,
     val memo: String?,
-    val is_turned_on: Boolean
+    val enable: Boolean
 )
 
-data class PetFeedScheduleUpdateRequestDto(
-    val id: Long,
-    val pet_id_list: String?,
-    val feed_time: String,
-    val memo: String?,
-    val is_turned_on: Boolean
-)
-
-data class PetFeedScheduleUpdateResponseDto(
-    val message: String
+data class UpdatePetScheduleResDto(
+    val _metadata: DtoMetadata
 )

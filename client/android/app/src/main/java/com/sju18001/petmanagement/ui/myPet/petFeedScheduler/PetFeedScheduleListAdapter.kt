@@ -14,8 +14,8 @@ import com.sju18001.petmanagement.R
 interface PetFeedScheduleListAdapterInterface{
     fun startEditPetFeedScheduleFragmentForUpdate(data: PetFeedScheduleListItem)
     fun askForDeleteItem(position: Int, id: Long)
-    fun deletePetFeedSchedule(id: Long)
-    fun updatePetFeedSchedule(data: PetFeedScheduleListItem)
+    fun deletePetSchedule(id: Long)
+    fun updatePetSchedule(data: PetFeedScheduleListItem)
 }
 
 class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleListItem>, private val petNameForId: HashMap<Long, String>) : RecyclerView.Adapter<PetFeedScheduleListAdapter.ViewHolder>(){
@@ -57,7 +57,7 @@ class PetFeedScheduleListAdapter(private var dataSet: ArrayList<PetFeedScheduleL
         // 스위치
         holder.isTurnedOnSwitch.setOnCheckedChangeListener { _, isChecked ->
             dataSet[position].isTurnedOn = isChecked
-            petFeedScheduleListAdapterInterface.updatePetFeedSchedule(dataSet[position])
+            petFeedScheduleListAdapterInterface.updatePetSchedule(dataSet[position])
         }
     }
 
