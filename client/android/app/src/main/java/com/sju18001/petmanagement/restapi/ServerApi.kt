@@ -8,10 +8,9 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ServerApi {
-
     // Sign in, Sign up API
     @POST("api/account/login")
-    fun signInRequest(@Body accountSignInRequestDto: AccountSignInRequestDto): Call<AccountSignInResponseDto>
+    fun loginReq(@Body loginReqDto: LoginReqDto): Call<LoginResDto>
 
     @POST("api/account/signup")
     fun signUpRequest(@Body accountSignUpRequestDto: AccountSignUpRequestDto): Call<AccountSignUpResponseDto>

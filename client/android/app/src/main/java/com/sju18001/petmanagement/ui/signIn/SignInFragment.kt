@@ -39,7 +39,7 @@ class SignInFragment : Fragment() {
     private lateinit var sessionManager: SessionManager
 
     // variable for storing API call(for cancel)
-    private var signInApiCall: Call<AccountSignInResponseDto>? = null
+    private var loginApiCall: Call<LoginResDto>? = null
     private var profileLookupApiCall: Call<AccountProfileLookupResponseDto>? = null
 
     // Snackbar variable(for dismiss)
@@ -141,28 +141,29 @@ class SignInFragment : Fragment() {
 
     private fun signIn(username: String, password: String) {
         // create sign in request Dto
-        val accountSignInRequestDto = AccountSignInRequestDto(username, password)
-
+        val loginReqDto = LoginReqDto(username, password)
         // call API using Retrofit
-        signInApiCall = RetrofitBuilder.getServerApi().signInRequest(accountSignInRequestDto)
-        signInApiCall!!.enqueue(object: Callback<AccountSignInResponseDto> {
+        loginApiCall = RetrofitBuilder.getServerApi().loginReq(loginReqDto)
+        loginApiCall!!.enqueue(object: Callback<LoginResDto> {
             override fun onResponse(
-                call: Call<AccountSignInResponseDto>,
-                response: Response<AccountSignInResponseDto>
+                call: Call<LoginResDto>,
+                response: Response<LoginResDto>
             ) {
-                if(response.isSuccessful) {
-                    checkIsFirstLoginAndSwitchActivity(response.body()!!.token)
-                }
-                else {
-                    // create custom snack bar to display error message
-                    displayErrorMessage(context?.getText(R.string.sign_in_failed)!!.toString())
+                response.body()?.let(){
+                    if(it._metadata.status) {
+                        checkIsFirstLoginAndSwitchActivity(it.token)
+                    }
+                    else {
+                        // create custom snack bar to display error message
+                        displayErrorMessage(context?.getText(R.string.sign_in_failed)!!.toString())
 
-                    // enable buttons
-                    enableButtons()
+                        // enable buttons
+                        enableButtons()
+                    }
                 }
             }
 
-            override fun onFailure(call: Call<AccountSignInResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<LoginResDto>, t: Throwable) {
                 // if the view was destroyed(API call canceled) -> do nothing
                 if(_binding == null) { return }
 
@@ -298,7 +299,7 @@ class SignInFragment : Fragment() {
         snackBar?.dismiss()
 
         // stop api call when fragment is destroyed
-        signInApiCall?.cancel()
+        loginApiCall?.cancel()
         profileLookupApiCall?.cancel()
     }
 }
