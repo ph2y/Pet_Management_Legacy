@@ -151,11 +151,11 @@ class SignUpFragment : Fragment() {
             }
 
             // hide keyboard
-            Util().hideKeyboard(requireActivity())
+            Util.hideKeyboard(requireActivity())
         }
 
         // hide keyboard when touched outside
-        binding.fragmentSignUpLayout.setOnClickListener{ Util().hideKeyboard(requireActivity()) }
+        binding.fragmentSignUpLayout.setOnClickListener{ Util.hideKeyboard(requireActivity()) }
     }
 
     // show previous step button

@@ -159,7 +159,7 @@ class PetScheduleManagerFragment : Fragment() {
                         if(response.isSuccessful){
                             // Do nothing
                         }else{
-                            Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
                         }
                     }
 
@@ -196,7 +196,7 @@ class PetScheduleManagerFragment : Fragment() {
                     adapter.setDataSet(dataSet)
                     adapter.notifyDataSetChanged()
                 }else{
-                    Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
                 }
             }
 

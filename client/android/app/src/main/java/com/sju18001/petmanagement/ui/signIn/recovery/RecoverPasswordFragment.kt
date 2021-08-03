@@ -109,7 +109,7 @@ class RecoverPasswordFragment : Fragment() {
 
         // 버튼 클릭
         binding.emailInputButton.setOnClickListener{
-            activity?.let { Util().hideKeyboard(it) }
+            activity?.let { Util.hideKeyboard(it) }
 
             // 인증코드 전송
             sendAuthCode(binding.emailEditText.text.toString())
@@ -117,7 +117,7 @@ class RecoverPasswordFragment : Fragment() {
 
         // 레이아웃 클릭
         binding.emailInputLayout.setOnClickListener{
-            activity?.let { Util().hideKeyboard(it) }
+            activity?.let { Util.hideKeyboard(it) }
         }
     }
 
@@ -143,7 +143,7 @@ class RecoverPasswordFragment : Fragment() {
 
         // 버튼 클릭
         binding.codeInputButton.setOnClickListener{
-            activity?.let { Util().hideKeyboard(it) }
+            activity?.let { Util.hideKeyboard(it) }
 
             // 코드 확인
             recoverPassword(binding.usernameEditText.text.toString(), binding.codeEditText.text.toString())
@@ -151,7 +151,7 @@ class RecoverPasswordFragment : Fragment() {
 
         // 레이아웃 클릭
         binding.codeInputLayout.setOnClickListener{
-            activity?.let { Util().hideKeyboard(it) }
+            activity?.let { Util.hideKeyboard(it) }
         }
     }
 
@@ -192,7 +192,7 @@ class RecoverPasswordFragment : Fragment() {
                         setViewForCodeInput()
                     }else{
                         // 어떤 이메일이든 코드 전송은 하기 때문에, 보통 실패할 수 없다.
-                        Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                     }
                 }
             }
@@ -247,7 +247,7 @@ class RecoverPasswordFragment : Fragment() {
                         setViewForResult()
                     } else {
                         binding.codeMessage.visibility = View.VISIBLE
-                        Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                     }
                 }
             }

@@ -208,7 +208,7 @@ class PetScheduleEditFragment : Fragment() {
                 if(response.isSuccessful){
                     activity?.finish()
                 }else{
-                    Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
                 }
             }
 
@@ -234,7 +234,7 @@ class PetScheduleEditFragment : Fragment() {
                 if(response.isSuccessful){
                     activity?.finish()
                 }else{
-                    Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
                 }
             }
 

@@ -55,14 +55,14 @@ class RecoverUsernameFragment : Fragment() {
 
         // 아이디 찾기 버튼 클릭
         binding.recoverUsernameButton.setOnClickListener{
-            activity?.let { Util().hideKeyboard(it) }
+            activity?.let { Util.hideKeyboard(it) }
 
             recoverUsername(binding.emailEditText.text.toString())
         }
 
         // 레이아웃 클릭
         binding.recoverUsernameLayout.setOnClickListener{
-            activity?.let { Util().hideKeyboard(it) }
+            activity?.let { Util.hideKeyboard(it) }
         }
 
         // 이메일 입력란 입력
@@ -147,7 +147,7 @@ class RecoverUsernameFragment : Fragment() {
                             setViewForResult(it.username)
                         }
                     }else{
-                        Toast.makeText(context, Util().getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                     }
                 }
             }

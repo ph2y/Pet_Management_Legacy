@@ -123,7 +123,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             }
 
             val currentLocationButtonParams = layoutParams as ViewGroup.MarginLayoutParams
-            currentLocationButtonParams.bottomMargin += Util().convertDpToPixel(NAVVIEW_HEIGHT)
+            currentLocationButtonParams.bottomMargin += Util.convertDpToPixel(NAVVIEW_HEIGHT)
             layoutParams = currentLocationButtonParams
         }
 
@@ -134,7 +134,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             var searchTextCancel = root.findViewById<ImageButton>(R.id.search_text_cancel).apply {
                 setOnClickListener{
                     searchTextInput!!.setText("")
-                    Util().hideKeyboard(requireActivity())
+                    Util.hideKeyboard(requireActivity())
                 }
             }
 
@@ -238,7 +238,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     // * 검색
     private fun doSearch(keyword: String, mapView:MapView, keyboardView: View){
         searchKeyword(keyword, mapView)
-        Util().hideKeyboard(requireActivity())
+        Util.hideKeyboard(requireActivity())
 
         /* WARNING: 에뮬레이터에서 Circle이 정상 작동하지 않을 시 밑의 3줄 주석 처리를 해야한다.
         setMapCenterPointToCurrentLocation(mapView)
@@ -385,7 +385,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             .setMessage("길찾기를 위해 카카오맵 웹페이지로 이동합니다.")
             .setPositiveButton("확인",
                 DialogInterface.OnClickListener { _, _ ->
-                    Util().openWebPage(requireActivity(), "https://map.kakao.com/link/to/" + document.id)
+                    Util.openWebPage(requireActivity(), "https://map.kakao.com/link/to/" + document.id)
                 })
             .setNegativeButton("취소",
                 DialogInterface.OnClickListener { dialog, _ ->
@@ -416,19 +416,19 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                         when(which){
                             0 -> {
                                 if(Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForCall)){
-                                    Util().doCall(requireActivity(), document.phone)
+                                    Util.doCall(requireActivity(), document.phone)
                                 }else{
                                     Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForCall)
                                 }
                             }
                             1 -> {
                                 if(Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForContacts)){
-                                    Util().insertContactsContract(requireActivity(), document)
+                                    Util.insertContactsContract(requireActivity(), document)
                                 }else{
                                     Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForContacts)
                                 }
                             }
-                            2 -> Util().doCopy(requireActivity(), document.phone)
+                            2 -> Util.doCopy(requireActivity(), document.phone)
                         }
                     })
                 .setNegativeButton("취소",
@@ -458,7 +458,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         // 버튼 이벤트
         val shareButton = requireActivity().findViewById<ImageButton>(R.id.share_button)
         shareButton.setOnClickListener{ _ ->
-            Util().shareText(requireActivity(), document.place_url)
+            Util.shareText(requireActivity(), document.place_url)
         }
     }
 
@@ -498,7 +498,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
     // * 애니메이션
     private fun initializeAnimations(){
-        showingNavViewAnim = ValueAnimator.ofInt(0, Util().convertDpToPixel(NAVVIEW_HEIGHT))
+        showingNavViewAnim = ValueAnimator.ofInt(0, Util.convertDpToPixel(NAVVIEW_HEIGHT))
         showingNavViewAnim!!.addUpdateListener { valueAnimator ->
             val value = valueAnimator.animatedValue as Int
 
@@ -507,7 +507,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         }
         showingNavViewAnim!!.duration = ANIMATION_DURATION
 
-        hidingNavViewAnim = ValueAnimator.ofInt(Util().convertDpToPixel(NAVVIEW_HEIGHT), 0)
+        hidingNavViewAnim = ValueAnimator.ofInt(Util.convertDpToPixel(NAVVIEW_HEIGHT), 0)
         hidingNavViewAnim!!.addUpdateListener { valueAnimator ->
             val value = valueAnimator.animatedValue as Int
 
@@ -516,7 +516,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         }
         hidingNavViewAnim!!.duration = ANIMATION_DURATION
 
-        increasingCurrentLocationButtonMarginAnim = ValueAnimator.ofInt(Util().convertDpToPixel(CURRENT_LOCATION_BUTTON_MARGIN), Util().convertDpToPixel(NAVVIEW_HEIGHT + CURRENT_LOCATION_BUTTON_MARGIN))
+        increasingCurrentLocationButtonMarginAnim = ValueAnimator.ofInt(Util.convertDpToPixel(CURRENT_LOCATION_BUTTON_MARGIN), Util.convertDpToPixel(NAVVIEW_HEIGHT + CURRENT_LOCATION_BUTTON_MARGIN))
         increasingCurrentLocationButtonMarginAnim!!.addUpdateListener { valueAnimator ->
             val value = valueAnimator.animatedValue as Int
             val params = currentLocationButton!!.layoutParams as (ViewGroup.MarginLayoutParams)
@@ -526,7 +526,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         }
         increasingCurrentLocationButtonMarginAnim!!.duration = ANIMATION_DURATION
 
-        decreasingCurrentLocationButtonMarginAnim = ValueAnimator.ofInt(Util().convertDpToPixel(NAVVIEW_HEIGHT + CURRENT_LOCATION_BUTTON_MARGIN), Util().convertDpToPixel(CURRENT_LOCATION_BUTTON_MARGIN))
+        decreasingCurrentLocationButtonMarginAnim = ValueAnimator.ofInt(Util.convertDpToPixel(NAVVIEW_HEIGHT + CURRENT_LOCATION_BUTTON_MARGIN), Util.convertDpToPixel(CURRENT_LOCATION_BUTTON_MARGIN))
         decreasingCurrentLocationButtonMarginAnim!!.addUpdateListener { valueAnimator ->
             val value = valueAnimator.animatedValue as Int
             val params = currentLocationButton!!.layoutParams as (ViewGroup.MarginLayoutParams)
@@ -536,7 +536,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         }
         decreasingCurrentLocationButtonMarginAnim!!.duration = ANIMATION_DURATION
 
-        showingLocationInformationAnim = ValueAnimator.ofInt(1, Util().convertDpToPixel(LOCATION_INFORMATION_HEIGHT))
+        showingLocationInformationAnim = ValueAnimator.ofInt(1, Util.convertDpToPixel(LOCATION_INFORMATION_HEIGHT))
         showingLocationInformationAnim!!.addUpdateListener { valueAnimator ->
             val value = valueAnimator.animatedValue as Int
             if(locationInformation == null) locationInformation = requireActivity().findViewById<ConstraintLayout>(R.id.location_information)
@@ -546,7 +546,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         }
         showingLocationInformationAnim!!.duration = ANIMATION_DURATION
 
-        hidingLocationInformationAnim = ValueAnimator.ofInt(Util().convertDpToPixel(LOCATION_INFORMATION_HEIGHT), 1)
+        hidingLocationInformationAnim = ValueAnimator.ofInt(Util.convertDpToPixel(LOCATION_INFORMATION_HEIGHT), 1)
         hidingLocationInformationAnim!!.addUpdateListener { valueAnimator ->
             val value = valueAnimator.animatedValue as Int
             if(locationInformation == null) locationInformation = requireActivity().findViewById<ConstraintLayout>(R.id.location_information)
@@ -595,7 +595,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
-        Util().hideKeyboard(requireActivity())
+        Util.hideKeyboard(requireActivity())
 
         // 장소 정보가 열려있을 때
         if(navView != null && locationInformation != null){
