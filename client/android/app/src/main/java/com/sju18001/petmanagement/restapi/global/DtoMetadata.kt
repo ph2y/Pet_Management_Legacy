@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.restapi.dao
+package com.sju18001.petmanagement.restapi.global
 
 data class DtoMetadata (
     val status: Boolean,
