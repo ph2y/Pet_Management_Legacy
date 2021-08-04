@@ -18,10 +18,10 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePetBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.PetProfileCreateRequestDto
-import com.sju18001.petmanagement.restapi.dto.PetProfileCreateResponseDto
-import com.sju18001.petmanagement.restapi.dto.PetProfileUpdateRequestDto
-import com.sju18001.petmanagement.restapi.dto.PetProfileUpdateResponseDto
+import com.sju18001.petmanagement.restapi.dto.CreatePetReqDto
+import com.sju18001.petmanagement.restapi.dto.CreatePetResDto
+import com.sju18001.petmanagement.restapi.dto.UpdatePetReqDto
+import com.sju18001.petmanagement.restapi.dto.UpdatePetResDto
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import org.json.JSONObject
 import retrofit2.Call
@@ -43,8 +43,8 @@ class CreateUpdatePetFragment : Fragment() {
     val myPetViewModel: MyPetViewModel by activityViewModels()
 
     // variables for storing API call(for cancel)
-    private var petProfileCreateApiCall: Call<PetProfileCreateResponseDto>? = null
-    private var petProfileUpdateApiCall: Call<PetProfileUpdateResponseDto>? = null
+    private var createPetApiCall: Call<CreatePetResDto>? = null
+    private var updatePetResDto: Call<UpdatePetResDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -182,23 +182,22 @@ class CreateUpdatePetFragment : Fragment() {
         }
 
         // create DTO
-        val petProfileCreateRequestDto = PetProfileCreateRequestDto(
+        val createPetRequestDto = CreatePetReqDto(
             binding.petNameInput.text.toString(),
             binding.petSpeciesInput.text.toString(),
             binding.petBreedInput.text.toString(),
             petBirthStringValue,
             binding.yearOnlyCheckbox.isChecked,
             binding.genderFemale.isChecked,
-            binding.petMessageInput.text.toString(),
-            null
+            binding.petMessageInput.text.toString()
         )
 
-        petProfileCreateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .petProfileCreateRequest(petProfileCreateRequestDto)
-        petProfileCreateApiCall!!.enqueue(object: Callback<PetProfileCreateResponseDto> {
+        createPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .createPetReq(createPetRequestDto)
+        createPetApiCall!!.enqueue(object: Callback<CreatePetResDto> {
             override fun onResponse(
-                call: Call<PetProfileCreateResponseDto>,
-                response: Response<PetProfileCreateResponseDto>
+                call: Call<CreatePetResDto>,
+                response: Response<CreatePetResDto>
             ) {
                 if(response.isSuccessful) {
                     // set api state/button to normal
@@ -214,7 +213,8 @@ class CreateUpdatePetFragment : Fragment() {
                     setButtonToNormal()
 
                     // get error message + show(Toast)
-                    val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
+                    val errorMessage = JSONObject(response.errorBody()!!.charStream().readText())
+                        .getJSONObject("_metadata").getString("message").toString()
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
 
                     // log error message
@@ -222,7 +222,7 @@ class CreateUpdatePetFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<PetProfileCreateResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<CreatePetResDto>, t: Throwable) {
                 // if the view was destroyed(API call canceled) -> return
                 if(_binding == null) {
                     return
@@ -254,7 +254,7 @@ class CreateUpdatePetFragment : Fragment() {
         }
 
         // create DTO
-        val petProfileUpdateRequestDto = PetProfileUpdateRequestDto(
+        val updatePetReqDto = UpdatePetReqDto(
             myPetViewModel.petIdValue!!,
             binding.petNameInput.text.toString(),
             binding.petSpeciesInput.text.toString(),
@@ -262,17 +262,16 @@ class CreateUpdatePetFragment : Fragment() {
             petBirthStringValue,
             binding.yearOnlyCheckbox.isChecked,
             binding.genderFemale.isChecked,
-            binding.petMessageInput.text.toString(),
-            null
+            binding.petMessageInput.text.toString()
         )
 
-        petProfileUpdateApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .petProfileUpdateRequest(petProfileUpdateRequestDto)
-        petProfileUpdateApiCall!!.enqueue(object: Callback<PetProfileUpdateResponseDto> {
+        updatePetResDto = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .updatePetReq(updatePetReqDto)
+        updatePetResDto!!.enqueue(object: Callback<UpdatePetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
-                call: Call<PetProfileUpdateResponseDto>,
-                response: Response<PetProfileUpdateResponseDto>
+                call: Call<UpdatePetResDto>,
+                response: Response<UpdatePetResDto>
             ) {
                 if(response.isSuccessful) {
                     // set api state/button to normal
@@ -289,7 +288,8 @@ class CreateUpdatePetFragment : Fragment() {
                     setButtonToNormal()
 
                     // get error message + show(Toast)
-                    val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
+                    val errorMessage = JSONObject(response.errorBody()!!.charStream().readText())
+                        .getJSONObject("_metadata").getString("message").toString()
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
 
                     // log error message
@@ -297,7 +297,7 @@ class CreateUpdatePetFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<PetProfileUpdateResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<UpdatePetResDto>, t: Throwable) {
                 // if the view was destroyed(API call canceled) -> return
                 if(_binding == null) {
                     return
@@ -414,8 +414,8 @@ class CreateUpdatePetFragment : Fragment() {
         _binding = null
 
         // stop api call when fragment is destroyed
-        petProfileCreateApiCall?.cancel()
-        petProfileUpdateApiCall?.cancel()
+        createPetApiCall?.cancel()
+        updatePetResDto?.cancel()
         myPetViewModel.createUpdateDeletePetApiIsLoading = false
     }
 }

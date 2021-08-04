@@ -13,8 +13,6 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentPetProfileBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.PetProfileCreateRequestDto
-import com.sju18001.petmanagement.restapi.dto.PetProfileCreateResponseDto
 import com.sju18001.petmanagement.restapi.dto.PetProfileDeleteRequestDto
 import com.sju18001.petmanagement.restapi.dto.PetProfileDeleteResponseDto
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel

@@ -4,19 +4,18 @@ import com.sju18001.petmanagement.restapi.dao.DtoMetadata
 import com.sju18001.petmanagement.restapi.dao.Pet
 
 // Create Dto
-data class PetProfileCreateRequestDto (
+data class CreatePetReqDto (
     val name: String,
     val species: String?,
     val breed: String?,
     val birth: String?,
-    val year_only: Boolean?,
-    val gender: Boolean?,
-    val message: String?,
-    val photo_url: String?
+    val yearOnly: Boolean,
+    val gender: Boolean,
+    val message: String
     )
 
-data class PetProfileCreateResponseDto (
-    val message: String
+data class CreatePetResDto (
+    val _metadata: DtoMetadata
     )
 
 // Fetch Dto
@@ -26,20 +25,19 @@ data class FetchPetResDto (
     )
 
 // Update Dto
-data class PetProfileUpdateRequestDto (
+data class UpdatePetReqDto (
     val id: Long,
     val name: String,
     val species: String?,
     val breed: String?,
     val birth: String?,
-    val year_only: Boolean?,
+    val yearOnly: Boolean?,
     val gender: Boolean?,
-    val message: String?,
-    val photo_url: String?
+    val message: String?
     )
 
-data class PetProfileUpdateResponseDto (
-    val message: String
+data class UpdatePetResDto (
+    val _metadata: DtoMetadata
     )
 
 // Delete Dto
