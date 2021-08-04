@@ -3,16 +3,16 @@ package com.sju18001.petmanagement.ui.login
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
-class SignInViewModel(private val handle: SavedStateHandle): ViewModel() {
-    // variables for sign in
-    var signInIdEditText = handle.get<String>("signInIdEditText")?: ""
+class LoginViewModel(private val handle: SavedStateHandle): ViewModel() {
+    // variables for login
+    var loginIdEditText = handle.get<String>("loginIdEditText")?: ""
         set(value){
-            handle.set("signInIdEditText", value)
+            handle.set("loginIdEditText", value)
             field = value
         }
-    var signInPwEditText = handle.get<String>("signInPwEditText")?: ""
+    var loginPwEditText = handle.get<String>("loginPwEditText")?: ""
         set(value){
-            handle.set("signInPwEditText", value)
+            handle.set("loginPwEditText", value)
             field = value
         }
 

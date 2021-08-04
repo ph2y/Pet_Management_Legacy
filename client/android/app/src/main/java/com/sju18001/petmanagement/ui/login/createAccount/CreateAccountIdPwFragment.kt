@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.sju18001.petmanagement.databinding.FragmentCreateAccountIdPwBinding
-import com.sju18001.petmanagement.ui.login.SignInViewModel
+import com.sju18001.petmanagement.ui.login.LoginViewModel
 import java.util.regex.Pattern
 
 class CreateAccountIdPwFragment : Fragment() {
@@ -36,26 +36,26 @@ class CreateAccountIdPwFragment : Fragment() {
         super.onStart()
 
         // variable for ViewModel
-        val signInViewModel: SignInViewModel by activityViewModels()
+        val loginViewModel: LoginViewModel by activityViewModels()
 
         // for state restore(ViewModel)
-        restoreState(signInViewModel)
+        restoreState(loginViewModel)
 
         // for id text change listener
         binding.idEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(patternId.matcher(s).matches()) {
-                    signInViewModel.createAccountIdValid = true
+                    loginViewModel.createAccountIdValid = true
                     binding.idMessage.visibility = View.GONE
                 }
                 else {
-                    signInViewModel.createAccountIdValid = false
+                    loginViewModel.createAccountIdValid = false
                     binding.idMessage.visibility = View.VISIBLE
                 }
-                signInViewModel.createAccountIdEditText = s.toString()
-                signInViewModel.createAccountIdIsOverlap = false
+                loginViewModel.createAccountIdEditText = s.toString()
+                loginViewModel.createAccountIdIsOverlap = false
                 binding.idMessageOverlap.visibility = View.GONE
-                checkIsValid(signInViewModel)
+                checkIsValid(loginViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -65,23 +65,23 @@ class CreateAccountIdPwFragment : Fragment() {
         binding.pwEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(patternPw.matcher(s).matches()) {
-                    signInViewModel.createAccountPwValid = true
+                    loginViewModel.createAccountPwValid = true
                     binding.pwMessage.visibility = View.GONE
                 }
                 else {
-                    signInViewModel.createAccountPwValid = false
+                    loginViewModel.createAccountPwValid = false
                     binding.pwMessage.visibility = View.VISIBLE
                 }
                 if(s.toString() == binding.pwCheckEditText.text.toString()) {
-                    signInViewModel.createAccountPwCheckValid = true
+                    loginViewModel.createAccountPwCheckValid = true
                     binding.pwCheckMessage.visibility = View.GONE
                 }
                 else {
-                    signInViewModel.createAccountPwCheckValid = false
+                    loginViewModel.createAccountPwCheckValid = false
                     binding.pwCheckMessage.visibility = View.VISIBLE
                 }
-                signInViewModel.createAccountPwEditText = s.toString()
-                checkIsValid(signInViewModel)
+                loginViewModel.createAccountPwEditText = s.toString()
+                checkIsValid(loginViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -91,23 +91,23 @@ class CreateAccountIdPwFragment : Fragment() {
         binding.pwCheckEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(s.toString() == binding.pwEditText.text.toString()) {
-                    signInViewModel.createAccountPwCheckValid = true
+                    loginViewModel.createAccountPwCheckValid = true
                     binding.pwCheckMessage.visibility = View.GONE
                 }
                 else {
-                    signInViewModel.createAccountPwCheckValid = false
+                    loginViewModel.createAccountPwCheckValid = false
                     binding.pwCheckMessage.visibility = View.VISIBLE
                 }
-                signInViewModel.createAccountPwCheckEditText = s.toString()
-                checkIsValid(signInViewModel)
+                loginViewModel.createAccountPwCheckEditText = s.toString()
+                checkIsValid(loginViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
     }
 
-    private fun checkIsValid(signInViewModel: SignInViewModel) {
-        if(signInViewModel.createAccountIdValid && signInViewModel.createAccountPwValid && signInViewModel.createAccountPwCheckValid) {
+    private fun checkIsValid(loginViewModel: LoginViewModel) {
+        if(loginViewModel.createAccountIdValid && loginViewModel.createAccountPwValid && loginViewModel.createAccountPwCheckValid) {
             (parentFragment as CreateAccountFragment).enableNextButton()
         }
         else{
@@ -115,32 +115,32 @@ class CreateAccountIdPwFragment : Fragment() {
         }
     }
 
-    private fun restoreState(signInViewModel: SignInViewModel) {
-        if(binding.idEditText.text.toString() != signInViewModel.createAccountIdEditText) {
-            binding.idEditText.setText(signInViewModel.createAccountIdEditText)
+    private fun restoreState(loginViewModel: LoginViewModel) {
+        if(binding.idEditText.text.toString() != loginViewModel.createAccountIdEditText) {
+            binding.idEditText.setText(loginViewModel.createAccountIdEditText)
         }
-        if(binding.pwEditText.text.toString() != signInViewModel.createAccountPwEditText) {
-            binding.pwEditText.setText(signInViewModel.createAccountPwEditText)
+        if(binding.pwEditText.text.toString() != loginViewModel.createAccountPwEditText) {
+            binding.pwEditText.setText(loginViewModel.createAccountPwEditText)
         }
-        if(binding.pwCheckEditText.text.toString() != signInViewModel.createAccountPwCheckEditText) {
-            binding.pwCheckEditText.setText(signInViewModel.createAccountPwCheckEditText)
+        if(binding.pwCheckEditText.text.toString() != loginViewModel.createAccountPwCheckEditText) {
+            binding.pwCheckEditText.setText(loginViewModel.createAccountPwCheckEditText)
         }
 
-        if(!signInViewModel.createAccountIdValid && signInViewModel.createAccountIdEditText != "") {
+        if(!loginViewModel.createAccountIdValid && loginViewModel.createAccountIdEditText != "") {
             binding.idMessage.visibility = View.VISIBLE
         }
-        if(!signInViewModel.createAccountPwValid && signInViewModel.createAccountPwEditText != "") {
+        if(!loginViewModel.createAccountPwValid && loginViewModel.createAccountPwEditText != "") {
             binding.pwMessage.visibility = View.VISIBLE
         }
-        if(!signInViewModel.createAccountPwCheckValid && signInViewModel.createAccountPwCheckEditText != "") {
+        if(!loginViewModel.createAccountPwCheckValid && loginViewModel.createAccountPwCheckEditText != "") {
             binding.pwCheckMessage.visibility = View.VISIBLE
         }
-        if(signInViewModel.createAccountIdIsOverlap) {
+        if(loginViewModel.createAccountIdIsOverlap) {
             binding.idMessageOverlap.visibility = View.VISIBLE
         }
 
         (parentFragment as CreateAccountFragment).showPreviousButton()
-        checkIsValid(signInViewModel)
+        checkIsValid(loginViewModel)
     }
 
     override fun onDestroyView() {

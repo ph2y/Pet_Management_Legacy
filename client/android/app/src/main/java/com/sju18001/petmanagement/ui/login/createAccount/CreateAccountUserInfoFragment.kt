@@ -17,7 +17,7 @@ import com.sju18001.petmanagement.databinding.FragmentCreateAccountUserInfoBindi
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.dto.SendAuthCodeReqDto
 import com.sju18001.petmanagement.restapi.dto.SendAuthCodeResDto
-import com.sju18001.petmanagement.ui.login.SignInViewModel
+import com.sju18001.petmanagement.ui.login.LoginViewModel
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -51,26 +51,26 @@ class CreateAccountUserInfoFragment : Fragment() {
         super.onStart()
 
         // variable for ViewModel
-        val signInViewModel: SignInViewModel by activityViewModels()
+        val loginViewModel: LoginViewModel by activityViewModels()
 
         // for state restore(ViewModel)
-        restoreState(signInViewModel)
+        restoreState(loginViewModel)
 
         // for phone text change listener
         binding.phoneEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(patternPhone.matcher(s).matches()) {
-                    signInViewModel.createAccountPhoneValid = true
+                    loginViewModel.createAccountPhoneValid = true
                     binding.phoneMessage.visibility = View.GONE
                 }
                 else {
-                    signInViewModel.createAccountPhoneValid = false
+                    loginViewModel.createAccountPhoneValid = false
                     binding.phoneMessage.visibility = View.VISIBLE
                 }
-                signInViewModel.createAccountPhoneEditText = s.toString()
-                signInViewModel.createAccountPhoneIsOverlap = false
+                loginViewModel.createAccountPhoneEditText = s.toString()
+                loginViewModel.createAccountPhoneIsOverlap = false
                 binding.phoneMessageOverlap.visibility = View.GONE
-                checkIsValid(signInViewModel)
+                checkIsValid(loginViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -80,19 +80,19 @@ class CreateAccountUserInfoFragment : Fragment() {
         binding.emailEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(patternEmail.matcher(s).matches()) {
-                    signInViewModel.createAccountEmailValid = true
+                    loginViewModel.createAccountEmailValid = true
                     binding.emailMessage.visibility = View.GONE
                     binding.requestEmailCodeButton.isEnabled = true
                 }
                 else {
-                    signInViewModel.createAccountEmailValid = false
+                    loginViewModel.createAccountEmailValid = false
                     binding.emailMessage.visibility = View.VISIBLE
                     binding.requestEmailCodeButton.isEnabled = false
                 }
-                signInViewModel.createAccountEmailEditText = s.toString()
-                signInViewModel.createAccountEmailIsOverlap = false
+                loginViewModel.createAccountEmailEditText = s.toString()
+                loginViewModel.createAccountEmailIsOverlap = false
                 binding.emailMessageOverlap.visibility = View.GONE
-                checkIsValid(signInViewModel)
+                checkIsValid(loginViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -101,7 +101,7 @@ class CreateAccountUserInfoFragment : Fragment() {
         // for email code text change listener
         binding.emailCodeEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                signInViewModel.createAccountEmailCodeEditText = s.toString()
+                loginViewModel.createAccountEmailCodeEditText = s.toString()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -113,7 +113,7 @@ class CreateAccountUserInfoFragment : Fragment() {
             setRequestCodeButtonToLoading()
 
             // API call
-            requestEmailCode(signInViewModel)
+            requestEmailCode(loginViewModel)
         }
     }
 
@@ -139,8 +139,8 @@ class CreateAccountUserInfoFragment : Fragment() {
         binding.emailEditText.isEnabled = false
     }
 
-    private fun checkIsValid(signInViewModel: SignInViewModel) {
-        if(signInViewModel.createAccountPhoneValid && signInViewModel.createAccountEmailValid) {
+    private fun checkIsValid(loginViewModel: LoginViewModel) {
+        if(loginViewModel.createAccountPhoneValid && loginViewModel.createAccountEmailValid) {
             (parentFragment as CreateAccountFragment).enableNextButton()
         }
         else{
@@ -148,17 +148,17 @@ class CreateAccountUserInfoFragment : Fragment() {
         }
     }
 
-    public fun showOverlapMessage(signInViewModel: SignInViewModel) {
-        if(signInViewModel.createAccountPhoneIsOverlap) {
+    public fun showOverlapMessage(loginViewModel: LoginViewModel) {
+        if(loginViewModel.createAccountPhoneIsOverlap) {
             binding.phoneMessageOverlap.visibility = View.VISIBLE
         }
-        if(signInViewModel.createAccountEmailIsOverlap) {
+        if(loginViewModel.createAccountEmailIsOverlap) {
             binding.emailMessageOverlap.visibility = View.VISIBLE
         }
     }
 
-    public fun showHideRequestMessage(signInViewModel: SignInViewModel) {
-        if(signInViewModel.showsEmailRequestMessage) {
+    public fun showHideRequestMessage(loginViewModel: LoginViewModel) {
+        if(loginViewModel.showsEmailRequestMessage) {
             binding.emailMessageRequest.visibility = View.VISIBLE
         }
         else {
@@ -166,9 +166,9 @@ class CreateAccountUserInfoFragment : Fragment() {
         }
     }
 
-    private fun startTimer(signInViewModel: SignInViewModel) {
+    private fun startTimer(loginViewModel: LoginViewModel) {
         // set base
-        binding.emailCodeChronometer.base = signInViewModel.emailCodeChronometerBase
+        binding.emailCodeChronometer.base = loginViewModel.emailCodeChronometerBase
 
         // start timer + show
         binding.emailCodeChronometer.start()
@@ -193,8 +193,8 @@ class CreateAccountUserInfoFragment : Fragment() {
         binding.emailCodeChronometerLayout.visibility = View.GONE
     }
 
-    private fun requestEmailCode(signInViewModel: SignInViewModel) {
-        val sendAuthCodeRequestDto = SendAuthCodeReqDto(signInViewModel.createAccountEmailEditText)
+    private fun requestEmailCode(loginViewModel: LoginViewModel) {
+        val sendAuthCodeRequestDto = SendAuthCodeReqDto(loginViewModel.createAccountEmailEditText)
 
         codeRequestApiCall = RetrofitBuilder.getServerApi().sendAuthCodeReq(sendAuthCodeRequestDto)
         codeRequestApiCall!!.enqueue(object: Callback<SendAuthCodeResDto> {
@@ -207,15 +207,15 @@ class CreateAccountUserInfoFragment : Fragment() {
                     Toast.makeText(context, R.string.email_code_sent, Toast.LENGTH_LONG).show()
 
                     // set current code requested email
-                    signInViewModel.currentCodeRequestedEmail = signInViewModel.createAccountEmailEditText
+                    loginViewModel.currentCodeRequestedEmail = loginViewModel.createAccountEmailEditText
 
                     // hide request message
-                    signInViewModel.showsEmailRequestMessage = false
-                    showHideRequestMessage(signInViewModel)
+                    loginViewModel.showsEmailRequestMessage = false
+                    showHideRequestMessage(loginViewModel)
 
                     // start a 10 minute timer
-                    signInViewModel.emailCodeChronometerBase = SystemClock.elapsedRealtime() + 600000.toLong()
-                    startTimer(signInViewModel)
+                    loginViewModel.emailCodeChronometerBase = SystemClock.elapsedRealtime() + 600000.toLong()
+                    startTimer(loginViewModel)
                 }
                 else {
                     // get error message
@@ -255,42 +255,42 @@ class CreateAccountUserInfoFragment : Fragment() {
         })
     }
 
-    private fun restoreState(signInViewModel: SignInViewModel) {
-        if(binding.phoneEditText.text.toString() != signInViewModel.createAccountPhoneEditText) {
-            binding.phoneEditText.setText(signInViewModel.createAccountPhoneEditText)
+    private fun restoreState(loginViewModel: LoginViewModel) {
+        if(binding.phoneEditText.text.toString() != loginViewModel.createAccountPhoneEditText) {
+            binding.phoneEditText.setText(loginViewModel.createAccountPhoneEditText)
         }
-        if(binding.emailEditText.text.toString() != signInViewModel.createAccountEmailEditText) {
-            binding.emailEditText.setText(signInViewModel.createAccountEmailEditText)
+        if(binding.emailEditText.text.toString() != loginViewModel.createAccountEmailEditText) {
+            binding.emailEditText.setText(loginViewModel.createAccountEmailEditText)
         }
-        if(binding.emailCodeEditText.text.toString() != signInViewModel.createAccountEmailCodeEditText) {
-            binding.emailCodeEditText.setText(signInViewModel.createAccountEmailCodeEditText)
+        if(binding.emailCodeEditText.text.toString() != loginViewModel.createAccountEmailCodeEditText) {
+            binding.emailCodeEditText.setText(loginViewModel.createAccountEmailCodeEditText)
         }
 
-        if(!signInViewModel.createAccountPhoneValid && signInViewModel.createAccountPhoneEditText != "") {
+        if(!loginViewModel.createAccountPhoneValid && loginViewModel.createAccountPhoneEditText != "") {
             binding.phoneMessage.visibility = View.VISIBLE
         }
-        if(!signInViewModel.createAccountEmailValid && signInViewModel.createAccountEmailEditText != "") {
+        if(!loginViewModel.createAccountEmailValid && loginViewModel.createAccountEmailEditText != "") {
             binding.emailMessage.visibility = View.VISIBLE
         }
-        if(signInViewModel.createAccountPhoneIsOverlap) {
+        if(loginViewModel.createAccountPhoneIsOverlap) {
             binding.phoneMessageOverlap.visibility = View.VISIBLE
         }
-        if(signInViewModel.createAccountEmailIsOverlap) {
+        if(loginViewModel.createAccountEmailIsOverlap) {
             binding.emailMessageOverlap.visibility = View.VISIBLE
         }
-        if(signInViewModel.createAccountEmailValid && codeRequestApiCall == null) {
+        if(loginViewModel.createAccountEmailValid && codeRequestApiCall == null) {
             binding.requestEmailCodeButton.isEnabled = true
         }
-        if(signInViewModel.emailCodeChronometerBase != 0.toLong()) {
-            startTimer(signInViewModel)
+        if(loginViewModel.emailCodeChronometerBase != 0.toLong()) {
+            startTimer(loginViewModel)
         }
-        if(signInViewModel.emailCodeValid) {
+        if(loginViewModel.emailCodeValid) {
             lockEmailViews()
         }
-        showHideRequestMessage(signInViewModel)
+        showHideRequestMessage(loginViewModel)
 
         (parentFragment as CreateAccountFragment).showPreviousButton()
-        checkIsValid(signInViewModel)
+        checkIsValid(loginViewModel)
     }
 
     override fun onDestroyView() {

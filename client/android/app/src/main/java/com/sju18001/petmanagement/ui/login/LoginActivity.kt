@@ -5,34 +5,34 @@ import android.os.Bundle
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.databinding.ActivitySignInBinding
+import com.sju18001.petmanagement.databinding.ActivityLoginBinding
 
-class SignInActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     // variable for view binding
-    private lateinit var binding: ActivitySignInBinding
+    private lateinit var binding: ActivityLoginBinding
 
     // variable for ViewModel
-    private val signInViewModel: SignInViewModel by lazy{
-        ViewModelProvider(this, SavedStateViewModelFactory(application, this)).get(SignInViewModel::class.java)
+    private val loginViewModel: LoginViewModel by lazy{
+        ViewModelProvider(this, SavedStateViewModelFactory(application, this)).get(LoginViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // view binding
-        binding = ActivitySignInBinding.inflate(layoutInflater)
+        binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // hide action bar
         supportActionBar?.hide()
 
-        // show sign in fragment
-        if(supportFragmentManager.findFragmentById(R.id.sign_in_activity_fragment_container) == null) {
-            val fragment = SignInFragment()
+        // show login fragment
+        if(supportFragmentManager.findFragmentById(R.id.login_activity_fragment_container) == null) {
+            val fragment = LoginFragment()
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.sign_in_activity_fragment_container, fragment)
+                .add(R.id.login_activity_fragment_container, fragment)
                 .commit()
         }
     }

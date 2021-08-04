@@ -9,18 +9,18 @@
     <string name="title_community">커뮤니티</string>
     <string name="title_my_page">내 정보</string>
 
-    <string name="sign_in_button">로그인</string>
+    <string name="login_button">로그인</string>
     <string name="divider">|</string>
     <string name="find_id_pw_button">ID/PW 찾기</string>
 
-    <string name="sign_in_failed">아이디 또는 비밀번호가 일치하지 않아요!</string>
+    <string name="login_failed">아이디 또는 비밀번호가 일치하지 않아요!</string>
     <string name="create_account_success">회원가입 성공~ 로그인 후 이용해 주세요!</string>
 
     <string name="previous_step_button">이전</string>
     <string name="next_step_button">다음</string>
     <string name="create_account_button">회원가입</string>
 
-    <string name="return_to_sign_in_dialog">회원가입을 취소하고 로그인 화면으로 돌아갈까요?</string>
+    <string name="return_to_login_dialog">회원가입을 취소하고 로그인 화면으로 돌아갈까요?</string>
     <string name="confirm">확인</string>
     <string name="cancel">취소</string>
 

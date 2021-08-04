@@ -1,11 +1,12 @@
 package com.sju18001.petmanagement.restapi.dto
 
-data class AccountSignInRequestDto (
+data class LoginReqDto (
     val username: String,
     val password: String
 )
 
-data class AccountSignInResponseDto (
+data class LoginResDto (
+    val _metadata: DtoMetadata,
     val token: String
 )
 

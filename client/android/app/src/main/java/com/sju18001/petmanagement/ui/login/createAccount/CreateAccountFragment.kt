@@ -18,7 +18,7 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateAccountBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.dto.*
-import com.sju18001.petmanagement.ui.login.SignInViewModel
+import com.sju18001.petmanagement.ui.login.LoginViewModel
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -54,7 +54,7 @@ class CreateAccountFragment : Fragment() {
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val alertBuilder = AlertDialog.Builder(context)
-                alertBuilder.setMessage(R.string.return_to_sign_in_dialog)
+                alertBuilder.setMessage(R.string.return_to_login_dialog)
                 alertBuilder.setPositiveButton(R.string.confirm){ _, _->
                     activity?.supportFragmentManager?.popBackStack()
                 }
@@ -79,12 +79,12 @@ class CreateAccountFragment : Fragment() {
         super.onStart()
 
         // variable for ViewModel
-        val signInViewModel: SignInViewModel by activityViewModels()
+        val loginViewModel: LoginViewModel by activityViewModels()
 
         // for close button
         binding.backButton.setOnClickListener {
             val alertBuilder = AlertDialog.Builder(context)
-            alertBuilder.setMessage(R.string.return_to_sign_in_dialog)
+            alertBuilder.setMessage(R.string.return_to_login_dialog)
             alertBuilder.setPositiveButton(R.string.confirm){ _, _->
                 activity?.supportFragmentManager?.popBackStack()
             }
@@ -131,14 +131,14 @@ class CreateAccountFragment : Fragment() {
                 setNextButtonToLoading()
 
                 // check if inputted email is the same as code requested email
-                if(signInViewModel.createAccountEmailEditText == signInViewModel.currentCodeRequestedEmail) {
+                if(loginViewModel.createAccountEmailEditText == loginViewModel.currentCodeRequestedEmail) {
                     // validate email code(+ create account)
-                    validateEmailCode(signInViewModel)
+                    validateEmailCode(loginViewModel)
                 }
                 else {
-                    signInViewModel.showsEmailRequestMessage = true
+                    loginViewModel.showsEmailRequestMessage = true
                     (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
-                        .showHideRequestMessage(signInViewModel)
+                        .showHideRequestMessage(loginViewModel)
 
                     // set next button to normal
                     setNextButtonToNormal()
@@ -213,11 +213,11 @@ class CreateAccountFragment : Fragment() {
         binding.previousStepButton.visibility = View.INVISIBLE
     }
 
-    private fun createAccount(signInViewModel: SignInViewModel) {
+    private fun createAccount(loginViewModel: LoginViewModel) {
         // create create account request Dto
-        val accountCreateAccountRequestDto = CreateAccountReqDto(signInViewModel.createAccountIdEditText,
-            signInViewModel.createAccountPwEditText, signInViewModel.createAccountEmailEditText, signInViewModel.createAccountPhoneEditText,
-            "#", signInViewModel.createAccountMarketingCheckBox, null)
+        val accountCreateAccountRequestDto = CreateAccountReqDto(loginViewModel.createAccountIdEditText,
+            loginViewModel.createAccountPwEditText, loginViewModel.createAccountEmailEditText, loginViewModel.createAccountPhoneEditText,
+            "#", loginViewModel.createAccountMarketingCheckBox, null)
 
         // call API using Retrofit
         createAccountApiCall = RetrofitBuilder.getServerApi().createAccountReq(accountCreateAccountRequestDto)
@@ -237,30 +237,30 @@ class CreateAccountFragment : Fragment() {
 
                     // if email overlap + show message
                     if(errorMessage == MESSAGE_EMAIL_OVERLAP) {
-                        signInViewModel.createAccountEmailIsOverlap = true
+                        loginViewModel.createAccountEmailIsOverlap = true
 
                         // set email code valid to false + reset chronometer/requested email + unlock email views
-                        signInViewModel.emailCodeValid = false
-                        signInViewModel.emailCodeChronometerBase = 0
-                        signInViewModel.currentCodeRequestedEmail = ""
+                        loginViewModel.emailCodeValid = false
+                        loginViewModel.emailCodeChronometerBase = 0
+                        loginViewModel.currentCodeRequestedEmail = ""
                         (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
                             .unlockEmailViews()
 
                         // show message
                         (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
-                            .showOverlapMessage(signInViewModel)
+                            .showOverlapMessage(loginViewModel)
                         setNextButtonToNormal()
                     }
                     // if id overlap -> go to id/pw fragment + show message
                     else if(errorMessage == MESSAGE_ID_OVERLAP) {
-                        signInViewModel.createAccountIdIsOverlap = true
+                        loginViewModel.createAccountIdIsOverlap = true
                         childFragmentManager.popBackStack()
                     }
                     // if phone overlap + show message
                     else if(errorMessage == MESSAGE_PHONE_OVERLAP) {
-                        signInViewModel.createAccountPhoneIsOverlap = true
+                        loginViewModel.createAccountPhoneIsOverlap = true
                         (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
-                            .showOverlapMessage(signInViewModel)
+                            .showOverlapMessage(loginViewModel)
                         setNextButtonToNormal()
                     }
                 }
@@ -288,13 +288,13 @@ class CreateAccountFragment : Fragment() {
         })
     }
 
-    private fun validateEmailCode(signInViewModel: SignInViewModel) {
+    private fun validateEmailCode(loginViewModel: LoginViewModel) {
         // create verify code request DTO
-        val verifyAuthCodeRequestDto = VerifyAuthCodeReqDto(signInViewModel.currentCodeRequestedEmail,
-            signInViewModel.createAccountEmailCodeEditText)
+        val verifyAuthCodeRequestDto = VerifyAuthCodeReqDto(loginViewModel.currentCodeRequestedEmail,
+            loginViewModel.createAccountEmailCodeEditText)
 
         // if not yet verified
-        if(!signInViewModel.emailCodeValid) {
+        if(!loginViewModel.emailCodeValid) {
             // call API using Retrofit
             verifyAuthCodeApiCall = RetrofitBuilder.getServerApi().verifyAuthCodeRequest(verifyAuthCodeRequestDto)
             verifyAuthCodeApiCall!!.enqueue(object: Callback<VerifyAuthCodeResDto> {
@@ -304,12 +304,12 @@ class CreateAccountFragment : Fragment() {
                 ) {
                     if(response.isSuccessful) {
                         // set email code valid to true + lock email views
-                        signInViewModel.emailCodeValid = true
+                        loginViewModel.emailCodeValid = true
                         (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
                             .lockEmailViews()
 
                         // call create account API if the code is valid
-                        createAccount(signInViewModel)
+                        createAccount(loginViewModel)
                     }
                     else {
                         // code invalid Toast message
@@ -346,7 +346,7 @@ class CreateAccountFragment : Fragment() {
         }
         else {
             // call create account API if already verified
-            createAccount(signInViewModel)
+            createAccount(loginViewModel)
         }
     }
 

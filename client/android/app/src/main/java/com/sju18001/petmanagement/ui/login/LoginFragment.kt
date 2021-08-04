@@ -16,7 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.sju18001.petmanagement.MainActivity
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.databinding.FragmentSignInBinding
+import com.sju18001.petmanagement.databinding.FragmentLoginBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
@@ -29,17 +29,17 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SignInFragment : Fragment() {
+class LoginFragment : Fragment() {
 
     // variables for view binding
-    private var _binding: FragmentSignInBinding? = null
+    private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
 
     // variable for storing API call(for cancel)
-    private var signInApiCall: Call<AccountSignInResponseDto>? = null
+    private var loginApiCall: Call<LoginResDto>? = null
     private var profileLookupApiCall: Call<AccountProfileLookupResponseDto>? = null
 
     // Snackbar variable(for dismiss)
@@ -68,7 +68,7 @@ class SignInFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // view binding
-        _binding = FragmentSignInBinding.inflate(inflater, container, false)
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -76,19 +76,19 @@ class SignInFragment : Fragment() {
         super.onStart()
 
         // variable for ViewModel
-        val signInViewModel: SignInViewModel by activityViewModels()
+        val loginViewModel: LoginViewModel by activityViewModels()
 
         // restore EditText values after view destruction
-        binding.idEditText.setText(signInViewModel.signInIdEditText)
-        binding.pwEditText.setText(signInViewModel.signInPwEditText)
+        binding.idEditText.setText(loginViewModel.loginIdEditText)
+        binding.pwEditText.setText(loginViewModel.loginPwEditText)
 
         // reset create account values in ViewModel
-        signInViewModel.resetCreateAccountValues()
+        loginViewModel.resetCreateAccountValues()
 
         // for id text change listener
         binding.idEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                signInViewModel.signInIdEditText = s.toString()
+                loginViewModel.loginIdEditText = s.toString()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -97,22 +97,22 @@ class SignInFragment : Fragment() {
         // for pw text change listener
         binding.pwEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                signInViewModel.signInPwEditText = s.toString()
+                loginViewModel.loginPwEditText = s.toString()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for sign in button
-        binding.signInButton.setOnClickListener {
+        // for login button
+        binding.loginButton.setOnClickListener {
             // disable buttons
             disableButtons()
 
             // hide keyboard
             Util().hideKeyboard(requireActivity())
 
-            // call signIn function
-            signIn(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
+            // call login function
+            login(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
         }
 
         // for create account button
@@ -120,7 +120,7 @@ class SignInFragment : Fragment() {
             val createAccountFragment = CreateAccountFragment()
             activity?.supportFragmentManager?.beginTransaction()!!
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.sign_in_activity_fragment_container, createAccountFragment)
+                .replace(R.id.login_activity_fragment_container, createAccountFragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -130,39 +130,39 @@ class SignInFragment : Fragment() {
             val findIdPwFragment = FindIdPwFragment()
             activity?.supportFragmentManager?.beginTransaction()!!
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.sign_in_activity_fragment_container, findIdPwFragment)
+                .replace(R.id.login_activity_fragment_container, findIdPwFragment)
                 .addToBackStack(null)
                 .commit()
         }
 
-        // hide keyboard when touch signInLayout
-        binding.fragmentSignInLayout.setOnClickListener{ Util().hideKeyboard(requireActivity()) }
+        // hide keyboard when touch loginLayout
+        binding.fragmentLoginLayout.setOnClickListener{ Util().hideKeyboard(requireActivity()) }
     }
 
-    private fun signIn(username: String, password: String) {
-        // create sign in request Dto
-        val accountSignInRequestDto = AccountSignInRequestDto(username, password)
+    private fun login(username: String, password: String) {
+        // create login request Dto
+        val accountLoginRequestDto = LoginReqDto(username, password)
 
         // call API using Retrofit
-        signInApiCall = RetrofitBuilder.getServerApi().signInRequest(accountSignInRequestDto)
-        signInApiCall!!.enqueue(object: Callback<AccountSignInResponseDto> {
+        loginApiCall = RetrofitBuilder.getServerApi().loginReq(accountLoginRequestDto)
+        loginApiCall!!.enqueue(object: Callback<LoginResDto> {
             override fun onResponse(
-                call: Call<AccountSignInResponseDto>,
-                response: Response<AccountSignInResponseDto>
+                call: Call<LoginResDto>,
+                response: Response<LoginResDto>
             ) {
                 if(response.isSuccessful) {
                     checkIsFirstLoginAndSwitchActivity(response.body()!!.token)
                 }
                 else {
                     // create custom snack bar to display error message
-                    displayErrorMessage(context?.getText(R.string.sign_in_failed)!!.toString())
+                    displayErrorMessage(context?.getText(R.string.login_failed)!!.toString())
 
                     // enable buttons
                     enableButtons()
                 }
             }
 
-            override fun onFailure(call: Call<AccountSignInResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<LoginResDto>, t: Throwable) {
                 // if the view was destroyed(API call canceled) -> do nothing
                 if(_binding == null) { return }
 
@@ -178,6 +178,7 @@ class SignInFragment : Fragment() {
         })
     }
 
+    // TODO: apply Hanbit-Kang's code when merging(login currently does not work due to this function)
     // 첫 로그인인지 체킹 후 액티비티 전환
     private fun checkIsFirstLoginAndSwitchActivity(token: String){
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
@@ -248,10 +249,10 @@ class SignInFragment : Fragment() {
 
     // disable buttons
     private fun disableButtons() {
-        // set sign in button status to loading
-        binding.signInButton.text = ""
-        binding.signInProgressBar.visibility = View.VISIBLE
-        binding.signInButton.isEnabled = false
+        // set login button status to loading
+        binding.loginButton.text = ""
+        binding.loginProgressBar.visibility = View.VISIBLE
+        binding.loginButton.isEnabled = false
 
         // disable create account, find id/pw buttons
         binding.createAccountButton.isEnabled = false
@@ -260,10 +261,10 @@ class SignInFragment : Fragment() {
 
     // enable buttons
     private fun enableButtons() {
-        // set sign in button status to active
-        binding.signInButton.text = context?.getText(R.string.sign_in_button)
-        binding.signInProgressBar.visibility = View.GONE
-        binding.signInButton.isEnabled = true
+        // set login button status to active
+        binding.loginButton.text = context?.getText(R.string.login_button)
+        binding.loginProgressBar.visibility = View.GONE
+        binding.loginButton.isEnabled = true
 
         // enable create account, find id/pw buttons
         binding.createAccountButton.isEnabled = true
@@ -272,7 +273,7 @@ class SignInFragment : Fragment() {
 
     // display error message(Snackbar)
     private fun displayErrorMessage(message: String) {
-        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_sign_in_layout)!!,
+        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_layout)!!,
             message, Snackbar.LENGTH_LONG)
         val snackBarView = snackBar!!.view
         snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
@@ -282,7 +283,7 @@ class SignInFragment : Fragment() {
 
     // display success message(Snackbar)
     private fun displaySuccessMessage(message: String) {
-        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_sign_in_layout)!!,
+        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_layout)!!,
             message, Snackbar.LENGTH_LONG)
         val snackBarView = snackBar!!.view
         snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_green_dark))
@@ -298,7 +299,7 @@ class SignInFragment : Fragment() {
         snackBar?.dismiss()
 
         // stop api call when fragment is destroyed
-        signInApiCall?.cancel()
+        loginApiCall?.cancel()
         profileLookupApiCall?.cancel()
     }
 }

@@ -11,7 +11,7 @@ interface ServerApi {
 
     // Create Account, Login API
     @POST("api/account/login")
-    fun signInRequest(@Body accountSignInRequestDto: AccountSignInRequestDto): Call<AccountSignInResponseDto>
+    fun loginReq(@Body loginReqDto: LoginReqDto): Call<LoginResDto>
 
     @POST("api/account/create")
     fun createAccountReq(@Body createAccountReqDto: CreateAccountReqDto): Call<CreateAccountResDto>
