@@ -31,7 +31,7 @@ data class UpdatePetScheduleReqDto(
     val petIdList: String?,
     val time: String,
     val memo: String?,
-    val enable: Boolean
+    val enabled: Boolean
 )
 
 data class UpdatePetScheduleResDto(

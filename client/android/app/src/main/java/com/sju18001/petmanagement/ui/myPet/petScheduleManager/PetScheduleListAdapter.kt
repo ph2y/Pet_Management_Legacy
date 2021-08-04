@@ -25,7 +25,7 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         val noonTextView: TextView = view.findViewById(R.id.noon_text_view)
         val timeTextView: TextView = view.findViewById(R.id.time_text_view)
-        val enableSwitch: Switch = view.findViewById(R.id.is_turned_on_switch)
+        val enabledSwitch: Switch = view.findViewById(R.id.enabled_switch)
         val petListTextView: TextView = view.findViewById(R.id.pet_list_text_view)
         val memoTextView: TextView = view.findViewById(R.id.memo_text_view)
     }
@@ -56,8 +56,8 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
         }
 
         // 스위치
-        holder.enableSwitch.setOnCheckedChangeListener { _, isChecked ->
-            dataSet[position].enable = isChecked
+        holder.enabledSwitch.setOnCheckedChangeListener { _, isChecked ->
+            dataSet[position].enabled = isChecked
             petScheduleListAdapterInterface.updatePetSchedule(dataSet[position])
         }
     }
@@ -69,7 +69,7 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
         val localTime = LocalTime.parse(data.time)
         holder.noonTextView.text = if(localTime.hour <= 12) "오전" else "오후"
         holder.timeTextView.text = localTime.hour.toString().padStart(2, '0') + ":" + localTime.minute.toString().padStart(2, '0')
-        holder.enableSwitch.isChecked = data.enable!!
+        holder.enabledSwitch.isChecked = data.enabled!!
         holder.petListTextView.text = getPetNamesFromPetIdList(data.petIdList)
         holder.memoTextView.text = data.memo
     }

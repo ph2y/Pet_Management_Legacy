@@ -6,6 +6,6 @@ data class PetSchedule (
     val petList: List<Pet>,
     val time: String,
     val memo: String?,
-    var enable: Boolean,
+    var enabled: Boolean,
     val petIdList: String
 )

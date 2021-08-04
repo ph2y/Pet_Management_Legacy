@@ -102,7 +102,7 @@ class PetScheduleManagerFragment : Fragment() {
                     .putExtra("petIdList", data.petIdList)
                     .putExtra("time", data.time)
                     .putExtra("memo", data.memo)
-                    .putExtra("enable", data.enable)
+                    .putExtra("enabled", data.enabled)
                 startActivity(myPetActivityIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
@@ -146,7 +146,7 @@ class PetScheduleManagerFragment : Fragment() {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun updatePetSchedule(data: PetSchedule){
                 val updatePetScheduleReqDto = UpdatePetScheduleReqDto(
-                    data.id, data.petIdList, data.time, data.memo, data.enable
+                    data.id, data.petIdList, data.time, data.memo, data.enabled
                 )
 
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)

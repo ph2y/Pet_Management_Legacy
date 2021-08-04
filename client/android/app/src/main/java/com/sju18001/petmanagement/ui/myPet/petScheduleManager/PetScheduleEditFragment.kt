@@ -88,7 +88,7 @@ class PetScheduleEditFragment : Fragment() {
             if(intent.getStringExtra("fragmentType") == "create_pet_schedule"){
                 createPetSchedule()
             }else{
-                updatePetSchedule(intent.getLongExtra("id", 0), intent.getBooleanExtra("enable", false))
+                updatePetSchedule(intent.getLongExtra("id", 0), intent.getBooleanExtra("enabled", false))
             }
         }
 
@@ -220,9 +220,9 @@ class PetScheduleEditFragment : Fragment() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun updatePetSchedule(id: Long, enable: Boolean){
+    private fun updatePetSchedule(id: Long, enabled: Boolean){
         val updatePetScheduleReqDto = UpdatePetScheduleReqDto(
-            id, getCheckedPetIdList(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(), binding.memoEditText.text.toString(), enable
+            id, getCheckedPetIdList(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(), binding.memoEditText.text.toString(), enabled
         )
 
         updatePetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
