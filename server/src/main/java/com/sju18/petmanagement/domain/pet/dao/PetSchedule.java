@@ -37,7 +37,7 @@ public class PetSchedule {
     @Column
     private LocalTime time;
     private String memo;
-    private Boolean enable;
+    private Boolean enabled;
 
     @Transient
     private String petIdList;

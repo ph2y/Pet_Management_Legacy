@@ -16,5 +16,5 @@ public class UpdatePetScheduleReqDto {
     private String time;
     @Size(max = 200, message = "valid.petSchedule.memo.size")
     private String memo;
-    private Boolean enable;
+    private Boolean enabled;
 }

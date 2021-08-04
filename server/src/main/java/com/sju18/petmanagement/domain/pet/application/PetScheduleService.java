@@ -41,7 +41,7 @@ public class PetScheduleService {
                 .petList(appliedPetList)
                 .time(LocalTime.parse(reqDto.getTime()))
                 .memo(reqDto.getMemo())
-                .enable(false)
+                .enabled(false)
                 .build();
 
         // save(id가 없는 transient 상태의 객체) -> EntityManger.persist() => save
@@ -114,8 +114,8 @@ public class PetScheduleService {
         if (reqDto.getMemo() != null && !reqDto.getMemo().equals(petSchedule.getMemo())) {
             petSchedule.setMemo(reqDto.getMemo());
         }
-        if (reqDto.getEnable() != null && !reqDto.getEnable().equals(petSchedule.getEnable())) {
-            petSchedule.setEnable(reqDto.getEnable());
+        if (reqDto.getEnabled() != null && !reqDto.getEnabled().equals(petSchedule.getEnabled())) {
+            petSchedule.setEnabled(reqDto.getEnabled());
         }
 
         // save(id가 있는 detached 상태의 객체) -> EntityManger.merge() => update
