@@ -8,6 +8,7 @@ import android.widget.Switch
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import androidx.work.WorkManager
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.restapi.dao.PetSchedule
 import java.time.LocalTime
@@ -17,6 +18,8 @@ interface PetScheduleListAdapterInterface{
     fun askForDeleteItem(position: Int, id: Long)
     fun deletePetSchedule(id: Long)
     fun updatePetSchedule(data: PetSchedule)
+    fun enqueueNotificationWorkManager(time: String)
+    fun cancelNotificationWorkManager(time: String)
 }
 
 class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, private val petNameForId: HashMap<Long, String>) : RecyclerView.Adapter<PetScheduleListAdapter.ViewHolder>(){
@@ -59,6 +62,14 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
         holder.enabledSwitch.setOnCheckedChangeListener { _, isChecked ->
             dataSet[position].enabled = isChecked
             petScheduleListAdapterInterface.updatePetSchedule(dataSet[position])
+
+            if(isChecked){
+                // Notification ON
+                petScheduleListAdapterInterface.enqueueNotificationWorkManager(dataSet[position].time)
+            }else{
+                // Notification OFF
+                petScheduleListAdapterInterface.cancelNotificationWorkManager(dataSet[position].time)
+            }
         }
     }
 
