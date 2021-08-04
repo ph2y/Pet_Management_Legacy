@@ -232,8 +232,7 @@ class CreateAccountFragment : Fragment() {
                 }
                 else {
                     // get error message(overlap)
-                    val errorMessage = JSONObject(response.errorBody()!!.charStream().readText())
-                        .getJSONObject("_metadata").getString("message").toString()
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
 
                     // if email overlap + show message
                     if(errorMessage == MESSAGE_EMAIL_OVERLAP) {

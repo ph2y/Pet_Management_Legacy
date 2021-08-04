@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetProfileBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
@@ -166,8 +167,7 @@ class PetProfileFragment : Fragment(){
                 }
                 else {
                     // get error message + show(Toast)
-                    val errorMessage = JSONObject(response.errorBody()!!.charStream().readText())
-                        .getJSONObject("_metadata").getString("message").toString()
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
 
                     // log error message
