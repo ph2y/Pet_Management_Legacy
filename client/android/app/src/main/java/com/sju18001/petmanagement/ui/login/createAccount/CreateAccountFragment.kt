@@ -296,7 +296,7 @@ class CreateAccountFragment : Fragment() {
         // if not yet verified
         if(!loginViewModel.emailCodeValid) {
             // call API using Retrofit
-            verifyAuthCodeApiCall = RetrofitBuilder.getServerApi().verifyAuthCodeRequest(verifyAuthCodeRequestDto)
+            verifyAuthCodeApiCall = RetrofitBuilder.getServerApi().verifyAuthCodeReq(verifyAuthCodeRequestDto)
             verifyAuthCodeApiCall!!.enqueue(object: Callback<VerifyAuthCodeResDto> {
                 override fun onResponse(
                     call: Call<VerifyAuthCodeResDto>,

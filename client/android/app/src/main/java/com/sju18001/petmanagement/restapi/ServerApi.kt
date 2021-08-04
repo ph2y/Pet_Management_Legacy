@@ -23,10 +23,10 @@ interface ServerApi {
     fun profileUpdateRequest(@Body accountProfileUpdateRequestDto: AccountProfileUpdateRequestDto): Call<AccountProfileUpdateResponseDto>
 
     @POST("api/account/authcode/send")
-    fun sendAuthCodeReq(@Body accountSendAuthCodeRequestDto: SendAuthCodeReqDto): Call<SendAuthCodeResDto>
+    fun sendAuthCodeReq(@Body sendAuthCodeReqDto: SendAuthCodeReqDto): Call<SendAuthCodeResDto>
 
     @POST("api/account/authcode/verify")
-    fun verifyAuthCodeRequest(@Body accountVerifyAuthCodeRequestDto: VerifyAuthCodeReqDto): Call<VerifyAuthCodeResDto>
+    fun verifyAuthCodeReq(@Body verifyAuthCodeReqDto: VerifyAuthCodeReqDto): Call<VerifyAuthCodeResDto>
 
     @POST("api/account/findusername")
     fun findUsernameRequest(@Body accountFindUsernameRequestDto: AccountFindUsernameRequestDto): Call<AccountFindUsernameResponseDto>
