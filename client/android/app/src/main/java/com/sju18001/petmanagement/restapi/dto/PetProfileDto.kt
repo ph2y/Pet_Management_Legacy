@@ -1,6 +1,6 @@
 package com.sju18001.petmanagement.restapi.dto
 
-import com.sju18001.petmanagement.restapi.dao.DtoMetadata
+import com.sju18001.petmanagement.restapi.global.DtoMetadata
 import com.sju18001.petmanagement.restapi.dao.Pet
 
 // Create Dto
