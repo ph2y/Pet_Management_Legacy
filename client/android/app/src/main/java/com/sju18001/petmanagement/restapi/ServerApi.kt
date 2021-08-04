@@ -4,7 +4,6 @@ import com.sju18001.petmanagement.restapi.dto.*
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.http.Body
-import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ServerApi {
@@ -35,14 +34,14 @@ interface ServerApi {
     fun recoverPasswordReq(@Body recoverPasswordReqDto: RecoverPasswordReqDto): Call<RecoverPasswordResDto>
 
     // Pet Profile CRUD API
-    @POST("api/pet/profile/create")
-    fun petProfileCreateRequest(@Body petProfileCreateRequestDto: PetProfileCreateRequestDto): Call<PetProfileCreateResponseDto>
+    @POST("api/pet/create")
+    fun createPetReq(@Body createPetReqDto: CreatePetReqDto): Call<CreatePetResDto>
 
     @POST("api/pet/fetch")
     fun fetchPetReq(@Body body: RequestBody): Call<FetchPetResDto>
 
-    @POST("api/pet/profile/update")
-    fun petProfileUpdateRequest(@Body petProfileUpdateRequestDto: PetProfileUpdateRequestDto): Call<PetProfileUpdateResponseDto>
+    @POST("api/pet/update")
+    fun updatePetReq(@Body updatePetReqDto: UpdatePetReqDto): Call<UpdatePetResDto>
 
     @POST("api/pet/profile/delete")
     fun petProfileDeleteRequest(@Body petProfileDeleteRequestDto: PetProfileDeleteRequestDto): Call<PetProfileDeleteResponseDto>
