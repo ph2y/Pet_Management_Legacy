@@ -1,4 +1,8 @@
+<<<<<<< HEAD:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/recovery/RecoverPasswordFragment.kt
 package com.sju18001.petmanagement.ui.signIn.recovery
+=======
+package com.sju18001.petmanagement.ui.login.findIdPw
+>>>>>>> hotfix/client-refactoring-for-signIn-and-signUp:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/findIdPw/FindPwFragment.kt
 
 import android.os.Bundle
 import android.text.Editable
@@ -172,12 +176,20 @@ class RecoverPasswordFragment : Fragment() {
 
     // 코드 전송
     private fun sendAuthCode(email: String){
+<<<<<<< HEAD:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/recovery/RecoverPasswordFragment.kt
         val sendAuthCodeReqDto = SendAuthCodeReqDto(email)
+=======
+        val accountSendAuthCodeRequestDto = SendAuthCodeReqDto(email)
+>>>>>>> hotfix/client-refactoring-for-signIn-and-signUp:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/findIdPw/FindPwFragment.kt
 
         // 버튼 로딩 상태
         setEmailInputButtonLoading(true)
 
+<<<<<<< HEAD:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/recovery/RecoverPasswordFragment.kt
         val call = RetrofitBuilder.getServerApi().sendAuthCodeReq(sendAuthCodeReqDto)
+=======
+        val call = RetrofitBuilder.getServerApi().sendAuthCodeReq(accountSendAuthCodeRequestDto)
+>>>>>>> hotfix/client-refactoring-for-signIn-and-signUp:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/findIdPw/FindPwFragment.kt
         call.enqueue(object: Callback<SendAuthCodeResDto> {
             override fun onResponse(
                 call: Call<SendAuthCodeResDto>,

@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.signIn
+package com.sju18001.petmanagement.ui.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -17,11 +17,11 @@ import com.google.android.material.snackbar.Snackbar
 import com.sju18001.petmanagement.MainActivity
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.databinding.FragmentSignInBinding
+import com.sju18001.petmanagement.databinding.FragmentLoginBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
-import com.sju18001.petmanagement.ui.signIn.signUp.SignUpFragment
+import com.sju18001.petmanagement.ui.login.createAccount.CreateAccountFragment
 import com.sju18001.petmanagement.ui.signIn.recovery.RecoveryFragment
 import com.sju18001.petmanagement.ui.welcomePage.WelcomePageActivity
 import okhttp3.MediaType
@@ -30,10 +30,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class SignInFragment : Fragment() {
+class LoginFragment : Fragment() {
 
     // variables for view binding
-    private var _binding: FragmentSignInBinding? = null
+    private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
     // session manager for user token
@@ -52,13 +52,13 @@ class SignInFragment : Fragment() {
         // get session manager
         sessionManager = context?.let { SessionManager(it) }!!
 
-        // get sign up result
-        setFragmentResultListener("signUpResult") { _, bundle ->
+        // get create account result
+        setFragmentResultListener("createAccountResult") { _, bundle ->
             val result: Boolean = bundle.get("isSuccessful") as Boolean
 
             // if successful -> show success message
             if(result) {
-                displaySuccessMessage(context?.getText(R.string.sign_up_success)!!.toString())
+                displaySuccessMessage(context?.getText(R.string.create_account_success)!!.toString())
             }
         }
     }
@@ -69,7 +69,7 @@ class SignInFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // view binding
-        _binding = FragmentSignInBinding.inflate(inflater, container, false)
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -77,19 +77,19 @@ class SignInFragment : Fragment() {
         super.onStart()
 
         // variable for ViewModel
-        val signInViewModel: SignInViewModel by activityViewModels()
+        val loginViewModel: LoginViewModel by activityViewModels()
 
         // restore EditText values after view destruction
-        binding.idEditText.setText(signInViewModel.signInIdEditText)
-        binding.pwEditText.setText(signInViewModel.signInPwEditText)
+        binding.usernameEditText.setText(loginViewModel.loginUsernameEditText)
+        binding.pwEditText.setText(loginViewModel.loginPwEditText)
 
-        // reset sign up values in ViewModel
-        signInViewModel.resetSignUpValues()
+        // reset create account values in ViewModel
+        loginViewModel.resetCreateAccountValues()
 
         // for id text change listener
-        binding.idEditText.addTextChangedListener(object: TextWatcher {
+        binding.usernameEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                signInViewModel.signInIdEditText = s.toString()
+                loginViewModel.loginUsernameEditText = s.toString()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -98,30 +98,30 @@ class SignInFragment : Fragment() {
         // for pw text change listener
         binding.pwEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                signInViewModel.signInPwEditText = s.toString()
+                loginViewModel.loginPwEditText = s.toString()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for sign in button
-        binding.signInButton.setOnClickListener {
+        // for login button
+        binding.loginButton.setOnClickListener {
             // disable buttons
             disableButtons()
 
             // hide keyboard
             Util.hideKeyboard(requireActivity())
 
-            // call signIn function
-            signIn(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
+            // call login function
+            login(binding.usernameEditText.text.toString(), binding.pwEditText.text.toString())
         }
 
-        // for sign up button
-        binding.signUpButton.setOnClickListener {
-            val signUpFragment = SignUpFragment()
+        // for create account button
+        binding.createAccountButton.setOnClickListener {
+            val createAccountFragment = CreateAccountFragment()
             activity?.supportFragmentManager?.beginTransaction()!!
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.sign_in_activity_fragment_container, signUpFragment)
+                .replace(R.id.login_activity_fragment_container, createAccountFragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -131,18 +131,19 @@ class SignInFragment : Fragment() {
             val recoveryFragment = RecoveryFragment()
             activity?.supportFragmentManager?.beginTransaction()!!
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.sign_in_activity_fragment_container, recoveryFragment)
+                .replace(R.id.login_activity_fragment_container, recoveryFragment)
                 .addToBackStack(null)
                 .commit()
         }
 
-        // hide keyboard when touch signInLayout
-        binding.fragmentSignInLayout.setOnClickListener{ Util.hideKeyboard(requireActivity()) }
+        // hide keyboard when touch loginLayout
+        binding.fragmentLoginLayout.setOnClickListener{ Util.hideKeyboard(requireActivity()) }
     }
 
-    private fun signIn(username: String, password: String) {
-        // create sign in request Dto
+    private fun login(username: String, password: String) {
+        // create login request Dto
         val loginReqDto = LoginReqDto(username, password)
+
         // call API using Retrofit
         loginApiCall = RetrofitBuilder.getServerApi().loginReq(loginReqDto)
         loginApiCall!!.enqueue(object: Callback<LoginResDto> {
@@ -155,7 +156,7 @@ class SignInFragment : Fragment() {
                 }
                 else {
                     // create custom snack bar to display error message
-                    displayErrorMessage(context?.getText(R.string.sign_in_failed)!!.toString())
+                    displayErrorMessage(context?.getText(R.string.login_failed)!!.toString())
 
                     // enable buttons
                     enableButtons()
@@ -178,6 +179,7 @@ class SignInFragment : Fragment() {
         })
     }
 
+    // TODO: apply Hanbit-Kang's code when merging(login currently does not work due to this function)
     // 첫 로그인인지 체킹 후 액티비티 전환
     private fun checkIsFirstLoginAndSwitchActivity(token: String){
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
@@ -249,31 +251,31 @@ class SignInFragment : Fragment() {
 
     // disable buttons
     private fun disableButtons() {
-        // set sign in button status to loading
-        binding.signInButton.text = ""
-        binding.signInProgressBar.visibility = View.VISIBLE
-        binding.signInButton.isEnabled = false
+        // set login button status to loading
+        binding.loginButton.text = ""
+        binding.loginProgressBar.visibility = View.VISIBLE
+        binding.loginButton.isEnabled = false
 
-        // disable sign up, recovery buttons
-        binding.signUpButton.isEnabled = false
+        // disable create account, recovery buttons
+        binding.createAccountButton.isEnabled = false
         binding.recoveryButton.isEnabled = false
     }
 
     // enable buttons
     private fun enableButtons() {
-        // set sign in button status to active
-        binding.signInButton.text = context?.getText(R.string.sign_in_button)
-        binding.signInProgressBar.visibility = View.GONE
-        binding.signInButton.isEnabled = true
+        // set login button status to active
+        binding.loginButton.text = context?.getText(R.string.login_button)
+        binding.loginProgressBar.visibility = View.GONE
+        binding.loginButton.isEnabled = true
 
-        // enable sign up, recovery buttons
-        binding.signUpButton.isEnabled = true
+        // enable create account, recovery buttons
+        binding.createAccountButton.isEnabled = true
         binding.recoveryButton.isEnabled = true
     }
 
     // display error message(Snackbar)
     private fun displayErrorMessage(message: String) {
-        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_sign_in_layout)!!,
+        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_layout)!!,
             message, Snackbar.LENGTH_LONG)
         val snackBarView = snackBar!!.view
         snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
@@ -283,7 +285,7 @@ class SignInFragment : Fragment() {
 
     // display success message(Snackbar)
     private fun displaySuccessMessage(message: String) {
-        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_sign_in_layout)!!,
+        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_layout)!!,
             message, Snackbar.LENGTH_LONG)
         val snackBarView = snackBar!!.view
         snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_green_dark))

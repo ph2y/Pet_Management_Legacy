@@ -8,12 +8,13 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface ServerApi {
-    // Sign in, Sign up API
+
+    // Create Account, Login API
     @POST("api/account/login")
     fun loginReq(@Body loginReqDto: LoginReqDto): Call<LoginResDto>
 
-    @POST("api/account/signup")
-    fun signUpRequest(@Body accountSignUpRequestDto: AccountSignUpRequestDto): Call<AccountSignUpResponseDto>
+    @POST("api/account/create")
+    fun createAccountReq(@Body createAccountReqDto: CreateAccountReqDto): Call<CreateAccountResDto>
 
     @POST("api/account/fetch")
     fun fetchAccountReq(@Body body: RequestBody): Call<FetchAccountResDto>
@@ -24,8 +25,8 @@ interface ServerApi {
     @POST("api/account/authcode/send")
     fun sendAuthCodeReq(@Body sendAuthCodeReqDto: SendAuthCodeReqDto): Call<SendAuthCodeResDto>
 
-    @POST("api/account/verifyauthcode")
-    fun verifyAuthCodeRequest(@Body accountVerifyAuthCodeRequestDto: AccountVerifyAuthCodeRequestDto): Call<AccountVerifyAuthCodeResponseDto>
+    @POST("api/account/authcode/verify")
+    fun verifyAuthCodeReq(@Body verifyAuthCodeReqDto: VerifyAuthCodeReqDto): Call<VerifyAuthCodeResDto>
 
     @POST("api/account/recoverUsername")
     fun recoverUsernameReq(@Body recoverUsernameReqDto: RecoverUsernameReqDto): Call<RecoverUsernameResDto>
