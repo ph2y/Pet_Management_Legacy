@@ -57,9 +57,19 @@
     <string name="email_message_request">이메일 인증을 해주세요!</string>
     <string name="email_code_chronometer_label">남은 시간:</string>
 
+    <!-- Recovery Fragment-->
+    <string name="recovery_title">아이디 / 비밀번호 찾기</string>
+
+    <!-- RecoverUsername Fragment-->
     <string name="recover_username">아이디 찾기</string>
+    <string name="recover_username_result_title">아이디 찾기 결과 안내</string>
+    <string name="recover_username_result_description">회원님의 아이디는 다음과 같습니다.</string>
+
+    <!-- RecoverPassword Fragment-->
     <string name="recover_password">비밀번호 찾기</string>
     <string name="recover_password_email_input_button">인증코드 전송</string>
+    <string name="recover_password_result_title">비밀번호 찾기 결과 안내</string>
+    <string name="recover_password_result_description">회원님의 임시 비밀번호를 이메일로 전송하였습니다. 로그인 후 비밀번호를 꼭 변경해주세요.</string>
 
     <string name="create_pet_title">펫 추가</string>
     <string name="update_pet_title">펫 정보 수정</string>
@@ -89,4 +99,23 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- WelcomePage Fragment -->
+    <string name="skip_button">SKIP</string>
+    <string name="welcome_page1_description_title">프로필을 등록하세요.</string>
+    <string name="welcome_page1_description_content">자신만의 프로필을 꾸며보세요!</string>
+    <string name="welcome_page1_decline_button">다음에 할게요</string>
+    <string name="welcome_page1_accept_button">좋아요!</string>
+
+    <!-- PetScheduleEdit Fragment -->
+    <string name="pet_schedule_create_title">일정 추가</string>
+    <string name="pet_schedule_update_title">일정 편집</string>
+    <string name="pet_name_list_title">반려동물을 선택하세요.</string>
+    <string name="memo_title">메모</string>
+
+    <!-- Map Fragment -->
+    <string name="cafe">카페</string>
+    <string name="grooming">미용</string>
+    <string name="shop">샵</string>
+    <string name="hospital">병원</string>
 </resources>

@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:text="SKIP"
+        android:text="@string/skip_button"
         android:textColor="@color/material_on_background_disabled"
         android:textSize="16dp"
         app:layout_constraintBottom_toBottomOf="parent"

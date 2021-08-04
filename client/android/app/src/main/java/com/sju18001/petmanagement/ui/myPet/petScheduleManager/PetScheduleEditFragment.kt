@@ -14,6 +14,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetScheduleEditBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -144,7 +145,7 @@ class PetScheduleEditFragment : Fragment() {
         }
 
         // 액션 타이틀
-        binding.actionTitle.text = "일정 편집"
+        binding.actionTitle.text = context?.getText(R.string.pet_schedule_update_title)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
