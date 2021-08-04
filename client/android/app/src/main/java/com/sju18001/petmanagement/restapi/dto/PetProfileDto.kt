@@ -19,6 +19,10 @@ data class CreatePetResDto (
     )
 
 // Fetch Dto
+data class FetchPetReqDto(
+    val id: Long?
+    )
+
 data class FetchPetResDto (
     val _metadata: DtoMetadata,
     val petList: List<Pet>
