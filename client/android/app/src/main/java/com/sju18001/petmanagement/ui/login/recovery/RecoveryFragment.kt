@@ -1,8 +1,4 @@
-<<<<<<< HEAD:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/recovery/RecoveryFragment.kt
-package com.sju18001.petmanagement.ui.signIn.recovery
-=======
-package com.sju18001.petmanagement.ui.login.findIdPw
->>>>>>> hotfix/client-refactoring-for-signIn-and-signUp:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/findIdPw/FindIdPwFragment.kt
+package com.sju18001.petmanagement.ui.login.recovery
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,11 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
-<<<<<<< HEAD:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/recovery/RecoveryFragment.kt
 import com.sju18001.petmanagement.databinding.FragmentRecoveryBinding
-=======
-import com.sju18001.petmanagement.databinding.FragmentFindIdPwBinding
->>>>>>> hotfix/client-refactoring-for-signIn-and-signUp:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/findIdPw/FindIdPwFragment.kt
 
 private val TAB_ELEMENTS = listOf("아이디 찾기", "비밀번호 찾기")
 

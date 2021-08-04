@@ -1,8 +1,4 @@
-<<<<<<< HEAD:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/recovery/RecoverUsernameFragment.kt
-package com.sju18001.petmanagement.ui.signIn.recovery
-=======
-package com.sju18001.petmanagement.ui.login.findIdPw
->>>>>>> hotfix/client-refactoring-for-signIn-and-signUp:client/android/app/src/main/java/com/sju18001/petmanagement/ui/login/findIdPw/FindIdFragment.kt
+package com.sju18001.petmanagement.ui.login.recovery
 
 import android.os.Bundle
 import android.text.Editable
