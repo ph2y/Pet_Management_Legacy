@@ -9,12 +9,12 @@ import retrofit2.http.POST
 
 interface ServerApi {
 
-    // Sign in, Sign up API
+    // Create Account, Login API
     @POST("api/account/login")
     fun signInRequest(@Body accountSignInRequestDto: AccountSignInRequestDto): Call<AccountSignInResponseDto>
 
-    @POST("api/account/signup")
-    fun signUpRequest(@Body accountSignUpRequestDto: AccountSignUpRequestDto): Call<AccountSignUpResponseDto>
+    @POST("api/account/create")
+    fun createAccountReq(@Body createAccountReqDto: CreateAccountReqDto): Call<CreateAccountResDto>
 
     @POST("api/account/profilelookup")
     fun profileLookupRequest(@Body body: RequestBody): Call<AccountProfileLookupResponseDto>
@@ -22,11 +22,11 @@ interface ServerApi {
     @POST("api/account/profileupdate")
     fun profileUpdateRequest(@Body accountProfileUpdateRequestDto: AccountProfileUpdateRequestDto): Call<AccountProfileUpdateResponseDto>
 
-    @POST("api/account/sendauthcode")
-    fun sendAuthCodeRequest(@Body accountSendAuthCodeRequestDto: AccountSendAuthCodeRequestDto): Call<AccountSendAuthCodeResponseDto>
+    @POST("api/account/authcode/send")
+    fun sendAuthCodeReq(@Body accountSendAuthCodeRequestDto: SendAuthCodeReqDto): Call<SendAuthCodeResDto>
 
-    @POST("api/account/verifyauthcode")
-    fun verifyAuthCodeRequest(@Body accountVerifyAuthCodeRequestDto: AccountVerifyAuthCodeRequestDto): Call<AccountVerifyAuthCodeResponseDto>
+    @POST("api/account/authcode/verify")
+    fun verifyAuthCodeRequest(@Body accountVerifyAuthCodeRequestDto: VerifyAuthCodeReqDto): Call<VerifyAuthCodeResDto>
 
     @POST("api/account/findusername")
     fun findUsernameRequest(@Body accountFindUsernameRequestDto: AccountFindUsernameRequestDto): Call<AccountFindUsernameResponseDto>

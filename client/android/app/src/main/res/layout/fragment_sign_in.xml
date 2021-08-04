@@ -135,13 +135,13 @@
             android:layout_marginTop="20dp">
 
             <TextView
-                android:id="@+id/sign_up_button"
+                android:id="@+id/create_account_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:text="@string/sign_up_button"
+                android:text="@string/create_account_button"
                 android:background="?attr/selectableItemBackground"/>
 
             <TextView

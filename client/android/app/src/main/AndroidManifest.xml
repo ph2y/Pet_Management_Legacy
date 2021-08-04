@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetManagement">
         <activity android:name=".ui.welcomePage.WelcomePageActivity"></activity>
-        <activity android:name=".ui.signIn.SignInActivity">
+        <activity android:name=".ui.login.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

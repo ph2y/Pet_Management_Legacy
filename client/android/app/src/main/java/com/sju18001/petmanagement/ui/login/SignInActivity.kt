@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.signIn
+package com.sju18001.petmanagement.ui.login
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

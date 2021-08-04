@@ -26,7 +26,7 @@
             android:layout_gravity="center"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:text="@string/sign_up_button"/>
+            android:text="@string/create_account_button"/>
 
     </LinearLayout>
 
@@ -40,18 +40,18 @@
         app:layout_constrainedHeight="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/fragment_sign_up_layout"
+            android:id="@+id/fragment_create_account_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:id="@+id/sign_up_main_layout"
+                android:id="@+id/create_account_main_layout"
                 android:layout_width="match_parent"
                 android:layout_height="480dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/sign_up_button_layout">
+                app:layout_constraintBottom_toTopOf="@id/create_account_button_layout">
 
                 <FrameLayout
                     android:id="@+id/child_fragment_container"
@@ -61,12 +61,12 @@
             </LinearLayout>
 
             <RelativeLayout
-                android:id="@+id/sign_up_button_layout"
+                android:id="@+id/create_account_button_layout"
                 android:layout_width="280dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/sign_up_main_layout"
+                app:layout_constraintTop_toBottomOf="@id/create_account_main_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
 
@@ -91,7 +91,7 @@
                         android:enabled="false"/>
 
                     <ProgressBar
-                        android:id="@+id/sign_up_progress_bar"
+                        android:id="@+id/create_account_progress_bar"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:visibility="gone"

@@ -35,8 +35,8 @@ public class AccountService {
     @Transactional
     public void createAccount(CreateAccountReqDto reqDto) throws Exception {
         // 중복 확인
-        this.checkUsernameDuplication(reqDto.getUsername());
         this.checkEmailDuplication(reqDto.getEmail());
+        this.checkUsernameDuplication(reqDto.getUsername());
         this.checkPhoneDuplication(reqDto.getPhone());
 
         // Account 객체 생성

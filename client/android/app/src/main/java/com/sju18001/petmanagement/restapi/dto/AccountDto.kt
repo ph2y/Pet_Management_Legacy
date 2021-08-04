@@ -9,36 +9,35 @@ data class AccountSignInResponseDto (
     val token: String
 )
 
-data class AccountSignUpRequestDto (
+data class CreateAccountReqDto (
     val username: String,
     val password: String,
     val email: String,
-    val nickname: String?,
     val phone: String,
-    val photo: String?,
+    val nickname: String?,
     val marketing: Boolean,
     val userMessage: String?
 )
 
-data class AccountSignUpResponseDto (
-    val message: String
+data class CreateAccountResDto (
+    val _metadata: DtoMetadata
 )
 
-data class AccountSendAuthCodeRequestDto(
+data class SendAuthCodeReqDto(
     val email: String
 )
 
-data class AccountSendAuthCodeResponseDto(
-    val message: String
+data class SendAuthCodeResDto(
+    val _metadata: DtoMetadata
 )
 
-data class AccountVerifyAuthCodeRequestDto(
+data class VerifyAuthCodeReqDto(
     val email: String,
     val code: String
 )
 
-data class AccountVerifyAuthCodeResponseDto(
-    val message: String
+data class VerifyAuthCodeResDto(
+    val _metadata: DtoMetadata
 )
 
 data class AccountProfileLookupResponseDto(

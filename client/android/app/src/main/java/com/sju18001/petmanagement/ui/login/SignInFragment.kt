@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.signIn
+package com.sju18001.petmanagement.ui.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -20,8 +20,8 @@ import com.sju18001.petmanagement.databinding.FragmentSignInBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
-import com.sju18001.petmanagement.ui.signIn.signUp.SignUpFragment
-import com.sju18001.petmanagement.ui.signIn.findIdPw.FindIdPwFragment
+import com.sju18001.petmanagement.ui.login.createAccount.CreateAccountFragment
+import com.sju18001.petmanagement.ui.login.findIdPw.FindIdPwFragment
 import com.sju18001.petmanagement.ui.welcomePage.WelcomePageActivity
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -51,13 +51,13 @@ class SignInFragment : Fragment() {
         // get session manager
         sessionManager = context?.let { SessionManager(it) }!!
 
-        // get sign up result
-        setFragmentResultListener("signUpResult") { _, bundle ->
+        // get create account result
+        setFragmentResultListener("createAccountResult") { _, bundle ->
             val result: Boolean = bundle.get("isSuccessful") as Boolean
 
             // if successful -> show success message
             if(result) {
-                displaySuccessMessage(context?.getText(R.string.sign_up_success)!!.toString())
+                displaySuccessMessage(context?.getText(R.string.create_account_success)!!.toString())
             }
         }
     }
@@ -82,8 +82,8 @@ class SignInFragment : Fragment() {
         binding.idEditText.setText(signInViewModel.signInIdEditText)
         binding.pwEditText.setText(signInViewModel.signInPwEditText)
 
-        // reset sign up values in ViewModel
-        signInViewModel.resetSignUpValues()
+        // reset create account values in ViewModel
+        signInViewModel.resetCreateAccountValues()
 
         // for id text change listener
         binding.idEditText.addTextChangedListener(object: TextWatcher {
@@ -115,12 +115,12 @@ class SignInFragment : Fragment() {
             signIn(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
         }
 
-        // for sign up button
-        binding.signUpButton.setOnClickListener {
-            val signUpFragment = SignUpFragment()
+        // for create account button
+        binding.createAccountButton.setOnClickListener {
+            val createAccountFragment = CreateAccountFragment()
             activity?.supportFragmentManager?.beginTransaction()!!
                 .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.sign_in_activity_fragment_container, signUpFragment)
+                .replace(R.id.sign_in_activity_fragment_container, createAccountFragment)
                 .addToBackStack(null)
                 .commit()
         }
@@ -253,8 +253,8 @@ class SignInFragment : Fragment() {
         binding.signInProgressBar.visibility = View.VISIBLE
         binding.signInButton.isEnabled = false
 
-        // disable sign up, find id/pw buttons
-        binding.signUpButton.isEnabled = false
+        // disable create account, find id/pw buttons
+        binding.createAccountButton.isEnabled = false
         binding.findIdPwButton.isEnabled = false
     }
 
@@ -265,8 +265,8 @@ class SignInFragment : Fragment() {
         binding.signInProgressBar.visibility = View.GONE
         binding.signInButton.isEnabled = true
 
-        // enable sign up, find id/pw buttons
-        binding.signUpButton.isEnabled = true
+        // enable create account, find id/pw buttons
+        binding.createAccountButton.isEnabled = true
         binding.findIdPwButton.isEnabled = true
     }
 

@@ -1,9 +1,8 @@
-package com.sju18001.petmanagement.ui.signIn.findIdPw
+package com.sju18001.petmanagement.ui.login.findIdPw
 
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater

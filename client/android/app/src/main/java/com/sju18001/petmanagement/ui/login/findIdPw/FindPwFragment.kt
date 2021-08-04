@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.signIn.findIdPw
+package com.sju18001.petmanagement.ui.login.findIdPw
 
 import android.os.Bundle
 import android.text.Editable
@@ -13,10 +13,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFindPwBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
-import com.sju18001.petmanagement.restapi.dto.AccountFindPasswordRequestDto
-import com.sju18001.petmanagement.restapi.dto.AccountFindPasswordResponseDto
-import com.sju18001.petmanagement.restapi.dto.AccountSendAuthCodeRequestDto
-import com.sju18001.petmanagement.restapi.dto.AccountSendAuthCodeResponseDto
+import com.sju18001.petmanagement.restapi.dto.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -175,16 +172,16 @@ class FindPwFragment : Fragment() {
 
     // 코드 전송
     private fun sendAuthCode(email: String){
-        val accountSendAuthCodeRequestDto = AccountSendAuthCodeRequestDto(email)
+        val accountSendAuthCodeRequestDto = SendAuthCodeReqDto(email)
 
         // 버튼 로딩 상태
         setEmailInputButtonLoading(true)
 
-        val call = RetrofitBuilder.getServerApi().sendAuthCodeRequest(accountSendAuthCodeRequestDto)
-        call.enqueue(object: Callback<AccountSendAuthCodeResponseDto> {
+        val call = RetrofitBuilder.getServerApi().sendAuthCodeReq(accountSendAuthCodeRequestDto)
+        call.enqueue(object: Callback<SendAuthCodeResDto> {
             override fun onResponse(
-                call: Call<AccountSendAuthCodeResponseDto>,
-                response: Response<AccountSendAuthCodeResponseDto>
+                call: Call<SendAuthCodeResDto>,
+                response: Response<SendAuthCodeResDto>
             ) {
                 if(!isViewDestroyed){
                     // 버튼 로딩 상태 해제
@@ -200,7 +197,7 @@ class FindPwFragment : Fragment() {
                 }
             }
 
-            override fun onFailure(call: Call<AccountSendAuthCodeResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<SendAuthCodeResDto>, t: Throwable) {
                 if(!isViewDestroyed) {
                     // 버튼 로딩 상태 해제
                     setEmailInputButtonLoading(false)
