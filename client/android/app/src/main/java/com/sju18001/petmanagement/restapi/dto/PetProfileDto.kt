@@ -45,10 +45,10 @@ data class UpdatePetResDto (
     )
 
 // Delete Dto
-data class PetProfileDeleteRequestDto (
+data class DeletePetReqDto (
     val id: Long
     )
 
-data class PetProfileDeleteResponseDto (
-    val message: String
+data class DeletePetResDto (
+    val _metadata: DtoMetadata
     )

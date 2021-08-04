@@ -43,8 +43,8 @@ interface ServerApi {
     @POST("api/pet/update")
     fun updatePetReq(@Body updatePetReqDto: UpdatePetReqDto): Call<UpdatePetResDto>
 
-    @POST("api/pet/profile/delete")
-    fun petProfileDeleteRequest(@Body petProfileDeleteRequestDto: PetProfileDeleteRequestDto): Call<PetProfileDeleteResponseDto>
+    @POST("api/pet/delete")
+    fun deletePetReq(@Body deletePetReqDto: DeletePetReqDto): Call<DeletePetResDto>
 
     // PetSchedule API
     @POST("api/pet/schedule/create")
