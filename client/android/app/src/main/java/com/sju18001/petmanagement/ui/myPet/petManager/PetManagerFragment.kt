@@ -23,11 +23,10 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentPetManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.FetchPetReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetResDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -51,7 +50,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     public var PET_LIST_ORDER: String = "pet_list_id_order"
 
     // variable for storing API call(for cancel)
-    private var petProfileFetchApiCall: Call<FetchPetResDto>? = null
+    private var fetchPetApiCall: Call<FetchPetResDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -102,12 +101,12 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     override fun onResume() {
         super.onResume()
 
-        // call API using Retrofit
-        // TODO: Merge할 때 HanJuK님의 코드로 변경
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+        // create DTO
+        val fetchPetReqDto = FetchPetReqDto( null )
 
-        petProfileFetchApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchPetReq(body)
-        petProfileFetchApiCall!!.enqueue(object: Callback<FetchPetResDto> {
+        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPetReq(fetchPetReqDto)
+        fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<FetchPetResDto>,
@@ -150,7 +149,8 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                 }
                 else {
                     // get error message + show(Toast)
-                    val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
+                    val errorMessage = JSONObject(response.errorBody()!!.charStream().readText())
+                        .getJSONObject("_metadata").getString("message").toString()
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
 
                     // log error message
@@ -302,6 +302,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         _binding = null
 
         // stop api call when fragment is destroyed
-        petProfileFetchApiCall?.cancel()
+        fetchPetApiCall?.cancel()
     }
 }

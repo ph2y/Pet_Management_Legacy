@@ -163,9 +163,11 @@ class PetScheduleEditFragment : Fragment() {
     }
 
     private fun addPetNameList(){
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+        // create DTO
+        val fetchPetReqDto = FetchPetReqDto( null )
 
-        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchPetReq(body)
+        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPetReq(fetchPetReqDto)
         fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
             override fun onResponse(
                 call: Call<FetchPetResDto>,
