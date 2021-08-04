@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateAccountUserInfoBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.dto.SendAuthCodeReqDto
@@ -219,8 +220,7 @@ class CreateAccountUserInfoFragment : Fragment() {
                 }
                 else {
                     // get error message
-                    val errorMessage = JSONObject(response.errorBody()!!.charStream().readText())
-                        .getJSONObject("_metadata").getString("message").toString()
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
 
                     //display error toast message
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
