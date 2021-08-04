@@ -13,8 +13,8 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentPetProfileBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.PetProfileDeleteRequestDto
-import com.sju18001.petmanagement.restapi.dto.PetProfileDeleteResponseDto
+import com.sju18001.petmanagement.restapi.dto.DeletePetReqDto
+import com.sju18001.petmanagement.restapi.dto.DeletePetResDto
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import org.json.JSONObject
 import retrofit2.Call
@@ -31,7 +31,7 @@ class PetProfileFragment : Fragment(){
     private val myPetViewModel: MyPetViewModel by activityViewModels()
 
     // variable for storing API call(for cancel)
-    private var petProfileDeleteApiCall: Call<PetProfileDeleteResponseDto>? = null
+    private var deletePetApiCall: Call<DeletePetResDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -145,16 +145,16 @@ class PetProfileFragment : Fragment(){
         disableButton()
 
         // create DTO
-        val petProfileDeleteRequestDto = PetProfileDeleteRequestDto(
+        val deletePetReqDto = DeletePetReqDto(
             requireActivity().intent.getLongExtra("petId", -1)
         )
 
-        petProfileDeleteApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .petProfileDeleteRequest(petProfileDeleteRequestDto)
-        petProfileDeleteApiCall!!.enqueue(object: Callback<PetProfileDeleteResponseDto> {
+        deletePetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .deletePetReq(deletePetReqDto)
+        deletePetApiCall!!.enqueue(object: Callback<DeletePetResDto> {
             override fun onResponse(
-                call: Call<PetProfileDeleteResponseDto>,
-                response: Response<PetProfileDeleteResponseDto>
+                call: Call<DeletePetResDto>,
+                response: Response<DeletePetResDto>
             ) {
                 // set api state/button to normal
                 myPetViewModel.createUpdateDeletePetApiIsLoading = false
@@ -166,7 +166,8 @@ class PetProfileFragment : Fragment(){
                 }
                 else {
                     // get error message + show(Toast)
-                    val errorMessage = JSONObject(response.errorBody()!!.string().trim()).getString("message")
+                    val errorMessage = JSONObject(response.errorBody()!!.charStream().readText())
+                        .getJSONObject("_metadata").getString("message").toString()
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
 
                     // log error message
@@ -174,7 +175,7 @@ class PetProfileFragment : Fragment(){
                 }
             }
 
-            override fun onFailure(call: Call<PetProfileDeleteResponseDto>, t: Throwable) {
+            override fun onFailure(call: Call<DeletePetResDto>, t: Throwable) {
                 // if the view was destroyed(API call canceled) -> return
                 if(_binding == null) {
                     return
@@ -236,7 +237,7 @@ class PetProfileFragment : Fragment(){
         _binding = null
 
         // stop api call when fragment is destroyed
-        petProfileDeleteApiCall?.cancel()
+        deletePetApiCall?.cancel()
         myPetViewModel.createUpdateDeletePetApiIsLoading = false
     }
 }
