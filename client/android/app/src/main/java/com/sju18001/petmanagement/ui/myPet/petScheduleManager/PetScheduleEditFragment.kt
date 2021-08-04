@@ -142,10 +142,11 @@ class PetScheduleEditFragment : Fragment() {
             binding.timePicker.hour = intent.getIntExtra("hour", 0)
             binding.timePicker.minute = intent.getIntExtra("minute", 0)
             binding.memoEditText.setText(intent.getStringExtra("memo"))
+            
+            // 액션 타이틀
+            binding.actionTitle.text = context?.getText(R.string.pet_schedule_update_title)
         }
 
-        // 액션 타이틀
-        binding.actionTitle.text = context?.getText(R.string.pet_schedule_update_title)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
