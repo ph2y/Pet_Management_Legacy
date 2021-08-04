@@ -75,7 +75,7 @@
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <EditText
-                        android:id="@+id/id_edit_text"
+                        android:id="@+id/username_edit_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentTop="true"

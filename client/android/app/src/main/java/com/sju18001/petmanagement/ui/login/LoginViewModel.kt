@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 
 class LoginViewModel(private val handle: SavedStateHandle): ViewModel() {
     // variables for login
-    var loginIdEditText = handle.get<String>("loginIdEditText")?: ""
+    var loginUsernameEditText = handle.get<String>("loginUsernameEditText")?: ""
         set(value){
-            handle.set("loginIdEditText", value)
+            handle.set("loginUsernameEditText", value)
             field = value
         }
     var loginPwEditText = handle.get<String>("loginPwEditText")?: ""
@@ -39,20 +39,20 @@ class LoginViewModel(private val handle: SavedStateHandle): ViewModel() {
             field = value
         }
 
-        // id/pw
-    var createAccountIdEditText = handle.get<String>("createAccountIdEditText")?: ""
+        // username/password
+    var createAccountUsernameEditText = handle.get<String>("createAccountUsernameEditText")?: ""
         set(value){
-            handle.set("createAccountIdEditText", value)
+            handle.set("createAccountUsernameEditText", value)
             field = value
         }
-    var createAccountIdValid = handle.get<Boolean>("createAccountIdValid")?: false
+    var createAccountUsernameValid = handle.get<Boolean>("createAccountUsernameValid")?: false
         set(value){
-            handle.set("createAccountIdValid", value)
+            handle.set("createAccountUsernameValid", value)
             field = value
         }
-    var createAccountIdIsOverlap = handle.get<Boolean>("createAccountIdIsOverlap")?: false
+    var createAccountUsernameIsOverlap = handle.get<Boolean>("createAccountUsernameIsOverlap")?: false
         set(value){
-            handle.set("createAccountIdIsOverlap", value)
+            handle.set("createAccountUsernameIsOverlap", value)
             field = value
         }
     var createAccountPwEditText = handle.get<String>("createAccountPwEditText")?: ""
@@ -139,9 +139,9 @@ class LoginViewModel(private val handle: SavedStateHandle): ViewModel() {
         createAccountPrivacyCheckBox = false
         createAccountMarketingCheckBox = false
 
-        createAccountIdEditText = ""
-        createAccountIdValid = false
-        createAccountIdIsOverlap = false
+        createAccountUsernameEditText = ""
+        createAccountUsernameValid = false
+        createAccountUsernameIsOverlap = false
         createAccountPwEditText = ""
         createAccountPwValid = false
         createAccountPwCheckEditText = ""

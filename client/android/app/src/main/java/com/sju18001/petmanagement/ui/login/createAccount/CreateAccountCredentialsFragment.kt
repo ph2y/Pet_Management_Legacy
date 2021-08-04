@@ -8,18 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import com.sju18001.petmanagement.databinding.FragmentCreateAccountIdPwBinding
+import com.sju18001.petmanagement.databinding.FragmentCreateAccountCredentialsBinding
 import com.sju18001.petmanagement.ui.login.LoginViewModel
 import java.util.regex.Pattern
 
-class CreateAccountIdPwFragment : Fragment() {
+class CreateAccountCredentialsFragment : Fragment() {
 
     // pattern regex for EditTexts
-    private val patternId: Pattern = Pattern.compile("^[a-z0-9]{5,16}$")
-    private val patternPw: Pattern = Pattern.compile("^[a-zA-Z0-9!@.#$%^&*?_~]{8,20}$")
+    private val patternUsername: Pattern = Pattern.compile("^[a-z0-9]{5,16}$")
+    private val patternPassword: Pattern = Pattern.compile("^[a-zA-Z0-9!@.#$%^&*?_~]{8,20}$")
 
     // variables for view binding
-    private var _binding: FragmentCreateAccountIdPwBinding? = null
+    private var _binding: FragmentCreateAccountCredentialsBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -28,7 +28,7 @@ class CreateAccountIdPwFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // view binding
-        _binding = FragmentCreateAccountIdPwBinding.inflate(inflater, container, false)
+        _binding = FragmentCreateAccountCredentialsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -41,20 +41,20 @@ class CreateAccountIdPwFragment : Fragment() {
         // for state restore(ViewModel)
         restoreState(loginViewModel)
 
-        // for id text change listener
-        binding.idEditText.addTextChangedListener(object: TextWatcher {
+        // for username text change listener
+        binding.usernameEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(patternId.matcher(s).matches()) {
-                    loginViewModel.createAccountIdValid = true
-                    binding.idMessage.visibility = View.GONE
+                if(patternUsername.matcher(s).matches()) {
+                    loginViewModel.createAccountUsernameValid = true
+                    binding.usernameMessage.visibility = View.GONE
                 }
                 else {
-                    loginViewModel.createAccountIdValid = false
-                    binding.idMessage.visibility = View.VISIBLE
+                    loginViewModel.createAccountUsernameValid = false
+                    binding.usernameMessage.visibility = View.VISIBLE
                 }
-                loginViewModel.createAccountIdEditText = s.toString()
-                loginViewModel.createAccountIdIsOverlap = false
-                binding.idMessageOverlap.visibility = View.GONE
+                loginViewModel.createAccountUsernameEditText = s.toString()
+                loginViewModel.createAccountUsernameIsOverlap = false
+                binding.usernameMessageOverlap.visibility = View.GONE
                 checkIsValid(loginViewModel)
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -64,7 +64,7 @@ class CreateAccountIdPwFragment : Fragment() {
         // for pw text change listener
         binding.pwEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(patternPw.matcher(s).matches()) {
+                if(patternPassword.matcher(s).matches()) {
                     loginViewModel.createAccountPwValid = true
                     binding.pwMessage.visibility = View.GONE
                 }
@@ -107,7 +107,7 @@ class CreateAccountIdPwFragment : Fragment() {
     }
 
     private fun checkIsValid(loginViewModel: LoginViewModel) {
-        if(loginViewModel.createAccountIdValid && loginViewModel.createAccountPwValid && loginViewModel.createAccountPwCheckValid) {
+        if(loginViewModel.createAccountUsernameValid && loginViewModel.createAccountPwValid && loginViewModel.createAccountPwCheckValid) {
             (parentFragment as CreateAccountFragment).enableNextButton()
         }
         else{
@@ -116,8 +116,8 @@ class CreateAccountIdPwFragment : Fragment() {
     }
 
     private fun restoreState(loginViewModel: LoginViewModel) {
-        if(binding.idEditText.text.toString() != loginViewModel.createAccountIdEditText) {
-            binding.idEditText.setText(loginViewModel.createAccountIdEditText)
+        if(binding.usernameEditText.text.toString() != loginViewModel.createAccountUsernameEditText) {
+            binding.usernameEditText.setText(loginViewModel.createAccountUsernameEditText)
         }
         if(binding.pwEditText.text.toString() != loginViewModel.createAccountPwEditText) {
             binding.pwEditText.setText(loginViewModel.createAccountPwEditText)
@@ -126,8 +126,8 @@ class CreateAccountIdPwFragment : Fragment() {
             binding.pwCheckEditText.setText(loginViewModel.createAccountPwCheckEditText)
         }
 
-        if(!loginViewModel.createAccountIdValid && loginViewModel.createAccountIdEditText != "") {
-            binding.idMessage.visibility = View.VISIBLE
+        if(!loginViewModel.createAccountUsernameValid && loginViewModel.createAccountUsernameEditText != "") {
+            binding.usernameMessage.visibility = View.VISIBLE
         }
         if(!loginViewModel.createAccountPwValid && loginViewModel.createAccountPwEditText != "") {
             binding.pwMessage.visibility = View.VISIBLE
@@ -135,8 +135,8 @@ class CreateAccountIdPwFragment : Fragment() {
         if(!loginViewModel.createAccountPwCheckValid && loginViewModel.createAccountPwCheckEditText != "") {
             binding.pwCheckMessage.visibility = View.VISIBLE
         }
-        if(loginViewModel.createAccountIdIsOverlap) {
-            binding.idMessageOverlap.visibility = View.VISIBLE
+        if(loginViewModel.createAccountUsernameIsOverlap) {
+            binding.usernameMessageOverlap.visibility = View.VISIBLE
         }
 
         (parentFragment as CreateAccountFragment).showPreviousButton()

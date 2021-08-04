@@ -35,11 +35,11 @@ class CreateAccountFragment : Fragment() {
 
     // const variables for fragment tags
     private val FRAGMENT_TAG_TERMS: String = "terms"
-    private val FRAGMENT_TAG_ID_PW: String = "id_pw"
+    private val FRAGMENT_TAG_USERNAME_PASSWORD: String = "username_password"
     private val FRAGMENT_TAG_USER_INFO: String = "user_info"
 
     // const variables for error message
-    private val MESSAGE_ID_OVERLAP: String = "Username already exists"
+    private val MESSAGE_USERNAME_OVERLAP: String = "Username already exists"
     private val MESSAGE_PHONE_OVERLAP: String = "Phone number already exists"
     private val MESSAGE_EMAIL_OVERLAP: String = "Email already exists"
 
@@ -112,10 +112,10 @@ class CreateAccountFragment : Fragment() {
 
             if(childFragmentManager.fragments[0].tag != FRAGMENT_TAG_USER_INFO) {
                 if(childFragmentManager.fragments[0].tag == FRAGMENT_TAG_TERMS) {
-                    nextFragment = CreateAccountIdPwFragment()
-                    nextFragmentTag = FRAGMENT_TAG_ID_PW
+                    nextFragment = CreateAccountCredentialsFragment()
+                    nextFragmentTag = FRAGMENT_TAG_USERNAME_PASSWORD
                 }
-                else if(childFragmentManager.fragments[0].tag == FRAGMENT_TAG_ID_PW) {
+                else if(childFragmentManager.fragments[0].tag == FRAGMENT_TAG_USERNAME_PASSWORD) {
                     nextFragment = CreateAccountUserInfoFragment()
                     nextFragmentTag = FRAGMENT_TAG_USER_INFO
                 }
@@ -215,7 +215,7 @@ class CreateAccountFragment : Fragment() {
 
     private fun createAccount(loginViewModel: LoginViewModel) {
         // create create account request Dto
-        val accountCreateAccountRequestDto = CreateAccountReqDto(loginViewModel.createAccountIdEditText,
+        val accountCreateAccountRequestDto = CreateAccountReqDto(loginViewModel.createAccountUsernameEditText,
             loginViewModel.createAccountPwEditText, loginViewModel.createAccountEmailEditText, loginViewModel.createAccountPhoneEditText,
             "#", loginViewModel.createAccountMarketingCheckBox, null)
 
@@ -251,9 +251,9 @@ class CreateAccountFragment : Fragment() {
                             .showOverlapMessage(loginViewModel)
                         setNextButtonToNormal()
                     }
-                    // if id overlap -> go to id/pw fragment + show message
-                    else if(errorMessage == MESSAGE_ID_OVERLAP) {
-                        loginViewModel.createAccountIdIsOverlap = true
+                    // if username overlap -> go to credentials fragment + show message
+                    else if(errorMessage == MESSAGE_USERNAME_OVERLAP) {
+                        loginViewModel.createAccountUsernameIsOverlap = true
                         childFragmentManager.popBackStack()
                     }
                     // if phone overlap + show message

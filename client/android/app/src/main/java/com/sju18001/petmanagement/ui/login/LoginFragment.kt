@@ -79,16 +79,16 @@ class LoginFragment : Fragment() {
         val loginViewModel: LoginViewModel by activityViewModels()
 
         // restore EditText values after view destruction
-        binding.idEditText.setText(loginViewModel.loginIdEditText)
+        binding.usernameEditText.setText(loginViewModel.loginUsernameEditText)
         binding.pwEditText.setText(loginViewModel.loginPwEditText)
 
         // reset create account values in ViewModel
         loginViewModel.resetCreateAccountValues()
 
         // for id text change listener
-        binding.idEditText.addTextChangedListener(object: TextWatcher {
+        binding.usernameEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                loginViewModel.loginIdEditText = s.toString()
+                loginViewModel.loginUsernameEditText = s.toString()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -112,7 +112,7 @@ class LoginFragment : Fragment() {
             Util().hideKeyboard(requireActivity())
 
             // call login function
-            login(binding.idEditText.text.toString(), binding.pwEditText.text.toString())
+            login(binding.usernameEditText.text.toString(), binding.pwEditText.text.toString())
         }
 
         // for create account button
