@@ -8,11 +8,11 @@ import android.view.ViewGroup
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentMyPetBinding
 import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
 import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleManagerFragment
 
-private val TAB_ELEMENTS = listOf("반려동물 관리", "스케쥴러")
 
 class MyPetFragment : Fragment() {
     private var _binding: FragmentMyPetBinding? = null
@@ -28,6 +28,8 @@ class MyPetFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val TAB_ELEMENTS = listOf(requireContext().getText(R.string.pet_manager_title), requireContext().getText(R.string.pet_schedule_manager_title))
 
         val tabLayout = binding.tabLayout
         val viewPager = binding.viewPager.also{

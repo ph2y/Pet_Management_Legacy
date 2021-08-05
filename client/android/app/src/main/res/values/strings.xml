@@ -71,6 +71,7 @@
     <string name="recover_password_result_title">비밀번호 찾기 결과 안내</string>
     <string name="recover_password_result_description">회원님의 임시 비밀번호를 이메일로 전송하였습니다. 로그인 후 비밀번호를 꼭 변경해주세요.</string>
 
+    <string name="pet_manager_title">반려동물 관리</string>
     <string name="create_pet_title">펫 추가</string>
     <string name="update_pet_title">펫 정보 수정</string>
     <string name="pet_message">상태메시지:</string>
@@ -107,7 +108,8 @@
     <string name="welcome_page1_decline_button">다음에 할게요</string>
     <string name="welcome_page1_accept_button">좋아요!</string>
 
-    <!-- PetScheduleEdit Fragment -->
+    <!-- PetScheduleManager -->
+    <string name="pet_schedule_manager_title">일정 관리</string>
     <string name="pet_schedule_create_title">일정 추가</string>
     <string name="pet_schedule_update_title">일정 편집</string>
     <string name="pet_name_list_title">반려동물을 선택하세요.</string>
