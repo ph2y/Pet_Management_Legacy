@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -18,18 +19,20 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePetBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.CreatePetReqDto
-import com.sju18001.petmanagement.restapi.dto.CreatePetResDto
-import com.sju18001.petmanagement.restapi.dto.UpdatePetReqDto
-import com.sju18001.petmanagement.restapi.dto.UpdatePetResDto
+import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
-import org.json.JSONObject
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 import java.time.LocalDate
 import java.util.*
+
 
 class CreateUpdatePetFragment : Fragment() {
 
@@ -45,7 +48,9 @@ class CreateUpdatePetFragment : Fragment() {
 
     // variables for storing API call(for cancel)
     private var createPetApiCall: Call<CreatePetResDto>? = null
-    private var updatePetResDto: Call<UpdatePetResDto>? = null
+    private var updatePetApiCall: Call<UpdatePetResDto>? = null
+    private var updatePetPhotoApiCall: Call<UpdatePetPhotoResDto>? = null
+    private var fetchPetApiCall: Call<FetchPetResDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -77,7 +82,10 @@ class CreateUpdatePetFragment : Fragment() {
         if(myPetViewModel.petBirthYearValue == null) { myPetViewModel.petBirthYearValue = calendar.get(Calendar.YEAR) }
         if(myPetViewModel.petBirthMonthValue == null) { myPetViewModel.petBirthMonthValue = calendar.get(Calendar.MONTH) }
         if(myPetViewModel.petBirthDateValue == null) { myPetViewModel.petBirthDateValue = calendar.get(Calendar.DAY_OF_MONTH) }
-        binding.petBirthInput.init(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH),
+        binding.petBirthInput.init(
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH),
         ) { _, year, monthOfYear, dayOfMonth ->
             myPetViewModel.petBirthYearValue = year
             myPetViewModel.petBirthMonthValue = monthOfYear + 1
@@ -171,7 +179,7 @@ class CreateUpdatePetFragment : Fragment() {
     // create pet
     private fun createPet() {
         // set api state/button to loading
-        myPetViewModel.createUpdateDeletePetApiIsLoading = true
+        myPetViewModel.petManagerApiIsLoading = true
         setButtonToLoading()
 
         // for birth value
@@ -201,16 +209,12 @@ class CreateUpdatePetFragment : Fragment() {
                 response: Response<CreatePetResDto>
             ) {
                 if(response.isSuccessful) {
-                    // set api state/button to normal
-                    myPetViewModel.createUpdateDeletePetApiIsLoading = false
-                    setButtonToNormal()
-
-                    Toast.makeText(context, context?.getText(R.string.create_pet_successful), Toast.LENGTH_LONG).show()
-                    activity?.finish()
+                    // get created pet id + update pet photo
+                    getIdAndUpdatePhoto()
                 }
                 else {
                     // set api state/button to normal
-                    myPetViewModel.createUpdateDeletePetApiIsLoading = false
+                    myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
 
                     // get error message + show(Toast)
@@ -229,7 +233,7 @@ class CreateUpdatePetFragment : Fragment() {
                 }
 
                 // set api state/button to normal
-                myPetViewModel.createUpdateDeletePetApiIsLoading = false
+                myPetViewModel.petManagerApiIsLoading = false
                 setButtonToNormal()
 
                 // show(Toast)/log error message
@@ -242,7 +246,7 @@ class CreateUpdatePetFragment : Fragment() {
     // update pet
     private fun updatePet() {
         // set api state/button to loading
-        myPetViewModel.createUpdateDeletePetApiIsLoading = true
+        myPetViewModel.petManagerApiIsLoading = true
         setButtonToLoading()
 
         // for birth value
@@ -265,26 +269,21 @@ class CreateUpdatePetFragment : Fragment() {
             binding.petMessageInput.text.toString()
         )
 
-        updatePetResDto = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        updatePetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
             .updatePetReq(updatePetReqDto)
-        updatePetResDto!!.enqueue(object: Callback<UpdatePetResDto> {
+        updatePetApiCall!!.enqueue(object: Callback<UpdatePetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<UpdatePetResDto>,
                 response: Response<UpdatePetResDto>
             ) {
                 if(response.isSuccessful) {
-                    // set api state/button to normal
-                    myPetViewModel.createUpdateDeletePetApiIsLoading = false
-                    setButtonToNormal()
-
-                    Toast.makeText(context, context?.getText(R.string.update_pet_successful), Toast.LENGTH_LONG).show()
-                    savePetDataForPetProfile()
-                    fragmentManager?.popBackStack()
+                    // update pet photo
+                    updatePetPhoto(myPetViewModel.petIdValue!!, myPetViewModel.petPhotoPathValue)
                 }
                 else {
                     // set api state/button to normal
-                    myPetViewModel.createUpdateDeletePetApiIsLoading = false
+                    myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
 
                     // get error message + show(Toast)
@@ -303,8 +302,100 @@ class CreateUpdatePetFragment : Fragment() {
                 }
 
                 // set api state/button to normal
-                myPetViewModel.createUpdateDeletePetApiIsLoading = false
+                myPetViewModel.petManagerApiIsLoading = false
                 setButtonToNormal()
+
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
+    // update pet photo
+    private fun updatePetPhoto(id: Long, path: String) {
+        updatePetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .updatePetPhotoReq(id, MultipartBody.Part.createFormData("file", "file.png",
+                RequestBody.create(MediaType.parse("image/jpeg"), File(path))))
+        updatePetPhotoApiCall!!.enqueue(object: Callback<UpdatePetPhotoResDto> {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(
+                call: Call<UpdatePetPhotoResDto>,
+                response: Response<UpdatePetPhotoResDto>
+            ) {
+                if(response.isSuccessful) {
+                    // delete copied file
+                    File(path).delete()
+
+                    // set api state/button to normal
+                    myPetViewModel.petManagerApiIsLoading = false
+                    setButtonToNormal()
+
+                    // show success message
+                    Toast.makeText(context, context?.getText(R.string.update_pet_successful), Toast.LENGTH_LONG).show()
+
+                    // return to previous activity/fragment
+                    if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+                        savePetDataForPetProfile()
+                        fragmentManager?.popBackStack()
+                    }
+                    else { activity?.finish() }
+                }
+                else {
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<UpdatePetPhotoResDto>, t: Throwable) {
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
+    // get created pet id + update pet photo
+    private fun getIdAndUpdatePhoto() {
+        // create DTO
+        val fetchPetReqDto = FetchPetReqDto( null )
+
+        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPetReq(fetchPetReqDto)
+        fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(
+                call: Call<FetchPetResDto>,
+                response: Response<FetchPetResDto>
+            ) {
+                if(response.isSuccessful) {
+                    val petIdList: ArrayList<Long> = ArrayList()
+                    response.body()?.petList?.map {
+                        petIdList.add(it.id)
+                    }
+
+                    // update pet photo
+                    updatePetPhoto(petIdList[petIdList.size - 1], myPetViewModel.petPhotoPathValue)
+                }
+                else {
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
+                // if the view was destroyed(API call canceled) -> return
+                if(_binding == null) {
+                    return
+                }
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -335,7 +426,7 @@ class CreateUpdatePetFragment : Fragment() {
     // for loading check
     private fun checkIsLoading() {
         // if loading -> set button to loading
-        if(myPetViewModel.createUpdateDeletePetApiIsLoading) {
+        if(myPetViewModel.petManagerApiIsLoading) {
             setButtonToLoading()
         }
         else {
@@ -350,9 +441,9 @@ class CreateUpdatePetFragment : Fragment() {
             binding.backButtonTitle.text = context?.getText(R.string.update_pet_title)
         }
 
-        if(myPetViewModel.petImageValue != null) {
-            binding.petImageInput.setImageURI(myPetViewModel.petImageValue)
-        }
+//        if(myPetViewModel.petImageValue != null) {
+//            binding.petImageInput.setImageURI(myPetViewModel.petImageValue)
+//        }
         binding.petNameInput.setText(myPetViewModel.petNameValue)
         binding.petMessageInput.setText(myPetViewModel.petMessageValue)
         if(myPetViewModel.petGenderValue != null) {
@@ -402,8 +493,11 @@ class CreateUpdatePetFragment : Fragment() {
         // get + save pet image value
         if (resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_IMAGE){
             if (data != null) {
-                myPetViewModel.petImageValue = data.data
-                binding.petImageInput.setImageURI(data.data)
+                // copy selected photo and get real path
+                myPetViewModel.petPhotoPathValue = ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!)
+
+                // set photo to view
+                binding.petImageInput.setImageBitmap(BitmapFactory.decodeFile(myPetViewModel.petPhotoPathValue))
             }
         }
     }
@@ -414,7 +508,9 @@ class CreateUpdatePetFragment : Fragment() {
 
         // stop api call when fragment is destroyed
         createPetApiCall?.cancel()
-        updatePetResDto?.cancel()
-        myPetViewModel.createUpdateDeletePetApiIsLoading = false
+        updatePetApiCall?.cancel()
+        updatePetPhotoApiCall?.cancel()
+        fetchPetApiCall?.cancel()
+        myPetViewModel.petManagerApiIsLoading = false
     }
 }

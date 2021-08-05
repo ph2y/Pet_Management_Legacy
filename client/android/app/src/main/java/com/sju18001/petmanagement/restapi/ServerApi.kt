@@ -1,10 +1,10 @@
 package com.sju18001.petmanagement.restapi
 
 import com.sju18001.petmanagement.restapi.dto.*
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ServerApi {
 
@@ -45,6 +45,11 @@ interface ServerApi {
 
     @POST("api/pet/delete")
     fun deletePetReq(@Body deletePetReqDto: DeletePetReqDto): Call<DeletePetResDto>
+
+    // Pet Photo API
+    @Multipart
+    @POST("api/pet/photo/update")
+    fun updatePetPhotoReq(@Part("id") id: Long, @Part file: MultipartBody.Part): Call<UpdatePetPhotoResDto>
 
     // PetSchedule API
     @POST("api/pet/schedule/create")

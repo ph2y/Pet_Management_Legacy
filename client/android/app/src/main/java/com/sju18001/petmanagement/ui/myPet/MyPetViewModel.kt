@@ -1,6 +1,5 @@
 package com.sju18001.petmanagement.ui.myPet
 
-import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
@@ -18,9 +17,9 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("loadedFromIntent", value)
             field = value
         }
-    var petImageValueProfile = handle.get<Int>("petImageValueProfile")
+    var petPhotoValueProfile = handle.get<Int>("petPhotoValueProfile")
         set(value){
-            handle.set("petImageValueProfile", value)
+            handle.set("petPhotoValueProfile", value)
             field = value
         }
     var petNameValueProfile = handle.get<String>("petNameValueProfile")?: ""
@@ -76,9 +75,9 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("petIdValue", value)
             field = value
         }
-    var petImageValue = handle.get<Uri>("petImageValue")
+    var petPhotoPathValue = handle.get<String>("petPhotoPathValue")?: ""
         set(value){
-            handle.set("petImageValue", value)
+            handle.set("petPhotoPathValue", value)
             field = value
         }
     var petMessageValue = handle.get<String>("petMessageValue")?: ""
@@ -126,9 +125,9 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("petBirthIsYearOnlyValue", value)
             field = value
         }
-    var createUpdateDeletePetApiIsLoading = handle.get<Boolean>("createUpdateDeletePetApiIsLoading")?: false
+    var petManagerApiIsLoading = handle.get<Boolean>("petManagerApiIsLoading")?: false
         set(value) {
-            handle.set("createUpdateDeletePetApiIsLoading", value)
+            handle.set("petManagerApiIsLoading", value)
         }
 
     // variables for schedule manager
