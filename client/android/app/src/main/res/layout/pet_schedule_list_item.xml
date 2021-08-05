@@ -92,6 +92,7 @@
                 android:maxLines="2"
                 android:ellipsize="end"
                 android:text="캣츠비, 노브랜드 사료"
+                android:gravity="right"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/pet_list_text_view"
                 app:layout_constraintBottom_toBottomOf="parent"
