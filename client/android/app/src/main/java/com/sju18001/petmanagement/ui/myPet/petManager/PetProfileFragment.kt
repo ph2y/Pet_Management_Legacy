@@ -17,7 +17,6 @@ import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.DeletePetReqDto
 import com.sju18001.petmanagement.restapi.dto.DeletePetResDto
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -131,7 +130,7 @@ class PetProfileFragment : Fragment(){
     // for loading check
     private fun checkIsLoading() {
         // if loading -> set button to loading
-        if(myPetViewModel.createUpdateDeletePetApiIsLoading) {
+        if(myPetViewModel.petManagerApiIsLoading) {
             disableButton()
         }
         else {
@@ -142,7 +141,7 @@ class PetProfileFragment : Fragment(){
     // delete pet
     private fun deletePet() {
         // set api state/button to loading
-        myPetViewModel.createUpdateDeletePetApiIsLoading = true
+        myPetViewModel.petManagerApiIsLoading = true
         disableButton()
 
         // create DTO
@@ -158,7 +157,7 @@ class PetProfileFragment : Fragment(){
                 response: Response<DeletePetResDto>
             ) {
                 // set api state/button to normal
-                myPetViewModel.createUpdateDeletePetApiIsLoading = false
+                myPetViewModel.petManagerApiIsLoading = false
                 enableButton()
 
                 if(response.isSuccessful) {
@@ -182,7 +181,7 @@ class PetProfileFragment : Fragment(){
                 }
 
                 // set api state/button to normal
-                myPetViewModel.createUpdateDeletePetApiIsLoading = false
+                myPetViewModel.petManagerApiIsLoading = false
                 enableButton()
 
                 // show(Toast)/log error message
@@ -194,7 +193,7 @@ class PetProfileFragment : Fragment(){
 
     private fun savePetDataForPetProfile() {
         myPetViewModel.loadedFromIntent = true
-        myPetViewModel.petImageValueProfile = requireActivity().intent.getIntExtra("petImage", R.drawable.sample1)
+        myPetViewModel.petPhotoValueProfile = requireActivity().intent.getIntExtra("petImage", R.drawable.sample1)
         myPetViewModel.petNameValueProfile = requireActivity().intent.getStringExtra("petName").toString()
         myPetViewModel.petBirthValueProfile = requireActivity().intent.getStringExtra("petBirth").toString()
         myPetViewModel.petSpeciesValueProfile = requireActivity().intent.getStringExtra("petSpecies").toString()
@@ -205,7 +204,7 @@ class PetProfileFragment : Fragment(){
     }
 
     private fun setViewsWithPetData() {
-        myPetViewModel.petImageValueProfile?.let { binding.petImage.setImageResource(it) }
+        myPetViewModel.petPhotoValueProfile?.let { binding.petImage.setImageResource(it) }
         binding.petName.text = myPetViewModel.petNameValueProfile
         binding.petBirth.text = myPetViewModel.petBirthValueProfile
         binding.petSpecies.text = myPetViewModel.petSpeciesValueProfile
@@ -218,7 +217,7 @@ class PetProfileFragment : Fragment(){
 
     private fun savePetDataForPetUpdate() {
         myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
-        myPetViewModel.petImageValue = null
+//        myPetViewModel.petImageValue = null
         myPetViewModel.petMessageValue = myPetViewModel.petMessageValueProfile
         myPetViewModel.petNameValue = myPetViewModel.petNameValueProfile
         myPetViewModel.petGenderValue = myPetViewModel.petGenderValueProfile == "♀"
@@ -238,6 +237,6 @@ class PetProfileFragment : Fragment(){
 
         // stop api call when fragment is destroyed
         deletePetApiCall?.cancel()
-        myPetViewModel.createUpdateDeletePetApiIsLoading = false
+        myPetViewModel.petManagerApiIsLoading = false
     }
 }
