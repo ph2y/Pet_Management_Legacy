@@ -88,7 +88,12 @@ class PetScheduleEditFragment : Fragment() {
             if(intent.getStringExtra("fragmentType") == "create_pet_schedule"){
                 createPetSchedule()
             }else{
-                updatePetSchedule(intent.getLongExtra("id", 0), intent.getBooleanExtra("enabled", false))
+                val enabled = intent.getBooleanExtra("enabled", false)
+                if(enabled){
+                    PetScheduleNotification.cancelNotificationWorkManager(requireContext(), intent.getStringExtra("originalTime"))
+                    PetScheduleNotification.enqueueNotificationWorkManager(requireContext(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString())
+                }
+                updatePetSchedule(intent.getLongExtra("id", 0), enabled)
             }
         }
 

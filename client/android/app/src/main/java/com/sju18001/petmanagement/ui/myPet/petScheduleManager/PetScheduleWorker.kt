@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.controller
+package com.sju18001.petmanagement.ui.myPet.petScheduleManager
 
 import android.content.Context
 import android.util.Log

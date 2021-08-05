@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.myPet.petScheduleManager
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
@@ -16,7 +17,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.*
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.controller.PetScheduleWorker
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetScheduleManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -33,7 +33,6 @@ import retrofit2.Response
 import java.time.Duration
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
-import kotlin.math.abs
 
 class PetScheduleManagerFragment : Fragment() {
     private var _binding: FragmentPetScheduleManagerBinding? = null
@@ -106,18 +105,20 @@ class PetScheduleManagerFragment : Fragment() {
                     .putExtra("id", data.id)
                     .putExtra("petIdList", data.petIdList)
                     .putExtra("time", data.time)
+                    .putExtra("originalTime", data.time)
                     .putExtra("memo", data.memo)
                     .putExtra("enabled", data.enabled)
                 startActivity(myPetActivityIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
 
-            override fun askForDeleteItem(position: Int, id: Long) {
+            override fun askForDeleteItem(position: Int, item: PetSchedule) {
                 val builder = AlertDialog.Builder(activity)
                 builder.setMessage("일정을 삭제하시겠습니까?")
                     .setPositiveButton(
                         R.string.confirm, DialogInterface.OnClickListener { _, _ ->
-                            deletePetSchedule(id)
+                            PetScheduleNotification.cancelNotificationWorkManager(requireContext(), item.time)
+                            deletePetSchedule(item.id)
                             adapter.removeItem(position)
                             adapter.notifyDataSetChanged()
                         }
@@ -174,35 +175,8 @@ class PetScheduleManagerFragment : Fragment() {
                 })
             }
 
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun enqueueNotificationWorkManager(time: String) {
-                // Get time difference in Minutes
-                // 가령, 현재 시간이 12시이고, time이 13시이면 minDiff는 60입니다.
-                // 즉, minDiff분 뒤에 Notification을 시작합니다.
-                val now = LocalTime.now()
-                val parsedTime = LocalTime.parse(time)
-
-                var minDiff = Duration.between(now, parsedTime).toMinutes()
-                if(minDiff < 0){
-                    minDiff += 60 * 24
-                }
-
-                // Build WorkRequest
-                val notificationWorkRequest: PeriodicWorkRequest =
-                    PeriodicWorkRequestBuilder<PetScheduleWorker>(24, TimeUnit.HOURS)
-                        .setInitialDelay(minDiff, TimeUnit.MINUTES)
-                        .build()
-
-                // Enqueue the work
-                WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
-                    time,
-                    ExistingPeriodicWorkPolicy.KEEP,
-                    notificationWorkRequest
-                )
-            }
-
-            override fun cancelNotificationWorkManager(time: String) {
-                WorkManager.getInstance(requireContext()).cancelAllWorkByTag(time)
+            override fun getContext(): Context {
+                return requireContext()
             }
         }
 

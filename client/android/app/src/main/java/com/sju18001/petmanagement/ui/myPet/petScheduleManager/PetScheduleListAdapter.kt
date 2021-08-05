@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPet.petScheduleManager
 
+import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +16,10 @@ import java.time.LocalTime
 
 interface PetScheduleListAdapterInterface{
     fun startPetScheduleEditFragmentForUpdate(data: PetSchedule)
-    fun askForDeleteItem(position: Int, id: Long)
+    fun askForDeleteItem(position: Int, item: PetSchedule)
     fun deletePetSchedule(id: Long)
     fun updatePetSchedule(data: PetSchedule)
-    fun enqueueNotificationWorkManager(time: String)
-    fun cancelNotificationWorkManager(time: String)
+    fun getContext(): Context
 }
 
 class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, private val petNameForId: HashMap<Long, String>) : RecyclerView.Adapter<PetScheduleListAdapter.ViewHolder>(){
@@ -54,7 +54,7 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
 
         // 아이템 Long click
         holder.itemView.setOnLongClickListener { _ ->
-            petScheduleListAdapterInterface.askForDeleteItem(position, dataSet[position].id)
+            petScheduleListAdapterInterface.askForDeleteItem(position, dataSet[position])
             true
         }
 
@@ -65,10 +65,10 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
 
             if(isChecked){
                 // Notification ON
-                petScheduleListAdapterInterface.enqueueNotificationWorkManager(dataSet[position].time)
+                PetScheduleNotification.enqueueNotificationWorkManager(petScheduleListAdapterInterface.getContext(), dataSet[position].time)
             }else{
                 // Notification OFF
-                petScheduleListAdapterInterface.cancelNotificationWorkManager(dataSet[position].time)
+                PetScheduleNotification.cancelNotificationWorkManager(petScheduleListAdapterInterface.getContext(), dataSet[position].time)
             }
         }
     }

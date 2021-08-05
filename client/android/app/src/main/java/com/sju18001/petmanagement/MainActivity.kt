@@ -4,18 +4,30 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.FetchPetScheduleResDto
 import com.sju18001.petmanagement.ui.community.CommunityFragment
 import com.sju18001.petmanagement.ui.map.MapFragment
 import com.sju18001.petmanagement.ui.myPage.MyPageFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetFragment
 import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
+import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleNotification
+import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleWorker
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.security.MessageDigest
 import java.util.*
 
@@ -142,6 +154,9 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
+        
+        // 모든 알람 취소하고, PetSchedule에 따라 알람 등록
+        synchronizeNotificationWorkManager()
     }
 
     // for saving currently active fragment index
@@ -166,5 +181,35 @@ class MainActivity : AppCompatActivity() {
         } catch(e: Exception) {
             Log.e("Not found", e.toString())
         }
+    }
+
+    private fun synchronizeNotificationWorkManager(){
+        // 모든 알람 취소
+        PetScheduleNotification.cancelAllWorkManager(applicationContext)
+        
+        // PetSchedule Fetch한 뒤, 알람 등록
+        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+        
+        val fetchPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchPetScheduleReq(body)
+        fetchPetScheduleApiCall!!.enqueue(object: Callback<FetchPetScheduleResDto> {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(
+                call: Call<FetchPetScheduleResDto>,
+                response: Response<FetchPetScheduleResDto>
+            ) {
+                if(response.isSuccessful){
+                    // ON인 것들에 대해 알람 설정
+                    response.body()?.petScheduleList?.map{
+                        if(it.enabled){
+                            PetScheduleNotification.enqueueNotificationWorkManager(applicationContext, it.time)
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<FetchPetScheduleResDto>, t: Throwable) {
+                // Do nothing
+            }
+        })
     }
 }
