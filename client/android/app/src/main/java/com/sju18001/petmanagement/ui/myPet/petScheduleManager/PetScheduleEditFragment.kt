@@ -91,7 +91,10 @@ class PetScheduleEditFragment : Fragment() {
                 val enabled = intent.getBooleanExtra("enabled", false)
                 if(enabled){
                     PetScheduleNotification.cancelNotificationWorkManager(requireContext(), intent.getStringExtra("originalTime"))
-                    PetScheduleNotification.enqueueNotificationWorkManager(requireContext(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString())
+                    PetScheduleNotification.enqueueNotificationWorkManager(requireContext(),
+                        LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(),
+                        binding.memoEditText.text.toString()
+                    )
                 }
                 updatePetSchedule(intent.getLongExtra("id", 0), enabled)
             }
@@ -140,7 +143,7 @@ class PetScheduleEditFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun setViewForUpdate(){
-        // 스케줄 데이터 불러오기
+        // 일정 데이터 불러오기
         val intent = requireActivity().intent
 
         if(intent.getStringExtra("fragmentType") == "update_pet_schedule"){

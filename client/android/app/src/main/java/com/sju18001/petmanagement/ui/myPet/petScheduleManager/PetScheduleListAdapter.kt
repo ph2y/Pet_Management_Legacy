@@ -65,7 +65,7 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
 
             if(isChecked){
                 // Notification ON
-                PetScheduleNotification.enqueueNotificationWorkManager(petScheduleListAdapterInterface.getContext(), dataSet[position].time)
+                PetScheduleNotification.enqueueNotificationWorkManager(petScheduleListAdapterInterface.getContext(), dataSet[position].time, dataSet[position].memo)
             }else{
                 // Notification OFF
                 PetScheduleNotification.cancelNotificationWorkManager(petScheduleListAdapterInterface.getContext(), dataSet[position].time)

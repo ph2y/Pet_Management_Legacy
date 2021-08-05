@@ -155,7 +155,7 @@ class MainActivity : AppCompatActivity() {
             false
         }
         
-        // 모든 알람 취소하고, PetSchedule에 따라 알람 등록
+        // 모든 알람 취소하고, PetSchedule에 따라 알림 등록
         synchronizeNotificationWorkManager()
     }
 
@@ -184,10 +184,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun synchronizeNotificationWorkManager(){
-        // 모든 알람 취소
+        // 모든 알림 취소
         PetScheduleNotification.cancelAllWorkManager(applicationContext)
         
-        // PetSchedule Fetch한 뒤, 알람 등록
+        // PetSchedule Fetch한 뒤, 알림 등록
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
         
         val fetchPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchPetScheduleReq(body)
@@ -198,10 +198,10 @@ class MainActivity : AppCompatActivity() {
                 response: Response<FetchPetScheduleResDto>
             ) {
                 if(response.isSuccessful){
-                    // ON인 것들에 대해 알람 설정
+                    // ON인 것들에 대해 알림 설정
                     response.body()?.petScheduleList?.map{
                         if(it.enabled){
-                            PetScheduleNotification.enqueueNotificationWorkManager(applicationContext, it.time)
+                            PetScheduleNotification.enqueueNotificationWorkManager(applicationContext, it.time, it.memo)
                         }
                     }
                 }

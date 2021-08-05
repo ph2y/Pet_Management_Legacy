@@ -4,10 +4,7 @@ import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.work.*
 import java.time.Duration
 import java.time.LocalTime
 import java.util.concurrent.TimeUnit
@@ -15,7 +12,7 @@ import java.util.concurrent.TimeUnit
 class PetScheduleNotification {
     companion object{
         @RequiresApi(Build.VERSION_CODES.O)
-        fun enqueueNotificationWorkManager(context: Context, time: String) {
+        fun enqueueNotificationWorkManager(context: Context, time: String, memo: String?) {
             // Get time difference in Minutes
             // 가령, 현재 시간이 12시이고, time이 13시이면 minDiff는 60입니다.
             // 즉, minDiff분 뒤에 Notification을 시작합니다.
@@ -31,6 +28,7 @@ class PetScheduleNotification {
             val notificationWorkRequest: PeriodicWorkRequest =
                 PeriodicWorkRequestBuilder<PetScheduleWorker>(24, TimeUnit.HOURS)
                     .setInitialDelay(minDiff, TimeUnit.MINUTES)
+                    .setInputData(workDataOf("MEMO" to memo))
                     .build()
 
             // Enqueue the work
