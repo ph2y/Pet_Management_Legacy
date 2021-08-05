@@ -92,7 +92,7 @@ class PetScheduleEditFragment : Fragment() {
                 if(enabled){
                     PetScheduleNotification.cancelNotificationWorkManager(requireContext(), intent.getStringExtra("originalTime"))
                     PetScheduleNotification.enqueueNotificationWorkManager(requireContext(),
-                        LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(),
+                        LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString()+":00",
                         binding.memoEditText.text.toString()
                     )
                 }
@@ -266,7 +266,7 @@ class PetScheduleEditFragment : Fragment() {
         if(intent.getStringExtra("fragmentType") == "update_pet_schedule"){
             // Initialize ViewModel for PetIdList
             intent.getStringExtra("petIdList")?.let{
-                val petIdListOfString = it.split(",")
+                val petIdListOfString = it.split(", ")
 
                 // Set item(id) in petIdList true
                 for (i in 0 until adapter.itemCount) {
