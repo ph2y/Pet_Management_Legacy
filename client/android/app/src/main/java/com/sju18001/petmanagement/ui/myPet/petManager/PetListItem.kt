@@ -12,12 +12,12 @@ class PetListItem {
     private var mPetSpecies: String? = null
     private var mPetBreed: String? = null
     private var mPetGender: Boolean? = null
-    private var mPetPhotoUrl: Int? = null
+    private var mPetPhotoUrl: String? = null
     private var mPetMessage: String? = null
 
     // set values for the item
     public fun setValues(petId: Long, petName: String, petBirth: LocalDate?, petYearOnly: Boolean?, petSpecies: String?,
-                         petBreed: String?, petGender: Boolean?, petPhotoUrl: Int?, petMessage: String?) {
+                         petBreed: String?, petGender: Boolean?, petPhotoUrl: String?, petMessage: String?) {
         mPetId = petId
         mPetName = petName
         mPetBirth = petBirth
@@ -51,7 +51,7 @@ class PetListItem {
     public fun getPetGender() : Boolean? {
         return mPetGender
     }
-    public fun getPetPhotoUrl() : Int? {
+    public fun getPetPhotoUrl() : String? {
         return mPetPhotoUrl
     }
     public fun getPetMessage() : String? {

@@ -17,6 +17,11 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("loadedFromIntent", value)
             field = value
         }
+    var petPhotoUrlProfile = handle.get<String>("petPhotoUrlProfile")?: ""
+        set(value){
+            handle.set("petPhotoUrlProfile", value)
+            field = value
+        }
     var petNameValueProfile = handle.get<String>("petNameValueProfile")?: ""
         set(value){
             handle.set("petNameValueProfile", value)
@@ -68,6 +73,11 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
     var petIdValue = handle.get<Long>("petIdValue")
         set(value) {
             handle.set("petIdValue", value)
+            field = value
+        }
+    var petPhotoUrl = handle.get<String>("petPhotoUrl")?: ""
+        set(value){
+            handle.set("petPhotoUrl", value)
             field = value
         }
     var petPhotoPathValue = handle.get<String>("petPhotoPathValue")?: ""

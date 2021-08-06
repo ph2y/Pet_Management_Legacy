@@ -23,7 +23,6 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.File
 
 class PetProfileFragment : Fragment(){
 
@@ -232,6 +231,7 @@ class PetProfileFragment : Fragment(){
 
     private fun savePetDataForPetProfile() {
         myPetViewModel.loadedFromIntent = true
+        myPetViewModel.petPhotoUrlProfile = requireActivity().intent.getStringExtra("petPhotoUrl").toString()
         myPetViewModel.petNameValueProfile = requireActivity().intent.getStringExtra("petName").toString()
         myPetViewModel.petBirthValueProfile = requireActivity().intent.getStringExtra("petBirth").toString()
         myPetViewModel.petSpeciesValueProfile = requireActivity().intent.getStringExtra("petSpecies").toString()
@@ -242,7 +242,12 @@ class PetProfileFragment : Fragment(){
     }
 
     private fun setViewsWithPetData() {
-        fetchPetPhoto(requireActivity().intent.getLongExtra("petId", -1))
+        if(myPetViewModel.petPhotoUrlProfile != "null") {
+            fetchPetPhoto(requireActivity().intent.getLongExtra("petId", -1))
+        }
+        else {
+            binding.petPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
+        }
         binding.petName.text = myPetViewModel.petNameValueProfile
         binding.petBirth.text = myPetViewModel.petBirthValueProfile
         binding.petSpecies.text = myPetViewModel.petSpeciesValueProfile
@@ -255,6 +260,7 @@ class PetProfileFragment : Fragment(){
 
     private fun savePetDataForPetUpdate() {
         myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
+        myPetViewModel.petPhotoUrl = myPetViewModel.petPhotoUrlProfile
         myPetViewModel.petPhotoPathValue = ""
         myPetViewModel.petMessageValue = myPetViewModel.petMessageValueProfile
         myPetViewModel.petNameValue = myPetViewModel.petNameValueProfile
