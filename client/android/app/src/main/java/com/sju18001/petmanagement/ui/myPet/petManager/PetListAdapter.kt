@@ -73,7 +73,12 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         }
 
         // set values to views
-        fetchPetPhoto(currentItem.getPetId()!!, holder.petPhoto)
+        if(currentItem.getPetPhotoUrl() != null) {
+            fetchPetPhoto(currentItem.getPetId()!!, holder.petPhoto)
+        }
+        else {
+            holder.petPhoto.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
+        }
         holder.petName.text = petNameInfo
         holder.petBirth.text = petBirth
 
@@ -87,6 +92,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         holder.itemView.setOnClickListener {
             // set pet values to Intent
             val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
+            petProfileIntent.putExtra("petPhotoUrl", currentItem.getPetPhotoUrl())
             petProfileIntent.putExtra("petId", currentItem.getPetId())
             petProfileIntent.putExtra("petName", currentItem.getPetName())
             petProfileIntent.putExtra("petBirth", petBirth)

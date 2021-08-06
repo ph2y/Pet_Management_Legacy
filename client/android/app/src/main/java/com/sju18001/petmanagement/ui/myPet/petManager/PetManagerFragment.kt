@@ -125,7 +125,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                             it.species,
                             it.breed,
                             it.gender,
-                            R.drawable.sample1,
+                            it.photoUrl,
                             it.message
                         )
                         petListApi.add(item)
