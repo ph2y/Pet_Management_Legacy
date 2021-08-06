@@ -53,6 +53,11 @@ data class DeletePetResDto (
     val _metadata: DtoMetadata
     )
 
+// Fetch Pet Photo
+data class FetchPetPhotoReqDto (
+    val id: Long
+    )
+
 // Update Photo Dto
 data class UpdatePetPhotoResDto (
     val _metadata: DtoMetadata,
