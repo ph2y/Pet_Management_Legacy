@@ -199,7 +199,10 @@ class PetScheduleManagerFragment : Fragment() {
                 if(response.isSuccessful){
                     // dataSet에 값 저장
                     response.body()?.petScheduleList?.map{
-                        dataSet.add(it)
+                        dataSet.add(PetSchedule(
+                            it.id, it.username, it.petList, it.time, it.memo, it.enabled,
+                            it.petIdList.replace(" ", "")
+                        ))
                     }
                     dataSet.sortBy{ it.time }
 

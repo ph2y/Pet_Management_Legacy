@@ -266,7 +266,7 @@ class PetScheduleEditFragment : Fragment() {
         if(intent.getStringExtra("fragmentType") == "update_pet_schedule"){
             // Initialize ViewModel for PetIdList
             intent.getStringExtra("petIdList")?.let{
-                val petIdListOfString = it.split(", ")
+                val petIdListOfString = it.replace(" ", "").split(",")
 
                 // Set item(id) in petIdList true
                 for (i in 0 until adapter.itemCount) {

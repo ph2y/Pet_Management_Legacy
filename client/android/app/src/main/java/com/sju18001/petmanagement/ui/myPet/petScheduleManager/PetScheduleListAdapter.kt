@@ -90,7 +90,7 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
         if(petIdList.isNullOrEmpty()) return ""
 
         var petNames = ""
-        val petIdListOfString: List<String> = petIdList.split(", ")
+        val petIdListOfString: List<String> = petIdList.replace(" ", "").split(",")
 
         // "이름, 이름, " 식으로 String 추가함
         for(id in petIdListOfString) {
