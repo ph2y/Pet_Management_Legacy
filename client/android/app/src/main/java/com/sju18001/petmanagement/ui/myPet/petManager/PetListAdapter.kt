@@ -3,7 +3,9 @@ package com.sju18001.petmanagement.ui.myPet.petManager
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.util.Log
 import android.view.*
@@ -22,6 +24,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
@@ -92,7 +95,13 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         holder.itemView.setOnClickListener {
             // set pet values to Intent
             val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
-            petProfileIntent.putExtra("petPhotoUrl", currentItem.getPetPhotoUrl())
+            if(currentItem.getPetPhotoUrl() != null) {
+                val bitmap = (holder.petPhoto.drawable as BitmapDrawable).bitmap
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                val photoByteArray = stream.toByteArray()
+                petProfileIntent.putExtra("photoByteArray", photoByteArray)
+            }
             petProfileIntent.putExtra("petId", currentItem.getPetId())
             petProfileIntent.putExtra("petName", currentItem.getPetName())
             petProfileIntent.putExtra("petBirth", petBirth)

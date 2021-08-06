@@ -1,7 +1,9 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -26,10 +28,10 @@ import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.time.LocalDate
 import java.util.*
@@ -49,7 +51,6 @@ class CreateUpdatePetFragment : Fragment() {
     // variables for storing API call(for cancel)
     private var createPetApiCall: Call<CreatePetResDto>? = null
     private var updatePetApiCall: Call<UpdatePetResDto>? = null
-    private var fetchPetPhotoApiCall: Call<ResponseBody>? = null
     private var updatePetPhotoApiCall: Call<UpdatePetPhotoResDto>? = null
     private var fetchPetApiCall: Call<FetchPetResDto>? = null
 
@@ -313,40 +314,6 @@ class CreateUpdatePetFragment : Fragment() {
         })
     }
 
-    // fetch pet photo
-    private fun fetchPetPhoto(id: Long) {
-        // create DTO
-        val fetchPetPhotoReqDto = FetchPetPhotoReqDto(id)
-
-        fetchPetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .fetchPetPhotoReq(fetchPetPhotoReqDto)
-        fetchPetPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
-            override fun onResponse(
-                call: Call<ResponseBody>,
-                response: Response<ResponseBody>
-            ) {
-                if(response.isSuccessful) {
-                    // set fetched photo to view
-                    binding.petPhotoInput.setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
-                }
-                else {
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
-            }
-        })
-    }
-
     // update pet photo
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updatePetPhoto(id: Long, path: String) {
@@ -366,9 +333,6 @@ class CreateUpdatePetFragment : Fragment() {
                     if(response.isSuccessful) {
                         // delete copied file
                         File(path).delete()
-
-                        // save photo url for pet profile
-                        myPetViewModel.petPhotoUrlProfile = response.body()!!.fileUrl.toString()
 
                         // close after success
                         closeAfterSuccess()
@@ -481,8 +445,10 @@ class CreateUpdatePetFragment : Fragment() {
         // if photo not selected, and is in update mode
         else if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
             // if photo is not null -> fetch photo else set default
-            if(myPetViewModel.petPhotoUrl != "null") {
-                fetchPetPhoto(myPetViewModel.petIdValue!!)
+            if(myPetViewModel.petPhotoByteArray != null) {
+                val bitmap = BitmapFactory.decodeByteArray(myPetViewModel.petPhotoByteArray, 0,
+                    myPetViewModel.petPhotoByteArray!!.size)
+                binding.petPhotoInput.setImageBitmap(bitmap)
             }
             else {
                 binding.petPhotoInput.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
@@ -539,6 +505,12 @@ class CreateUpdatePetFragment : Fragment() {
     // save pet data to ViewModel(for pet profile)
     @RequiresApi(Build.VERSION_CODES.O)
     private fun savePetDataForPetProfile() {
+        val bitmap = (binding.petPhotoInput.drawable as BitmapDrawable).bitmap
+        val stream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+        val photoByteArray = stream.toByteArray()
+        myPetViewModel.petPhotoByteArrayProfile = photoByteArray
+
         myPetViewModel.petNameValueProfile = binding.petNameInput.text.toString()
         val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){
             "${binding.petBirthInput.year}년 ${(binding.petBirthInput.month + 1).toString().padStart(2, '0')}" +
@@ -587,7 +559,6 @@ class CreateUpdatePetFragment : Fragment() {
         // stop api call when fragment is destroyed
         createPetApiCall?.cancel()
         updatePetApiCall?.cancel()
-        fetchPetPhotoApiCall?.cancel()
         updatePetPhotoApiCall?.cancel()
         fetchPetApiCall?.cancel()
         myPetViewModel.petManagerApiIsLoading = false
