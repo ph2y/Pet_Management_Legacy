@@ -17,9 +17,9 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("loadedFromIntent", value)
             field = value
         }
-    var petPhotoUrlProfile = handle.get<String>("petPhotoUrlProfile")?: ""
+    var petPhotoByteArrayProfile = handle.get<ByteArray>("petPhotoByteArrayProfile")
         set(value){
-            handle.set("petPhotoUrlProfile", value)
+            handle.set("petPhotoByteArrayProfile", value)
             field = value
         }
     var petNameValueProfile = handle.get<String>("petNameValueProfile")?: ""
@@ -75,9 +75,9 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("petIdValue", value)
             field = value
         }
-    var petPhotoUrl = handle.get<String>("petPhotoUrl")?: ""
+    var petPhotoByteArray = handle.get<ByteArray>("petPhotoByteArray")
         set(value){
-            handle.set("petPhotoUrl", value)
+            handle.set("petPhotoByteArray", value)
             field = value
         }
     var petPhotoPathValue = handle.get<String>("petPhotoPathValue")?: ""
