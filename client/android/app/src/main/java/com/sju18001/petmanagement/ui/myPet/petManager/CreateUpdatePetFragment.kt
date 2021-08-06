@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
@@ -26,6 +27,7 @@ import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,11 +35,10 @@ import java.io.File
 import java.time.LocalDate
 import java.util.*
 
-
 class CreateUpdatePetFragment : Fragment() {
 
     // constant variables
-    private val PICK_IMAGE = 0
+    private val PICK_PHOTO = 0
 
     // variables for view binding
     private var _binding: FragmentCreateUpdatePetBinding? = null
@@ -49,6 +50,7 @@ class CreateUpdatePetFragment : Fragment() {
     // variables for storing API call(for cancel)
     private var createPetApiCall: Call<CreatePetResDto>? = null
     private var updatePetApiCall: Call<UpdatePetResDto>? = null
+    private var fetchPetPhotoApiCall: Call<ResponseBody>? = null
     private var updatePetPhotoApiCall: Call<UpdatePetPhotoResDto>? = null
     private var fetchPetApiCall: Call<FetchPetResDto>? = null
 
@@ -95,12 +97,12 @@ class CreateUpdatePetFragment : Fragment() {
         // for view restore
         restoreState()
 
-        // for pet image picker
-        binding.petImageInputButton.setOnClickListener {
+        // for pet photo picker
+        binding.petPhotoInputButton.setOnClickListener {
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_IMAGE)
+            startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
         }
 
         // for EditText text change listeners
@@ -312,6 +314,40 @@ class CreateUpdatePetFragment : Fragment() {
         })
     }
 
+    // fetch pet photo
+    private fun fetchPetPhoto(id: Long) {
+        // create DTO
+        val fetchPetPhotoReqDto = FetchPetPhotoReqDto(id)
+
+        fetchPetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPetPhotoReq(fetchPetPhotoReqDto)
+        fetchPetPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
+            override fun onResponse(
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
+                if(response.isSuccessful) {
+                    // set fetched photo to view
+                    binding.petPhotoInput.setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
+                }
+                else {
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
     // update pet photo
     private fun updatePetPhoto(id: Long, path: String) {
         updatePetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
@@ -441,9 +477,16 @@ class CreateUpdatePetFragment : Fragment() {
             binding.backButtonTitle.text = context?.getText(R.string.update_pet_title)
         }
 
-//        if(myPetViewModel.petImageValue != null) {
-//            binding.petImageInput.setImageURI(myPetViewModel.petImageValue)
-//        }
+        // set selected photo(if any)
+        if(myPetViewModel.petPhotoPathValue != "") {
+            binding.petPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPetViewModel.petPhotoPathValue))
+        }
+
+        // if photo not selected, and is in edit mode -> fetch pet photo
+        else if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+            fetchPetPhoto(myPetViewModel.petIdValue!!)
+        }
+
         binding.petNameInput.setText(myPetViewModel.petNameValue)
         binding.petMessageInput.setText(myPetViewModel.petMessageValue)
         if(myPetViewModel.petGenderValue != null) {
@@ -486,18 +529,23 @@ class CreateUpdatePetFragment : Fragment() {
         myPetViewModel.petMessageValueProfile = binding.petMessageInput.text.toString()
     }
 
-    // for image select
+    // for photo select
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // get + save pet image value
-        if (resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_IMAGE){
+        // get + save pet photo value
+        if (resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_PHOTO){
             if (data != null) {
+                // delete previously copied file(if any)
+                if(myPetViewModel.petPhotoPathValue != "") {
+                    File(myPetViewModel.petPhotoPathValue).delete()
+                }
+
                 // copy selected photo and get real path
                 myPetViewModel.petPhotoPathValue = ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!)
 
                 // set photo to view
-                binding.petImageInput.setImageBitmap(BitmapFactory.decodeFile(myPetViewModel.petPhotoPathValue))
+                binding.petPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPetViewModel.petPhotoPathValue))
             }
         }
     }
@@ -506,9 +554,15 @@ class CreateUpdatePetFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
+        // delete copied file(if any)
+        if(isRemoving || requireActivity().isFinishing) {
+            File(myPetViewModel.petPhotoPathValue).delete()
+        }
+
         // stop api call when fragment is destroyed
         createPetApiCall?.cancel()
         updatePetApiCall?.cancel()
+        fetchPetPhotoApiCall?.cancel()
         updatePetPhotoApiCall?.cancel()
         fetchPetApiCall?.cancel()
         myPetViewModel.petManagerApiIsLoading = false

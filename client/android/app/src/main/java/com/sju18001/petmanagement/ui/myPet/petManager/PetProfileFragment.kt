@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
 import android.app.AlertDialog
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -16,10 +17,13 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.DeletePetReqDto
 import com.sju18001.petmanagement.restapi.dto.DeletePetResDto
+import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 class PetProfileFragment : Fragment(){
 
@@ -32,6 +36,7 @@ class PetProfileFragment : Fragment(){
 
     // variable for storing API call(for cancel)
     private var deletePetApiCall: Call<DeletePetResDto>? = null
+    private var fetchPetPhotoApiCall: Call<ResponseBody>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -138,6 +143,40 @@ class PetProfileFragment : Fragment(){
         }
     }
 
+    // fetch pet photo
+    private fun fetchPetPhoto(id: Long) {
+        // create DTO
+        val fetchPetPhotoReqDto = FetchPetPhotoReqDto(id)
+
+        fetchPetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPetPhotoReq(fetchPetPhotoReqDto)
+        fetchPetPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
+            override fun onResponse(
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
+                if(response.isSuccessful) {
+                    // set fetched photo to view
+                    binding.petPhoto.setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
+                }
+                else {
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
     // delete pet
     private fun deletePet() {
         // set api state/button to loading
@@ -193,7 +232,6 @@ class PetProfileFragment : Fragment(){
 
     private fun savePetDataForPetProfile() {
         myPetViewModel.loadedFromIntent = true
-        myPetViewModel.petPhotoValueProfile = requireActivity().intent.getIntExtra("petImage", R.drawable.sample1)
         myPetViewModel.petNameValueProfile = requireActivity().intent.getStringExtra("petName").toString()
         myPetViewModel.petBirthValueProfile = requireActivity().intent.getStringExtra("petBirth").toString()
         myPetViewModel.petSpeciesValueProfile = requireActivity().intent.getStringExtra("petSpecies").toString()
@@ -204,7 +242,7 @@ class PetProfileFragment : Fragment(){
     }
 
     private fun setViewsWithPetData() {
-        myPetViewModel.petPhotoValueProfile?.let { binding.petImage.setImageResource(it) }
+        fetchPetPhoto(requireActivity().intent.getLongExtra("petId", -1))
         binding.petName.text = myPetViewModel.petNameValueProfile
         binding.petBirth.text = myPetViewModel.petBirthValueProfile
         binding.petSpecies.text = myPetViewModel.petSpeciesValueProfile
@@ -217,7 +255,7 @@ class PetProfileFragment : Fragment(){
 
     private fun savePetDataForPetUpdate() {
         myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
-//        myPetViewModel.petImageValue = null
+        myPetViewModel.petPhotoPathValue = ""
         myPetViewModel.petMessageValue = myPetViewModel.petMessageValueProfile
         myPetViewModel.petNameValue = myPetViewModel.petNameValueProfile
         myPetViewModel.petGenderValue = myPetViewModel.petGenderValueProfile == "♀"
@@ -237,6 +275,7 @@ class PetProfileFragment : Fragment(){
 
         // stop api call when fragment is destroyed
         deletePetApiCall?.cancel()
+        fetchPetPhotoApiCall?.cancel()
         myPetViewModel.petManagerApiIsLoading = false
     }
 }

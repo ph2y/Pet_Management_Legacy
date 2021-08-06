@@ -3,14 +3,25 @@ package com.sju18001.petmanagement.ui.myPet.petManager
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Build
+import android.util.Log
 import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.time.LocalDate
 import java.time.Period
 import java.time.format.DateTimeFormatter
@@ -21,8 +32,11 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
 
     private var resultList = emptyList<PetListItem>()
 
+    // session manager for user token
+    private lateinit var sessionManager: SessionManager
+
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val petImage: ImageView = itemView.findViewById(R.id.pet_image)
+        val petPhoto: ImageView = itemView.findViewById(R.id.pet_photo)
         val petName: TextView = itemView.findViewById(R.id.pet_name)
         val petBirth: TextView = itemView.findViewById(R.id.pet_birth)
         val dragHandle: ImageView = itemView.findViewById(R.id.drag_handle)
@@ -30,6 +44,10 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.pet_list_item, parent, false)
+
+        // get session manager
+        sessionManager = SessionManager(context)
+
         return HistoryListViewHolder(itemView)
     }
 
@@ -55,7 +73,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         }
 
         // set values to views
-        currentItem.getPetPhotoUrl()?.let { holder.petImage.setImageResource(it) }
+        fetchPetPhoto(currentItem.getPetId()!!, holder.petPhoto)
         holder.petName.text = petNameInfo
         holder.petBirth.text = petBirth
 
@@ -70,7 +88,6 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
             // set pet values to Intent
             val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
             petProfileIntent.putExtra("petId", currentItem.getPetId())
-            petProfileIntent.putExtra("petImage", currentItem.getPetPhotoUrl())
             petProfileIntent.putExtra("petName", currentItem.getPetName())
             petProfileIntent.putExtra("petBirth", petBirth)
             petProfileIntent.putExtra("petSpecies", currentItem.getPetSpecies())
@@ -116,6 +133,39 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
     }
     override fun onRowSelected(itemViewHolder: HistoryListViewHolder) {}
     override fun onRowClear(itemViewHolder: HistoryListViewHolder) {}
+
+    // fetch pet photo
+    private fun fetchPetPhoto(id: Long, view: View) {
+        // create DTO
+        val fetchPetPhotoReqDto = FetchPetPhotoReqDto(id)
+
+        RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPetPhotoReq(fetchPetPhotoReqDto).enqueue(object: Callback<ResponseBody> {
+            override fun onResponse(
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
+                if(response.isSuccessful) {
+                    // set fetched photo to view
+                    (view as ImageView).setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
+                }
+                else {
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
 
     public fun setResult(result: List<PetListItem>){
         this.resultList = result
