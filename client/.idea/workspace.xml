@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:feature" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:feature" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="26773560-2341-42e4-b4be-84977d31b401" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/restapi/SessionManager.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/restapi/dto/PetProfileDto.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/api/PetProfileController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/application/PetProfileService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/dao/Pet.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/dao/PetRepository.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/dto/PetProfileCreateRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/dto/PetProfileCreateResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/dto/PetProfileDeleteRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/dto/PetProfileDeleteResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/dto/PetProfileFetchRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/dto/PetProfileFetchResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/dto/PetProfileUpdateRequestDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../server/src/main/java/com/sju18/petmanagement/domain/pet/dto/PetProfileUpdateResponseDto.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/restapi/AccountDto.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/restapi/ServerApi.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/restapi/ServerApi.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/restapi/dto/AccountDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/restapi/dto/AccountDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/myPet/AddPetFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/myPet/AddPetFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/myPet/MyPetFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/myPet/MyPetFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/myPet/MyPetListAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/myPet/MyPetListAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/myPet/MyPetListItem.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/myPet/MyPetListItem.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/signIn/SignInFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/signIn/SignInFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/signIn/SignUpFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/java/com/sju18001/petmanagement/ui/signIn/SignUpFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/drawable/ic_baseline_arrow_back_36.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/drawable/ic_baseline_arrow_back_36.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/android/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/android/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/android/build.gradle" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1vnWbOCnXEETvgkB8ExolDqgHSa" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/android" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="26773560-2341-42e4-b4be-84977d31b401" name="Default Changelist" comment="" />
+      <created>1627198406006</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1627198406006</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="740" y="275" key="FileChooserDialogImpl" timestamp="1627198422939">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="740" y="275" key="FileChooserDialogImpl/-1920.0.1536.824/0.0.1920.1040@0.0.1920.1040" timestamp="1627198422939" />
+  </component>
+</project>

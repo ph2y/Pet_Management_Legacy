@@ -6,10 +6,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceFragmentCompat
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentMyPageBinding
 
-class MyPageFragment : Fragment() {
+class MyPageFragment : PreferenceFragmentCompat() {
 
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        setPreferencesFromResource(R.xml.preferences, rootKey)
+    }
+    /*
     private lateinit var myPageViewModel: MyPageViewModel
     private var _binding: FragmentMyPageBinding? = null
 
@@ -35,4 +41,5 @@ class MyPageFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+     */
 }

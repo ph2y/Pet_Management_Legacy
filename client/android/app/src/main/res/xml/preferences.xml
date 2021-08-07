@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <Preference
+        app:key="account"
+        app:title="계정"
+        app:summary="내 계정 설정"/>
+
+    <Preference
+        app:key="notification"
+        app:title="알림"
+        app:summary="앱 내 각종 알림 설정"/>
+
+    <SwitchPreferenceCompat
+        app:key="map"
+        app:title="수신 동의"/>
+</PreferenceScreen>
