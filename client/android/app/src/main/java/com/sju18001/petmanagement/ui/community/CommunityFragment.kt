@@ -72,7 +72,9 @@ class CommunityFragment : Fragment() {
     private fun updatePosts(){
         val items = getFetchedPost()
         adapter.addItems(items)
-        adapter.notifyDataSetChanged()
+        binding.communityHomeRecyclerView.post{
+            adapter.notifyDataSetChanged()
+        }
     }
     
     private fun getFetchedPost(): List<CommunityPost>{
