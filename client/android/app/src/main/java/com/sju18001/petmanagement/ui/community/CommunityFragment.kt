@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.databinding.FragmentCommunityBinding
 import com.sju18001.petmanagement.restapi.dao.CommunityPost
 import com.sju18001.petmanagement.ui.map.CommunityViewModel
-import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleListAdapter
 
 class CommunityFragment : Fragment() {
 
@@ -78,7 +77,8 @@ class CommunityFragment : Fragment() {
     
     private fun getFetchedPost(): List<CommunityPost>{
         // TODO: 서버의 fetch post 기능이 구현되면 적용할 것
-        val item = CommunityPost("rachmaninoff", "url", "몽자", listOf(), "테스트용!", 25)
-        return listOf<CommunityPost>(item, item, item, item, item)
+        val item1 = CommunityPost("rachmaninoff", "url", "몽자", listOf(), "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.", 25)
+        val item2 = CommunityPost("liszt", "url", "탱이", listOf(), "item2", 128)
+        return listOf(item1, item2, item1, item2, item1)
     }
 }
