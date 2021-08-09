@@ -7,7 +7,7 @@
     tools:context=".ui.community.comment.CommunityCommentFragment">
 
     <RelativeLayout
-        android:id="@+id/back_button_layout"
+        android:id="@+id/layout_back_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,7 +30,7 @@
             android:layout_toEndOf="@id/back_button"
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
-            android:textSize="24dp"
+            android:textSize="20dp"
             android:textStyle="bold"
             android:text="@string/comment"/>
     </RelativeLayout>
@@ -40,11 +40,12 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/back_button_layout"
+        app:layout_constraintTop_toBottomOf="@id/layout_back_button"
         app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintBottom_toTopOf="@id/layout_comment_bottom"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_comment_bottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
