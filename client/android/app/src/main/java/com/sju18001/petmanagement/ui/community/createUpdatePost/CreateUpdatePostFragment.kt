@@ -2,8 +2,9 @@ package com.sju18001.petmanagement.ui.community.createUpdatePost
 
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +13,15 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
 
 class CreateUpdatePostFragment : Fragment() {
 
@@ -22,12 +29,15 @@ class CreateUpdatePostFragment : Fragment() {
     private val PICK_PHOTO = 0
     private val PICK_VIDEO = 1
 
+    // variable for ViewModel
+    private val createUpdatePostViewModel: CreateUpdatePostViewModel by activityViewModels()
+
     // variables for view binding
     private var _binding: FragmentCreateUpdatePostBinding? = null
     private val binding get() = _binding!!
 
-    // variable for ViewModel
-    val createUpdatePostViewModel: CreateUpdatePostViewModel by activityViewModels()
+    // variables for RecyclerView
+    private lateinit var adapter: PhotoVideoListAdapter
 
     // variables for storing API call(for cancel)
     // TODO
@@ -49,7 +59,15 @@ class CreateUpdatePostFragment : Fragment() {
     ): View? {
         // view binding
         _binding = FragmentCreateUpdatePostBinding.inflate(inflater, container, false)
-        return binding.root
+        val root: View = binding.root
+
+        // initialize RecyclerView
+        adapter = PhotoVideoListAdapter(createUpdatePostViewModel, requireContext())
+        binding.photosAndVideosRecyclerView.adapter = adapter
+        binding.photosAndVideosRecyclerView.layoutManager = LinearLayoutManager(activity)
+        (binding.photosAndVideosRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL;
+
+        return root
     }
 
     override fun onStart() {
@@ -58,7 +76,7 @@ class CreateUpdatePostFragment : Fragment() {
         // for view restore
         // TODO
 
-        // for post image/video picker
+        // for post photo/video picker
         binding.uploadPhotosAndVideosButton.setOnClickListener {
             val dialog = Dialog(requireActivity())
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -87,21 +105,56 @@ class CreateUpdatePostFragment : Fragment() {
         binding.backButton.setOnClickListener {
             activity?.finish()
         }
+
+        // hide keyboard when touch outside
+        binding.fragmentCreateUpdatePostLayout.setOnClickListener{ Util.hideKeyboard(requireActivity()) }
     }
 
-    // for image/video select
+    // for photo/video select
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         // get + save pet photo value
         if(resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_PHOTO) {
             if(data != null) {
-                Log.d("test", "image")
+                // copy selected photo and get real path
+                createUpdatePostViewModel.photoVideoPathList
+                        .add(ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!))
+
+                // create bytearray + add to ViewModel
+                val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoVideoPathList.last())
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                val photoByteArray = stream.toByteArray()
+                createUpdatePostViewModel.photoVideoByteArrayList.add(photoByteArray)
+
+                // save thumbnail
+                val thumbnail = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
+                createUpdatePostViewModel.thumbnailList.add(thumbnail)
+
+                // update RecyclerView
+                adapter.setResult(createUpdatePostViewModel.thumbnailList)
             }
         }
         else if(resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_VIDEO) {
             if(data != null) {
-                Log.d("test", "video")
+                // copy selected photo and get real path
+                createUpdatePostViewModel.photoVideoPathList
+                        .add(ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!))
+
+                val video = FileInputStream(File(createUpdatePostViewModel.photoVideoPathList.last()))
+                val stream = ByteArrayOutputStream()
+                val buffer = ByteArray(1024)
+                var n: Int
+                while (-1 != video.read(buffer).also { n = it }) stream.write(buffer, 0, n)
+                val videoByteArray = stream.toByteArray()
+                createUpdatePostViewModel.photoVideoByteArrayList.add(videoByteArray)
+
+                // save thumbnail
+                createUpdatePostViewModel.thumbnailList.add(null)
+
+                // update RecyclerView
+                adapter.setResult(createUpdatePostViewModel.thumbnailList)
             }
         }
     }
