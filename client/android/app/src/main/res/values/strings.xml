@@ -117,7 +117,8 @@
     <!-- Create Update Post Fragment -->
     <string name="create_post_title">글 쓰기</string>
     <string name="update_post_title">글 수정</string>
-    <string name="upload_photos_and_videos">사진/동영상 업로드</string>
+    <string name="upload_photo_label">사진</string>
+    <string name="upload_video_label">동영상</string>
     <string name="write_post_hint">내용을 입력하세요.</string>
 
 </resources>
