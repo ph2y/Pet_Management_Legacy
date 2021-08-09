@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <PreferenceCategory android:title="@string/theme_preferences">
+        <Preference
+            app:key="light_theme"
+            app:title="@string/light_theme"
+            app:allowDividerAbove="true" />
+        <Preference
+            app:key="dark_theme"
+            app:title="@string/dark_theme"
+            app:allowDividerAbove="true" />
+        <Preference
+            app:key="system_theme"
+            app:title="@string/system_theme"
+            app:allowDividerAbove="true" />
+    </PreferenceCategory>
+</PreferenceScreen>

@@ -120,4 +120,26 @@
     <string name="grooming">미용</string>
     <string name="shop">샵</string>
     <string name="hospital">병원</string>
+
+    <!-- MyPage Fragment -->
+    <string name="preferences_title">설정</string>
+    <string name="info_version_title">버전 및 정보</string>
+    <string name="preferences">환경 설정</string>
+    <string name="notification_preferences">알림 설정</string>
+    <string name="theme_preferences">테마 설정</string>
+    <string name="policy">약관 및 정책</string>
+    <string name="license">라이센스</string>
+    <string name="version">현재 버전</string>
+
+    <string name="map_radius">지도 반경 설정</string>
+
+    <string name="feed_notification">피드 알림</string>
+    <string name="info_notification">정보 알림</string>
+    <string name="ad_notification">광고 알림</string>
+
+    <string name="light_theme">라이트 테마</string>
+    <string name="dark_theme">다크 테마</string>
+    <string name="system_theme">시스템 테마</string>
+
+    <string name="account">계정</string>
 </resources>
