@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
@@ -34,6 +35,7 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         val contentTextView: TextView = view.findViewById(R.id.text_content)
         val timeTextView: TextView = view.findViewById(R.id.text_time)
         val replyTextView: TextView = view.findViewById(R.id.text_reply)
+        val createCommentButton: ImageButton = view.findViewById(R.id.button_create_comment)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -85,6 +87,10 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
 
         holder.replyTextView.setOnClickListener {
             // TODO: 답글 달기
+        }
+
+        holder.createCommentButton.setOnClickListener {
+            // TODO: 댓글/답글 CREATE
         }
     }
 
