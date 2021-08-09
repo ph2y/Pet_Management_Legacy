@@ -27,8 +27,9 @@ import java.util.Locale;
 public class PetService {
     private final MessageSource msgSrc = MessageConfig.getPetMessageSource();
     private final PetRepository petRepository;
+    private final PetScheduleCascadeService petScheduleCascadeServ;
     private final AccountService accountServ;
-    private final FileService fileService;
+    private final FileService fileServ;
 
     // CREATE
     @Transactional
@@ -51,7 +52,7 @@ public class PetService {
         petRepository.save(pet);
 
         // 반려동물 파일 저장소 생성
-        fileService.createPetFileStorage(owner.getId(), pet.getId());
+        fileServ.createPetFileStorage(owner.getId(), pet.getId());
     }
 
     // READ
@@ -137,7 +138,7 @@ public class PetService {
         // 해당 유저의 계정 스토리지에 프로필 사진 저장
         String fileUrl = null;
         if (uploadedFile != null) {
-            fileUrl = fileService.savePetPhoto(currentAccount.getId(), currentPet.getId(), uploadedFile);
+            fileUrl = fileServ.savePetPhoto(currentAccount.getId(), currentPet.getId(), uploadedFile);
 
             // 파일정보 DB 데이터 업데이트
             currentPet.setPhotoUrl(fileUrl);
@@ -156,7 +157,8 @@ public class PetService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
                 ));
-        fileService.deletePetFileStorage(owner.getId(), pet.getId());
+        fileServ.deletePetFileStorage(owner.getId(), pet.getId());
+        petScheduleCascadeServ.deletePetCascadeToPetSchedule(pet);
         petRepository.delete(pet);
     }
 }
