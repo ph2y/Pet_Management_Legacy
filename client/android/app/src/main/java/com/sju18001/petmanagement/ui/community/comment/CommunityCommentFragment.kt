@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
 import com.sju18001.petmanagement.restapi.dao.Comment
@@ -51,6 +52,16 @@ class CommunityCommentFragment : Fragment() {
         binding.recyclerViewComment?.let{
             it.adapter = adapter
             it.layoutManager = LinearLayoutManager(activity)
+
+            // 스크롤하여, 최하단에 위치할 시 comment 추가 로드
+            it.addOnScrollListener(object: RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if(!recyclerView.canScrollVertically(1)){
+                        // TODO: 서버 API와 연동하여 구현
+                        updateComments()
+                    }
+                }
+            })
         }
 
         // 초기 댓글 추가
