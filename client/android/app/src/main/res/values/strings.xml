@@ -142,4 +142,8 @@
     <string name="system_theme">시스템 테마</string>
 
     <string name="account">계정</string>
+
+    <!-- Community Fragment -->
+    <string name="comment">댓글</string>
+    <string name="comment_input_hint">댓글 내용을 입력하세요.</string>
 </resources>
