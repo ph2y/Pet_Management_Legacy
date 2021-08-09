@@ -34,6 +34,7 @@
             android:value="fc8b31553a5077fdddb778cdda5b0d41" />
 
         <activity android:name=".ui.myPet.MyPetActivity" />
+        <activity android:name=".ui.myPage.MyPageActivity" />
         <activity android:name=".MainActivity"/>
     </application>
 
