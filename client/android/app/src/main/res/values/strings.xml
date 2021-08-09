@@ -120,4 +120,8 @@
     <string name="grooming">미용</string>
     <string name="shop">샵</string>
     <string name="hospital">병원</string>
+
+    <!-- Community Fragment -->
+    <string name="comment">댓글</string>
+    <string name="comment_input_hint">댓글 내용을 입력하세요.</string>
 </resources>

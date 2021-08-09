@@ -1,6 +1,6 @@
 package com.sju18001.petmanagement.restapi.dao
 
-data class CommunityPost(
+data class Post(
     // TODO: 서버에서 dto가 완성되면 동기화
     val nickname: String,
     val petPhotoUrl: String,
