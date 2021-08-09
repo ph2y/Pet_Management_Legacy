@@ -59,7 +59,6 @@
             android:id="@+id/image_profile"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
             android:src="@drawable/marker_pet"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
@@ -71,7 +70,8 @@
             android:hint="@string/comment_input_hint"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:layout_marginBottom="3dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
             android:textSize="14dp"
             android:maxLines="8"
             app:layout_constraintBottom_toBottomOf="parent"
