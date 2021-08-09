@@ -61,7 +61,7 @@ class CommunityFragment : Fragment() {
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
         }
-        binding.communityRecyclerView?.let{
+        binding.recyclerViewPost?.let{
             it.adapter = adapter
             it.layoutManager = LinearLayoutManager(activity)
             
@@ -69,6 +69,7 @@ class CommunityFragment : Fragment() {
             it.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if(!recyclerView.canScrollVertically(1)){
+                        // TODO: 서버 API와 연동하여 구현
                         updatePosts()
                     }
                 }
@@ -82,7 +83,7 @@ class CommunityFragment : Fragment() {
     private fun updatePosts(){
         val items = getFetchedPost()
         adapter.addItems(items)
-        binding.communityRecyclerView.post{
+        binding.recyclerViewPost.post{
             adapter.notifyDataSetChanged()
         }
     }
