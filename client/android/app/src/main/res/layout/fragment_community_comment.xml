@@ -46,19 +46,21 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
+        android:background="@drawable/border"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
         <ImageView
             android:id="@+id/profile_image"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
             android:src="@drawable/marker_pet"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
         <EditText
             android:id="@+id/comment_edit_text"
@@ -67,8 +69,11 @@
             android:background="@android:color/transparent"
             android:hint="@string/comment_input_hint"
             android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="3dp"
+            android:textSize="14dp"
             android:maxLines="8"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/profile_image"
             app:layout_constraintEnd_toStartOf="@id/create_comment_button"
             />
@@ -78,7 +83,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_baseline_send_24"
             android:background="@android:color/transparent"
-            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
