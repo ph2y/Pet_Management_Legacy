@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentCommunityBinding
 import com.sju18001.petmanagement.restapi.dao.Post
+import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import com.sju18001.petmanagement.ui.map.CommunityViewModel
 
 class CommunityFragment : Fragment() {
@@ -53,11 +54,9 @@ class CommunityFragment : Fragment() {
     private fun initializeAdapter(){
         adapter = CommunityPostListAdapter(arrayListOf())
         adapter.communityPostListAdapterInterface = object: CommunityPostListAdapterInterface {
-            override fun startCommunityActivityForCommentFragment() {
-                val communityActivityIntent = Intent(context, CommunityActivity::class.java)
-                communityActivityIntent
-                    .putExtra("fragmentType", "comment_fragment")
-                // TODO: 댓글 정보 전달
+            override fun startCommunityCommentActivity() {
+                val communityActivityIntent = Intent(context, CommunityCommentActivity::class.java)
+                // TODO: 댓글 정보 전달 ex. communityActivityIntent.putExtra("~", "~")
                 startActivity(communityActivityIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }

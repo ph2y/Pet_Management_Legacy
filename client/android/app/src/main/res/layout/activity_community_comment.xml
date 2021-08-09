@@ -5,6 +5,6 @@
     android:id="@+id/community_activity_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.community.CommunityActivity">
+    tools:context=".ui.community.comment.CommunityCommentActivity">
 
 </androidx.constraintlayout.widget.ConstraintLayout>
