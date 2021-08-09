@@ -15,7 +15,7 @@
         android:padding="16dp">
 
         <ImageButton
-            android:id="@+id/back_button"
+            android:id="@+id/button_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
@@ -24,10 +24,10 @@
             android:background="?selectableItemBackgroundBorderless"/>
 
         <TextView
-            android:id="@+id/back_button_title"
+            android:id="@+id/text_back_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/back_button"
+            android:layout_toEndOf="@id/button_back"
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:textSize="20dp"
@@ -36,7 +36,7 @@
     </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/comment_recycler_view"
+        android:id="@+id/recycler_view_comment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:clipToPadding="false"
@@ -56,7 +56,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
         <ImageView
-            android:id="@+id/profile_image"
+            android:id="@+id/image_profile"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginLeft="5dp"
@@ -64,7 +64,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
         <EditText
-            android:id="@+id/comment_edit_text"
+            android:id="@+id/edit_text_comment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
@@ -75,11 +75,11 @@
             android:textSize="14dp"
             android:maxLines="8"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/profile_image"
-            app:layout_constraintEnd_toStartOf="@id/create_comment_button"
+            app:layout_constraintStart_toEndOf="@id/image_profile"
+            app:layout_constraintEnd_toStartOf="@id/button_create_comment"
             />
         <ImageButton
-            android:id="@+id/create_comment_button"
+            android:id="@+id/button_create_comment"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/ic_baseline_send_24"

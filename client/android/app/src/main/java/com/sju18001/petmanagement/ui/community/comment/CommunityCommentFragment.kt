@@ -37,7 +37,7 @@ class CommunityCommentFragment : Fragment() {
 
     private fun initializeAdapter(){
         adapter = CommunityCommentListAdapter(arrayListOf())
-        binding.commentRecyclerView?.let{
+        binding.recyclerViewComment?.let{
             it.adapter = adapter
             it.layoutManager = LinearLayoutManager(activity)
         }
@@ -48,7 +48,7 @@ class CommunityCommentFragment : Fragment() {
     private fun updateComments(){
         val items = getFetchedComment()
         adapter.addItems(items)
-        binding.commentRecyclerView.post{
+        binding.recyclerViewComment.post{
             adapter.notifyDataSetChanged()
         }
     }
