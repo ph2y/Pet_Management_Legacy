@@ -10,7 +10,7 @@ import android.widget.TextView
 import com.sju18001.petmanagement.R
 
 interface CommunityPostListAdapterInterface{
-    fun startCommunityActivityForCommentFragment()
+    fun startCommunityCommentActivity()
 }
 
 private const val MAX_LINE = 5
@@ -41,7 +41,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
         // 댓글 버튼
         holder.commentButton.setOnClickListener {
-            communityPostListAdapterInterface.startCommunityActivityForCommentFragment()
+            communityPostListAdapterInterface.startCommunityCommentActivity()
         }
     }
 

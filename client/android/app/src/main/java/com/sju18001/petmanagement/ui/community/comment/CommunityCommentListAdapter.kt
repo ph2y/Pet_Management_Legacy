@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.community
+package com.sju18001.petmanagement.ui.community.comment
 
 import android.view.LayoutInflater
 import android.view.View

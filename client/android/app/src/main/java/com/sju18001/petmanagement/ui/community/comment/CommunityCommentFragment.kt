@@ -1,14 +1,11 @@
-package com.sju18001.petmanagement.ui.community
+package com.sju18001.petmanagement.ui.community.comment
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
 
 class CommunityCommentFragment : Fragment() {
