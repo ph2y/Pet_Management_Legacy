@@ -13,11 +13,12 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sju18001.petmanagement.R
+import java.io.File
 
 class PhotoVideoListAdapter(private val createUpdatePostViewModel: CreateUpdatePostViewModel, private val context: Context) :
         RecyclerView.Adapter<PhotoVideoListAdapter.HistoryListViewHolder>() {
 
-    private var resultList = emptyList<Bitmap?>()
+    private var resultList = mutableListOf<Bitmap?>()
 
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val thumbnail: ImageView = itemView.findViewById(R.id.photos_and_videos_thumbnail)
@@ -41,14 +42,26 @@ class PhotoVideoListAdapter(private val createUpdatePostViewModel: CreateUpdateP
         }
 
         // for delete button
-        holder.deleteButton.setOnClickListener {
-            // TODO
-        }
+        holder.deleteButton.setOnClickListener { deleteItem(position) }
     }
 
     override fun getItemCount() = resultList.size
 
-    public fun setResult(result: List<Bitmap?>){
+    private fun deleteItem(position: Int) {
+        // delete file
+        File(createUpdatePostViewModel.photoVideoPathList[position]).delete()
+
+        // delete ViewModel values + RecyclerView list
+        createUpdatePostViewModel.photoVideoByteArrayList.removeAt(position)
+        createUpdatePostViewModel.photoVideoPathList.removeAt(position)
+        createUpdatePostViewModel.thumbnailList.removeAt(position)
+
+        // for item remove animation
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, this.resultList.size)
+    }
+
+    public fun setResult(result: MutableList<Bitmap?>){
         this.resultList = result
         notifyDataSetChanged()
     }

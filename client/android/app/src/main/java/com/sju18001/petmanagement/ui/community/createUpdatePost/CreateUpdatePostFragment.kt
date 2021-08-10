@@ -65,7 +65,8 @@ class CreateUpdatePostFragment : Fragment() {
         adapter = PhotoVideoListAdapter(createUpdatePostViewModel, requireContext())
         binding.photosAndVideosRecyclerView.adapter = adapter
         binding.photosAndVideosRecyclerView.layoutManager = LinearLayoutManager(activity)
-        (binding.photosAndVideosRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL;
+        (binding.photosAndVideosRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        adapter.setResult(createUpdatePostViewModel.thumbnailList)
 
         return root
     }
@@ -74,7 +75,7 @@ class CreateUpdatePostFragment : Fragment() {
         super.onStart()
 
         // for view restore
-        // TODO
+        restoreState()
 
         // for post photo/video picker
         binding.uploadPhotosAndVideosButton.setOnClickListener {
@@ -133,7 +134,8 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.thumbnailList.add(thumbnail)
 
                 // update RecyclerView
-                adapter.setResult(createUpdatePostViewModel.thumbnailList)
+                adapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
+                binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
             }
         }
         else if(resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_VIDEO) {
@@ -154,13 +156,28 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.thumbnailList.add(null)
 
                 // update RecyclerView
-                adapter.setResult(createUpdatePostViewModel.thumbnailList)
+                adapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
+                binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
             }
         }
+    }
+
+    private fun restoreState() {
+        // TODO
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        // delete copied files(if any)
+        if(isRemoving || requireActivity().isFinishing) {
+            for(path in createUpdatePostViewModel.photoVideoPathList) {
+                File(path).delete()
+            }
+        }
+
+        // stop api call when fragment is destroyed
+        // TODO
     }
 }
