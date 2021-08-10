@@ -3,6 +3,8 @@ package com.sju18.petmanagement.domain.community.dao;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.pet.dao.Pet;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,10 +22,12 @@ public class Post {
     private Long id;
 
     @ManyToOne(targetEntity = Account.class, fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "account_id")
     private Account author;
 
     @ManyToOne(targetEntity = Pet.class, fetch = FetchType.EAGER)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JoinColumn(name = "pet_id")
     private Pet pet;
 

@@ -58,12 +58,12 @@ public class PostController {
                 postList = new ArrayList<>();
                 postList.add(postServ.fetchPostById(reqDto.getId()));
             } else if (reqDto.getPetId() != null && reqDto.getPageIndex() != null) {
-                final Page<Post> postPage = postServ.fetchPostByPet(auth, reqDto.getPageIndex(), reqDto.getPetId());
+                final Page<Post> postPage = postServ.fetchPostByPet(reqDto.getPageIndex(), reqDto.getPetId());
                 postList = postPage.getContent();
                 pageable = postPage.getPageable();
                 isLast = postPage.isLast();
             } else if (reqDto.getPageIndex() != null) {
-                final Page<Post> postPage = postServ.fetchPostByDefault(reqDto.getPageIndex());
+                final Page<Post> postPage = postServ.fetchPostByDefault(auth, reqDto.getPageIndex());
                 postList = postPage.getContent();
                 pageable = postPage.getPageable();
                 isLast = postPage.isLast();
