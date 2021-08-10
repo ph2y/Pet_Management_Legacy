@@ -10,7 +10,7 @@ import java.util.List;
 public class UpdatePostReqDto {
     @PositiveOrZero(message = "valid.post.id.notNegative")
     private Long id;
-    @PositiveOrZero(message = "valid.post.petId.notNegative")
+    @PositiveOrZero(message = "valid.pet.id.notNegative")
     private Long petId;
     @NotBlank(message = "valid.post.contents.blank")
     @Size(max = 10000, message = "valid.post.contents.size")
