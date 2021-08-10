@@ -93,5 +93,10 @@ class CommunityCommentFragment : Fragment() {
         binding.layoutBackButton.setOnClickListener {
             Util.hideKeyboard(requireActivity())
         }
+        
+        // 댓글 / 답글 생성
+        binding.buttonCreateComment.setOnClickListener {
+            // TODO: 댓글/답글 CREATE
+        }
     }
 }
