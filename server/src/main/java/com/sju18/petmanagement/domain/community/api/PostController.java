@@ -47,7 +47,7 @@ public class PostController {
 
     //READ
     @PostMapping("/api/post/fetch")
-    public ResponseEntity<?> fetchPost(@Valid @RequestBody FetchPostReqDto reqDto) {
+    public ResponseEntity<?> fetchPost(Authentication auth, @Valid @RequestBody FetchPostReqDto reqDto) {
         DtoMetadata dtoMetadata;
         final List<Post> postList;
         Pageable pageable = null;
@@ -58,7 +58,7 @@ public class PostController {
                 postList = new ArrayList<>();
                 postList.add(postServ.fetchPostById(reqDto.getId()));
             } else if (reqDto.getPetId() != null && reqDto.getPageIndex() != null) {
-                final Page<Post> postPage = postServ.fetchPostByPet(reqDto.getPageIndex(), reqDto.getPetId());
+                final Page<Post> postPage = postServ.fetchPostByPet(auth, reqDto.getPageIndex(), reqDto.getPetId());
                 postList = postPage.getContent();
                 pageable = postPage.getPageable();
                 isLast = postPage.isLast();
