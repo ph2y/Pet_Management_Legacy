@@ -212,7 +212,7 @@
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <Switch
-                        android:id="@+id/enabled_switch2"
+                        android:id="@+id/marketing_switch"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
@@ -261,19 +261,19 @@
                         tools:src="@tools:sample/avatars" />
 
                     <EditText
-                        android:id="@+id/editTextTextPersonName"
+                        android:id="@+id/nickname_edit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:ems="10"
+                        android:hint="@string/nickname_hint"
                         android:inputType="textPersonName"
                         android:textAlignment="center"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/imageView"
-                        tools:text="박지환" />
+                        app:layout_constraintTop_toBottomOf="@+id/imageView" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
@@ -321,6 +321,7 @@
                         android:layout_marginEnd="15dp"
                         android:layout_marginBottom="5dp"
                         android:ems="10"
+                        android:hint="@string/password_change_hint"
                         android:inputType="textPassword"
                         android:padding="10dp"
                         android:textSize="16sp"
