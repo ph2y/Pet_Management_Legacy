@@ -2,13 +2,16 @@ package com.sju18001.petmanagement.ui.myPage
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentMyPageBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
@@ -30,7 +33,7 @@ class MyPageFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
-    // Account API
+    // variables for storing API call(for cancel)
     private var fetchAccountApiCall: Call<FetchAccountResDto>? = null
 
     // session manager for user token
@@ -123,15 +126,25 @@ class MyPageFragment : Fragment() {
                     binding.nicknameText.text = accountData.nickname
                 }
                 else {
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
 
+                    // log error message
+                    Log.d("error", errorMessage)
                 }
             }
 
             override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
-                TODO("Not yet implemented")
+                // if the view was destroyed(API call canceled) -> return
+                if(_binding == null) {
+                    return
+                }
+
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
             }
-
-
         })
     }
 

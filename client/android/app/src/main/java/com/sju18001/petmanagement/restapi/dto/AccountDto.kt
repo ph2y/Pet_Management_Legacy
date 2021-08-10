@@ -84,3 +84,7 @@ data class RecoverPasswordReqDto(
 data class RecoverPasswordResDto(
     val _metadata: DtoMetadata
 )
+
+data class DeleteAccountResDto(
+    val _metadata: DtoMetadata
+)

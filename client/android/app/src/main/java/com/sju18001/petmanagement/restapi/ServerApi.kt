@@ -22,6 +22,9 @@ interface ServerApi {
     @POST("api/account/update")
     fun updateAccountReq(@Body updateAccountReqDto: UpdateAccountReqDto): Call<UpdateAccountResDto>
 
+    @POST("api/account/delete")
+    fun deleteAccountReq(@Body body: RequestBody): Call<DeleteAccountResDto>
+
     @POST("api/account/authcode/send")
     fun sendAuthCodeReq(@Body sendAuthCodeReqDto: SendAuthCodeReqDto): Call<SendAuthCodeResDto>
 
