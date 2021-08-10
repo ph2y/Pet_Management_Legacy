@@ -62,21 +62,21 @@ public class PostService {
 
     // READ
     @Transactional(readOnly = true)
-    public Page<Post> fetchPostByDefault(Integer pageIndex) {
+    public Page<Post> fetchPostByDefault(Authentication auth, Integer pageIndex) {
+        Account author = accountServ.fetchCurrentAccount(auth);
         // 기본 조건에 따른 최신 게시물 인출 (커뮤니티 메인화면 조회시)
         // 조건: 가장 최신의 전체 공개 게시물 또는 친구의 게시물 10개 조회
-        Pageable pageQuery = PageRequest.of(pageIndex, 10, Sort.Direction.DESC, "id");
+        Pageable pageQuery = PageRequest.of(pageIndex, 10, Sort.Direction.DESC, "post_id");
 
-        return postRepository.findMainPosts(Collections.emptyList(), pageQuery);
+        return postRepository.findMainPosts(Collections.emptyList(), author.getId(), pageQuery);
     }
 
     @Transactional(readOnly = true)
-    public Page<Post> fetchPostByPet(Authentication auth, Integer pageIndex, Long petId) {
+    public Page<Post> fetchPostByPet(Integer pageIndex, Long petId) {
         // 태그된 펫으로 게시물 인출 (펫 피드 조회시)
-        Pageable pageQuery = PageRequest.of(pageIndex,10, Sort.Direction.DESC, "id");
-        Pet taggedPet = petServ.fetchPetById(auth, petId);
+        Pageable pageQuery = PageRequest.of(pageIndex,10, Sort.Direction.DESC, "post_id");
 
-        return postRepository.findAllByPet(taggedPet, pageQuery);
+        return postRepository.findAllByTaggedPetId(petId, pageQuery);
     }
 
     @Transactional(readOnly = true)
