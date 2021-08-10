@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 public class CreatePostReqDto {
-    @PositiveOrZero(message = "valid.post.petId.notNegative")
+    @PositiveOrZero(message = "valid.pet.id.notNegative")
     private Long petId;
     @NotBlank(message = "valid.post.contents.blank")
     @Size(max = 10000, message = "valid.post.contents.size")

@@ -26,7 +26,7 @@ import java.util.Locale;
 @RestController
 public class PostController {
     private static final Logger logger = LogManager.getLogger();
-    private final MessageSource msgSrc = MessageConfig.getPostMessageSource();
+    private final MessageSource msgSrc = MessageConfig.getCommunityMessageSource();
     private final PostService postServ;
 
     // CREATE

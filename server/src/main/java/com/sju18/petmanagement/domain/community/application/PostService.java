@@ -28,7 +28,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 @Service
 public class PostService {
-    private final MessageSource msgSrc = MessageConfig.getPostMessageSource();
+    private final MessageSource msgSrc = MessageConfig.getCommunityMessageSource();
     private final PostRepository postRepository;
     private final AccountService accountServ;
     private final PetService petServ;
@@ -84,7 +84,7 @@ public class PostService {
         // 게시물 고유번호로 게시물 인출 (게시물 단일 불러오기시 사용)
         return postRepository.findById(postId)
                 .orElseThrow(() -> new Exception(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
                 ));
     }
 
@@ -95,7 +95,7 @@ public class PostService {
         Account author = accountServ.fetchCurrentAccount(auth);
         Post currentPost = postRepository.findByAuthorAndId(author, reqDto.getId())
                 .orElseThrow(() -> new Exception(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
                 ));
 
         if (!reqDto.getPetId().equals(currentPost.getPet().getId())) {
@@ -130,7 +130,7 @@ public class PostService {
         Account author = accountServ.fetchCurrentAccount(auth);
         Post post = postRepository.findByAuthorAndId(author, reqDto.getId())
                 .orElseThrow(() -> new Exception(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
                 ));
         fileServ.deletePostFileStorage(post.getId());
         postRepository.delete(post);
