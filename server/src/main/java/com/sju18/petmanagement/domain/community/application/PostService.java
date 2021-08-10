@@ -38,7 +38,7 @@ public class PostService {
     @Transactional
     public void createPost(Authentication auth, CreatePostReqDto reqDto) throws Exception {
         Account author = accountServ.fetchCurrentAccount(auth);
-        Pet taggedPet = petServ.fetchPetById(reqDto.getPetId());
+        Pet taggedPet = petServ.fetchPetById(auth, reqDto.getPetId());
 
         // 받은 사용자 정보와 새 입력 정보로 새 게시물 정보 생성
         Post post = Post.builder()
@@ -62,7 +62,7 @@ public class PostService {
 
     // READ
     @Transactional(readOnly = true)
-    public Page<Post> fetchPostByDefault(int pageIndex) {
+    public Page<Post> fetchPostByDefault(Integer pageIndex) {
         // 기본 조건에 따른 최신 게시물 인출 (커뮤니티 메인화면 조회시)
         // 조건: 가장 최신의 전체 공개 게시물 또는 친구의 게시물 10개 조회
         Pageable pageQuery = PageRequest.of(pageIndex, 10, Sort.Direction.DESC, "id");
@@ -71,10 +71,10 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public Page<Post> fetchPostByPet(int pageIndex, Long petId) {
+    public Page<Post> fetchPostByPet(Authentication auth, Integer pageIndex, Long petId) {
         // 태그된 펫으로 게시물 인출 (펫 피드 조회시)
         Pageable pageQuery = PageRequest.of(pageIndex,10, Sort.Direction.DESC, "id");
-        Pet taggedPet = petServ.fetchPetById(petId);
+        Pet taggedPet = petServ.fetchPetById(auth, petId);
 
         return postRepository.findAllByPet(taggedPet, pageQuery);
     }
@@ -99,7 +99,7 @@ public class PostService {
                 ));
 
         if (!reqDto.getPetId().equals(currentPost.getPet().getId())) {
-            Pet taggedPet = petServ.fetchPetById(reqDto.getPetId());
+            Pet taggedPet = petServ.fetchPetById(auth, reqDto.getPetId());
             currentPost.setPet(taggedPet);
         }
         if (!reqDto.getContents().equals(currentPost.getContents())) {

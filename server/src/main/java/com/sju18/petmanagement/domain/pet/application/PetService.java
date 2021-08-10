@@ -73,6 +73,18 @@ public class PetService {
                 ));
     }
 
+    @Transactional(readOnly = true)
+    // id로 인출하되 자신의 반려동물 중에서만 인출됨 (메소드 오버로딩)
+    public Pet fetchPetById(Authentication auth, Long petId) {
+        String ownername = accountServ.fetchCurrentAccount(auth).getUsername();
+
+        // 사용자 정보로 반려동물 리스트 인출
+        return petRepository.findByOwnernameAndId(ownername, petId)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                ));
+    }
+
     public byte[] fetchPetPhoto(Authentication auth, Long petId) throws Exception {
         Account currentAccount = accountServ.fetchCurrentAccount(auth);
         Pet currentPet = petRepository.findByOwnernameAndId(currentAccount.getUsername(), petId)
