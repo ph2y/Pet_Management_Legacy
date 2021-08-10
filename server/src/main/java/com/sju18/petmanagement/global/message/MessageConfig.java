@@ -69,4 +69,15 @@ public class MessageConfig implements WebMvcConfigurer {
         );
         return msgSrc;
     }
+
+    @Bean
+    public static MessageSource getPostMessageSource() {
+        ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
+        msgSrc.setBasenames(
+                "static/messages/post/error",
+                "static/messages/post/response",
+                "static/messages/post/validation"
+        );
+        return msgSrc;
+    }
 }
