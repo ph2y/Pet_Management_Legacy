@@ -2,18 +2,23 @@
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory android:title="@string/theme_preferences">
+    <PreferenceCategory
+        android:title="@string/theme_preferences"
+        app:iconSpaceReserved="false">
         <Preference
-            app:key="light_theme"
+            app:key="light_theme_preference"
             app:title="@string/light_theme"
-            app:allowDividerAbove="true" />
+            app:allowDividerAbove="true"
+            app:iconSpaceReserved="false"/>
         <Preference
-            app:key="dark_theme"
+            app:key="dark_theme_preference"
             app:title="@string/dark_theme"
-            app:allowDividerAbove="true" />
+            app:allowDividerAbove="true"
+            app:iconSpaceReserved="false"/>
         <Preference
-            app:key="system_theme"
+            app:key="system_theme_preference"
             app:title="@string/system_theme"
-            app:allowDividerAbove="true" />
+            app:allowDividerAbove="true"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 </PreferenceScreen>
