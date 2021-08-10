@@ -1,15 +1,23 @@
 *.iml
 .gradle
 /local.properties
+<<<<<<< HEAD
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+=======
+.idea/
+>>>>>>> 72f107b (account layout implemented)
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
+<<<<<<< HEAD
 local.properties
+=======
+local.properties
+>>>>>>> 72f107b (account layout implemented)
