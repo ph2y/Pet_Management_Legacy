@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <PreferenceCategory android:title="@string/notification_preferences">
+    <PreferenceCategory
+        android:title="@string/notification_preferences"
+        app:iconSpaceReserved="false">
         <SwitchPreference
             android:defaultValue="false"
-            android:key="switch_preference_1"
+            android:key="feed_notification_preference"
             android:title="@string/feed_notification"
-            app:allowDividerAbove="true" />
+            app:allowDividerAbove="true"
+            app:iconSpaceReserved="false"/>
         <SwitchPreference
             android:defaultValue="false"
-            android:key="switch_preference_2"
-            android:title="@string/feed_notification"
-            app:allowDividerAbove="true" />
+            android:key="info_notification_preference"
+            android:title="@string/info_notification"
+            app:allowDividerAbove="true"
+            app:iconSpaceReserved="false"/>
         <SwitchPreference
             android:defaultValue="false"
-            android:key="switch_preference_1"
+            android:key="ad_notification_preference"
             android:title="@string/ad_notification"
-            app:allowDividerAbove="true" />
+            app:allowDividerAbove="true"
+            app:iconSpaceReserved="false"/>
     </PreferenceCategory>
 </PreferenceScreen>
