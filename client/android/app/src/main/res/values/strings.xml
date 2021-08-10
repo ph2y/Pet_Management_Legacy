@@ -117,8 +117,14 @@
     <!-- Create Update Post Fragment -->
     <string name="create_post_title">글 쓰기</string>
     <string name="update_post_title">글 수정</string>
+    <string name="photo_video_usage">0/10</string>
+    <string name="upload_photo_video_label">사진 및 동영상을 업로드하세요.</string>
+    <string name="select_file_type_label">파일 유형 선택</string>
     <string name="upload_photo_label">사진</string>
     <string name="upload_video_label">동영상</string>
-    <string name="write_post_hint">내용을 입력하세요.</string>
+    <string name="write_post_hint">글 내용을 입력하세요.</string>
+    <string name="file_type_exception_message">지원하지 않는 파일 유형이에요!</string>
+    <string name="photo_video_usage_full_message">사진 및 동영상은 최대 10개까지만 업로드 가능해요!</string>
+    <string name="post_invalid_message">글 내용을 입력해주세요!</string>
 
 </resources>

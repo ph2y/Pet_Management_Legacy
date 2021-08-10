@@ -8,7 +8,8 @@
         android:id="@+id/photos_and_videos_thumbnail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:layout_margin="12dp"/>
 
     <ImageView
         android:id="@+id/delete_button"

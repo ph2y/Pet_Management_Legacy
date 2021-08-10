@@ -10,12 +10,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
 import java.io.File
 
-class PhotoVideoListAdapter(private val createUpdatePostViewModel: CreateUpdatePostViewModel, private val context: Context) :
+class PhotoVideoListAdapter(private val createUpdatePostViewModel: CreateUpdatePostViewModel,
+                            private val context: Context,
+                            private val binding: FragmentCreateUpdatePostBinding) :
         RecyclerView.Adapter<PhotoVideoListAdapter.HistoryListViewHolder>() {
 
     private var resultList = mutableListOf<Bitmap?>()
@@ -42,7 +46,15 @@ class PhotoVideoListAdapter(private val createUpdatePostViewModel: CreateUpdateP
         }
 
         // for delete button
-        holder.deleteButton.setOnClickListener { deleteItem(position) }
+        holder.deleteButton.setOnClickListener {
+            deleteItem(position)
+
+            // update photo/video upload layout
+            val uploadedCount = createUpdatePostViewModel.thumbnailList.size
+            if(uploadedCount == 0) { binding.uploadPhotoVideoLabel.visibility = View.VISIBLE }
+            val photoVideoUsageText = "$uploadedCount/10"
+            binding.photoVideoUsage.text = photoVideoUsageText
+        }
     }
 
     override fun getItemCount() = resultList.size
