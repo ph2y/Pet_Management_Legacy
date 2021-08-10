@@ -31,6 +31,17 @@ class EditAccountFragment : Fragment() {
         return root
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        val intent = requireActivity().intent
+
+        binding.nicknameEdit.setText(intent.getStringExtra("nickname"))
+        binding.emailEdit.setText(intent.getStringExtra("email"))
+        binding.phoneEdit.setText(intent.getStringExtra("phone"))
+        binding.marketingSwitch.isChecked = intent.getBooleanExtra("marketing", false)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

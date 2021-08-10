@@ -142,12 +142,14 @@
     <string name="system_theme">시스템 테마</string>
 
     <string name="account">계정</string>
-
+    <string name="nickname_hint">닉네임을 설정해주세요</string>
+    <string name="password_change_hint">8~20자의 영문, 숫자, 특수문자만 사용 가능</string>
     <string name="change">변경</string>
     <string name="re_verify">재인증</string>
     <string name="marketing_hint">마케팅 정보 수신동의</string>
     <string name="sign_out">로그아웃</string>
     <string name="withdrawal">회원탈퇴</string>
+
 
     <!-- Community Fragment -->
     <string name="comment">댓글</string>
