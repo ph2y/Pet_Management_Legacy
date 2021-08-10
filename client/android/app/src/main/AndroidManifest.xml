@@ -37,7 +37,6 @@
         <activity android:name=".ui.myPet.MyPetActivity" />
         <activity android:name=".ui.myPage.MyPageActivity" />
         <activity android:name=".MainActivity" />
-
     </application>
 
 </manifest>
