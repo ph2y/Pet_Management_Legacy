@@ -149,60 +149,73 @@ class CreateUpdatePostFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        // get + save pet photo value
-        if(resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_PHOTO) {
-            if(data != null) {
-                // copy selected photo and get real path
-                createUpdatePostViewModel.photoVideoPathList
+        // exception
+        if(resultCode != AppCompatActivity.RESULT_OK) { return }
+
+        // get photo/video value
+        when(requestCode) {
+            PICK_PHOTO -> {
+                if(data != null) {
+                    // copy selected photo and get real path
+                    createUpdatePostViewModel.photoVideoPathList
                         .add(ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!))
 
-                // create bytearray + add to ViewModel
-                val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoVideoPathList.last())
-                val stream = ByteArrayOutputStream()
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                val photoByteArray = stream.toByteArray()
-                createUpdatePostViewModel.photoVideoByteArrayList.add(photoByteArray)
+                    // create bytearray + add to ViewModel
+                    val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoVideoPathList.last())
+                    val stream = ByteArrayOutputStream()
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                    val photoByteArray = stream.toByteArray()
+                    createUpdatePostViewModel.photoVideoByteArrayList.add(photoByteArray)
 
-                // save thumbnail
-                val thumbnail = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
-                createUpdatePostViewModel.thumbnailList.add(thumbnail)
+                    // save thumbnail
+                    val thumbnail = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
+                    createUpdatePostViewModel.thumbnailList.add(thumbnail)
 
-                // update RecyclerView
-                adapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
-                binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
+                    // update RecyclerView
+                    adapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
+                    binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
 
-                // update photo/video usage
-                updatePhotoVideoUsage()
+                    // update photo/video usage
+                    updatePhotoVideoUsage()
+                }
+                else {
+                    // show message(file null exception)
+                    Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
+                }
             }
-        }
-        else if(resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_VIDEO) {
-            if(data != null) {
-                // copy selected photo and get real path
-                createUpdatePostViewModel.photoVideoPathList
+            PICK_VIDEO -> {
+                if(data != null) {
+                    // copy selected photo and get real path
+                    createUpdatePostViewModel.photoVideoPathList
                         .add(ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!))
 
-                val video = FileInputStream(File(createUpdatePostViewModel.photoVideoPathList.last()))
-                val stream = ByteArrayOutputStream()
-                val buffer = ByteArray(1024)
-                var n: Int
-                while (-1 != video.read(buffer).also { n = it }) stream.write(buffer, 0, n)
-                val videoByteArray = stream.toByteArray()
-                createUpdatePostViewModel.photoVideoByteArrayList.add(videoByteArray)
+                    val video = FileInputStream(File(createUpdatePostViewModel.photoVideoPathList.last()))
+                    val stream = ByteArrayOutputStream()
+                    val buffer = ByteArray(1024)
+                    var n: Int
+                    while (-1 != video.read(buffer).also { n = it }) stream.write(buffer, 0, n)
+                    val videoByteArray = stream.toByteArray()
+                    createUpdatePostViewModel.photoVideoByteArrayList.add(videoByteArray)
 
-                // save thumbnail
-                createUpdatePostViewModel.thumbnailList.add(null)
+                    // save thumbnail
+                    createUpdatePostViewModel.thumbnailList.add(null)
 
-                // update RecyclerView
-                adapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
-                binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
+                    // update RecyclerView
+                    adapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
+                    binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
 
-                // update photo/video usage
-                updatePhotoVideoUsage()
+                    // update photo/video usage
+                    updatePhotoVideoUsage()
+                }
+                else {
+                    // show message(file null exception)
+                    Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
+                }
             }
-        }
-        else if(resultCode == AppCompatActivity.RESULT_OK) {
-            // show message(file type exception)
-            Toast.makeText(context, context?.getText(R.string.file_type_exception_message), Toast.LENGTH_LONG).show()
+            else -> {
+                // show message(file type exception)
+                Toast.makeText(context, context?.getText(R.string.file_type_exception_message), Toast.LENGTH_LONG).show()
+            }
         }
     }
 
