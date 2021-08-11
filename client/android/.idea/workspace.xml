@@ -59,11 +59,14 @@
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/restapi/ServerApi.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/restapi/ServerApi.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/restapi/dto/AccountDto.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/restapi/dto/AccountDto.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/restapi/SessionManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/restapi/SessionManager.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/ui/myPage/MyPageFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/ui/myPage/MyPageFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/ui/myPage/MyPageViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/ui/myPage/MyPageViewModel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/ui/myPage/account/EditAccountFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/sju18001/petmanagement/ui/myPage/account/EditAccountFragment.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_account_edit.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_account_edit.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/fragment_my_page.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/fragment_my_page.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../server/src/main/java/com/sju18/petmanagement/global/storage/FileService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../server/src/main/java/com/sju18/petmanagement/global/storage/FileService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -131,6 +134,7 @@
     <property name="DeviceAndSnapshotComboBoxAction.selectedDevice" value="SerialNumber@R5CN804DE9R" />
     <property name="DeviceAndSnapshotComboBoxAction.selectionTime" value="2021-07-02T08:58:51.322676100Z" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="android-custom-viewC:/Users/Komputer/AppData/Local/Android/Sdk/sources/android-30/android/widget/TextView.java_SELECTED" value="TextView" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/app/src/main/res/xml" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.0" />
@@ -280,22 +284,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="1096" y="274" key="FileChooserDialogImpl/0.0.1920.1040/-1440.-982.1152.2008@0.0.1920.1040" timestamp="1626347067654" />
-    <state width="1877" height="310" key="GridCell.Tab.0.bottom" timestamp="1628613792377">
+    <state width="1877" height="250" key="GridCell.Tab.0.bottom" timestamp="1628661886827">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="310" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1440.-982.1152.2008@0.0.1920.1040" timestamp="1628613792377" />
-    <state width="1877" height="310" key="GridCell.Tab.0.center" timestamp="1628613792376">
+    <state width="1877" height="250" key="GridCell.Tab.0.bottom/0.0.1920.1040/-1440.-982.1152.2008@0.0.1920.1040" timestamp="1628661886827" />
+    <state width="1877" height="250" key="GridCell.Tab.0.center" timestamp="1628661886827">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="310" key="GridCell.Tab.0.center/0.0.1920.1040/-1440.-982.1152.2008@0.0.1920.1040" timestamp="1628613792376" />
-    <state width="1877" height="310" key="GridCell.Tab.0.left" timestamp="1628613792376">
+    <state width="1877" height="250" key="GridCell.Tab.0.center/0.0.1920.1040/-1440.-982.1152.2008@0.0.1920.1040" timestamp="1628661886827" />
+    <state width="1877" height="250" key="GridCell.Tab.0.left" timestamp="1628661886826">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="310" key="GridCell.Tab.0.left/0.0.1920.1040/-1440.-982.1152.2008@0.0.1920.1040" timestamp="1628613792376" />
-    <state width="1877" height="310" key="GridCell.Tab.0.right" timestamp="1628613792376">
+    <state width="1877" height="250" key="GridCell.Tab.0.left/0.0.1920.1040/-1440.-982.1152.2008@0.0.1920.1040" timestamp="1628661886826" />
+    <state width="1877" height="250" key="GridCell.Tab.0.right" timestamp="1628661886827">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1877" height="310" key="GridCell.Tab.0.right/0.0.1920.1040/-1440.-982.1152.2008@0.0.1920.1040" timestamp="1628613792376" />
+    <state width="1877" height="250" key="GridCell.Tab.0.right/0.0.1920.1040/-1440.-982.1152.2008@0.0.1920.1040" timestamp="1628661886827" />
     <state width="1877" height="282" key="GridCell.Tab.1.bottom" timestamp="1625216370350">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>

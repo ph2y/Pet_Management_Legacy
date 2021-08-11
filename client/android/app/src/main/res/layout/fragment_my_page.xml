@@ -163,7 +163,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/imageView"
+                        android:id="@+id/account_photo"
                         android:layout_width="85dp"
                         android:layout_height="85dp"
                         android:layout_marginStart="5dp"
@@ -185,7 +185,7 @@
                         android:textSize="25sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/imageView"
+                        app:layout_constraintStart_toEndOf="@+id/account_photo"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.49" />
 

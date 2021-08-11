@@ -1,7 +1,10 @@
 package com.sju18001.petmanagement.ui.myPage.account
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
@@ -19,6 +23,7 @@ import com.sju18001.petmanagement.restapi.dto.DeleteAccountResDto
 import com.sju18001.petmanagement.restapi.dto.UpdateAccountReqDto
 import com.sju18001.petmanagement.restapi.dto.UpdateAccountResDto
 import com.sju18001.petmanagement.ui.login.LoginActivity
+import com.sju18001.petmanagement.ui.myPage.MyPageViewModel
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -33,12 +38,22 @@ class EditAccountFragment : Fragment() {
     // onDestroyView.
     private val binding get() = _binding!!
 
+    // variable for ViewModel
+    private val myPageViewModel: MyPageViewModel by activityViewModels()
+
     // variables for storing API call(for cancel)
     private var updateAccountApiCall: Call<UpdateAccountResDto>? = null
     private var deleteAccountApiCall: Call<DeleteAccountResDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // get session manager
+        sessionManager = context?.let { SessionManager(it) }!!
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,8 +68,8 @@ class EditAccountFragment : Fragment() {
 
         (activity as AppCompatActivity)!!.supportActionBar!!.hide()
 
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
+        // save account data to ViewModel(for account profile) if not already loaded
+        if(!myPageViewModel.loadedFromIntent) { saveAccountDataForAccountProfile() }
 
         return root
     }
@@ -62,12 +77,15 @@ class EditAccountFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        binding.confirmButton.setOnClickListener {
-            updateAccount()
-        }
+        // for view restore
+        restoreState()
 
         binding.backButton.setOnClickListener {
             activity?.finish()
+        }
+
+        binding.confirmButton.setOnClickListener {
+            updateAccount()
         }
 
         binding.signOutButton.setOnClickListener {
@@ -80,42 +98,68 @@ class EditAccountFragment : Fragment() {
 
         binding.marketingSwitch.setOnCheckedChangeListener { _, isChecked ->
             if(isChecked) {
-
+                Toast.makeText(context, context?.getText(R.string.marketing_agree), Toast.LENGTH_SHORT).show()
             }
             else {
-
+                Toast.makeText(context, context?.getText(R.string.marketing_decline), Toast.LENGTH_SHORT).show()
             }
         }
+
+        // for EditText text change listeners
+        binding.nicknameEdit.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                myPageViewModel.accountNicknameValue = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        binding.phoneEdit.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                myPageViewModel.accountPhoneValue = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        binding.passwordEdit.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                myPageViewModel.accountPasswordValue = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        binding.emailEdit.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                myPageViewModel.accountEmailValue = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     override fun onResume() {
         super.onResume()
 
-        // for test
-        val intent = requireActivity().intent
-        binding.nicknameEdit.setText(intent.getStringExtra("nickname"))
-        binding.emailEdit.setText(intent.getStringExtra("email"))
-        binding.phoneEdit.setText(intent.getStringExtra("phone"))
-        binding.marketingSwitch.isChecked = intent.getBooleanExtra("marketing", false)
+        // set views with data from ViewModel
+        setViewsWithAccountProfileData()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        updateAccountApiCall?.cancel()
+        deleteAccountApiCall?.cancel()
     }
 
     // update account
     private fun updateAccount() {
-        // for test
-        val intent = requireActivity().intent
-
         // create dto
         val updateAccountReqDto = UpdateAccountReqDto(
-            binding.emailEdit.text.toString(),
-            binding.phoneEdit.text.toString(),
-            binding.nicknameEdit.text.toString(),
-            binding.marketingSwitch.isChecked,
-            ""
+            myPageViewModel.accountEmailValue,
+            myPageViewModel.accountPhoneValue,
+            myPageViewModel.accountNicknameValue,
+            myPageViewModel.accountMarketingValue,
+            myPageViewModel.accountUserMessageValue
         )
 
         updateAccountApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
@@ -159,6 +203,10 @@ class EditAccountFragment : Fragment() {
     }
 
     private fun signOut() {
+        // remove user token in sessionManager
+        sessionManager.removeUserToken()
+
+        // go back to login activity
         val intent = Intent(context, LoginActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
@@ -203,5 +251,31 @@ class EditAccountFragment : Fragment() {
                 Log.d("error", t.message.toString())
             }
         })
+    }
+
+    private fun saveAccountDataForAccountProfile() {
+        myPageViewModel.loadedFromIntent = true
+        myPageViewModel.accountEmailValue = requireActivity().intent.getStringExtra("email").toString()
+        myPageViewModel.accountPhoneValue = requireActivity().intent.getStringExtra("phone").toString()
+        myPageViewModel.accountMarketingValue = requireActivity().intent.getBooleanExtra("marketing", false)
+        myPageViewModel.accountNicknameValue = requireActivity().intent.getStringExtra("nickname").toString()
+        myPageViewModel.accountUserMessageValue = requireActivity().intent.getStringExtra("userMessage").toString()
+        myPageViewModel.accountPhotoByteArray = requireActivity().intent.getByteArrayExtra("photoByteArray")
+    }
+
+    private fun setViewsWithAccountProfileData() {
+        if(myPageViewModel.accountPhotoByteArray != null) {
+            val bitmap = BitmapFactory.decodeByteArray(myPageViewModel.accountPhotoByteArray, 0, myPageViewModel.accountPhotoByteArray!!.size)
+            binding.accountPhoto.setImageBitmap(bitmap)
+        }
+        
+        binding.nicknameEdit.setText(myPageViewModel.accountNicknameValue)
+        binding.emailEdit.setText(myPageViewModel.accountEmailValue)
+        binding.phoneEdit.setText(myPageViewModel.accountPhoneValue)
+        binding.marketingSwitch.isChecked = myPageViewModel.accountMarketingValue!!
+    }
+
+    private fun restoreState() {
+        setViewsWithAccountProfileData()
     }
 }
