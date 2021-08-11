@@ -21,6 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetManagement">
         <activity android:name=".ui.community.comment.CommunityCommentActivity"></activity>
+        <activity android:name=".ui.community.createUpdatePost.CreateUpdatePostActivity" />
         <activity android:name=".ui.welcomePage.WelcomePageActivity" />
         <activity android:name=".ui.login.LoginActivity">
             <intent-filter>

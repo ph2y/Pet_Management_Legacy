@@ -5,15 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.databinding.FragmentCommunityBinding
 import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
+import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.databinding.FragmentCommunityBinding
+import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
 import com.sju18001.petmanagement.ui.map.CommunityViewModel
 
 class CommunityFragment : Fragment() {
@@ -44,6 +44,16 @@ class CommunityFragment : Fragment() {
         }
         
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        // for create post FAB
+        binding.createPostFab.setOnClickListener {
+            startActivity(Intent(context, CreateUpdatePostActivity::class.java))
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+        }
     }
 
     override fun onDestroyView() {
