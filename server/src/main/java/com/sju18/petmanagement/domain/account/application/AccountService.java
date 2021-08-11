@@ -4,6 +4,7 @@ import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.account.dto.CreateAccountReqDto;
 import com.sju18.petmanagement.domain.account.dto.UpdateAccountReqDto;
+import com.sju18.petmanagement.domain.pet.application.PetCascadeService;
 import com.sju18.petmanagement.global.exception.DtoValidityException;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileService;
@@ -29,7 +30,8 @@ import java.util.Locale;
 public class AccountService {
     private final MessageSource msgSrc = MessageConfig.getAccountMessageSource();
     private final AccountRepository accountRepository;
-    private final FileService fileService;
+    private final PetCascadeService petCascadeServ;
+    private final FileService fileServ;
     private final PasswordEncoder pwEncoder;
 
     @Transactional
@@ -54,7 +56,7 @@ public class AccountService {
         accountRepository.save(newAccount);
 
         // 프로필 파일 저장소 생성
-        fileService.createAccountFileStorage(newAccount.getId());
+        fileServ.createAccountFileStorage(newAccount.getId());
     }
 
     private void checkUsernameDuplication(String username) throws Exception {
@@ -172,7 +174,7 @@ public class AccountService {
         // 해당 유저의 계정 스토리지에 프로필 사진 저장
         String fileUrl = null;
         if (uploadedFile != null) {
-            fileUrl = fileService.saveAccountPhoto(currentAccount.getId(), uploadedFile);
+            fileUrl = fileServ.saveAccountPhoto(currentAccount.getId(), uploadedFile);
 
             // 파일정보 DB 데이터 업데이트
             currentAccount.setPhotoUrl(fileUrl);
@@ -185,7 +187,8 @@ public class AccountService {
     @Transactional
     public void deleteAccount(Authentication auth) throws Exception {
         Account currentAccount = this.fetchCurrentAccount(auth);
-        fileService.deleteAccountFileStorage(currentAccount.getId());
+        fileServ.deleteAccountFileStorage(currentAccount.getId());
+        petCascadeServ.deleteAccountCascadeToPet(currentAccount);
         accountRepository.deleteById(currentAccount.getId());
     }
 

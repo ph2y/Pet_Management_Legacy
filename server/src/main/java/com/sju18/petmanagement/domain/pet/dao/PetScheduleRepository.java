@@ -9,5 +9,6 @@ import java.util.Optional;
 @Repository
 public interface PetScheduleRepository extends JpaRepository<PetSchedule, Long> {
     List<PetSchedule> findAllByUsername(String username);
+    List<PetSchedule> findAllByPetListContains(Pet appliedPet);
     Optional<PetSchedule> findByUsernameAndId(String username, Long id);
 }
