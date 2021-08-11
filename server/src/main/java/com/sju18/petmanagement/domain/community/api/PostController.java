@@ -5,6 +5,7 @@ import com.sju18.petmanagement.domain.community.dao.Post;
 import com.sju18.petmanagement.domain.community.dto.*;
 import com.sju18.petmanagement.global.common.DtoMetadata;
 import com.sju18.petmanagement.global.message.MessageConfig;
+import com.sju18.petmanagement.global.storage.FileMetadata;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,20 +57,21 @@ public class PostController {
 
         try {
             if (reqDto.getId() != null) {
+                // 개별 게시물 조회 요청
                 postList = new ArrayList<>();
                 postList.add(postServ.fetchPostById(reqDto.getId()));
-            } else if (reqDto.getPetId() != null && reqDto.getPageIndex() != null) {
-                final Page<Post> postPage = postServ.fetchPostByPet(reqDto.getPageIndex(), reqDto.getPetId());
-                postList = postPage.getContent();
-                pageable = postPage.getPageable();
-                isLast = postPage.isLast();
-            } else if (reqDto.getPageIndex() != null) {
-                final Page<Post> postPage = postServ.fetchPostByDefault(auth, reqDto.getPageIndex());
+            } else if (reqDto.getPetId() != null) {
+                // 펫 피드 조회 요청
+                final Page<Post> postPage = postServ.fetchPostByPet(reqDto.getPetId(), reqDto.getPageIndex());
                 postList = postPage.getContent();
                 pageable = postPage.getPageable();
                 isLast = postPage.isLast();
             } else {
-                throw new Exception(msgSrc.getMessage("error.post.undefinedOperation", null, Locale.ENGLISH));
+                // 전체 게시물 조회 요청
+                final Page<Post> postPage = postServ.fetchPostByDefault(auth, reqDto.getPageIndex(), reqDto.getTopPostId());
+                postList = postPage.getContent();
+                pageable = postPage.getPageable();
+                isLast = postPage.isLast();
             }
         } catch (Exception e) {
             logger.warn(e.toString());
@@ -77,6 +80,20 @@ public class PostController {
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.post.fetch.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new FetchPostResDto(dtoMetadata, postList, pageable, isLast));
+    }
+
+    @PostMapping("/api/post/media/fetch")
+    public ResponseEntity<?> fetchPostMedia(Authentication auth, @Valid @RequestBody FetchPostMediaReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        byte[] fileBinData;
+        try {
+            fileBinData = postServ.fetchPostMedia(auth, reqDto.getId(), reqDto.getIndex());
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new FetchPostMediaResDto(dtoMetadata));
+        }
+        return ResponseEntity.ok(fileBinData);
     }
 
     // UPDATE
@@ -92,6 +109,21 @@ public class PostController {
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.post.update.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new UpdatePostResDto(dtoMetadata));
+    }
+
+    @PostMapping("/api/post/media/update")
+    public ResponseEntity<?> updatePostMedia(Authentication auth, @ModelAttribute UpdatePostMediaReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        List<FileMetadata> fileMetadataList;
+        try {
+            fileMetadataList = postServ.updatePostMedia(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new UpdatePostMediaResDto(dtoMetadata, null));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.postMedia.update.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new UpdatePostMediaResDto(dtoMetadata, fileMetadataList));
     }
 
     // DELETE

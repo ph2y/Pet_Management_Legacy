@@ -31,6 +31,7 @@ public class Post {
     @JoinColumn(name = "pet_id")
     private Pet pet;
 
+    @Lob
     @Column(nullable = false)
     private String contents;
     @Column(nullable = false)
@@ -45,5 +46,8 @@ public class Post {
     private String disclosure;
     private Double geoTagLat;
     private Double geoTagLong;
-    private String attachedImagesJsonArray;
+    @Lob
+    private String mediaAttachments;
+    @Lob
+    private String fileAttachments;
 }
