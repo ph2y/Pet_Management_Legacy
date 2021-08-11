@@ -124,27 +124,32 @@
     <string name="license">라이센스</string>
     <string name="version">현재 버전</string>
 
+    <!-- Preferences Fragment -->
     <string name="map_radius">지도 반경 설정</string>
 
+    <!-- Feed Preferences Fragment -->
     <string name="feed_notification">피드 알림</string>
     <string name="info_notification">정보 알림</string>
     <string name="ad_notification">광고 알림</string>
 
+    <!-- Theme Preferences Fragment -->
     <string name="light_theme">라이트 테마</string>
     <string name="dark_theme">다크 테마</string>
     <string name="system_theme">시스템 테마</string>
 
+    <!-- Account Profile Edit Fragment -->
     <string name="account">계정</string>
     <string name="nickname_hint">닉네임을 설정해주세요</string>
     <string name="password_change_hint">8~20자의 영문, 숫자, 특수문자만 사용 가능</string>
     <string name="change">변경</string>
     <string name="re_verify">재인증</string>
     <string name="marketing_hint">마케팅 정보 수신동의</string>
+    <string name="marketing_agree">마케팅 정보를 수신합니다\n변경사항을 저장하려면 확인을 눌러주세요</string>
+    <string name="marketing_decline">마케팅 정보를 더 이상 수신하지 않습니다\n변경사항을 저장하려면 확인을 눌러주세요</string>
     <string name="sign_out">로그아웃</string>
     <string name="withdrawal">회원탈퇴</string>
     <string name="account_update_success">계정 업데이트 성공</string>
-    <string name="account_delete_success">회원탈퇴를 성공적으로 했습니다</string>
-
+    <string name="account_delete_success">회원탈퇴를 성공적으로 완료되었습니다</string>
 
     <!-- Community Fragment -->
     <string name="comment">댓글</string>
