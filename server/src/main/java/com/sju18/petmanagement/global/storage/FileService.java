@@ -23,7 +23,6 @@ import java.util.Objects;
 @Service
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
-
     private final String storageRootPath = "D:\\TempDev\\Pet-Management\\storage";
 
     // 특정 사용자 데이터 폴더 경로 조회

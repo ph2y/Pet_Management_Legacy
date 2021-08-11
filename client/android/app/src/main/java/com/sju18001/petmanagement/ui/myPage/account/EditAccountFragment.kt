@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPage.account
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -16,7 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.databinding.FragmentAccountEditBinding
+import com.sju18001.petmanagement.databinding.FragmentEditAccountBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.DeleteAccountResDto
@@ -32,7 +33,7 @@ import retrofit2.Response
 
 class EditAccountFragment : Fragment() {
     private lateinit var editAccountViewModel: EditAccountViewModel
-    private var _binding: FragmentAccountEditBinding? = null
+    private var _binding: FragmentEditAccountBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -63,7 +64,7 @@ class EditAccountFragment : Fragment() {
         editAccountViewModel =
             ViewModelProvider(this).get(EditAccountViewModel::class.java)
 
-        _binding = FragmentAccountEditBinding.inflate(inflater, container, false)
+        _binding = FragmentEditAccountBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         (activity as AppCompatActivity)!!.supportActionBar!!.hide()
@@ -88,15 +89,40 @@ class EditAccountFragment : Fragment() {
             updateAccount()
         }
 
-        binding.signOutButton.setOnClickListener {
-            signOut()
+        binding.logoutButton.setOnClickListener {
+            val builder = AlertDialog.Builder(activity)
+            builder.setMessage(context?.getString(R.string.logout_dialog))
+                .setPositiveButton(
+                    R.string.confirm
+                ) { _, _ ->
+                    logout()
+                }
+                .setNegativeButton(
+                    R.string.cancel
+                ) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .create().show()
         }
 
-        binding.withdrawalAccountButton.setOnClickListener {
-            withdrawalAccount()
+        binding.deleteAccountButton.setOnClickListener {
+            val builder = AlertDialog.Builder(activity)
+            builder.setMessage(context?.getString(R.string.delete_account_dialog))
+                .setPositiveButton(
+                    R.string.confirm
+                ) { _, _ ->
+                    deleteAccount()
+                }
+                .setNegativeButton(
+                    R.string.cancel
+                ) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .create().show()
         }
 
         binding.marketingSwitch.setOnCheckedChangeListener { _, isChecked ->
+            myPageViewModel.accountMarketingValue = isChecked
             if(isChecked) {
                 Toast.makeText(context, context?.getText(R.string.marketing_agree), Toast.LENGTH_SHORT).show()
             }
@@ -202,7 +228,7 @@ class EditAccountFragment : Fragment() {
         activity?.finish()
     }
 
-    private fun signOut() {
+    private fun logout() {
         // remove user token in sessionManager
         sessionManager.removeUserToken()
 
@@ -214,7 +240,7 @@ class EditAccountFragment : Fragment() {
         startActivity(intent)
     }
 
-    private fun withdrawalAccount() {
+    private fun deleteAccount() {
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         deleteAccountApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
@@ -227,7 +253,7 @@ class EditAccountFragment : Fragment() {
                 if(response.isSuccessful) {
                     if(response.body()?._metadata?.status == true) {
                         Toast.makeText(context, context?.getText(R.string.account_delete_success), Toast.LENGTH_LONG).show()
-                        signOut()
+                        logout()
                     }
                 }
                 else {

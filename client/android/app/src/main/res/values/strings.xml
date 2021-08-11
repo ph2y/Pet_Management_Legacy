@@ -146,8 +146,10 @@
     <string name="marketing_hint">마케팅 정보 수신동의</string>
     <string name="marketing_agree">마케팅 정보를 수신합니다\n변경사항을 저장하려면 확인을 눌러주세요</string>
     <string name="marketing_decline">마케팅 정보를 더 이상 수신하지 않습니다\n변경사항을 저장하려면 확인을 눌러주세요</string>
-    <string name="sign_out">로그아웃</string>
-    <string name="withdrawal">회원탈퇴</string>
+    <string name="logout">로그아웃</string>
+    <string name="logout_dialog">로그아웃 하시겠습니까?</string>
+    <string name="delete_account">회원탈퇴</string>
+    <string name="delete_account_dialog">정말 회원탈퇴 하시겠어요?</string>
     <string name="account_update_success">계정 업데이트 성공</string>
     <string name="account_delete_success">회원탈퇴를 성공적으로 완료되었습니다</string>
 
