@@ -12,4 +12,6 @@ public class FetchPostReqDto {
     private Long petId;
     @PositiveOrZero(message = "valid.post.id.notNegative")
     private Long id;
+    @PositiveOrZero(message = "valid.post.id.notNegative")
+    private Long topPostId;
 }
