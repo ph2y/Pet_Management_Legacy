@@ -4,12 +4,14 @@ import android.Manifest
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -17,29 +19,40 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Pet
+import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
+import com.sju18001.petmanagement.restapi.dto.FetchPetReqDto
+import com.sju18001.petmanagement.restapi.dto.FetchPetResDto
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
+import java.lang.reflect.Type
 
 class CreateUpdatePostFragment : Fragment() {
 
     // constant variables
     private val PICK_PHOTO = 0
     private val PICK_VIDEO = 1
+    private var PET_LIST_ORDER: String = "pet_list_id_order"
 
     // variable for ViewModel
     private val createUpdatePostViewModel: CreateUpdatePostViewModel by activityViewModels()
@@ -48,10 +61,15 @@ class CreateUpdatePostFragment : Fragment() {
     private var _binding: FragmentCreateUpdatePostBinding? = null
     private val binding get() = _binding!!
 
+    // variables for pet
+    private var petIdAndNameList: MutableList<Pet> = mutableListOf()
+
     // variables for RecyclerView
     private lateinit var adapter: PhotoVideoListAdapter
 
     // variables for storing API call(for cancel)
+    private var fetchPetApiCall: Call<FetchPetResDto>? = null
+    private var fetchPetPhotoApiCall: Call<ResponseBody>? = null
     // TODO
 
     // session manager for user token
@@ -86,8 +104,32 @@ class CreateUpdatePostFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        // for view restore
+        // for view restore(except pet)
         restoreState()
+
+        // for pet(+ restore)
+        setPetSpinnerAndPhoto()
+
+        // for pet spinner
+        binding.petNameSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0) {
+                    createUpdatePostViewModel.petId = petIdAndNameList[position - 1].id
+                    setPetPhoto()
+                }
+                else {
+                    createUpdatePostViewModel.petId = null
+                    binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+
+        // for location switch
+        binding.locationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            createUpdatePostViewModel.isUsingLocation = isChecked
+        }
 
         // for post photo/video picker
         binding.uploadPhotosAndVideosButton.setOnClickListener {
@@ -135,15 +177,7 @@ class CreateUpdatePostFragment : Fragment() {
             if(!(createUpdatePostViewModel.thumbnailList.size == 0 &&
                         createUpdatePostViewModel.postEditText == "")) {
                 // TODO: implement server API
-                if (ContextCompat.checkSelfPermission(requireContext(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                    && ContextCompat.checkSelfPermission(requireContext(),
-                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                    val location = (requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager)
-                        .getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                    Log.d("lat", location?.latitude.toString())
-                    Log.d("long", location?.longitude.toString())
-                }
+
             }
             else {
                 // show message(post invalid)
@@ -234,6 +268,171 @@ class CreateUpdatePostFragment : Fragment() {
         }
     }
 
+    // for pet views
+    private fun setPetSpinnerAndPhoto() {
+        // create DTO
+        val fetchPetReqDto = FetchPetReqDto( null )
+
+        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPetReq(fetchPetReqDto)
+        fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(
+                call: Call<FetchPetResDto>,
+                response: Response<FetchPetResDto>
+            ) {
+                if(response.isSuccessful) {
+                    // get pet id and name
+                    val apiResponse: MutableList<Pet> = mutableListOf()
+                    response.body()?.petList?.map {
+                        val item = Pet(
+                            it.id, "", it.name, "", "", null, null, false, null, null
+                        )
+                        apiResponse.add(item)
+                    }
+
+                    // reorder items
+                    reorderPetList(apiResponse)
+
+                    // set spinner + photo
+                    setPetSpinner()
+                }
+                else {
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
+                // if the view was destroyed(API call canceled) -> return
+                if(_binding == null) {
+                    return
+                }
+
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
+    // set pet photo
+    private fun setPetPhoto() {
+        // exception
+        if(createUpdatePostViewModel.petId == null) { return }
+
+        // create DTO
+        val fetchPetPhotoReqDto = FetchPetPhotoReqDto(createUpdatePostViewModel.petId!!)
+
+        fetchPetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPetPhotoReq(fetchPetPhotoReqDto)
+        fetchPetPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if(response.isSuccessful) {
+                        // set fetched photo to view
+                        binding.petPhotoCircleView.setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
+                    }
+                    else {
+                        // get error message
+                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                        // if null -> set default
+                        if(errorMessage == "null") {
+                            binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
+                        }
+                        // else -> show(Toast)/log error message
+                        else{
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                            Log.d("error", errorMessage)
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    // if the view was destroyed(API call canceled) -> return
+                    if(_binding == null) {
+                        return
+                    }
+
+                    // show(Toast)/log error message
+                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                    Log.d("error", t.message.toString())
+                }
+            })
+    }
+
+    // set pet spinner
+    private fun setPetSpinner() {
+        // set spinner values
+        val spinnerArray: ArrayList<String> = ArrayList<String>()
+        spinnerArray.add(requireContext().getText(R.string.pet_name_spinner_placeholder).toString())
+
+        for(pet in petIdAndNameList) {
+            spinnerArray.add(pet.name)
+        }
+
+        val spinnerArrayAdapter: ArrayAdapter<String> =
+            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, spinnerArray)
+        binding.petNameSpinner.adapter = spinnerArrayAdapter
+
+        // set spinner position
+        if(createUpdatePostViewModel.petId != null) {
+            for(i in 0 until petIdAndNameList.size) {
+                if(createUpdatePostViewModel.petId == petIdAndNameList[i].id) {
+                    binding.petNameSpinner.setSelection(i + 1)
+                    return
+                }
+            }
+
+            // exception(no such pet id) -> reset pet id to null
+            createUpdatePostViewModel.petId = null
+        }
+    }
+
+    // reorder pet list
+    private fun reorderPetList(apiResponse: MutableList<Pet>) {
+        // get saved pet list order
+        val petListOrder = getPetListOrder(PET_LIST_ORDER)
+
+        // sort by order
+        for(id in petListOrder) {
+            val pet = apiResponse.find { it.id == id }
+            petIdAndNameList.add(pet!!)
+        }
+    }
+
+    // get pet list order
+    private fun getPetListOrder(key: String?): MutableList<Long> {
+        val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+        val gson = Gson()
+        val json: String? = prefs.getString(key, null)
+        val type: Type = object : TypeToken<MutableList<Long>>() {}.type
+
+        if(json == null) { return mutableListOf() }
+        return gson.fromJson(json, type)
+    }
+
+    // get geolocation
+    // TODO
+    private fun getGeolocation() {
+        if (ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+            && ContextCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            val location = (requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager)
+                .getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            Log.d("lat", location?.latitude.toString())
+            Log.d("long", location?.longitude.toString())
+        }
+    }
+
     // update photo/video usage
     private fun updatePhotoVideoUsage() {
         val uploadedCount = createUpdatePostViewModel.thumbnailList.size
@@ -244,6 +443,9 @@ class CreateUpdatePostFragment : Fragment() {
 
     // for view restore
     private fun restoreState() {
+        // restore location switch
+        binding.locationSwitch.isChecked = createUpdatePostViewModel.isUsingLocation
+        
         // restore photo/video upload layout
         updatePhotoVideoUsage()
 
