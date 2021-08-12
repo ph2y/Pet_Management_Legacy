@@ -53,6 +53,9 @@ class CreateUpdatePostFragment : Fragment() {
     private val PICK_PHOTO = 0
     private val PICK_VIDEO = 1
     private var PET_LIST_ORDER: String = "pet_list_id_order"
+    private var DISCLOSURE_PUBLIC: String = "PUBLIC"
+    private var DISCLOSURE_PRIVATE: String = "PRIVATE"
+    private var DISCLOSURE_FRIEND: String = "FRIEND"
 
     // variable for ViewModel
     private val createUpdatePostViewModel: CreateUpdatePostViewModel by activityViewModels()
@@ -104,7 +107,7 @@ class CreateUpdatePostFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        // for view restore(except pet)
+        // for view restore(excluding pet and disclosure)
         restoreState()
 
         // for pet(+ restore)
@@ -122,7 +125,6 @@ class CreateUpdatePostFragment : Fragment() {
                     binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
                 }
             }
-
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
 
@@ -163,7 +165,39 @@ class CreateUpdatePostFragment : Fragment() {
             }
         }
 
-        // for EditText listener
+        // for disclosure spinner
+        ArrayAdapter.createFromResource(requireContext(), R.array.disclosure_array, android.R.layout.simple_spinner_item)
+            .also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                binding.disclosureSpinner.adapter = adapter
+        }
+        binding.disclosureSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                when(position) {
+                    0 -> {
+                        createUpdatePostViewModel.disclosure = DISCLOSURE_PUBLIC
+                        binding.disclosureIcon.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_public_24))
+                    }
+                    1 -> {
+                        createUpdatePostViewModel.disclosure = DISCLOSURE_PRIVATE
+                        binding.disclosureIcon.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_lock_24))
+                    }
+                    2 -> {
+                        createUpdatePostViewModel.disclosure = DISCLOSURE_FRIEND
+                        binding.disclosureIcon.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_group_24))
+                    }
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
+        when(createUpdatePostViewModel.disclosure) {
+            DISCLOSURE_PUBLIC -> { binding.disclosureSpinner.setSelection(0) }
+            DISCLOSURE_PRIVATE -> { binding.disclosureSpinner.setSelection(1) }
+            DISCLOSURE_FRIEND -> { binding.disclosureSpinner.setSelection(2) }
+            else -> { binding.disclosureSpinner.setSelection(0) }
+        }
+
+        // for post EditText listener
         binding.postEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 createUpdatePostViewModel.postEditText = s.toString()
@@ -177,7 +211,6 @@ class CreateUpdatePostFragment : Fragment() {
             if(!(createUpdatePostViewModel.thumbnailList.size == 0 &&
                         createUpdatePostViewModel.postEditText == "")) {
                 // TODO: implement server API
-
             }
             else {
                 // show message(post invalid)
@@ -445,7 +478,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun restoreState() {
         // restore location switch
         binding.locationSwitch.isChecked = createUpdatePostViewModel.isUsingLocation
-        
+
         // restore photo/video upload layout
         updatePhotoVideoUsage()
 

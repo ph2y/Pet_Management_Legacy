@@ -47,6 +47,13 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
             field = value
         }
 
+    // for disclosure
+    var disclosure = handle.get<String>("disclosure")
+        set(value) {
+            handle.set("disclosure", value)
+            field = value
+        }
+
     // for post EditText
     var postEditText = handle.get<String>("postEditText")?: ""
         set(value) {
