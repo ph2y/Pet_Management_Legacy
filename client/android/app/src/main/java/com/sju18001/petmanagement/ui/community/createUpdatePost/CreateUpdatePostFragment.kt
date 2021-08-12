@@ -35,7 +35,11 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Pet
+import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -74,6 +78,8 @@ class CreateUpdatePostFragment : Fragment() {
     private var fetchPetApiCall: Call<FetchPetResDto>? = null
     private var fetchPetPhotoApiCall: Call<ResponseBody>? = null
     private var createPostApiCall: Call<CreatePostResDto>? = null
+    private var fetchPostApiCall: Call<FetchPostResDto>? = null
+    private var updatePostMediaApiCall: Call<UpdatePostMediaResDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -251,7 +257,6 @@ class CreateUpdatePostFragment : Fragment() {
                 Toast.makeText(context, context?.getText(R.string.pet_not_selected_message), Toast.LENGTH_LONG).show()
             }
             else {
-                // TODO: implement server API
                 createPost()
             }
         }
@@ -473,6 +478,7 @@ class CreateUpdatePostFragment : Fragment() {
         val petListOrder = getPetListOrder(PET_LIST_ORDER)
 
         // sort by order
+        petIdAndNameList = mutableListOf()
         for(id in petListOrder) {
             val pet = apiResponse.find { it.id == id }
             petIdAndNameList.add(pet!!)
@@ -570,10 +576,9 @@ class CreateUpdatePostFragment : Fragment() {
             ) {
                 if (response.isSuccessful) {
                     // get created post id + update post media
-                    // TODO
-
-                    Log.d("test", "SUCCESS!")
-                } else {
+                    getIdAndUpdateMedia()
+                }
+                else {
                     // set api state/button to normal
                     createUpdatePostViewModel.apiIsLoading = false
                     setButtonToNormal()
@@ -604,6 +609,130 @@ class CreateUpdatePostFragment : Fragment() {
         })
     }
 
+    // update post media
+    private fun updatePostMedia(id: Long) {
+        // exception(no media files)
+        if(createUpdatePostViewModel.photoVideoPathList.size == 0) { closeAfterSuccess() }
+
+        else {
+            // create file list
+            val fileList: ArrayList<MultipartBody.Part> = ArrayList()
+            for(i in 0 until createUpdatePostViewModel.photoVideoPathList.size) {
+                val fileName = "file_$i" + createUpdatePostViewModel.photoVideoPathList[i]
+                    .substring(createUpdatePostViewModel.photoVideoPathList[i].lastIndexOf("."))
+
+                fileList.add(MultipartBody.Part.createFormData("fileList", fileName,
+                    RequestBody.create(MediaType.parse("multipart/form-data"), File(createUpdatePostViewModel.photoVideoPathList[i]))))
+            }
+
+            // API call
+            updatePostMediaApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                .updatePostMediaReq(id, fileList)
+            updatePostMediaApiCall!!.enqueue(object: Callback<UpdatePostMediaResDto> {
+                @RequiresApi(Build.VERSION_CODES.O)
+                override fun onResponse(
+                    call: Call<UpdatePostMediaResDto>,
+                    response: Response<UpdatePostMediaResDto>
+                ) {
+                    if(response.isSuccessful) {
+                        // close after success
+                        closeAfterSuccess()
+                    }
+                    else {
+                        // set api state/button to normal
+                        createUpdatePostViewModel.apiIsLoading = false
+                        setButtonToNormal()
+
+                        // get error message + show(Toast)
+                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                        // log error message
+                        Log.d("error", errorMessage)
+                    }
+                }
+
+                override fun onFailure(call: Call<UpdatePostMediaResDto>, t: Throwable) {
+                    // set api state/button to normal
+                    createUpdatePostViewModel.apiIsLoading = false
+                    setButtonToNormal()
+
+                    // show(Toast)/log error message
+                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                    Log.d("error", t.message.toString())
+                }
+            })
+        }
+    }
+
+    // get created pet id + update pet photo
+    private fun getIdAndUpdateMedia() {
+        // create DTO
+        val fetchPostReqDto = FetchPostReqDto(0, null, createUpdatePostViewModel.petId, null)
+
+        fetchPostApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPostReq(fetchPostReqDto)
+        fetchPostApiCall!!.enqueue(object: Callback<FetchPostResDto> {
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onResponse(
+                call: Call<FetchPostResDto>,
+                response: Response<FetchPostResDto>
+            ) {
+                if(response.isSuccessful) {
+                    val postId = (response.body()?.postList?.get(0) as Post).id
+
+                    // update post media
+                    updatePostMedia(postId)
+                }
+                else {
+                    // set api state/button to normal
+                    createUpdatePostViewModel.apiIsLoading = false
+                    setButtonToNormal()
+
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
+                // if the view was destroyed(API call canceled) -> return
+                if(_binding == null) {
+                    return
+                }
+
+                // set api state/button to normal
+                createUpdatePostViewModel.apiIsLoading = false
+                setButtonToNormal()
+
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
+    // close after success
+    private fun closeAfterSuccess() {
+        // set api state/button to normal
+        createUpdatePostViewModel.apiIsLoading = false
+        setButtonToNormal()
+
+        // delete copied files(if any)
+        if(isRemoving || requireActivity().isFinishing) {
+            for(path in createUpdatePostViewModel.photoVideoPathList) {
+                File(path).delete()
+            }
+        }
+
+        // show message + return to previous activity
+        Toast.makeText(context, context?.getText(R.string.create_post_successful), Toast.LENGTH_LONG).show()
+        activity?.finish()
+    }
+
     // for view restore
     private fun restoreState() {
         // restore location switch
@@ -631,6 +760,10 @@ class CreateUpdatePostFragment : Fragment() {
         }
 
         // stop api call when fragment is destroyed
-        // TODO
+        fetchPetApiCall?.cancel()
+        fetchPetPhotoApiCall?.cancel()
+        createPostApiCall?.cancel()
+        fetchPostApiCall?.cancel()
+        updatePostMediaApiCall?.cancel()
     }
 }

@@ -2,6 +2,7 @@ package com.sju18001.petmanagement.restapi.dto
 
 import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.global.DtoMetadata
+import com.sju18001.petmanagement.restapi.global.FileMetaData
 import com.sju18001.petmanagement.restapi.global.Pageable
 import java.math.BigDecimal
 
@@ -30,4 +31,9 @@ data class FetchPostResDto (
     val postList: List<Post>?,
     val pageable: Pageable?,
     val isLast: Boolean?
+)
+
+data class UpdatePostMediaResDto (
+    val _metadata: DtoMetadata,
+    val fileMetadataList: List<FileMetaData>
 )

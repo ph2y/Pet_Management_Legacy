@@ -164,5 +164,6 @@
     <string name="hashtag_empty_message">해시태그 내용을 입력해주세요!</string>
     <string name="post_invalid_message">글 내용을 입력하거나, 사진 및 동영상을 올려주세요!</string>
     <string name="pet_not_selected_message">펫을 선택해주세요!</string>
+    <string name="create_post_successful">글 쓰기에 성공했어요!</string>
 
 </resources>
