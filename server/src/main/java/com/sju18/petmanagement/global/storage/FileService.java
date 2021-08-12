@@ -4,8 +4,6 @@ import com.sju18.petmanagement.global.message.MessageConfig;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.aspectj.util.FileUtil;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,16 +12,13 @@ import java.io.FileNotFoundException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
-    private final String storageRootPath = "D:\\TempDev\\Pet-Management\\storage";
+    private final String storageRootPath = "E:\\TempDev\\Pet-Management\\storage";
 
     // 특정 사용자 데이터 폴더 경로 조회
     public Path getAccountFileStoragePath(Long accountId) {
@@ -35,7 +30,7 @@ public class FileService {
     }
     // 특정 게시물 데이터 폴더 경로 조회
     public Path getPostFileStoragePath(Long postId) {
-        return Paths.get(storageRootPath, "community", "post", "post_" + postId);
+        return Paths.get(storageRootPath, "community", "posts", "post_" + postId);
     }
     // 특정 게시물 댓글 데이터 폴더 경로 조회 - TODO: 장래 커뮤니티 기능 구현시 같이 구현예정
     // TODO: getCommentFileStoragePath(Long commentId) 구현
@@ -67,6 +62,8 @@ public class FileService {
     public void createPostFileStorage(Long postId) throws Exception {
         Path postAttachedFileStorage = getPostFileStoragePath(postId);
         Files.createDirectories(postAttachedFileStorage);
+        FileUtil.makeNewChildDir(postAttachedFileStorage.toFile(), "media");
+        FileUtil.makeNewChildDir(postAttachedFileStorage.toFile(), "general");
         FileUtil.makeNewChildDir(postAttachedFileStorage.toFile(), "comments");
     }
     // 게시물 데이터 폴더 삭제
@@ -119,24 +116,52 @@ public class FileService {
         return savePath.resolve(fileName).toString();
     }
     
-    // 게시물 첨부파일 저장
-    public JSONArray savePostAttachments(Long postId, List<MultipartFile> uploadedFiles) throws Exception {
+    // 게시물 미디어파일 저장 전처리
+    public List<FileMetadata> savePostMediaAttachments(Long postId, List<MultipartFile> uploadedFiles) throws Exception {
         // 업로드 다중파일 저장 경로
-        Path savePath = getPostFileStoragePath(postId);
+        Path savePath = getPostFileStoragePath(postId).resolve("media");
         // 업로드 가능한 확장자
         String[] acceptableExtensions = new String[]{
-                "jpg","png","jpeg", "gif", "webp", "mp3", "flac", "mp4", "webm"
+                "jpg","png","jpeg", "gif", "webp", "mp4", "webm"
         };
-        // 업로드 개별 파일 용량 제한 (100MB)
-        long fileSizeLimit = 100000000;
-        // 업로드 파일 갯수 제한
+        // 업로드 파일 갯수 제한 및 확인
         int fileCountLimit = 10;
-        //
-        JSONArray fileMetaDataList = new JSONArray();
-
         if (uploadedFiles.size() > fileCountLimit) {
             throw new Exception(msgSrc.getMessage("error.file.count", null, Locale.ENGLISH));
         }
+
+        return this.savePostAttachments(savePath, postId, acceptableExtensions, uploadedFiles);
+    }
+
+    // 게시물 첨부파일 저장 전처리
+    public List<FileMetadata> savePostFileAttachments(Long postId, List<MultipartFile> uploadedFiles) throws Exception {
+        // 업로드 다중파일 저장 경로
+        Path savePath = getPostFileStoragePath(postId).resolve("general");
+        // 업로드 가능한 확장자
+        String[] acceptableExtensions = new String[]{
+                "doc", "docx", "hwp", "pdf", "txt", "ppt", "pptx", "psd", "ai", "xls", "xlsx",
+                "rar", "tar", "zip", "exe", "apk"
+        };
+        // 업로드 파일 갯수 제한 및 확인
+        int fileCountLimit = 10;
+        if (uploadedFiles.size() > fileCountLimit) {
+            throw new Exception(msgSrc.getMessage("error.file.count", null, Locale.ENGLISH));
+        }
+
+        return this.savePostAttachments(savePath, postId, acceptableExtensions, uploadedFiles);
+    }
+
+    // 게시물 파일 저장
+    private List<FileMetadata> savePostAttachments(
+            Path savePath, Long postId, String[] acceptableExtensions, List<MultipartFile> uploadedFiles
+    ) throws Exception {
+        // 업로드 개별 파일 용량 제한 (100MB)
+        long fileSizeLimit = 100000000;
+        // 파일 메타데이터 리스트
+        List<FileMetadata> fileMetaDataList = new ArrayList<>();
+
+        // 해당 게시물 데이터 디렉토리 초기화
+        FileUtils.cleanDirectory(savePath.toFile());
 
         for (MultipartFile uploadedFile : uploadedFiles) {
             try {
@@ -147,17 +172,17 @@ public class FileService {
                 // 파일 저장
                 uploadedFile.transferTo(savePath.resolve(fileName));
                 // 파일 메타데이터 정보 생성
-                JSONObject fileMetaData = new JSONObject();
-                fileMetaData.put("fileName", fileName);
-                fileMetaData.put("fileSize", uploadedFile.getSize());
-                fileMetaData.put("fileType", "null");
-                fileMetaData.put("fileUrl", savePath.resolve(fileName));
+                FileMetadata fileMetaData = new FileMetadata(
+                        fileName,
+                        uploadedFile.getSize(),
+                        "post", "media",
+                        savePath.resolve(fileName).toString()
+                );
 
-                fileMetaDataList.put(fileMetaData);
+                fileMetaDataList.add(fileMetaData);
             } catch (Exception e) {
-                // 업로드 실패시 이미 업로드된 파일 삭제
-                // TODO: 게시물 수정시 기존 첨부파일에 대한 예외처리 필요
-                FileUtils.deleteDirectory(savePath.toFile());
+                // 업로드 실패시 해당 게시물 데이터 디렉토리 초기화
+                FileUtils.cleanDirectory(savePath.toFile());
                 throw e;
             }
         }

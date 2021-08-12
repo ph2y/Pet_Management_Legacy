@@ -34,7 +34,8 @@ public class MessageConfig implements WebMvcConfigurer {
         ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
         msgSrc.setBasenames(
                 "static/messages/account/validation",
-                "static/messages/pet/validation"
+                "static/messages/pet/validation",
+                "static/messages/community/validation"
         );
         return msgSrc;
     }
@@ -66,6 +67,17 @@ public class MessageConfig implements WebMvcConfigurer {
                 "static/messages/pet/error",
                 "static/messages/pet/response",
                 "static/messages/pet/validation"
+        );
+        return msgSrc;
+    }
+
+    @Bean
+    public static MessageSource getCommunityMessageSource() {
+        ReloadableResourceBundleMessageSource msgSrc = new ReloadableResourceBundleMessageSource();
+        msgSrc.setBasenames(
+                "static/messages/community/error",
+                "static/messages/community/response",
+                "static/messages/community/validation"
         );
         return msgSrc;
     }
