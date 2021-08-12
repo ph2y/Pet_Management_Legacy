@@ -152,6 +152,7 @@
     <string name="delete_account_dialog">정말 회원탈퇴 하시겠어요?</string>
     <string name="account_update_success">계정 업데이트 성공</string>
     <string name="account_delete_success">회원탈퇴를 성공적으로 완료되었습니다</string>
+    <string name="account_regex_invalid">형식에 맞지 않는 입력값이 있습니다\n다시 입력해주세요</string>
 
     <!-- Community Fragment -->
     <string name="comment">댓글</string>

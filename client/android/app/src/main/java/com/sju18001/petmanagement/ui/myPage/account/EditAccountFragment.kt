@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,6 +31,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.regex.Pattern
 
 class EditAccountFragment : Fragment() {
     private lateinit var editAccountViewModel: EditAccountViewModel
@@ -48,6 +50,11 @@ class EditAccountFragment : Fragment() {
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
+
+    // pattern regex for EditTexts
+    private val patternPhone: Pattern = Pattern.compile("(^02|^\\d{3})-(\\d{3}|\\d{4})-\\d{4}")
+    private val patternEmail: Pattern = Patterns.EMAIL_ADDRESS
+    private val patternNickname: Pattern = Pattern.compile("(^[가-힣ㄱ-ㅎa-zA-Z0-9]{2,20}$)")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +93,12 @@ class EditAccountFragment : Fragment() {
         }
 
         binding.confirmButton.setOnClickListener {
-            updateAccount()
+            if(checkIsValid()) {
+                updateAccount()
+            }
+            else {
+                Toast.makeText(context, context?.getText(R.string.account_regex_invalid), Toast.LENGTH_SHORT).show()
+            }
         }
 
         binding.logoutButton.setOnClickListener {
@@ -175,6 +187,13 @@ class EditAccountFragment : Fragment() {
 
         updateAccountApiCall?.cancel()
         deleteAccountApiCall?.cancel()
+    }
+
+    // check regex validation
+    private fun checkIsValid(): Boolean {
+        return patternEmail.matcher(myPageViewModel.accountEmailValue).matches() &&
+                patternNickname.matcher(myPageViewModel.accountNicknameValue).matches() &&
+                patternPhone.matcher(myPageViewModel.accountPhoneValue).matches()
     }
 
     // update account
