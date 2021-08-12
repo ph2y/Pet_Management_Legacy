@@ -12,7 +12,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/photos_and_videos_layout"
+        app:layout_constraintBottom_toTopOf="@id/pet_and_location_layout"
         android:padding="16dp">
 
         <ImageButton
@@ -67,13 +67,59 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/pet_and_location_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/back_button_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/photos_and_videos_layout">
+
+        <LinearLayout
+            android:id="@+id/pet_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/location_switch"
+            android:layout_centerVertical="true"
+            android:orientation="horizontal">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/pet_photo_circle_view"
+                android:layout_width="50dp"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_baseline_pets_60_with_padding"
+                app:civ_border_color="@color/carrot"
+                app:civ_border_width="1dp"/>
+
+            <Spinner
+                android:id="@+id/pet_name_spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                />
+
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/location_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:text="@string/location_switch_label"
+            />
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/photos_and_videos_layout"
         android:layout_width="match_parent"
         android:layout_height="90dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/back_button_layout"
+        app:layout_constraintTop_toBottomOf="@id/pet_and_location_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/post_edit_text"
+        app:layout_constraintBottom_toTopOf="@id/hashtag_input_layout"
         android:orientation="horizontal">
 
         <androidx.recyclerview.widget.RecyclerView
@@ -120,12 +166,65 @@
 
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/hashtag_input_layout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/photos_and_videos_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/hashtag_recycler_view">
+
+        <TextView
+            android:id="@+id/hashtag_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:textStyle="bold"
+            android:textSize="30dp"
+            android:text="#"/>
+
+        <EditText
+            android:id="@+id/hashtag_input_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/hashtag_icon"
+            android:layout_toStartOf="@id/hashtag_input_button"
+            android:layout_centerVertical="true"
+            android:hint="@string/write_hashtag_hint"
+            android:textSize="12dp"
+            android:theme="@style/onSelectedThemeCarrot"
+            />
+
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/hashtag_input_button"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/button_with_radius"
+            android:src="@drawable/ic_baseline_add_24"/>
+
+    </RelativeLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/hashtag_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/hashtag_input_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/post_edit_text"
+        android:orientation="horizontal"/>
+
     <EditText
         android:id="@+id/post_edit_text"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/photos_and_videos_layout"
+        app:layout_constraintTop_toBottomOf="@id/hashtag_recycler_view"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_margin="15dp"
