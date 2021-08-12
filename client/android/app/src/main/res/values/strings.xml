@@ -169,7 +169,7 @@
     <string name="write_post_hint">글 내용을 입력하세요.</string>
     <string name="file_type_exception_message">지원하지 않는 파일 유형이에요!</string>
     <string name="file_null_exception_message">파일이 존재하지 않아요!</string>
-    <string name="photo_video_usage_full_message">사진 및 동영상은 최대 10개까지만 `업로드 가능해요!</string>
+    <string name="photo_video_usage_full_message">사진 및 동영상은 최대 10개까지만 업로드 가능해요!</string>
     <string name="post_invalid_message">글 내용을 입력하거나, 사진 및 동영상을 올려주세요!</string>
 
 </resources>
