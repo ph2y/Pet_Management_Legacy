@@ -41,6 +41,8 @@ class CommunityFragment : Fragment() {
 
     // API Calls
     private var fetchPostApiCall: Call<FetchPostResDto>? = null
+    
+    // 글 새로고침
     private var topPostId: Long? = null
     private var pageIndex: Int = 1
 
@@ -60,6 +62,15 @@ class CommunityFragment : Fragment() {
         // 어뎁터 초기화
         initializeAdapter()
 
+        // 초기 post 추가
+        updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
+
+        // SwipeRefreshLayout
+        binding.layoutSwipeRefresh.setOnRefreshListener {
+            resetPostData()
+            updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
+        }
+
         return binding.root
     }
 
@@ -68,8 +79,8 @@ class CommunityFragment : Fragment() {
 
         // for create post FAB
         binding.createPostFab.setOnClickListener {
-            //startActivity(Intent(context, CreateUpdatePostActivity::class.java))
-            //requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+            startActivity(Intent(context, CreateUpdatePostActivity::class.java))
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
     }
 
@@ -106,9 +117,6 @@ class CommunityFragment : Fragment() {
                 }
             })
         }
-
-        // 초기 post 추가
-        updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
     }
 
     private fun updateAdapterDataSetByFetchPost(body: FetchPostReqDto){
@@ -123,7 +131,7 @@ class CommunityFragment : Fragment() {
                     response.body()!!.postList?.let {
                         if(it.isNotEmpty()){
                             it.map { item ->
-                                adapter.addItems(item)
+                                adapter.addItem(item)
                             }
 
                             topPostId = it.last().id
@@ -137,11 +145,22 @@ class CommunityFragment : Fragment() {
                 }else{
                     Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                 }
+
+                // 새로고침 아이콘 제거
+                binding.layoutSwipeRefresh.isRefreshing = false
             }
 
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
-                Log.e("CommunityFragment", t.message.toString())
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+
+                // 새로고침 아이콘 제거
+                binding.layoutSwipeRefresh.isRefreshing = false
             }
         })
+    }
+
+    private fun resetPostData(){
+        pageIndex = 1
+        adapter.resetDataSet()
     }
 }
