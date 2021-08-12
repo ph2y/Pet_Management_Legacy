@@ -27,7 +27,7 @@ public class Follow {
     @JoinColumn(name = "follower_id")
     Account follower;
 
-    // following: following 객체를 follow 하는 객체
+    // following: follower 객체를 follow 하는 객체
     @ManyToOne
     @JoinColumn(name = "following_id")
     Account following;

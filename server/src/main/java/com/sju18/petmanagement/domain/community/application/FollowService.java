@@ -38,7 +38,7 @@ public class FollowService {
         followRepository.save(follow);
     }
 
-    // 현재 사용자가 팔로잉하고 있는 Follow 리스트 Fetch
+    // 현재 사용자가 팔로잉하고 있는, 사용자가 Following 객체이고 찾는 객체가 Follower 객체인 Follow 리스트 Fetch
     @Transactional(readOnly = true)
     public List<Follow> fetchFollower(Authentication auth) throws Exception {
         Account following = accountServ.fetchCurrentAccount(auth);
@@ -46,7 +46,7 @@ public class FollowService {
         return new ArrayList<>(followRepository.findAllByFollowingId(following.getId()));
     }
 
-    // 현재 사용자를 팔로우하고 있는 Follow 리스트 Fetch
+    // 현재 사용자를 팔로우하고 있는, 사용자가 Follower 객체이고 찾는 객체가 Following 객체인 Follow 리스트 Fetch
     @Transactional(readOnly = true)
     public List<Follow> fetchFollowing(Authentication auth) throws Exception {
         Account follower = accountServ.fetchCurrentAccount(auth);
