@@ -68,7 +68,8 @@ class CreateUpdatePostFragment : Fragment() {
     private var petIdAndNameList: MutableList<Pet> = mutableListOf()
 
     // variables for RecyclerView
-    private lateinit var adapter: PhotoVideoListAdapter
+    private lateinit var photoVideoAdapter: PhotoVideoListAdapter
+    private lateinit var hashtagAdapter: HashtagListAdapter
 
     // variables for storing API call(for cancel)
     private var fetchPetApiCall: Call<FetchPetResDto>? = null
@@ -94,12 +95,19 @@ class CreateUpdatePostFragment : Fragment() {
         _binding = FragmentCreateUpdatePostBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-        // initialize RecyclerView
-        adapter = PhotoVideoListAdapter(createUpdatePostViewModel, requireContext(), binding)
-        binding.photosAndVideosRecyclerView.adapter = adapter
+        // initialize RecyclerView(photos and videos)
+        photoVideoAdapter = PhotoVideoListAdapter(createUpdatePostViewModel, requireContext(), binding)
+        binding.photosAndVideosRecyclerView.adapter = photoVideoAdapter
         binding.photosAndVideosRecyclerView.layoutManager = LinearLayoutManager(activity)
         (binding.photosAndVideosRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
-        adapter.setResult(createUpdatePostViewModel.thumbnailList)
+        photoVideoAdapter.setResult(createUpdatePostViewModel.thumbnailList)
+
+        // initialize RecyclerView(hashtags)
+        hashtagAdapter = HashtagListAdapter(createUpdatePostViewModel, binding)
+        binding.hashtagRecyclerView.adapter = hashtagAdapter
+        binding.hashtagRecyclerView.layoutManager = LinearLayoutManager(activity)
+        (binding.hashtagRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
 
         return root
     }
@@ -197,6 +205,33 @@ class CreateUpdatePostFragment : Fragment() {
             else -> { binding.disclosureSpinner.setSelection(0) }
         }
 
+        // for hashtag input button
+        binding.hashtagInputButton.setOnClickListener {
+            if(binding.hashtagInputEditText.text.toString() == "") {
+                // show message(hashtag empty)
+                Toast.makeText(context, context?.getText(R.string.hashtag_empty_message), Toast.LENGTH_LONG).show()
+            }
+            else if(createUpdatePostViewModel.hashtagList.size == 5) {
+                // show message(hashtag usage full)
+                Toast.makeText(context, context?.getText(R.string.hashtag_usage_full_message), Toast.LENGTH_LONG).show()
+            }
+            else {
+                // save hashtag
+                val hashtag = binding.hashtagInputEditText.text.toString()
+                createUpdatePostViewModel.hashtagList.add(hashtag)
+
+                // update RecyclerView
+                hashtagAdapter.notifyItemInserted(createUpdatePostViewModel.hashtagList.size)
+                binding.hashtagRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.hashtagList.size - 1)
+
+                // reset hashtag EditText
+                binding.hashtagInputEditText.setText("")
+
+                // update hashtag usage
+                updateHashtagUsage()
+            }
+        }
+
         // for post EditText listener
         binding.postEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -254,7 +289,7 @@ class CreateUpdatePostFragment : Fragment() {
                     createUpdatePostViewModel.thumbnailList.add(thumbnail)
 
                     // update RecyclerView
-                    adapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
+                    photoVideoAdapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
                     binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
 
                     // update photo/video usage
@@ -283,7 +318,7 @@ class CreateUpdatePostFragment : Fragment() {
                     createUpdatePostViewModel.thumbnailList.add(null)
 
                     // update RecyclerView
-                    adapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
+                    photoVideoAdapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
                     binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
 
                     // update photo/video usage
@@ -474,6 +509,14 @@ class CreateUpdatePostFragment : Fragment() {
         binding.photoVideoUsage.text = photoVideoUsageText
     }
 
+    // update hashtag usage
+    private fun updateHashtagUsage() {
+        val hashtagCount = createUpdatePostViewModel.hashtagList.size
+        if(hashtagCount != 0) { binding.hashtagRecyclerView.visibility = View.VISIBLE }
+        val hashtagUsageText = "$hashtagCount/5"
+        binding.hashtagUsage.text = hashtagUsageText
+    }
+
     // for view restore
     private fun restoreState() {
         // restore location switch
@@ -481,6 +524,9 @@ class CreateUpdatePostFragment : Fragment() {
 
         // restore photo/video upload layout
         updatePhotoVideoUsage()
+
+        // restore hashtag layout
+        updateHashtagUsage()
 
         // restore post EditText
         binding.postEditText.setText(createUpdatePostViewModel.postEditText)

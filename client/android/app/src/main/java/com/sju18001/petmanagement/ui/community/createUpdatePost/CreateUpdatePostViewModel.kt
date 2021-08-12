@@ -54,6 +54,18 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
             field = value
         }
 
+    // for hashtag
+    var hashtagEditText = handle.get<String>("hashtagEditText")?: ""
+        set(value) {
+            handle.set("hashtagEditText", value)
+            field = value
+        }
+    var hashtagList = handle.get<MutableList<String>>("hashtagList")?: mutableListOf()
+        set(value) {
+            handle.set("hashtagList", value)
+            field = value
+        }
+
     // for post EditText
     var postEditText = handle.get<String>("postEditText")?: ""
         set(value) {
