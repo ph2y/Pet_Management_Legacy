@@ -139,6 +139,7 @@ class MyPageFragment : Fragment() {
                             it.username!!,
                             it.email!!,
                             it.phone!!,
+                            null,
                             it.marketing,
                             it.nickname,
                             it.photoUrl,

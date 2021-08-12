@@ -5,6 +5,7 @@ data class Account(
     val username: String,
     val email: String,
     val phone: String,
+    val password: String?,
     val marketing: Boolean?,
     val nickname: String?,
     val photoUrl: String?,

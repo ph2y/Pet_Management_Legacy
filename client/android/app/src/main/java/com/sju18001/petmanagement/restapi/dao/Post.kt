@@ -7,12 +7,12 @@ data class Post(
     val author: Account,
     val pet: Pet,
     val contents: String,
-    val timestamp: LocalDateTime,
+    val timestamp: String,
     val edited: Boolean,
     val serializedHashTags: String,
     val disclosure: String,
     val geoTagLat: Double,
     val geoTagLong: Double,
-    val mediaAttachments: String,
-    val fileAttachments: String
+    val mediaAttachments: String?,
+    val fileAttachments: String?
 )

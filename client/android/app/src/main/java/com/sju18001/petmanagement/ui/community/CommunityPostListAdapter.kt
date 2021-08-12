@@ -48,10 +48,10 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
     override fun getItemCount(): Int = dataSet.size
 
     private fun updateDataSetToViewHolder(holder: ViewHolder, data: Post){
-        holder.nicknameTextView.text = data.nickname
-        holder.petNameTextView.text = data.petName
-        holder.contentTextView.text = data.content
-        holder.likeCountTextView.text = data.like.toString()
+        holder.nicknameTextView.text = data.author.nickname
+        holder.petNameTextView.text = data.pet.name
+        holder.contentTextView.text = data.contents
+        holder.likeCountTextView.text = "0"
     }
 
     private fun setViewMore(contentTextView: TextView, viewMoreTextView: TextView){
@@ -78,9 +78,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
     }
 
-    fun addItems(items: List<Post>){
-        for(item in items){
-            dataSet.add(item)
-        }
+    fun addItems(item: Post){
+        dataSet.add(item)
     }
 }
