@@ -1,9 +1,14 @@
 package com.sju18001.petmanagement.ui.community.createUpdatePost
 
+import android.Manifest
 import android.app.Dialog
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,10 +21,11 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView.AdapterDataObserver
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
@@ -129,6 +135,15 @@ class CreateUpdatePostFragment : Fragment() {
             if(!(createUpdatePostViewModel.thumbnailList.size == 0 &&
                         createUpdatePostViewModel.postEditText == "")) {
                 // TODO: implement server API
+                if (ContextCompat.checkSelfPermission(requireContext(),
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                    && ContextCompat.checkSelfPermission(requireContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                    val location = (requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager)
+                        .getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                    Log.d("lat", location?.latitude.toString())
+                    Log.d("long", location?.longitude.toString())
+                }
             }
             else {
                 // show message(post invalid)
