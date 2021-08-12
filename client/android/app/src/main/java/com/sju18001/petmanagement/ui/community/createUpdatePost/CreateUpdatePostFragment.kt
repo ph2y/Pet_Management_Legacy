@@ -35,6 +35,7 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Pet
+import com.sju18001.petmanagement.restapi.dto.CreatePostResDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetResDto
@@ -74,7 +75,7 @@ class CreateUpdatePostFragment : Fragment() {
     // variables for storing API call(for cancel)
     private var fetchPetApiCall: Call<FetchPetResDto>? = null
     private var fetchPetPhotoApiCall: Call<ResponseBody>? = null
-    // TODO
+    private var createPostApiCall: Call<CreatePostResDto>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
