@@ -163,5 +163,6 @@
     <string name="hashtag_usage_full_message">해시태그는 최대 5개까지만 입력 가능해요!</string>
     <string name="hashtag_empty_message">해시태그 내용을 입력해주세요!</string>
     <string name="post_invalid_message">글 내용을 입력하거나, 사진 및 동영상을 올려주세요!</string>
+    <string name="pet_not_selected_message">펫을 선택해주세요!</string>
 
 </resources>

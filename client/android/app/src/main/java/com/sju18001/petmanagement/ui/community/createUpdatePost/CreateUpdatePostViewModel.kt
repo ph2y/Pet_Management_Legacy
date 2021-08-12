@@ -48,7 +48,7 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
         }
 
     // for disclosure
-    var disclosure = handle.get<String>("disclosure")
+    var disclosure = handle.get<String>("disclosure")?: "PUBLIC"
         set(value) {
             handle.set("disclosure", value)
             field = value
@@ -71,5 +71,11 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
         set(value) {
             handle.set("postEditText", value)
             field = value
+        }
+
+    // for API
+    var apiIsLoading = handle.get<Boolean>("apiIsLoading")?: false
+        set(value) {
+            handle.set("apiIsLoading", value)
         }
 }

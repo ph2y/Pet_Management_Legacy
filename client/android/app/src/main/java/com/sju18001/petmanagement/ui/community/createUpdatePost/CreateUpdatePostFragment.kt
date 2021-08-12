@@ -35,10 +35,7 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Pet
-import com.sju18001.petmanagement.restapi.dto.CreatePostResDto
-import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchPetReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchPetResDto
+import com.sju18001.petmanagement.restapi.dto.*
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -47,6 +44,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.lang.reflect.Type
+import java.math.BigDecimal
 
 class CreateUpdatePostFragment : Fragment() {
 
@@ -203,7 +201,6 @@ class CreateUpdatePostFragment : Fragment() {
             DISCLOSURE_PUBLIC -> { binding.disclosureSpinner.setSelection(0) }
             DISCLOSURE_PRIVATE -> { binding.disclosureSpinner.setSelection(1) }
             DISCLOSURE_FRIEND -> { binding.disclosureSpinner.setSelection(2) }
-            else -> { binding.disclosureSpinner.setSelection(0) }
         }
 
         // for hashtag input button
@@ -244,13 +241,18 @@ class CreateUpdatePostFragment : Fragment() {
 
         // for confirm button
         binding.confirmButton.setOnClickListener {
-            if(!(createUpdatePostViewModel.thumbnailList.size == 0 &&
-                        createUpdatePostViewModel.postEditText == "")) {
-                // TODO: implement server API
-            }
-            else {
+            if(createUpdatePostViewModel.thumbnailList.size == 0 &&
+                createUpdatePostViewModel.postEditText == "") {
                 // show message(post invalid)
                 Toast.makeText(context, context?.getText(R.string.post_invalid_message), Toast.LENGTH_LONG).show()
+            }
+            else if(createUpdatePostViewModel.petId == null) {
+                // show message(pet not selected)
+                Toast.makeText(context, context?.getText(R.string.pet_not_selected_message), Toast.LENGTH_LONG).show()
+            }
+            else {
+                // TODO: implement server API
+                createPost()
             }
         }
 
@@ -489,17 +491,27 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     // get geolocation
-    // TODO
-    private fun getGeolocation() {
+    private fun getGeolocation(): MutableList<BigDecimal> {
+        val latAndLong: MutableList<BigDecimal> = mutableListOf()
+
+        if(!createUpdatePostViewModel.isUsingLocation) {
+            latAndLong.add(0.0.toBigDecimal())
+            latAndLong.add(0.0.toBigDecimal())
+
+            return latAndLong
+        }
+
         if (ContextCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
             && ContextCompat.checkSelfPermission(requireContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             val location = (requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager)
                 .getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            Log.d("lat", location?.latitude.toString())
-            Log.d("long", location?.longitude.toString())
+            latAndLong.add(location?.latitude!!.toBigDecimal())
+            latAndLong.add(location?.longitude!!.toBigDecimal())
         }
+
+        return latAndLong
     }
 
     // update photo/video usage
@@ -516,6 +528,80 @@ class CreateUpdatePostFragment : Fragment() {
         if(hashtagCount != 0) { binding.hashtagRecyclerView.visibility = View.VISIBLE }
         val hashtagUsageText = "$hashtagCount/5"
         binding.hashtagUsage.text = hashtagUsageText
+    }
+
+    // set button to loading
+    private fun setButtonToLoading() {
+        binding.confirmButton.visibility = View.GONE
+        binding.createUpdatePostProgressBar.visibility = View.VISIBLE
+    }
+
+    // set button to normal
+    private fun setButtonToNormal() {
+        binding.confirmButton.visibility = View.VISIBLE
+        binding.createUpdatePostProgressBar.visibility = View.GONE
+    }
+
+    // create post
+    private fun createPost() {
+        // set api state/button to loading
+        createUpdatePostViewModel.apiIsLoading = true
+        setButtonToLoading()
+
+        // get location data(if enabled)
+        val latAndLong = getGeolocation()
+
+        // create DTO
+        val createPostReqDto = CreatePostReqDto(
+            createUpdatePostViewModel.petId!!,
+            createUpdatePostViewModel.postEditText,
+            createUpdatePostViewModel.hashtagList,
+            createUpdatePostViewModel.disclosure,
+            latAndLong[0],
+            latAndLong[1]
+        )
+
+        createPostApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .createPostReq(createPostReqDto)
+        createPostApiCall!!.enqueue(object: Callback<CreatePostResDto> {
+            override fun onResponse(
+                call: Call<CreatePostResDto>,
+                response: Response<CreatePostResDto>
+            ) {
+                if (response.isSuccessful) {
+                    // get created post id + update post media
+                    // TODO
+
+                    Log.d("test", "SUCCESS!")
+                } else {
+                    // set api state/button to normal
+                    createUpdatePostViewModel.apiIsLoading = false
+                    setButtonToNormal()
+
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<CreatePostResDto>, t: Throwable) {
+                // if the view was destroyed(API call canceled) -> return
+                if (_binding == null) {
+                    return
+                }
+
+                // set api state/button to normal
+                createUpdatePostViewModel.apiIsLoading = false
+                setButtonToNormal()
+
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
     }
 
     // for view restore
