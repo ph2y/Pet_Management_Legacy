@@ -7,5 +7,6 @@ data class Pageable (
     val pageSize: Int,
     val offset: Long,
     val sort: Sort,
+    val paged: Boolean,
     val unpaged: Boolean
 )
