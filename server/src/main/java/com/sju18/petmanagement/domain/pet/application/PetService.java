@@ -69,7 +69,7 @@ public class PetService {
         // 반려동물 고유번호로 반려동물 인출
         return petRepository.findById(petId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.pet.notExists", null, Locale.ENGLISH)
                 ));
     }
 
@@ -81,7 +81,7 @@ public class PetService {
         // 사용자 정보로 반려동물 리스트 인출
         return petRepository.findByOwnernameAndId(ownername, petId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.pet.notExists", null, Locale.ENGLISH)
                 ));
     }
 
@@ -89,7 +89,7 @@ public class PetService {
         Account currentAccount = accountServ.fetchCurrentAccount(auth);
         Pet currentPet = petRepository.findByOwnernameAndId(currentAccount.getUsername(), petId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.pet.notExists", null, Locale.ENGLISH)
                 ));
 
         // 사진 파일 인출
@@ -106,7 +106,7 @@ public class PetService {
         String ownername = accountServ.fetchCurrentAccount(auth).getUsername();
         Pet currentPet = petRepository.findByOwnernameAndId(ownername, reqDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.pet.notExists", null, Locale.ENGLISH)
                 ));
 
         if (reqDto.getName() != null && !reqDto.getName().isEmpty() && !reqDto.getName().equals(currentPet.getName())) {
@@ -141,7 +141,7 @@ public class PetService {
         Account currentAccount = accountServ.fetchCurrentAccount(auth);
         Pet currentPet = petRepository.findByOwnernameAndId(currentAccount.getUsername(), reqDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.pet.notExists", null, Locale.ENGLISH)
                 ));
 
         // 첨부파일 인출
@@ -167,7 +167,7 @@ public class PetService {
         Account owner = accountServ.fetchCurrentAccount(auth);
         Pet pet = petRepository.findByOwnernameAndId(owner.getUsername(), reqDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.pet.notExists", null, Locale.ENGLISH)
                 ));
         fileServ.deletePetFileStorage(owner.getId(), pet.getId());
         petScheduleCascadeServ.deletePetCascadeToPetSchedule(pet);
