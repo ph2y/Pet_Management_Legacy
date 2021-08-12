@@ -88,7 +88,7 @@ public class PetScheduleService {
         // 반려동물 스케줄 고유번호로 반려동물 스케줄 인출
         return petScheduleRepository.findById(petScheduleId)
                 .orElseThrow(() -> new IllegalArgumentException(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.petSchedule.notExists", null, Locale.ENGLISH)
                 ));
     }
 
@@ -100,7 +100,7 @@ public class PetScheduleService {
         // 받은 사용자 정보와 입력 정보로 반려동물 사료 시간(스케줄) 정보 업데이트
         PetSchedule petSchedule = petScheduleRepository.findByUsernameAndId(username,reqDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH)
+                        msgSrc.getMessage("error.petSchedule.notExists", null, Locale.ENGLISH)
                 ));
 
         if (reqDto.getPetIdList() != null) {
@@ -130,7 +130,7 @@ public class PetScheduleService {
         // 받은 사용자 정보와 반려동물 스케줄 id로 반려동물 사료 시간(스케줄) 정보 삭제
         PetSchedule petSchedule = petScheduleRepository.findByUsernameAndId(username,reqDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException(
-                        msgSrc.getMessage("error.notExists", null, Locale.ENGLISH))
+                        msgSrc.getMessage("error.petSchedule.notExists", null, Locale.ENGLISH))
                 );
         petScheduleRepository.delete(petSchedule);
     }
