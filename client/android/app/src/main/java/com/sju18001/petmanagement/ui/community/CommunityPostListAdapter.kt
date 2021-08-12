@@ -78,7 +78,11 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
     }
 
-    fun addItems(item: Post){
+    fun addItem(item: Post){
         dataSet.add(item)
+    }
+
+    fun resetDataSet(){
+        dataSet = arrayListOf()
     }
 }
