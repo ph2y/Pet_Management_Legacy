@@ -48,10 +48,13 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
     override fun getItemCount(): Int = dataSet.size
 
     private fun updateDataSetToViewHolder(holder: ViewHolder, data: Post){
+        // TODO: use @Hanbit-Kang's code when merging
+        /*
         holder.nicknameTextView.text = data.nickname
         holder.petNameTextView.text = data.petName
         holder.contentTextView.text = data.content
         holder.likeCountTextView.text = data.like.toString()
+         */
     }
 
     private fun setViewMore(contentTextView: TextView, viewMoreTextView: TextView){
