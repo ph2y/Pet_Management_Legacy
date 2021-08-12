@@ -39,8 +39,7 @@ class CommunityFragment : Fragment() {
     // 리싸이클러뷰
     private lateinit var adapter: CommunityPostListAdapter
 
-    // API Calls
-    private var fetchPostApiCall: Call<FetchPostResDto>? = null
+    private var isViewDestroyed: Boolean = false
     
     // 글 새로고침
     private var topPostId: Long? = null
@@ -88,7 +87,7 @@ class CommunityFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        fetchPostApiCall?.cancel()
+        isViewDestroyed = true
     }
 
     private fun initializeAdapter(){
@@ -120,13 +119,17 @@ class CommunityFragment : Fragment() {
     }
 
     private fun updateAdapterDataSetByFetchPost(body: FetchPostReqDto){
-        fetchPostApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
             .fetchPostReq(body)
-        fetchPostApiCall!!.enqueue(object: Callback<FetchPostResDto> {
+        call!!.enqueue(object: Callback<FetchPostResDto> {
             override fun onResponse(
                 call: Call<FetchPostResDto>,
                 response: Response<FetchPostResDto>
             ) {
+                if(isViewDestroyed){
+                    return
+                }
+
                 if(response.isSuccessful){
                     response.body()!!.postList?.let {
                         if(it.isNotEmpty()){
@@ -151,6 +154,10 @@ class CommunityFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
+                if(isViewDestroyed){
+                    return
+                }
+
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
 
                 // 새로고침 아이콘 제거
@@ -162,5 +169,10 @@ class CommunityFragment : Fragment() {
     private fun resetPostData(){
         pageIndex = 1
         adapter.resetDataSet()
+
+        // 데이터셋 변경 알림
+        binding.recyclerViewPost.post{
+            adapter.notifyDataSetChanged()
+        }
     }
 }
