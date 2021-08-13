@@ -1,7 +1,5 @@
 package com.sju18001.petmanagement.restapi.dao
 
-import android.accounts.Account
-
 data class Post(
     val id: Long,
     val author: Account,
