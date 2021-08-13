@@ -14,7 +14,14 @@ import java.util.Optional;
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findById(Long id);
     Optional<Comment> findByAuthorAndId(Account author, Long id);
-    Page<Comment> findAllByPostId(Long postId, Pageable pageable);
+
+    @Query(
+            value = "SELECT * FROM comment AS c WHERE c.post_id = :postId",
+            countQuery = "SELECT COUNT(*) FROM comment AS c WHERE c.post_id = :postId",
+            nativeQuery = true
+    )
+    Page<Comment> findAllByPostId(@Param("postId") Long postId, Pageable pageable);
+
     @Query(
             value = "SELECT * FROM comment AS c WHERE c.comment_id <= :top AND c.post_id = :postId",
             countQuery = "SELECT COUNT(*) FROM comment AS c WHERE c.comment_id <= :top AND c.post_id = :postId",
@@ -25,9 +32,16 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             @Param("postId") Long postId,
             Pageable pageable
     );
-    Page<Comment> findAllByParentCommentId(Long parentCommentId, Pageable pageable);
+
     @Query(
-            value = "SELECT * FROM comment AS c WHERE c.comment_id <= :top AND c.post_id = :postId",
+            value = "SELECT * FROM comment AS c WHERE c.parent_comment_id = :parentId",
+            countQuery = "SELECT COUNT(*) FROM comment AS c WHERE c.parent_comment_id = :parentId",
+            nativeQuery = true
+    )
+    Page<Comment> findAllByParentCommentId(@Param("parentId") Long parentCommentId, Pageable pageable);
+
+    @Query(
+            value = "SELECT * FROM comment AS c WHERE c.comment_id <= :top AND c.parent_comment_id = :parentId",
             countQuery = "SELECT COUNT(*) FROM comment AS c WHERE c.comment_id <= :top AND c.parent_comment_id = :parentId",
             nativeQuery = true
     )

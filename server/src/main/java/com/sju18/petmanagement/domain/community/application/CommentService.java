@@ -35,17 +35,21 @@ public class CommentService {
     @Transactional
     public void createComment(Authentication auth, CreateCommentReqDto reqDto) throws Exception {
         Account author = accountServ.fetchCurrentAccount(auth);
-        Post commentedPost = postService.fetchPostById(reqDto.getPostId());
-        Comment repliedComment = this.fetchCommentById(reqDto.getParentCommentId());
-
+        Post commentedPost = null;
+        Comment repliedComment = null;
+        if (reqDto.getParentCommentId() != null) {
+            repliedComment = this.fetchCommentById(reqDto.getParentCommentId());
+        } else {
+            commentedPost = postService.fetchPostById(reqDto.getPostId());
+        }
 
         // 받은 사용자 정보와 새 입력 정보로 새 댓글 정보 생성
         Comment comment = Comment.builder()
                 .author(author)
                 .post(commentedPost)
-                .postId(commentedPost.getId())
+                .postId(commentedPost != null ? commentedPost.getId() : null)
                 .parentComment(repliedComment)
-                .parentCommentId(repliedComment.getId())
+                .parentCommentId(repliedComment != null ? repliedComment.getId() : null)
                 .contents(reqDto.getContents())
                 .timestamp(LocalDateTime.now())
                 .edited(false)
@@ -129,6 +133,6 @@ public class CommentService {
                 .orElseThrow(() -> new Exception(
                         msgSrc.getMessage("error.comment.notExists", null, Locale.ENGLISH)
                 ));
-        commentRepository.save(comment);
+        commentRepository.delete(comment);
     }
 }
