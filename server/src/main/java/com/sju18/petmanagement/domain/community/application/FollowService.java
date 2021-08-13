@@ -50,7 +50,7 @@ public class FollowService {
     @Transactional(readOnly = true)
     public List<Long> fetchFollower(Account account) throws Exception {
         return new ArrayList<>(followRepository.findAllByFollowingId(account.getId()))
-                .stream().map(Follow::getId)
+                .stream().map(follow -> follow.getFollower().getId())
                 .collect(Collectors.toList());
     }
 
