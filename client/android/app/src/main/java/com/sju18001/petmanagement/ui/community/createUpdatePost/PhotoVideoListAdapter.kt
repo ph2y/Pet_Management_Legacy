@@ -64,7 +64,6 @@ class PhotoVideoListAdapter(private val createUpdatePostViewModel: CreateUpdateP
         File(createUpdatePostViewModel.photoVideoPathList[position]).delete()
 
         // delete ViewModel values + RecyclerView list
-        createUpdatePostViewModel.photoVideoByteArrayList.removeAt(position)
         createUpdatePostViewModel.photoVideoPathList.removeAt(position)
         createUpdatePostViewModel.thumbnailList.removeAt(position)
 

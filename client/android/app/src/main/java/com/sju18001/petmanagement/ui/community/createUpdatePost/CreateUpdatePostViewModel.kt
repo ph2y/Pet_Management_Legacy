@@ -19,23 +19,8 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
             handle.set("isUsingLocation", value)
             field = value
         }
-    var geoTagLat = handle.get<BigDecimal>("geoTagLat")
-        set(value) {
-            handle.set("geoTagLat", value)
-            field = value
-        }
-    var geoTagLong = handle.get<BigDecimal>("geoTagLong")
-        set(value) {
-            handle.set("geoTagLong", value)
-            field = value
-        }
 
     // for photo/video files
-    var photoVideoByteArrayList = handle.get<MutableList<ByteArray>>("photoVideoByteArrayList")?: mutableListOf()
-        set(value) {
-            handle.set("photoVideoByteArrayList", value)
-            field = value
-        }
     var photoVideoPathList = handle.get<MutableList<String>>("photoVideoPathList")?: mutableListOf()
         set(value) {
             handle.set("photoVideoPathList", value)

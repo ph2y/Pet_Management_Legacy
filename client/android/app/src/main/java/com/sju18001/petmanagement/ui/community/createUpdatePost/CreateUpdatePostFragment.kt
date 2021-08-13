@@ -285,12 +285,11 @@ class CreateUpdatePostFragment : Fragment() {
                     createUpdatePostViewModel.photoVideoPathList
                         .add(ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!))
 
-                    // create bytearray + add to ViewModel
+                    // create bytearray
                     val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoVideoPathList.last())
                     val stream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                     val photoByteArray = stream.toByteArray()
-                    createUpdatePostViewModel.photoVideoByteArrayList.add(photoByteArray)
 
                     // save thumbnail
                     val thumbnail = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
@@ -313,14 +312,6 @@ class CreateUpdatePostFragment : Fragment() {
                     // copy selected photo and get real path
                     createUpdatePostViewModel.photoVideoPathList
                         .add(ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!))
-
-                    val video = FileInputStream(File(createUpdatePostViewModel.photoVideoPathList.last()))
-                    val stream = ByteArrayOutputStream()
-                    val buffer = ByteArray(1024)
-                    var n: Int
-                    while (-1 != video.read(buffer).also { n = it }) stream.write(buffer, 0, n)
-                    val videoByteArray = stream.toByteArray()
-                    createUpdatePostViewModel.photoVideoByteArrayList.add(videoByteArray)
 
                     // save thumbnail
                     createUpdatePostViewModel.thumbnailList.add(null)
@@ -455,7 +446,7 @@ class CreateUpdatePostFragment : Fragment() {
         }
 
         val spinnerArrayAdapter: ArrayAdapter<String> =
-            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_item, spinnerArray)
+            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item, spinnerArray)
         binding.petNameSpinner.adapter = spinnerArrayAdapter
 
         // set spinner position
