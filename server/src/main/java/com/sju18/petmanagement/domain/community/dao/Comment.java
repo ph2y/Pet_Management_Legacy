@@ -21,7 +21,7 @@ public class Comment {
 
     @ManyToOne(targetEntity = Account.class, fetch = FetchType.EAGER)
     @JoinColumn(name = "account_id", foreignKey = @ForeignKey(
-            name = "fk_account_id",
+            name = "fk_comment_account_id",
             foreignKeyDefinition = "FOREIGN KEY (account_id) REFERENCES account (account_id) ON DELETE SET NULL"
     ))
     private Account author;
@@ -29,19 +29,19 @@ public class Comment {
     // 연관관계 설정 (응답에 포함하지 않음)
     @ManyToOne(targetEntity = Post.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", foreignKey = @ForeignKey(
-            name = "fk_post_id",
+            name = "fk_comment_post_id",
             foreignKeyDefinition = "FOREIGN KEY (post_id) REFERENCES post (post_id) ON DELETE CASCADE"
     ))
     @JsonIgnore
     private Post post;
     // 응답에 포함할 field
-    @Column(name="post_id", updatable=false,insertable=false)
+    @Column(name="post_id", updatable=false, insertable=false)
     private Long postId;
 
     // 연관관계 설정 (응답에 포함하지 않음)
     @ManyToOne(targetEntity = Comment.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id", foreignKey = @ForeignKey(
-            name = "fk_parent_comment_id",
+            name = "fk_comment_parent_comment_id",
             foreignKeyDefinition = "FOREIGN KEY (parent_comment_id) REFERENCES comment (comment_id) ON DELETE CASCADE"
     ))
     @JsonIgnore
