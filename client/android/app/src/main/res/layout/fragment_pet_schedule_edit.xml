@@ -6,20 +6,6 @@
     android:windowSoftInputMode="adjustResize"
     >
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
-
-        </LinearLayout>
-    </ScrollView>
-
     <LinearLayout
         android:id="@+id/back_button_layout"
         android:layout_width="match_parent"
