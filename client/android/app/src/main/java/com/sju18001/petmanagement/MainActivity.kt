@@ -100,6 +100,9 @@ class MainActivity : AppCompatActivity() {
                 actionBar?.show()
             }
             else -> {
+                // 기본 프래그먼트(MyPet) 생성
+                fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPetFragment, "myPet").commitNow()
+
                 activeFragment = myPetFragment
                 activeFragmentIndex = 0
                 actionBar?.setTitle(R.string.title_my_pet)
@@ -107,49 +110,65 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // add fragments and show active fragment
-        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPetFragment, "myPet").hide(myPetFragment).commitNow()
-        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, mapFragment, "map").hide(mapFragment).commitNow()
-        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, communityFragment, "community").hide(communityFragment).commitNow()
-        fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPageFragment, "myPage").hide(myPageFragment).commitNow()
+        // Show active fragment
         fragmentManager.beginTransaction().show(activeFragment).commitNow()
 
         navView.setOnNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.navigation_my_pet -> {
+                    addFragmentWhenFragmentIsNull(myPetFragment, "myPet")
                     fragmentManager.beginTransaction().hide(activeFragment).show(myPetFragment).commitNow()
+
                     navView.menu.getItem(0).isChecked = true
+
                     actionBar?.setTitle(R.string.title_my_pet)
                     actionBar?.show()
+
                     activeFragmentIndex = 0
                     activeFragment = myPetFragment
+
                     true
                 }
                 R.id.navigation_map -> {
+                    addFragmentWhenFragmentIsNull(mapFragment, "map")
                     fragmentManager.beginTransaction().hide(activeFragment).show(mapFragment).commitNow()
+
                     navView.menu.getItem(1).isChecked = true
+
                     actionBar?.setShowHideAnimationEnabled(false)
                     actionBar?.hide()
+
                     activeFragmentIndex = 1
                     activeFragment = mapFragment
+
                     true
                 }
                 R.id.navigation_community -> {
+                    addFragmentWhenFragmentIsNull(communityFragment, "community")
                     fragmentManager.beginTransaction().hide(activeFragment).show(communityFragment).commitNow()
+
                     navView.menu.getItem(2).isChecked = true
+
                     actionBar?.setTitle(R.string.title_community)
                     actionBar?.show()
+
                     activeFragmentIndex = 2
                     activeFragment = communityFragment
+
                     true
                 }
                 R.id.navigation_my_page -> {
+                    addFragmentWhenFragmentIsNull(myPageFragment, "myPage")
                     fragmentManager.beginTransaction().hide(activeFragment).show(myPageFragment).commitNow()
+
                     navView.menu.getItem(3).isChecked = true
+
                     actionBar?.setTitle(R.string.title_my_page)
                     actionBar?.show()
+
                     activeFragmentIndex = 3
                     activeFragment = myPageFragment
+
                     true
                 }
             }
@@ -181,6 +200,12 @@ class MainActivity : AppCompatActivity() {
             }
         } catch(e: Exception) {
             Log.e("Not found", e.toString())
+        }
+    }
+
+    private fun addFragmentWhenFragmentIsNull(fragment: Fragment, tag: String){
+        if(fragmentManager.findFragmentByTag(tag) == null){
+            fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, fragment, tag).commitNow()
         }
     }
 
