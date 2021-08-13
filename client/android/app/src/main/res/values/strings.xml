@@ -161,7 +161,15 @@
     <!-- Create Update Post Fragment -->
     <string name="create_post_title">글 쓰기</string>
     <string name="update_post_title">글 수정</string>
+    <string name="pet_name_spinner_placeholder">펫 선택</string>
+    <string name="location_switch_label">위치 정보 사용 </string>
     <string name="photo_video_usage">0/10</string>
+    <string-array name="disclosure_array">
+        <item>공개</item>
+        <item>비공개</item>
+        <item>친구만</item>
+    </string-array>
+    <string name="hashtag_usage">0/5</string>
     <string name="upload_photo_video_label">사진 및 동영상을 업로드하세요.</string>
     <string name="select_file_type_label">파일 유형 선택</string>
     <string name="upload_photo_label">사진</string>
@@ -170,6 +178,10 @@
     <string name="file_type_exception_message">지원하지 않는 파일 유형이에요!</string>
     <string name="file_null_exception_message">파일이 존재하지 않아요!</string>
     <string name="photo_video_usage_full_message">사진 및 동영상은 최대 10개까지만 업로드 가능해요!</string>
+    <string name="hashtag_usage_full_message">해시태그는 최대 5개까지만 입력 가능해요!</string>
+    <string name="hashtag_empty_message">해시태그 내용을 입력해주세요!</string>
     <string name="post_invalid_message">글 내용을 입력하거나, 사진 및 동영상을 올려주세요!</string>
+    <string name="pet_not_selected_message">펫을 선택해주세요!</string>
+    <string name="create_post_successful">글 쓰기에 성공했어요!</string>
 
 </resources>

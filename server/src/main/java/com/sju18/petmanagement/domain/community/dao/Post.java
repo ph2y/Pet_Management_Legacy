@@ -32,7 +32,7 @@ public class Post {
     private Pet pet;
 
     @Lob
-    @Column(nullable = false)
+    @Column
     private String contents;
     @Column(nullable = false)
     private LocalDateTime timestamp;

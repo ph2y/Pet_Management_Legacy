@@ -76,6 +76,13 @@ interface ServerApi {
     fun updatePetScheduleReq(@Body updatePetScheduleReqDto: UpdatePetScheduleReqDto): Call<UpdatePetScheduleResDto>
 
     // Post API
+    @POST("api/post/create")
+    fun createPostReq(@Body createPostReqDto: CreatePostReqDto): Call<CreatePostResDto>
+
     @POST("api/post/fetch")
     fun fetchPostReq(@Body fetchPostReqDto: FetchPostReqDto): Call<FetchPostResDto>
+
+    @Multipart
+    @POST("api/post/media/update")
+    fun updatePostMediaReq(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>): Call<UpdatePostMediaResDto>
 }

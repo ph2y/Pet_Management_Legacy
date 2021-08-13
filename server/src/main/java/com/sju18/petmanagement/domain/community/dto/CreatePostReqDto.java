@@ -10,7 +10,6 @@ import java.util.List;
 public class CreatePostReqDto {
     @PositiveOrZero(message = "valid.pet.id.notNegative")
     private Long petId;
-    @NotBlank(message = "valid.post.contents.blank")
     @Size(max = 10000, message = "valid.post.contents.size")
     private String contents;
     @Size(max = 5, message = "valid.post.hashTags.count")

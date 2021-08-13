@@ -175,8 +175,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                // log error message
                 Log.d("error", t.message.toString())
             }
         })

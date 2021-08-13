@@ -323,7 +323,7 @@ class CreateUpdatePetFragment : Fragment() {
         else {
             updatePetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
                 .updatePetPhotoReq(id, MultipartBody.Part.createFormData("file", "file.png",
-                    RequestBody.create(MediaType.parse("image/jpeg"), File(path))))
+                    RequestBody.create(MediaType.parse("multipart/form-data"), File(path))))
             updatePetPhotoApiCall!!.enqueue(object: Callback<UpdatePetPhotoResDto> {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun onResponse(
@@ -338,6 +338,10 @@ class CreateUpdatePetFragment : Fragment() {
                         closeAfterSuccess()
                     }
                     else {
+                        // set api state/button to normal
+                        myPetViewModel.petManagerApiIsLoading = false
+                        setButtonToNormal()
+
                         // get error message + show(Toast)
                         val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
                         Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
@@ -348,6 +352,10 @@ class CreateUpdatePetFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<UpdatePetPhotoResDto>, t: Throwable) {
+                    // set api state/button to normal
+                    myPetViewModel.petManagerApiIsLoading = false
+                    setButtonToNormal()
+
                     // show(Toast)/log error message
                     Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
                     Log.d("error", t.message.toString())
@@ -379,6 +387,10 @@ class CreateUpdatePetFragment : Fragment() {
                     updatePetPhoto(petIdList[petIdList.size - 1], myPetViewModel.petPhotoPathValue)
                 }
                 else {
+                    // set api state/button to normal
+                    myPetViewModel.petManagerApiIsLoading = false
+                    setButtonToNormal()
+
                     // get error message + show(Toast)
                     val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
                     Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
@@ -393,6 +405,10 @@ class CreateUpdatePetFragment : Fragment() {
                 if(_binding == null) {
                     return
                 }
+
+                // set api state/button to normal
+                myPetViewModel.petManagerApiIsLoading = false
+                setButtonToNormal()
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
