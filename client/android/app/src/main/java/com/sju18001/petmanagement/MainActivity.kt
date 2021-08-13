@@ -77,33 +77,40 @@ class MainActivity : AppCompatActivity() {
         // get current selected item + set title
         when(savedInstanceState?.getInt("active_fragment_index")) {
             0 -> {
+                addFragmentWhenFragmentIsNull(myPetFragment, "myPet")
                 activeFragment = myPetFragment
+
                 activeFragmentIndex = 0
                 actionBar?.setTitle(R.string.title_my_pet)
                 actionBar?.show()
             }
             1 -> {
+                addFragmentWhenFragmentIsNull(mapFragment, "map")
                 activeFragment = mapFragment
+
                 activeFragmentIndex = 1
                 actionBar?.hide()
             }
             2 -> {
+                addFragmentWhenFragmentIsNull(communityFragment, "community")
                 activeFragment = communityFragment
+
                 activeFragmentIndex = 2
                 actionBar?.setTitle(R.string.title_community)
                 actionBar?.show()
             }
             3 -> {
+                addFragmentWhenFragmentIsNull(myPageFragment, "myPage")
                 activeFragment = myPageFragment
+
                 activeFragmentIndex = 3
                 actionBar?.setTitle(R.string.title_my_page)
                 actionBar?.show()
             }
             else -> {
-                // 기본 프래그먼트(MyPet) 생성
-                fragmentManager.beginTransaction().add(R.id.nav_host_fragment_activity_main, myPetFragment, "myPet").commitNow()
-
+                addFragmentWhenFragmentIsNull(myPetFragment, "myPet")
                 activeFragment = myPetFragment
+
                 activeFragmentIndex = 0
                 actionBar?.setTitle(R.string.title_my_pet)
                 actionBar?.show()
