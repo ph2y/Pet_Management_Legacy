@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -44,6 +45,13 @@ public class FollowService {
         Account following = accountServ.fetchCurrentAccount(auth);
 
         return new ArrayList<>(followRepository.findAllByFollowingId(following.getId()));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> fetchFollower(Account account) throws Exception {
+        return new ArrayList<>(followRepository.findAllByFollowingId(account.getId()))
+                .stream().map(Follow::getId)
+                .collect(Collectors.toList());
     }
 
     // 현재 사용자를 팔로우하고 있는, 사용자가 Follower 객체이고 찾는 객체가 Following 객체인 Follow 리스트 Fetch

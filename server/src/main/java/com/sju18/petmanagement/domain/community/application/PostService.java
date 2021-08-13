@@ -31,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -42,6 +41,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final AccountService accountServ;
     private final PetService petServ;
+    private final FollowService followServ;
     private final FileService fileServ;
 
     // CREATE
@@ -72,7 +72,7 @@ public class PostService {
 
     // READ
     @Transactional(readOnly = true)
-    public Page<Post> fetchPostByDefault(Authentication auth, Integer pageIndex, Long topPostId) {
+    public Page<Post> fetchPostByDefault(Authentication auth, Integer pageIndex, Long topPostId) throws Exception {
         Account author = accountServ.fetchCurrentAccount(auth);
         // 기본 조건에 따른 최신 게시물 인출 (커뮤니티 메인화면 조회시)
         // 조건: 가장 최신의 전체 공개 게시물 또는 친구의 게시물 10개 조회
@@ -84,10 +84,10 @@ public class PostService {
 
         if (topPostId != null) {
             return postRepository
-                    .findAllByDefaultOptionAndTopPostId(topPostId, Collections.emptyList(), author.getId(), pageQuery);
+                    .findAllByDefaultOptionAndTopPostId(topPostId, followServ.fetchFollower(author), author.getId(), pageQuery);
         } else {
             return postRepository
-                    .findAllByDefaultOption(Collections.emptyList(), author.getId(), pageQuery);
+                    .findAllByDefaultOption(followServ.fetchFollower(author), author.getId(), pageQuery);
         }
     }
 
