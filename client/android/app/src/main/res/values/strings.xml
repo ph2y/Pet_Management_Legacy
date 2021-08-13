@@ -143,13 +143,13 @@
     <!-- Create Update Post Fragment -->
     <string name="create_post_title">글 쓰기</string>
     <string name="update_post_title">글 수정</string>
-    <string name="pet_name_spinner_placeholder">펫을 선택해주세요.</string>
+    <string name="pet_name_spinner_placeholder">펫 선택</string>
     <string name="location_switch_label">위치 정보 사용 </string>
     <string name="photo_video_usage">0/10</string>
     <string-array name="disclosure_array">
         <item>공개</item>
-        <item>나만 보기</item>
-        <item>친구만 보기</item>
+        <item>비공개</item>
+        <item>친구만</item>
     </string-array>
     <string name="hashtag_usage">0/5</string>
     <string name="upload_photo_video_label">사진 및 동영상을 업로드하세요.</string>
