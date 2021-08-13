@@ -13,7 +13,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/create_edit_post_main_scroll_view"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:background="?android:colorBackground">
 
         <ImageButton
             android:id="@+id/back_button"
@@ -114,8 +115,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:layout_marginStart="4dp"
-                        android:overlapAnchor="false" />
+                        android:layout_marginStart="4dp"/>
 
                 </LinearLayout>
 
