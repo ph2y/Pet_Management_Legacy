@@ -224,6 +224,11 @@ class EditAccountFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
+        // delete copied file(if any)
+        if(isRemoving || requireActivity().isFinishing) {
+            File(myPageViewModel.accountPhotoPathValue).delete()
+        }
+
         updateAccountApiCall?.cancel()
         updateAccountPhotoApiCall?.cancel()
         deleteAccountApiCall?.cancel()
