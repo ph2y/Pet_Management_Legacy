@@ -109,9 +109,6 @@ class LoginFragment : Fragment() {
             // disable buttons
             disableButtons()
 
-            // hide keyboard
-            Util.hideKeyboard(requireActivity())
-
             // call login function
             login(binding.usernameEditText.text.toString(), binding.pwEditText.text.toString())
         }
@@ -136,8 +133,8 @@ class LoginFragment : Fragment() {
                 .commit()
         }
 
-        // hide keyboard when touch loginLayout
-        binding.fragmentLoginLayout.setOnClickListener{ Util.hideKeyboard(requireActivity()) }
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentLoginParentLayout)
     }
 
     private fun login(username: String, password: String) {
@@ -275,7 +272,7 @@ class LoginFragment : Fragment() {
 
     // display error message(Snackbar)
     private fun displayErrorMessage(message: String) {
-        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_layout)!!,
+        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_parent_layout)!!,
             message, Snackbar.LENGTH_LONG)
         val snackBarView = snackBar!!.view
         snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
@@ -285,7 +282,7 @@ class LoginFragment : Fragment() {
 
     // display success message(Snackbar)
     private fun displaySuccessMessage(message: String) {
-        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_layout)!!,
+        snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_parent_layout)!!,
             message, Snackbar.LENGTH_LONG)
         val snackBarView = snackBar!!.view
         snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_green_dark))

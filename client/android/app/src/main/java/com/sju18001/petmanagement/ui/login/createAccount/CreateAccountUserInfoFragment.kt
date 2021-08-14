@@ -116,6 +116,9 @@ class CreateAccountUserInfoFragment : Fragment() {
             // API call
             requestEmailCode(loginViewModel)
         }
+
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateAccountUserInfoParentLayout)
     }
 
     // set request code button to normal

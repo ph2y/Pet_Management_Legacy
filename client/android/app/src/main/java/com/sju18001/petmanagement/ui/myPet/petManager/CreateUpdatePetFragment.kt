@@ -176,6 +176,9 @@ class CreateUpdatePetFragment : Fragment() {
                 activity?.finish()
             }
         }
+
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateUpdatePetParentLayout)
     }
 
     // create pet

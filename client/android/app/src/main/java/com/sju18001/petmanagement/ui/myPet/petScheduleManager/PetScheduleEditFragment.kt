@@ -125,6 +125,9 @@ class PetScheduleEditFragment : Fragment() {
 
         addPetNameList()
 
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentPetScheduleEditParentLayout)
+
         return binding.root
     }
 

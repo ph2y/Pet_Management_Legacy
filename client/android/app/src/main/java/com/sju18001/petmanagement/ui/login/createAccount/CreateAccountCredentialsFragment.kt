@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateAccountCredentialsBinding
 import com.sju18001.petmanagement.ui.login.LoginViewModel
 import java.util.regex.Pattern
@@ -104,6 +105,9 @@ class CreateAccountCredentialsFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateAccountCredentialsParentLayout)
     }
 
     private fun checkIsValid(loginViewModel: LoginViewModel) {

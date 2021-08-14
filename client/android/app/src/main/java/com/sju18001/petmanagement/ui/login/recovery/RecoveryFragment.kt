@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentRecoveryBinding
 
 private val TAB_ELEMENTS = listOf("아이디 찾기", "비밀번호 찾기")
@@ -43,6 +44,9 @@ class RecoveryFragment: Fragment() {
         binding.backButton.setOnClickListener{
             activity?.supportFragmentManager?.popBackStack()
         }
+
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentRecoveryParentLayout)
     }
 
     override fun onDestroyView() {
