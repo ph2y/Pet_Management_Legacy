@@ -126,7 +126,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/location_switch_label" />
+                    android:text="@string/location_switch_label"/>
 
             </RelativeLayout>
 
@@ -146,7 +146,7 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentStart="true"
                     android:layout_toStartOf="@id/upload_photos_and_videos_button_layout"
-                    android:orientation="horizontal" />
+                    android:orientation="horizontal"/>
 
                 <TextView
                     android:id="@+id/upload_photo_video_label"
@@ -155,7 +155,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_toStartOf="@id/upload_photos_and_videos_button_layout"
                     android:gravity="center"
-                    android:text="@string/upload_photo_video_label" />
+                    android:text="@string/upload_photo_video_label"/>
 
                 <RelativeLayout
                     android:id="@+id/upload_photos_and_videos_button_layout"
@@ -170,7 +170,7 @@
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
                         android:text="@string/photo_video_usage"
-                        android:textSize="11dp" />
+                        android:textSize="11dp"/>
 
                     <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/upload_photos_and_videos_button"
@@ -178,7 +178,7 @@
                         android:layout_height="60dp"
                         android:layout_centerInParent="true"
                         android:background="@drawable/button_with_radius"
-                        android:src="@drawable/ic_baseline_add_24" />
+                        android:src="@drawable/ic_baseline_add_24"/>
 
                 </RelativeLayout>
 
@@ -209,14 +209,14 @@
                         android:layout_alignParentStart="true"
                         android:layout_centerVertical="true"
                         android:layout_marginStart="4dp"
-                        android:src="@drawable/ic_baseline_public_24" />
+                        android:src="@drawable/ic_baseline_public_24"/>
 
                     <Spinner
                         android:id="@+id/disclosure_spinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/disclosure_icon" />
+                        android:layout_toEndOf="@id/disclosure_icon"/>
 
                     <TextView
                         android:id="@+id/hashtag_icon"
@@ -226,7 +226,7 @@
                         android:layout_toEndOf="@id/disclosure_spinner"
                         android:text="#"
                         android:textSize="30dp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"/>
 
                     <EditText
                         android:id="@+id/hashtag_input_edit_text"
@@ -238,7 +238,7 @@
                         android:inputType="text"
                         android:maxLength="20"
                         android:textSize="16dp"
-                        android:theme="@style/onSelectedThemeCarrot" />
+                        android:theme="@style/onSelectedThemeCarrot"/>
 
                 </RelativeLayout>
 
@@ -255,7 +255,7 @@
                         android:layout_alignParentTop="true"
                         android:layout_centerHorizontal="true"
                         android:text="@string/hashtag_usage"
-                        android:textSize="11dp" />
+                        android:textSize="11dp"/>
 
                     <androidx.appcompat.widget.AppCompatImageButton
                         android:id="@+id/hashtag_input_button"
@@ -263,7 +263,7 @@
                         android:layout_height="30dp"
                         android:layout_centerInParent="true"
                         android:background="@drawable/button_with_radius"
-                        android:src="@drawable/ic_baseline_add_24" />
+                        android:src="@drawable/ic_baseline_add_24"/>
 
                 </RelativeLayout>
 
@@ -280,7 +280,7 @@
                 app:layout_constraintBottom_toTopOf="@id/post_edit_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/disclosure_and_hashtag_layout" />
+                app:layout_constraintTop_toBottomOf="@id/disclosure_and_hashtag_layout"/>
 
             <EditText
                 android:id="@+id/post_edit_text"
@@ -294,7 +294,7 @@
                 android:theme="@style/onSelectedThemeCarrot"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/hashtag_recycler_view" />
+                app:layout_constraintTop_toBottomOf="@id/hashtag_recycler_view"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

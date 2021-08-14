@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.community.followerFollowing
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -52,6 +53,23 @@ class FollowerFollowingFragment : Fragment() {
         }.attach()
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        // for search button
+        binding.searchButton.setOnClickListener {
+            // start search activity
+            val searchActivityIntent = Intent(context, SearchActivity::class.java)
+            startActivity(searchActivityIntent)
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+        }
+
+        // for back button
+        binding.backButton.setOnClickListener {
+            activity?.finish()
+        }
+    }
+
     class FollowerFollowingCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
         override fun getItemCount(): Int = 2
 
@@ -61,5 +79,10 @@ class FollowerFollowingFragment : Fragment() {
                 else -> FollowingFragment()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

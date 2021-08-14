@@ -20,6 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PetManagement">
+        <activity android:name=".ui.community.followerFollowing.SearchActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog"/>
         <activity android:name=".ui.community.followerFollowing.FollowerFollowingActivity" />
         <activity android:name=".ui.community.comment.CommunityCommentActivity" />
         <activity android:name=".ui.community.createUpdatePost.CreateUpdatePostActivity" />
