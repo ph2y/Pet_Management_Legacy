@@ -26,9 +26,14 @@ interface ServerApi {
     fun deleteAccountReq(@Body body: RequestBody): Call<DeleteAccountResDto>
 
     // Account Photo API
-    @POST("api/account/photo/fetch")
-    fun fetchAccountPhotoReq(@Body body: RequestBody): Call<ResponseBody>
+    @GET("api/account/photo/fetch")
+    fun fetchAccountPhotoReq(): Call<ResponseBody>
 
+    @Multipart
+    @POST("api/account/photo/update")
+    fun updateAccountPhotoReq(@Part file: MultipartBody.Part): Call<UpdateAccountPhotoResDto>
+
+    // Account recover API
     @POST("api/account/authcode/send")
     fun sendAuthCodeReq(@Body sendAuthCodeReqDto: SendAuthCodeReqDto): Call<SendAuthCodeResDto>
 

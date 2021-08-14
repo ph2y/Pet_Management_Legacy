@@ -175,12 +175,9 @@ class MyPageFragment : Fragment() {
     }
 
     // fetch account photo
-    private fun fetchAccountPhoto() {
-        // create empty body
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-
+    private fun fetchAccountPhotoAndSetView() {
         fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .fetchAccountPhotoReq(body)
+            .fetchAccountPhotoReq()
         fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
@@ -189,11 +186,15 @@ class MyPageFragment : Fragment() {
                     if(response.isSuccessful) {
                         // save in ViewModel by byte array
                         myPageViewModel.accountPhotoProfileByteArray = response.body()!!.byteStream().readBytes()
+                        binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(myPageViewModel.accountPhotoProfileByteArray, 0, myPageViewModel.accountPhotoProfileByteArray!!.size))
                     }
                     else {
                         // get error message + show(Toast)
                         val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                        // if null: set to default image
+                        // Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                        binding.accountPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
 
                         // log error message
                         Log.d("error", errorMessage)
@@ -210,14 +211,7 @@ class MyPageFragment : Fragment() {
 
     // set views for account profile
     private fun setViewsWithAccountProfileData() {
+        fetchAccountPhotoAndSetView()
         binding.nicknameText.text = myPageViewModel.accountNicknameProfileValue
-
-        if(accountData.photoUrl != null) {
-            fetchAccountPhoto()
-            binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(myPageViewModel.accountPhotoProfileByteArray, 0, myPageViewModel.accountPhotoProfileByteArray!!.size))
-        }
-        else {
-            binding.accountPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_24))
-        }
     }
 }
