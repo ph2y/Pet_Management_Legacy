@@ -5,6 +5,7 @@
     android:id="@+id/fragment_community_comment_parent_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:windowSoftInputMode="adjustResize"
     tools:context=".ui.community.comment.CommunityCommentFragment">
 
     <RelativeLayout
