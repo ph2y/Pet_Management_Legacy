@@ -75,11 +75,6 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
     }
 
     private fun setListenerOnViews(holder: ViewHolder){
-        // 편의 기능: 키보드 내리기
-        holder.communityCommentLayout.setOnClickListener {
-            Util.hideKeyboard(communityCommentListAdapterInterface.getActivity())
-        }
-
         holder.nicknameTextView.setOnClickListener {
             // TODO: 프로필로 이동
         }
