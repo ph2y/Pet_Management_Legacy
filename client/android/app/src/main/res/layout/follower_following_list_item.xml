@@ -12,18 +12,18 @@
         android:padding="12dp">
 
         <LinearLayout
-            android:id="@+id/follower_info_layout"
+            android:id="@+id/account_info_layout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/follow_button"
+            app:layout_constraintEnd_toStartOf="@id/follow_unfollow_button"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginEnd="12dp"
             android:orientation="horizontal">
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/follower_photo"
+                android:id="@+id/account_photo"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 app:civ_border_width="1dp"
@@ -31,7 +31,7 @@
                 android:src="@drawable/ic_baseline_account_circle_24"/>
 
             <TextView
-                android:id="@+id/follower_nickname"
+                android:id="@+id/account_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -43,10 +43,10 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/follow_button"
+            android:id="@+id/follow_unfollow_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/follower_info_layout"
+            app:layout_constraintStart_toEndOf="@id/account_info_layout"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
