@@ -184,6 +184,7 @@
     <string name="pet_not_selected_message">펫을 선택해주세요!</string>
     <string name="create_post_successful">글 쓰기에 성공했어요!</string>
     <!-- Follower/Following Fragment -->
+    <string name="follower_following_menu_title">팔로워/팔로잉</string>
     <string name="follower_fragment_title">팔로워</string>
     <string name="following_fragment_title">팔로잉</string>
     <string name="follow_button">팔로우</string>

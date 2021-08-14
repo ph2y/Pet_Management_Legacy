@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/follower_button"
+        android:title="@string/follower_following_menu_title"
+        android:icon="@drawable/ic_baseline_group_24"
+        app:showAsAction="always"/>
+</menu>
