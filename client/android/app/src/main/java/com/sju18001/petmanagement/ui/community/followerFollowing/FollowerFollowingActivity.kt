@@ -27,20 +27,13 @@ class FollowerFollowingActivity : AppCompatActivity() {
         // hide action bar
         supportActionBar?.hide()
 
-//        // get fragment type and show it(for first launch)
-//        val fragmentType = intent.getStringExtra("fragmentType")
-//
-//        if(supportFragmentManager.findFragmentById(R.id.my_pet_activity_fragment_container) == null) {
-//            val fragment = when(fragmentType){
-//                "create_pet" -> CreateUpdatePetFragment()
-//                "pet_profile_pet_manager" -> PetProfileFragment()
-//                else -> PetScheduleEditFragment()
-//            }
-//            supportFragmentManager
-//                .beginTransaction()
-//                .add(R.id.my_pet_activity_fragment_container, fragment)
-//                .commit()
-//        }
+        // open fragment
+        if(supportFragmentManager.findFragmentById(R.id.follower_following_activity_fragment_container) == null) {
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.follower_following_activity_fragment_container, FollowerFollowingFragment())
+                .commit()
+        }
     }
 
     override fun finish() {

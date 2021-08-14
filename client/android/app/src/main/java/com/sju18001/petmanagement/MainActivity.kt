@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -19,8 +20,10 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchPetScheduleResDto
 import com.sju18001.petmanagement.ui.community.CommunityFragment
+import com.sju18001.petmanagement.ui.community.followerFollowing.FollowerFollowingActivity
 import com.sju18001.petmanagement.ui.map.MapFragment
 import com.sju18001.petmanagement.ui.myPage.MyPageFragment
+import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetFragment
 import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
 import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleNotification
@@ -220,7 +223,10 @@ class MainActivity : AppCompatActivity() {
             0 -> { return false }
             1 -> { return false }
             2 -> {
-                Log.d("test", "button clicked")
+                // start follower following activity
+                startActivity(Intent(this, FollowerFollowingActivity::class.java))
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+
                 return super.onOptionsItemSelected(item)
             }
             3 -> { return false }
