@@ -60,6 +60,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:maxLength="20"
+                android:inputType="text"
                 android:theme="@style/onSelectedThemeCarrot"/>
 
             <TextView
