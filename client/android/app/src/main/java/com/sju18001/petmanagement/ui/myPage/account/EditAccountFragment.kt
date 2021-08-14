@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.myPage.account
 
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -11,6 +12,9 @@ import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -20,20 +24,28 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentEditAccountBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.DeleteAccountResDto
+import com.sju18001.petmanagement.restapi.dto.UpdateAccountPhotoResDto
 import com.sju18001.petmanagement.restapi.dto.UpdateAccountReqDto
 import com.sju18001.petmanagement.restapi.dto.UpdateAccountResDto
 import com.sju18001.petmanagement.ui.login.LoginActivity
 import com.sju18001.petmanagement.ui.myPage.MyPageViewModel
 import okhttp3.MediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 import java.util.regex.Pattern
 
 class EditAccountFragment : Fragment() {
+
+    // constant variables
+    private val PICK_PHOTO = 0
+
     private lateinit var editAccountViewModel: EditAccountViewModel
     private var _binding: FragmentEditAccountBinding? = null
 
@@ -46,6 +58,7 @@ class EditAccountFragment : Fragment() {
 
     // variables for storing API call(for cancel)
     private var updateAccountApiCall: Call<UpdateAccountResDto>? = null
+    private var updateAccountPhotoApiCall: Call<UpdateAccountPhotoResDto>? = null
     private var deleteAccountApiCall: Call<DeleteAccountResDto>? = null
 
     // session manager for user token
@@ -87,6 +100,29 @@ class EditAccountFragment : Fragment() {
 
         // for view restore
         restoreState()
+
+        // for button listeners
+        binding.accountPhotoInputButton.setOnClickListener {
+            val dialog = Dialog(requireActivity())
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.select_account_photo_dialog)
+            dialog.show()
+
+            dialog.findViewById<ImageView>(R.id.close_button).setOnClickListener { dialog.dismiss() }
+            dialog.findViewById<Button>(R.id.upload_photo_button).setOnClickListener {
+                dialog.dismiss()
+
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
+            }
+            dialog.findViewById<Button>(R.id.use_default_image).setOnClickListener {
+                dialog.dismiss()
+
+                // TODO: Account photo delete API implement
+            }
+        }
 
         binding.backButton.setOnClickListener {
             activity?.finish()
@@ -181,7 +217,7 @@ class EditAccountFragment : Fragment() {
         super.onResume()
 
         // set views with data from ViewModel
-        setViewsWithAccountProfileData()
+        restoreState()
     }
 
     override fun onDestroyView() {
@@ -189,6 +225,7 @@ class EditAccountFragment : Fragment() {
         _binding = null
 
         updateAccountApiCall?.cancel()
+        updateAccountPhotoApiCall?.cancel()
         deleteAccountApiCall?.cancel()
     }
 
@@ -219,7 +256,7 @@ class EditAccountFragment : Fragment() {
             ) {
                 if(response.isSuccessful) {
                     if(response.body()?._metadata?.status == true) {
-                        closeAfterSuccess()
+                        updateAccountPhoto(myPageViewModel.accountPhotoPathValue)
                     }
                 }
                 else {
@@ -243,6 +280,48 @@ class EditAccountFragment : Fragment() {
                 Log.d("error", t.message.toString())
             }
         })
+    }
+
+    // update account photo
+    private fun updateAccountPhoto(path: String) {
+        // if no photo selected -> don't update photo + close
+        if(path == "") {
+            closeAfterSuccess()
+        }
+        else {
+            updateAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                .updateAccountPhotoReq(MultipartBody.Part.createFormData("file", "file.png",
+                RequestBody.create(MediaType.parse("multipart/form-data"), File(path))))
+            updateAccountPhotoApiCall!!.enqueue(object: Callback<UpdateAccountPhotoResDto> {
+                override fun onResponse(
+                    call: Call<UpdateAccountPhotoResDto>,
+                    response: Response<UpdateAccountPhotoResDto>
+                ) {
+                    if(response.isSuccessful) {
+                        // delete copied file
+                        File(path).delete()
+
+                        // close after success
+                        closeAfterSuccess()
+                    }
+                    else {
+                        // get error message + show(Toast)
+                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                        // log error message
+                        Log.d("error", errorMessage)
+                    }
+                }
+
+                override fun onFailure(call: Call<UpdateAccountPhotoResDto>, t: Throwable) {
+                    // show(Toast)/log error message
+                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                    Log.d("error", t.message.toString())
+                }
+
+            })
+        }
     }
 
     private fun closeAfterSuccess() {
@@ -311,19 +390,45 @@ class EditAccountFragment : Fragment() {
         myPageViewModel.accountPhotoByteArray = requireActivity().intent.getByteArrayExtra("photoByteArray")
     }
 
-    private fun setViewsWithAccountProfileData() {
+    private fun restoreState() {
         if(myPageViewModel.accountPhotoByteArray != null) {
             val bitmap = BitmapFactory.decodeByteArray(myPageViewModel.accountPhotoByteArray, 0, myPageViewModel.accountPhotoByteArray!!.size)
-            binding.accountPhoto.setImageBitmap(bitmap)
+            binding.accountPhotoInput.setImageBitmap(bitmap)
         }
-        
+        else if(myPageViewModel.accountPhotoPathValue != "") {
+            binding.accountPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPageViewModel.accountPhotoPathValue))
+        }
+        else {
+            // set to default image
+            binding.accountPhotoInput.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
+        }
+
         binding.nicknameEdit.setText(myPageViewModel.accountNicknameValue)
         binding.emailEdit.setText(myPageViewModel.accountEmailValue)
         binding.phoneEdit.setText(myPageViewModel.accountPhoneValue)
         binding.marketingSwitch.isChecked = myPageViewModel.accountMarketingValue!!
     }
 
-    private fun restoreState() {
-        setViewsWithAccountProfileData()
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // get + save account photo value
+        if(resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_PHOTO) {
+            if (data != null) {
+                // delete previous profile photo data
+                    myPageViewModel.accountPhotoByteArray = null
+
+                // delete previously copied file(if any)
+                if(myPageViewModel.accountPhotoPathValue != "") {
+                    File(myPageViewModel.accountPhotoPathValue).delete()
+                }
+
+                // copy selected photo and get real path
+                myPageViewModel.accountPhotoPathValue = ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!)
+
+                // set photo to view
+                binding.accountPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPageViewModel.accountPhotoPathValue))
+            }
+        }
     }
 }

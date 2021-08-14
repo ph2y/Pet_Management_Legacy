@@ -308,16 +308,34 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <ImageView
-                        android:id="@+id/account_photo"
-                        android:layout_width="85dp"
-                        android:layout_height="85dp"
-                        android:layout_marginTop="10dp"
+                    <RelativeLayout
+                        android:id="@+id/account_photo_input_layout"
+                        android:layout_width="120dp"
+                        android:layout_height="120dp"
+                        android:layout_marginTop="16dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/ic_baseline_account_circle_24"
-                        tools:src="@tools:sample/avatars" />
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/account_photo_input"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@android:color/transparent"
+                            app:civ_border_color="@color/carrot"
+                            app:civ_border_width="1dp"
+                            tools:srcCompat="@drawable/ic_baseline_account_circle_36" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/account_photo_input_button"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_alignParentRight="true"
+                            android:layout_alignParentBottom="true"
+                            android:src="@drawable/ic_baseline_add_photo_alternate_48"
+                            app:civ_circle_background_color="@color/carrot" />
+
+                    </RelativeLayout>
 
                     <EditText
                         android:id="@+id/nickname_edit"
@@ -332,7 +350,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/account_photo" />
+                        app:layout_constraintTop_toBottomOf="@+id/account_photo_input_layout" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 
