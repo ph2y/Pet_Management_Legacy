@@ -266,8 +266,8 @@ class CreateUpdatePostFragment : Fragment() {
             activity?.finish()
         }
 
-        // hide keyboard when touch outside
-        binding.fragmentCreateUpdatePostLayout.setOnClickListener{ Util.hideKeyboard(requireActivity()) }
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateUpdatePostParentLayout)
     }
 
     // for photo/video select

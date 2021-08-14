@@ -55,14 +55,7 @@ class RecoverUsernameFragment : Fragment() {
 
         // 아이디 찾기 버튼 클릭
         binding.recoverUsernameButton.setOnClickListener{
-            activity?.let { Util.hideKeyboard(it) }
-
             recoverUsername(binding.emailEditText.text.toString())
-        }
-
-        // 레이아웃 클릭
-        binding.recoverUsernameLayout.setOnClickListener{
-            activity?.let { Util.hideKeyboard(it) }
         }
 
         // 이메일 입력란 입력
@@ -74,6 +67,9 @@ class RecoverUsernameFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentRecoveryUsernameParentLayout)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

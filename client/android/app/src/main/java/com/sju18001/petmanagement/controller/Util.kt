@@ -6,20 +6,19 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.provider.ContactsContract
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.restapi.Place
 import okhttp3.ResponseBody
 import org.json.JSONObject
+
 
 class Util {
     companion object{
@@ -33,6 +32,24 @@ class Util {
 
                 imm.hideSoftInputFromWindow(it.windowToken, 0)
                 it.clearFocus()
+            }
+        }
+
+        fun setupViewsForHideKeyboard(activity: Activity, view: View) {
+            // Set up touch listener for non-text box views to hide keyboard
+            if(view !is EditText) {
+                view.setOnTouchListener { _, _ ->
+                    hideKeyboard(activity)
+                    false
+                }
+            }
+
+            // If a layout container, iterate over children and seed recursion
+            if (view is ViewGroup) {
+                for (i in 0 until view.childCount) {
+                    val innerView = view.getChildAt(i)
+                    setupViewsForHideKeyboard(activity, innerView)
+                }
             }
         }
 

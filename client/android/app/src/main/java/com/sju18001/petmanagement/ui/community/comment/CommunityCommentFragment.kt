@@ -90,9 +90,7 @@ class CommunityCommentFragment : Fragment() {
         }
 
         // 편의 기능: 키보드 내리기
-        binding.layoutBackButton.setOnClickListener {
-            Util.hideKeyboard(requireActivity())
-        }
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCommunityCommentParentLayout)
         
         // 댓글 / 답글 생성
         binding.buttonCreateComment.setOnClickListener {

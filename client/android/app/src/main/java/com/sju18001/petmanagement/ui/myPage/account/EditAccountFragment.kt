@@ -172,6 +172,9 @@ class EditAccountFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
+
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentEditAccountParentFragment)
     }
 
     override fun onResume() {

@@ -41,6 +41,9 @@ class RecoverPasswordFragment : Fragment() {
             else -> setViewForEmailInput()
         }
 
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentRecoverPasswordParentLayout)
+
         return binding.root
     }
 
@@ -109,15 +112,8 @@ class RecoverPasswordFragment : Fragment() {
 
         // 버튼 클릭
         binding.emailInputButton.setOnClickListener{
-            activity?.let { Util.hideKeyboard(it) }
-
             // 인증코드 전송
             sendAuthCode(binding.emailEditText.text.toString())
-        }
-
-        // 레이아웃 클릭
-        binding.emailInputLayout.setOnClickListener{
-            activity?.let { Util.hideKeyboard(it) }
         }
     }
 
@@ -143,15 +139,8 @@ class RecoverPasswordFragment : Fragment() {
 
         // 버튼 클릭
         binding.codeInputButton.setOnClickListener{
-            activity?.let { Util.hideKeyboard(it) }
-
             // 코드 확인
             recoverPassword(binding.usernameEditText.text.toString(), binding.codeEditText.text.toString())
-        }
-
-        // 레이아웃 클릭
-        binding.codeInputLayout.setOnClickListener{
-            activity?.let { Util.hideKeyboard(it) }
         }
     }
 

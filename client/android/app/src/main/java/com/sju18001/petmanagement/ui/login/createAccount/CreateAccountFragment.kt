@@ -144,13 +144,10 @@ class CreateAccountFragment : Fragment() {
                     setNextButtonToNormal()
                 }
             }
-
-            // hide keyboard
-            Util.hideKeyboard(requireActivity())
         }
 
-        // hide keyboard when touched outside
-        binding.fragmentCreateAccountLayout.setOnClickListener{ Util.hideKeyboard(requireActivity()) }
+        // for hiding keyboard
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateAccountParentLayout)
     }
 
     // show previous step button
