@@ -20,7 +20,7 @@ interface ServerApi {
     fun fetchAccountReq(@Body body: RequestBody): Call<FetchAccountResDto>
 
     @POST("api/account/fetch")
-    fun fetchAccountNicknameReq(@Body fetchAccountReqDto: FetchAccountReqDto): Call<FetchAccountResDto>
+    fun fetchAccountByNicknameReq(@Body fetchAccountReqDto: FetchAccountReqDto): Call<FetchAccountResDto>
 
     @POST("api/account/update")
     fun updateAccountReq(@Body updateAccountReqDto: UpdateAccountReqDto): Call<UpdateAccountResDto>
@@ -31,6 +31,9 @@ interface ServerApi {
     // Account Photo API
     @POST("api/account/photo/fetch")
     fun fetchAccountPhotoReq(@Body body: RequestBody): Call<ResponseBody>
+
+    @POST("api/account/photo/fetch")
+    fun fetchAccountPhotoByIdReq(@Body id: Long?): Call<ResponseBody>
 
     @POST("api/account/authcode/send")
     fun sendAuthCodeReq(@Body sendAuthCodeReqDto: SendAuthCodeReqDto): Call<SendAuthCodeResDto>

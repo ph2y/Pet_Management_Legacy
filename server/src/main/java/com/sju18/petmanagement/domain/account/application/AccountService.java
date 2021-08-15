@@ -126,6 +126,16 @@ public class AccountService {
         return fileBinData;
     }
 
+    public byte[] fetchAccountPhotoById(Long id) throws Exception {
+        Account currentAccount = this.fetchAccountById(id);
+
+        // 사진 파일 인출
+        InputStream imageStream = new FileInputStream(currentAccount.getPhotoUrl());
+        byte[] fileBinData = IOUtil.toByteArray(imageStream);
+        imageStream.close();
+        return fileBinData;
+    }
+
     @Transactional
     public void updateAccount(Authentication auth, UpdateAccountReqDto reqDto) throws Exception {
         // 기존 사용자 프로필 로드

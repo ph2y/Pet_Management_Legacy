@@ -1,11 +1,11 @@
 package com.sju18001.petmanagement.ui.community.followerFollowing
 
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import android.view.Window
 import android.widget.Toast
 import androidx.lifecycle.SavedStateViewModelFactory
@@ -17,7 +17,7 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchAccountReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchAccountResDto
-import com.sju18001.petmanagement.restapi.dto.LoginResDto
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,6 +41,7 @@ class SearchActivity : AppCompatActivity() {
 
     // variable for storing API call(for cancel)
     private var fetchAccountApiCall: Call<FetchAccountResDto>? = null
+    private var fetchAccountPhotoApiCall: Call<ResponseBody>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,13 +102,38 @@ class SearchActivity : AppCompatActivity() {
         binding.searchButton.isEnabled = true
     }
 
+    private fun setAccountInfoViews(fetchAccountResDto: FetchAccountResDto) {
+        // if url is not null -> fetch photo and set it
+        if(fetchAccountResDto.photoUrl != null) {
+            searchViewModel.accountPhotoUrl = fetchAccountResDto.photoUrl
+            fetchAccountPhoto(fetchAccountResDto.id)
+        }
+        // else -> reset photo related values
+        else {
+            searchViewModel.accountPhotoUrl = null
+            searchViewModel.accountPhotoByteArray = null
+        }
+
+        // save and set nickname value
+        searchViewModel.accountNickname = fetchAccountResDto.nickname
+        val nicknameText = searchViewModel.accountNickname + '님'
+        binding.accountNickname.text = nicknameText
+
+        // set button status
+    }
+
+    private fun setAccountPhoto() {
+        binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(searchViewModel.accountPhotoByteArray,
+            0, searchViewModel.accountPhotoByteArray!!.size))
+    }
+
     private fun searchAccount(nickname: String) {
         // create DTO
         val fetchAccountReqDto = FetchAccountReqDto(null, null, nickname)
 
         // API call
         fetchAccountApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .fetchAccountNicknameReq(fetchAccountReqDto)
+            .fetchAccountByNicknameReq(fetchAccountReqDto)
         fetchAccountApiCall!!.enqueue(object: Callback<FetchAccountResDto> {
             override fun onResponse(
                 call: Call<FetchAccountResDto>,
@@ -118,7 +144,8 @@ class SearchActivity : AppCompatActivity() {
                     searchViewModel.apiIsLoading = false
                     setSearchButtonToNormal()
 
-                    Log.d("test", response.body().toString())
+                    // set account info views
+                    setAccountInfoViews(response.body()!!)
                 }
                 else {
                     // set api state/button to normal
@@ -166,11 +193,50 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
+    private fun fetchAccountPhoto(id: Long) {
+        // API call
+        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchAccountPhotoByIdReq(id)
+        fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if(response.isSuccessful) {
+                    Log.d("test", response.body().toString())
+                    // save photo as byte array
+                    searchViewModel.accountPhotoByteArray = response.body()!!.byteStream().readBytes()
+
+                    // set account photo
+                    setAccountPhoto()
+                }
+                else {
+                    // get error message
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                    // Toast + Log
+                    Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // if API call was canceled -> return
+                if(searchViewModel.apiIsCanceled) {
+                    searchViewModel.apiIsCanceled = false
+                    return
+                }
+
+                // show(Toast)/log error message
+                Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
     override fun onDestroy() {
         super.onDestroy()
 
         // stop api call when fragment is destroyed
         searchViewModel.apiIsCanceled = true
         fetchAccountApiCall?.cancel()
+        fetchAccountPhotoApiCall?.cancel()
     }
 }

@@ -12,6 +12,23 @@ class SearchViewModel(private val handle: SavedStateHandle) : ViewModel() {
         }
 
     // for account info
+    var accountPhotoUrl = handle.get<String>("accountPhotoUrl")
+        set(value){
+            handle.set("accountPhotoUrl", value)
+            field = value
+        }
+    var accountPhotoByteArray = handle.get<ByteArray>("accountPhotoByteArray")
+        set(value){
+            handle.set("accountPhotoByteArray", value)
+            field = value
+        }
+
+    // for nickname
+    var accountNickname = handle.get<String>("accountNickname")
+        set(value){
+            handle.set("accountNickname", value)
+            field = value
+        }
 
     // for API
     var apiIsLoading = handle.get<Boolean>("apiIsLoading")?: false

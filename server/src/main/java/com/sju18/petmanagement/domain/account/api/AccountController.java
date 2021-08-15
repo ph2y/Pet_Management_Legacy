@@ -77,12 +77,19 @@ public class AccountController {
         return ResponseEntity.ok(new FetchAccountResDto(dtoMetadata, account));
     }
 
-    @GetMapping("/api/account/photo/fetch")
-    public ResponseEntity<?> fetchAccountPhoto(Authentication auth) {
+    @PostMapping("/api/account/photo/fetch")
+    public ResponseEntity<?> fetchAccountPhoto(Authentication auth, @Valid @RequestBody Long id) {
         DtoMetadata dtoMetadata;
         byte[] fileBinData;
         try {
-            fileBinData = accountServ.fetchAccountPhoto(auth);
+            // if id is null -> fetch self photo
+            if(id == null) {
+                fileBinData = accountServ.fetchAccountPhoto(auth);
+            }
+            // if id is not null -> fetch id's photo
+            else {
+                fileBinData = accountServ.fetchAccountPhotoById(id);
+            }
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
