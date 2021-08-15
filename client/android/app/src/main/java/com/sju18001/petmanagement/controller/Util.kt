@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.net.Uri
+import android.os.Build
 import android.provider.ContactsContract
 import android.util.Log
 import android.util.TypedValue
@@ -15,9 +16,12 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.sju18001.petmanagement.restapi.Place
 import okhttp3.ResponseBody
 import org.json.JSONObject
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
 class Util {
@@ -106,6 +110,14 @@ class Util {
         fun getMessageFromErrorBody(errorBody: ResponseBody): String{
             val metadata = JSONObject(errorBody.string().trim()).getString("_metadata")
             return JSONObject(metadata).getString("message")
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        fun getSecondDifferenceInLocalDateTime(localDateTime: LocalDateTime): Long{
+            val time = localDateTime.atZone(ZoneId.of("Asia/Seoul"))
+            val now = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"))
+
+            return now.toEpochSecond() - time.toEpochSecond()
         }
     }
 }
