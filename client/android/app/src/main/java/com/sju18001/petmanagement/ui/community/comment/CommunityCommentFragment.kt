@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
@@ -221,6 +223,12 @@ class CommunityCommentFragment : Fragment() {
             createComment(CreateCommentReqDto(postId, communityCommentViewModel.idForReply, binding.editTextComment.text.toString()))
         }
 
+        // 키보드 동작
+        binding.editTextComment.setOnEditorActionListener{ _, _, _ ->
+            createComment(CreateCommentReqDto(postId, communityCommentViewModel.idForReply, binding.editTextComment.text.toString()))
+            true
+        }
+
         // SwipeRefreshLayout
         binding.layoutSwipeRefresh.setOnRefreshListener {
             resetCommentData()
@@ -268,7 +276,7 @@ class CommunityCommentFragment : Fragment() {
                 }
 
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                
+
                 setCommentInputToNormal()
                 setViewForReplyCancel()
             }
