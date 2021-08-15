@@ -80,10 +80,12 @@
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/account_info_card_view"
         android:layout_width="280dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        app:cardCornerRadius="8dp">
+        app:cardCornerRadius="8dp"
+        android:visibility="gone">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

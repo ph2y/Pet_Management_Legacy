@@ -4,6 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
 class SearchViewModel(private val handle: SavedStateHandle) : ViewModel() {
+    // for follower id list
+    var followerIdList = handle.get<MutableList<Long>>("followerIdList")
+        set(value) {
+            handle.set("followerIdList", value)
+            field = value
+        }
+
     // for search
     var searchEditText = handle.get<String>("searchEditText")?: ""
         set(value){

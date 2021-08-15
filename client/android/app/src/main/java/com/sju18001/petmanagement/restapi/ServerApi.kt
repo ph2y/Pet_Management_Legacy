@@ -91,4 +91,8 @@ interface ServerApi {
     @Multipart
     @POST("api/post/media/update")
     fun updatePostMediaReq(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>): Call<UpdatePostMediaResDto>
+
+    // Follow API
+    @POST("api/community/follower/fetch")
+    fun fetchFollowerReq(@Body body: RequestBody): Call<FetchFollowerResDto>
 }

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.view.Window
 import android.widget.Toast
 import androidx.lifecycle.SavedStateViewModelFactory
@@ -17,6 +18,9 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchAccountReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchAccountResDto
+import com.sju18001.petmanagement.restapi.dto.FetchFollowerResDto
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -42,6 +46,7 @@ class SearchActivity : AppCompatActivity() {
     // variable for storing API call(for cancel)
     private var fetchAccountApiCall: Call<FetchAccountResDto>? = null
     private var fetchAccountPhotoApiCall: Call<ResponseBody>? = null
+    private var fetchFollowerApiCall: Call<FetchFollowerResDto>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,6 +95,11 @@ class SearchActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        // initialize follower id list
+        if(searchViewModel.followerIdList == null) {
+            updateFollowerIdList()
+        }
+
         // restore views
         // TODO
     }
@@ -103,6 +113,11 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setAccountInfoViews(fetchAccountResDto: FetchAccountResDto) {
+        // set layout's visibility to visible(if not already done)
+        if(binding.accountInfoCardView.visibility != View.GONE) {
+            binding.accountInfoCardView.visibility = View.VISIBLE
+        }
+        
         // if url is not null -> fetch photo and set it
         if(fetchAccountResDto.photoUrl != null) {
             searchViewModel.accountPhotoUrl = fetchAccountResDto.photoUrl
@@ -120,11 +135,58 @@ class SearchActivity : AppCompatActivity() {
         binding.accountNickname.text = nicknameText
 
         // set button status
+        // TODO
     }
 
     private fun setAccountPhoto() {
         binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(searchViewModel.accountPhotoByteArray,
             0, searchViewModel.accountPhotoByteArray!!.size))
+    }
+
+    private fun updateFollowerIdList() {
+        // reset list
+        searchViewModel.followerIdList = mutableListOf()
+
+        // create empty body
+        val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+
+        // API call
+        fetchFollowerApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchFollowerReq(emptyBody)
+        fetchFollowerApiCall!!.enqueue(object: Callback<FetchFollowerResDto> {
+            override fun onResponse(
+                call: Call<FetchFollowerResDto>,
+                response: Response<FetchFollowerResDto>
+            ) {
+                if(response.isSuccessful) {
+                    response.body()!!.followerList.map {
+                        searchViewModel.followerIdList!!.add(it.id)
+                    }
+
+                    Log.d("test", searchViewModel.followerIdList.toString())
+                }
+                else {
+                    // get error message
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                    // Toast + Log
+                    Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<FetchFollowerResDto>, t: Throwable) {
+                // if API call was canceled -> return
+                if(searchViewModel.apiIsCanceled) {
+                    searchViewModel.apiIsCanceled = false
+                    return
+                }
+
+                // show(Toast)/log error message
+                Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
     }
 
     private fun searchAccount(nickname: String) {
@@ -238,5 +300,6 @@ class SearchActivity : AppCompatActivity() {
         searchViewModel.apiIsCanceled = true
         fetchAccountApiCall?.cancel()
         fetchAccountPhotoApiCall?.cancel()
+        fetchFollowerApiCall?.cancel()
     }
 }

@@ -83,7 +83,7 @@ public class AccountController {
         byte[] fileBinData;
         try {
             // if id is null -> fetch self photo
-            if(id == null) {
+            if(id == -1) {
                 fileBinData = accountServ.fetchAccountPhoto(auth);
             }
             // if id is not null -> fetch id's photo
