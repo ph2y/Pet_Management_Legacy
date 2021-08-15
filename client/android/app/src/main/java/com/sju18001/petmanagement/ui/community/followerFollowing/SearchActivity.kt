@@ -127,10 +127,24 @@ class SearchActivity : AppCompatActivity() {
 
                     // get error message + show(Toast)
                     val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
 
-                    // log error message
-                    Log.d("error", errorMessage)
+                    // if no such account exists -> show message
+                    if(errorMessage == "Account not exists") {
+                        Toast.makeText(this@SearchActivity,
+                            getText(R.string.account_does_not_exist_exception_message), Toast.LENGTH_LONG).show()
+                    }
+
+                    // if fetched self -> show message
+                    else if(errorMessage == "fetched self") {
+                        Toast.makeText(this@SearchActivity,
+                            getText(R.string.fetched_self_exception_message), Toast.LENGTH_LONG).show()
+                    }
+
+                    // other exceptions -> show Toast message + log
+                    else{
+                        Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
+                        Log.d("error", errorMessage)
+                    }
                 }
             }
 
@@ -139,9 +153,9 @@ class SearchActivity : AppCompatActivity() {
                 searchViewModel.apiIsLoading = false
                 setSearchButtonToNormal()
 
-                // if the view was destroyed(API call canceled) -> return
-                // TODO
-                if(binding == null) {
+                // if API call was canceled -> return
+                if(searchViewModel.apiIsCanceled) {
+                    searchViewModel.apiIsCanceled = false
                     return
                 }
 
@@ -156,6 +170,7 @@ class SearchActivity : AppCompatActivity() {
         super.onDestroy()
 
         // stop api call when fragment is destroyed
+        searchViewModel.apiIsCanceled = true
         fetchAccountApiCall?.cancel()
     }
 }
