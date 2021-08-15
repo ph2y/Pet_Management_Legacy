@@ -19,6 +19,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
+import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dao.Comment
 import com.sju18001.petmanagement.restapi.dao.PetSchedule
 import com.sju18001.petmanagement.restapi.dao.Post
@@ -31,7 +32,7 @@ import java.time.ZoneOffset.UTC
 
 interface CommunityCommentListAdapterInterface{
     fun getActivity(): Activity
-    fun onClickReply(nickname: String)
+    fun onClickReply(author: Account)
 }
 
 class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
@@ -109,9 +110,7 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         }
 
         holder.replyTextView.setOnClickListener {
-            dataSet[position].author.nickname?.let {
-                communityCommentListAdapterInterface.onClickReply(it)
-            }
+            communityCommentListAdapterInterface.onClickReply(dataSet[position].author)
         }
     }
 

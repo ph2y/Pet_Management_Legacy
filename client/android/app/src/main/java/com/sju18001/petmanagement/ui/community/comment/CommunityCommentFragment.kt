@@ -17,6 +17,7 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.CreateCommentReqDto
 import com.sju18001.petmanagement.restapi.dto.CreateCommentResDto
 import com.sju18001.petmanagement.restapi.dto.FetchCommentReqDto
@@ -60,19 +61,15 @@ class CommunityCommentFragment : Fragment() {
         // postId 지정
         postId = requireActivity().intent.getLongExtra("postId", -1)
 
-        // 뷰모델에 따른 초기화
+        // 초기화
         initializeViewForViewModel()
-
-        // 어뎁터 초기화
         initializeAdapter()
+        setListenerOnViews()
 
         // 초기 댓글 추가
         updateAdapterDataSetByFetchComment(FetchCommentReqDto(
             null, null, postId, null, null
         ))
-
-        // 리스너 추가
-        setListenerOnViews()
 
         return binding.root
     }
@@ -85,8 +82,11 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun initializeViewForViewModel(){
-        if(communityCommentViewModel.nicknameForReply.isNotEmpty()){
-            setViewForReply(communityCommentViewModel.nicknameForReply)
+        val idForReply = communityCommentViewModel.idForReply
+        val nicknameForReply = communityCommentViewModel.nicknameForReply
+
+        if(idForReply != null && nicknameForReply != null){
+            setViewForReply(idForReply, nicknameForReply)
         }
     }
 
@@ -97,8 +97,8 @@ class CommunityCommentFragment : Fragment() {
                 return requireActivity()
             }
 
-            override fun onClickReply(nickname: String) {
-                setViewForReply(nickname)
+            override fun onClickReply(author: Account) {
+                author.nickname?.let { setViewForReply(author.id, it) }
             }
         }
 
@@ -120,7 +120,7 @@ class CommunityCommentFragment : Fragment() {
         }
     }
 
-    private fun setViewForReply(nickname: String) {
+    private fun setViewForReply(id: Long, nickname: String) {
         // Show keyboard
         val editTextComment = binding.editTextComment
         val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -130,13 +130,21 @@ class CommunityCommentFragment : Fragment() {
 
         // Set view, data for layout_reply_description
         binding.layoutReplyDescription.visibility = View.VISIBLE
-        binding.textReplyNickname.text = nickname
-        communityCommentViewModel.nicknameForReply = nickname
+        nickname?.let{
+            binding.textReplyNickname.text = it
+            communityCommentViewModel.nicknameForReply = it
+        }
+        communityCommentViewModel.idForReply = id
 
         binding.buttonReplyCancel.setOnClickListener {
-            binding.layoutReplyDescription.visibility = View.GONE
-            communityCommentViewModel.nicknameForReply = ""
+            setViewForReplyCancel()
         }
+    }
+
+    private fun setViewForReplyCancel(){
+        binding.layoutReplyDescription.visibility = View.GONE
+        communityCommentViewModel.idForReply = null
+        communityCommentViewModel.nicknameForReply = ""
     }
 
     private fun updateAdapterDataSetByFetchComment(body: FetchCommentReqDto){
@@ -210,8 +218,7 @@ class CommunityCommentFragment : Fragment() {
         
         // 댓글 / 답글 생성
         binding.buttonCreateComment.setOnClickListener {
-            // TODO: 답글 CREATE
-            createComment(CreateCommentReqDto(postId, null, binding.editTextComment.text.toString()))
+            createComment(CreateCommentReqDto(postId, communityCommentViewModel.idForReply, binding.editTextComment.text.toString()))
         }
 
         // SwipeRefreshLayout
@@ -252,6 +259,7 @@ class CommunityCommentFragment : Fragment() {
                 }
 
                 setCommentInputToNormal()
+                setViewForReplyCancel()
             }
 
             override fun onFailure(call: Call<CreateCommentResDto>, t: Throwable) {
@@ -260,7 +268,9 @@ class CommunityCommentFragment : Fragment() {
                 }
 
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                
                 setCommentInputToNormal()
+                setViewForReplyCancel()
             }
         })
     }
