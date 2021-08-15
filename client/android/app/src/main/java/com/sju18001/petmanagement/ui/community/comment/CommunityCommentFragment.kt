@@ -153,12 +153,7 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun setViewForReply(id: Long, nickname: String) {
-        // Show keyboard
-        val editTextComment = binding.editTextComment
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
-        editTextComment.requestFocus()
-        imm.showSoftInput(editTextComment, 0)
+        Util.showKeyboard(requireActivity(), binding.editTextComment)
 
         // Set view, data for layout_reply_description
         binding.layoutReplyDescription.visibility = View.VISIBLE

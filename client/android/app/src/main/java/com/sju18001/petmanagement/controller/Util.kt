@@ -39,6 +39,13 @@ class Util {
             }
         }
 
+        fun showKeyboard(activity: Activity, view: View){
+            val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+            view.requestFocus()
+            imm.showSoftInput(view, 0)
+        }
+
         fun setupViewsForHideKeyboard(activity: Activity, view: View) {
             // Set up touch listener for non-text box views to hide keyboard
             if(view !is EditText) {

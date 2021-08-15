@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentUpdateCommentBinding
 
 class UpdateCommentFragment : Fragment() {
@@ -18,6 +19,9 @@ class UpdateCommentFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentUpdateCommentBinding.inflate(inflater, container, false)
+
+        Util.showKeyboard(requireActivity(), binding.editTextUpdateComment)
+
         return binding.root
     }
 }
