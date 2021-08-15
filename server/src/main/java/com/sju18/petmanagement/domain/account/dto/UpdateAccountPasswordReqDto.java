@@ -10,4 +10,8 @@ public class UpdateAccountPasswordReqDto {
     @NotBlank(message = "valid.account.password.blank")
     @Size(min = 8, max = 20, message = "valid.account.password.size")
     private String password;
+
+    @NotBlank(message = "valid.account.password.blank")
+    @Size(min = 8, max = 20, message = "valid.account.password.size")
+    private String newPassword;
 }

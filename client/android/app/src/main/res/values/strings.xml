@@ -142,6 +142,12 @@
     <string name="account_photo_type_select">사진 유형 선택</string>
     <string name="account_photo_by_gallery">갤러리 이미지</string>
     <string name="account_photo_by_default">기본 이미지</string>
+    <string name="account_password_change">비밀번호 변경</string>
+    <string name="account_new_password_hint">새 비밀번호</string>
+    <string name="account_new_password_check_hint">새 비밀번호 재확인</string>
+    <string name="account_original_password_hint">기존 비밀번호</string>
+    <string name="account_password_changed">비밀번호가 성공적으로 변경되었습니다</string>
+    <string name="account_password_mismatch">기존 비밀번호가 틀립니다\n다시 입력해주세요</string>
     <string name="nickname_hint">닉네임을 설정해주세요</string>
     <string name="password_change_hint">8~20자의 영문, 숫자, 특수문자만 사용 가능</string>
     <string name="change">변경</string>
