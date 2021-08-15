@@ -31,6 +31,7 @@ import java.time.ZoneOffset.UTC
 
 interface CommunityCommentListAdapterInterface{
     fun getActivity(): Activity
+    fun onClickReply(nickname: String)
 }
 
 class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
@@ -60,7 +61,7 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         setSpanToContent(holder.nicknameTextView, holder.contentsTextView)
         
         // 리스너 추가
-        setListenerOnViews(holder)
+        setListenerOnViews(holder, position)
     }
 
     override fun getItemCount(): Int = dataSet.size
@@ -102,13 +103,15 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         }
     }
 
-    private fun setListenerOnViews(holder: ViewHolder){
+    private fun setListenerOnViews(holder: ViewHolder, position: Int){
         holder.nicknameTextView.setOnClickListener {
             // TODO: 프로필로 이동
         }
 
         holder.replyTextView.setOnClickListener {
-            // TODO: 답글 달기
+            dataSet[position].author.nickname?.let {
+                communityCommentListAdapterInterface.onClickReply(it)
+            }
         }
     }
 
