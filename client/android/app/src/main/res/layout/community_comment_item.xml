@@ -26,7 +26,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         >
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_content"
+            android:id="@+id/layout_contents"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
@@ -42,7 +42,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 />
             <TextView
-                android:id="@+id/text_content"
+                android:id="@+id/text_contents"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="hi"
@@ -56,10 +56,10 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/layout_content"
+            app:layout_constraintTop_toBottomOf="@id/layout_contents"
             app:layout_constraintStart_toStartOf="parent">
             <TextView
-                android:id="@+id/text_time"
+                android:id="@+id/text_timestamp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="36분"
@@ -73,7 +73,7 @@
                 android:text="@string/reply_button"
                 android:layout_marginLeft="15dp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/text_time"
+                app:layout_constraintStart_toEndOf="@id/text_timestamp"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

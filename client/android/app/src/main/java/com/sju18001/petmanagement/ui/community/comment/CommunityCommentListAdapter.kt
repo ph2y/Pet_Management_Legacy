@@ -32,8 +32,8 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         val communityCommentLayout: ConstraintLayout = view.findViewById(R.id.layout_community_comment)
         val nicknameTextView: TextView = view.findViewById(R.id.text_nickname)
-        val contentTextView: TextView = view.findViewById(R.id.text_content)
-        val timeTextView: TextView = view.findViewById(R.id.text_time)
+        val contentsTextView: TextView = view.findViewById(R.id.text_contents)
+        val timestampTextView: TextView = view.findViewById(R.id.text_timestamp)
         val replyTextView: TextView = view.findViewById(R.id.text_reply)
     }
 
@@ -49,7 +49,7 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         updateDataSetToViewHolder(holder, dataSet[position])
         
         // 댓글 내용에 indent 추가
-        setSpanToContent(holder.nicknameTextView, holder.contentTextView)
+        setSpanToContent(holder.nicknameTextView, holder.contentsTextView)
         
         // 리스너 추가
         setListenerOnViews(holder)
@@ -58,14 +58,14 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
     override fun getItemCount(): Int = dataSet.size
 
     private fun updateDataSetToViewHolder(holder: CommunityCommentListAdapter.ViewHolder, data: Comment){
-        holder.nicknameTextView.text = data.nickname
-        holder.contentTextView.text = data.content
-        holder.timeTextView.text = data.time
+        holder.nicknameTextView.text = data.author.nickname
+        holder.contentsTextView.text = data.contents
+        holder.timestampTextView.text = data.timestamp
     }
 
     private fun setSpanToContent(nicknameTextView: TextView, contentTextView: TextView){
         contentTextView.post{
-            // content의 첫줄에 닉네임만큼의 indent를 주기 위함
+            // contents의 첫줄에 닉네임만큼의 indent를 주기 위함
             val spannable = SpannableString(contentTextView.text)
             val span = LeadingMarginSpan.Standard(nicknameTextView.width + 10, 0)
             spannable.setSpan(span, 0, spannable.count(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
