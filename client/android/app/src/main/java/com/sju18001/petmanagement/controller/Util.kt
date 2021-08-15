@@ -117,7 +117,7 @@ class Util {
             val time = localDateTime.atZone(ZoneId.of("Asia/Seoul"))
             val now = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"))
 
-            return now.toEpochSecond() - time.toEpochSecond()
+            return kotlin.math.abs(now.toEpochSecond() - time.toEpochSecond())
         }
     }
 }
