@@ -19,6 +19,9 @@ interface ServerApi {
     @POST("api/account/fetch")
     fun fetchAccountReq(@Body body: RequestBody): Call<FetchAccountResDto>
 
+    @POST("api/account/fetch")
+    fun fetchAccountNicknameReq(@Body fetchAccountReqDto: FetchAccountReqDto): Call<FetchAccountResDto>
+
     @POST("api/account/update")
     fun updateAccountReq(@Body updateAccountReqDto: UpdateAccountReqDto): Call<UpdateAccountResDto>
 

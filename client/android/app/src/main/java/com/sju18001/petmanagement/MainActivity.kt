@@ -7,14 +7,12 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
@@ -23,18 +21,14 @@ import com.sju18001.petmanagement.ui.community.CommunityFragment
 import com.sju18001.petmanagement.ui.community.followerFollowing.FollowerFollowingActivity
 import com.sju18001.petmanagement.ui.map.MapFragment
 import com.sju18001.petmanagement.ui.myPage.MyPageFragment
-import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetFragment
-import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
 import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleNotification
-import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleWorker
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.security.MessageDigest
-import java.time.LocalTime
 import java.util.*
 
 class MainActivity : AppCompatActivity() {

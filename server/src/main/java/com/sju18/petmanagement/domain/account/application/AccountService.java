@@ -109,6 +109,13 @@ public class AccountService {
                 .orElseThrow(() -> new Exception(msgSrc.getMessage("error.notExist", null, Locale.ENGLISH)));
     }
 
+    @Transactional(readOnly = true)
+    public Account fetchAccountByNickname(String nickname) throws Exception {
+        // 해당 nickname 가진 계정 정보 조회
+        return accountRepository.findByNickname(nickname)
+                .orElseThrow(() -> new Exception(msgSrc.getMessage("error.notExist", null, Locale.ENGLISH)));
+    }
+
     public byte[] fetchAccountPhoto(Authentication auth) throws Exception {
         Account currentAccount = this.fetchCurrentAccount(auth);
 

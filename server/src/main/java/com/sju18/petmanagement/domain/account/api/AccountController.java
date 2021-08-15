@@ -53,6 +53,9 @@ public class AccountController {
             } else if (reqDto.getUsername() != null && !reqDto.getUsername().isEmpty()) {
                 // 해당 username 가진 계정 정보 조회
                 account = accountServ.fetchAccountByUsername(reqDto.getUsername());
+            } else if (reqDto.getNickname() != null && !reqDto.getNickname().isEmpty()) {
+                // 해당 nickname 가진 계정 정보 조회
+                account = accountServ.fetchAccountByNickname(reqDto.getNickname());
             } else {
                 // 현재 로그인된 계정 정보 조회
                 account = accountServ.fetchCurrentAccount(auth);

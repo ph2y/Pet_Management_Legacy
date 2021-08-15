@@ -188,6 +188,7 @@
     <string name="follower_fragment_title">팔로워</string>
     <string name="following_fragment_title">팔로잉</string>
     <string name="follow_button">팔로우</string>
+    <string name="unfollow_button">언팔로우</string>
     <string name="search_button">검색</string>
     <string name="search_dialog_title">유저 검색</string>
     <string name="search_dialog_message">찾고 싶은 유저의 닉네임을 입력하세요.</string>

@@ -43,6 +43,12 @@ data class VerifyAuthCodeResDto(
     val _metadata: DtoMetadata
 )
 
+data class FetchAccountReqDto(
+    val id: Long?,
+    val username: String?,
+    val nickname: String?
+)
+
 data class FetchAccountResDto(
     val _metadata: DtoMetadata,
     val id: Long,
