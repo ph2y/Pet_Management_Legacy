@@ -163,6 +163,7 @@
     <string name="reply_button">답글 달기</string>
     <string name="update_comment_title">댓글 수정</string>
     <string name="create_comment_success">댓글을 작성하였습니다.</string>
+    <string name="update_comment_success">댓글을 수정하였습니다.</string>
     <string name="delete_comment_success">댓글을 삭제하였습니다.</string>
 
     <!-- Create Update Post Fragment -->
