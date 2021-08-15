@@ -584,14 +584,14 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<CreatePostResDto>, t: Throwable) {
+                // set api state/button to normal
+                createUpdatePostViewModel.apiIsLoading = false
+                setButtonToNormal()
+
                 // if the view was destroyed(API call canceled) -> return
                 if (_binding == null) {
                     return
                 }
-
-                // set api state/button to normal
-                createUpdatePostViewModel.apiIsLoading = false
-                setButtonToNormal()
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -690,14 +690,14 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
+                // set api state/button to normal
+                createUpdatePostViewModel.apiIsLoading = false
+                setButtonToNormal()
+
                 // if the view was destroyed(API call canceled) -> return
                 if(_binding == null) {
                     return
                 }
-
-                // set api state/button to normal
-                createUpdatePostViewModel.apiIsLoading = false
-                setButtonToNormal()
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()

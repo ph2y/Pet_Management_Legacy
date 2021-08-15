@@ -12,4 +12,11 @@ class SearchViewModel(private val handle: SavedStateHandle) : ViewModel() {
         }
 
     // for account info
+
+    // for API
+    var apiIsLoading = handle.get<Boolean>("apiIsLoading")?: false
+        set(value){
+            handle.set("apiIsLoading", value)
+            field = value
+        }
 }

@@ -231,17 +231,17 @@ class LoginFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> do nothing
-                if(_binding == null) { return }
-
-                // create custom snack bar to display error message
-                displayErrorMessage(t.message.toString())
-
                 // enable buttons
                 enableButtons()
 
                 // log error message
                 Log.d("error", t.message.toString())
+
+                // if the view was destroyed(API call canceled) -> do nothing
+                if(_binding == null) { return }
+
+                // create custom snack bar to display error message
+                displayErrorMessage(t.message.toString())
             }
         })
     }

@@ -71,6 +71,10 @@ class SearchActivity : AppCompatActivity() {
                 Toast.makeText(this, getString(R.string.nickname_regex_exception_message), Toast.LENGTH_LONG).show()
             }
             else {
+                // set api state/button to loading
+                searchViewModel.apiIsLoading = true
+                setSearchButtonToLoading()
+
                 searchAccount(searchViewModel.searchEditText)
             }
         }
@@ -89,6 +93,14 @@ class SearchActivity : AppCompatActivity() {
         // TODO
     }
 
+    private fun setSearchButtonToLoading() {
+        binding.searchButton.isEnabled = false
+    }
+
+    private fun setSearchButtonToNormal() {
+        binding.searchButton.isEnabled = true
+    }
+
     private fun searchAccount(nickname: String) {
         // create DTO
         val fetchAccountReqDto = FetchAccountReqDto(null, null, nickname)
@@ -102,13 +114,16 @@ class SearchActivity : AppCompatActivity() {
                 response: Response<FetchAccountResDto>
             ) {
                 if(response.isSuccessful) {
+                    // set api state/button to normal
+                    searchViewModel.apiIsLoading = false
+                    setSearchButtonToNormal()
+
                     Log.d("test", response.body().toString())
                 }
                 else {
                     // set api state/button to normal
-                        // TODO
-//                    createUpdatePostViewModel.apiIsLoading = false
-//                    setButtonToNormal()
+                    searchViewModel.apiIsLoading = false
+                    setSearchButtonToNormal()
 
                     // get error message + show(Toast)
                     val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
@@ -120,21 +135,27 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
+                // set api state/button to normal
+                searchViewModel.apiIsLoading = false
+                setSearchButtonToNormal()
+
                 // if the view was destroyed(API call canceled) -> return
                 // TODO
-//                if(_binding == null) {
-//                    return
-//                }
-
-                // set api state/button to normal
-                // TODO
-//                    createUpdatePostViewModel.apiIsLoading = false
-//                    setButtonToNormal()
+                if(binding == null) {
+                    return
+                }
 
                 // show(Toast)/log error message
                 Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
                 Log.d("error", t.message.toString())
             }
         })
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        // stop api call when fragment is destroyed
+        fetchAccountApiCall?.cancel()
     }
 }

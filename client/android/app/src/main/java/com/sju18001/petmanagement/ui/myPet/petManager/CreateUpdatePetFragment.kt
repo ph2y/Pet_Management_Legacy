@@ -232,14 +232,14 @@ class CreateUpdatePetFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<CreatePetResDto>, t: Throwable) {
+                // set api state/button to normal
+                myPetViewModel.petManagerApiIsLoading = false
+                setButtonToNormal()
+
                 // if the view was destroyed(API call canceled) -> return
                 if(_binding == null) {
                     return
                 }
-
-                // set api state/button to normal
-                myPetViewModel.petManagerApiIsLoading = false
-                setButtonToNormal()
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -301,14 +301,14 @@ class CreateUpdatePetFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<UpdatePetResDto>, t: Throwable) {
+                // set api state/button to normal
+                myPetViewModel.petManagerApiIsLoading = false
+                setButtonToNormal()
+
                 // if the view was destroyed(API call canceled) -> return
                 if(_binding == null) {
                     return
                 }
-
-                // set api state/button to normal
-                myPetViewModel.petManagerApiIsLoading = false
-                setButtonToNormal()
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -404,14 +404,14 @@ class CreateUpdatePetFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
+                // set api state/button to normal
+                myPetViewModel.petManagerApiIsLoading = false
+                setButtonToNormal()
+
                 // if the view was destroyed(API call canceled) -> return
                 if(_binding == null) {
                     return
                 }
-
-                // set api state/button to normal
-                myPetViewModel.petManagerApiIsLoading = false
-                setButtonToNormal()
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()

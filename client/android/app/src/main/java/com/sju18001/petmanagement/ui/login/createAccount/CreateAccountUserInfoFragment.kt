@@ -240,12 +240,6 @@ class CreateAccountUserInfoFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<SendAuthCodeResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> do nothing
-                if(_binding == null) { return }
-
-                //display error toast message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-
                 // log error message
                 Log.d("error", t.message.toString())
 
@@ -254,6 +248,12 @@ class CreateAccountUserInfoFragment : Fragment() {
 
                 // reset codeRequestApiCall variable
                 codeRequestApiCall = null
+
+                // if the view was destroyed(API call canceled) -> do nothing
+                if(_binding == null) { return }
+
+                //display error toast message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
             }
         })
     }
