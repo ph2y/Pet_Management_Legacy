@@ -30,6 +30,13 @@ class SearchViewModel(private val handle: SavedStateHandle) : ViewModel() {
             field = value
         }
 
+    // for id
+    var accountId = handle.get<Long>("accountId")
+        set(value){
+            handle.set("accountId", value)
+            field = value
+        }
+
     // for nickname
     var accountNickname = handle.get<String>("accountNickname")
         set(value){

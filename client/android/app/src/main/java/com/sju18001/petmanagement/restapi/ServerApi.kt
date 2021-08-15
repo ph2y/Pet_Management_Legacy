@@ -95,4 +95,10 @@ interface ServerApi {
     // Follow API
     @POST("api/community/follower/fetch")
     fun fetchFollowerReq(@Body body: RequestBody): Call<FetchFollowerResDto>
+
+    @POST("api/community/follow/create")
+    fun createFollowReq(@Body createFollowReqDto: CreateFollowReqDto): Call<CreateFollowResDto>
+
+    @POST("api/community/follow/delete")
+    fun deleteFollowReq(@Body deleteFollowReqDto: DeleteFollowReqDto): Call<DeleteFollowResDto>
 }

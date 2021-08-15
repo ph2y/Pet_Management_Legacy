@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.community.followerFollowing
 
 import android.graphics.BitmapFactory
+import android.graphics.PorterDuff
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -9,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
@@ -16,9 +18,7 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.ActivitySearchBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.FetchAccountReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchAccountResDto
-import com.sju18001.petmanagement.restapi.dto.FetchFollowerResDto
+import com.sju18001.petmanagement.restapi.dto.*
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -47,6 +47,9 @@ class SearchActivity : AppCompatActivity() {
     private var fetchAccountApiCall: Call<FetchAccountResDto>? = null
     private var fetchAccountPhotoApiCall: Call<ResponseBody>? = null
     private var fetchFollowerApiCall: Call<FetchFollowerResDto>? = null
+    private var createFollowApiCall: Call<CreateFollowResDto>? = null
+    private var deleteFollowApiCall: Call<DeleteFollowResDto>? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +88,21 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
+        // for follow unfollow button
+        binding.followUnfollowButton.setOnClickListener {
+            // set API/button state to loading
+            searchViewModel.apiIsLoading = true
+            setButtonState()
+
+            // API call
+            if(searchViewModel.accountId !in searchViewModel.followerIdList!!) {
+                createFollow()
+            }
+            else {
+                deleteFollow()
+            }
+        }
+
         // for close button
         binding.closeButton.setOnClickListener { finish() }
 
@@ -101,7 +119,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         // restore views
-        // TODO
+        restoreState()
     }
 
     private fun setSearchButtonToLoading() {
@@ -114,7 +132,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun setAccountInfoViews(fetchAccountResDto: FetchAccountResDto) {
         // set layout's visibility to visible(if not already done)
-        if(binding.accountInfoCardView.visibility != View.GONE) {
+        if(binding.accountInfoCardView.visibility != View.VISIBLE) {
             binding.accountInfoCardView.visibility = View.VISIBLE
         }
         
@@ -127,7 +145,11 @@ class SearchActivity : AppCompatActivity() {
         else {
             searchViewModel.accountPhotoUrl = null
             searchViewModel.accountPhotoByteArray = null
+            setAccountPhoto()
         }
+
+        // save id value
+        searchViewModel.accountId = fetchAccountResDto.id
 
         // save and set nickname value
         searchViewModel.accountNickname = fetchAccountResDto.nickname
@@ -135,12 +157,41 @@ class SearchActivity : AppCompatActivity() {
         binding.accountNickname.text = nicknameText
 
         // set button status
-        // TODO
+        setButtonState()
     }
 
     private fun setAccountPhoto() {
-        binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(searchViewModel.accountPhotoByteArray,
-            0, searchViewModel.accountPhotoByteArray!!.size))
+        if(searchViewModel.accountPhotoUrl != null) {
+            binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(searchViewModel.accountPhotoByteArray,
+                0, searchViewModel.accountPhotoByteArray!!.size))
+        }
+        else {
+            binding.accountPhoto.setImageDrawable(getDrawable(R.drawable.ic_baseline_account_circle_24))
+        }
+    }
+
+    private fun setButtonState() {
+        // exception
+        if(searchViewModel.accountId == null) { return }
+
+        // if id not in follower id list -> set button to follow
+        if(searchViewModel.accountId !in searchViewModel.followerIdList!!) {
+            binding.followUnfollowButton.background
+                .setColorFilter(ContextCompat.getColor(this, R.color.carrot), PorterDuff.Mode.MULTIPLY)
+            binding.followUnfollowButton.setTextColor(resources.getColor(R.color.white))
+            binding.followUnfollowButton.text = getText(R.string.follow_button)
+        }
+
+        // if id in follower id list -> set button to unfollow
+        else {
+            binding.followUnfollowButton.background
+                .setColorFilter(ContextCompat.getColor(this, R.color.border_line), PorterDuff.Mode.MULTIPLY)
+            binding.followUnfollowButton.setTextColor(resources.getColor(R.color.black))
+            binding.followUnfollowButton.text = getText(R.string.unfollow_button)
+        }
+
+        // if API is loading -> set button to loading, else -> set button to normal
+        binding.followUnfollowButton.isEnabled = !searchViewModel.apiIsLoading
     }
 
     private fun updateFollowerIdList() {
@@ -163,7 +214,8 @@ class SearchActivity : AppCompatActivity() {
                         searchViewModel.followerIdList!!.add(it.id)
                     }
 
-                    Log.d("test", searchViewModel.followerIdList.toString())
+                    // update button state
+                    setButtonState()
                 }
                 else {
                     // get error message
@@ -262,7 +314,6 @@ class SearchActivity : AppCompatActivity() {
         fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if(response.isSuccessful) {
-                    Log.d("test", response.body().toString())
                     // save photo as byte array
                     searchViewModel.accountPhotoByteArray = response.body()!!.byteStream().readBytes()
 
@@ -293,6 +344,123 @@ class SearchActivity : AppCompatActivity() {
         })
     }
 
+    private fun createFollow() {
+        // create DTO
+        val createFollowReqDto = CreateFollowReqDto(searchViewModel.accountId!!)
+
+        // API call
+        createFollowApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .createFollowReq(createFollowReqDto)
+        createFollowApiCall!!.enqueue(object: Callback<CreateFollowResDto> {
+            override fun onResponse(
+                call: Call<CreateFollowResDto>,
+                response: Response<CreateFollowResDto>
+            ) {
+                if(response.isSuccessful) {
+                    // update follower id list(update button state)
+                    updateFollowerIdList()
+
+                    // set api state/button to normal
+                    searchViewModel.apiIsLoading = false
+                }
+                else {
+                    // set api state/button to normal
+                    searchViewModel.apiIsLoading = false
+                    setButtonState()
+
+                    // get error message
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                    // Toast + Log
+                    Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<CreateFollowResDto>, t: Throwable) {
+                // if API call was canceled -> return
+                if(searchViewModel.apiIsCanceled) {
+                    searchViewModel.apiIsCanceled = false
+                    return
+                }
+
+                // show(Toast)/log error message
+                Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
+    private fun deleteFollow() {
+        // create DTO
+        val deleteFollowReqDto = DeleteFollowReqDto(searchViewModel.accountId!!)
+
+        // API call
+        deleteFollowApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .deleteFollowReq(deleteFollowReqDto)
+        deleteFollowApiCall!!.enqueue(object: Callback<DeleteFollowResDto> {
+            override fun onResponse(
+                call: Call<DeleteFollowResDto>,
+                response: Response<DeleteFollowResDto>
+            ) {
+                if(response.isSuccessful) {
+                    // update follower id list(update button state)
+                    updateFollowerIdList()
+
+                    // set api state/button to normal
+                    searchViewModel.apiIsLoading = false
+                }
+                else {
+                    // set api state/button to normal
+                    searchViewModel.apiIsLoading = false
+                    setButtonState()
+
+                    // get error message
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                    // Toast + Log
+                    Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<DeleteFollowResDto>, t: Throwable) {
+                // if API call was canceled -> return
+                if(searchViewModel.apiIsCanceled) {
+                    searchViewModel.apiIsCanceled = false
+                    return
+                }
+
+                // show(Toast)/log error message
+                Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
+    private fun restoreState() {
+        // restore EditText
+        binding.searchEditText.setText(searchViewModel.searchEditText)
+
+        // restore account info layout
+        if(searchViewModel.accountId != null) {
+            binding.accountInfoCardView.visibility = View.VISIBLE
+
+            // account photo
+            if(searchViewModel.accountPhotoUrl != null) {
+                binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(searchViewModel.accountPhotoByteArray,
+                    0, searchViewModel.accountPhotoByteArray!!.size))
+            }
+
+            // account nickname
+            val nicknameText = searchViewModel.accountNickname + '님'
+            binding.accountNickname.text = nicknameText
+
+            // follow unfollow button
+            setButtonState()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
 
@@ -301,5 +469,7 @@ class SearchActivity : AppCompatActivity() {
         fetchAccountApiCall?.cancel()
         fetchAccountPhotoApiCall?.cancel()
         fetchFollowerApiCall?.cancel()
+        createFollowApiCall?.cancel()
+        deleteFollowApiCall?.cancel()
     }
 }
