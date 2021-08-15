@@ -1,29 +1,29 @@
 package com.sju18001.petmanagement.ui.community.comment
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.util.Log
-import android.view.KeyEvent
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
-import com.sju18001.petmanagement.restapi.dto.CreateCommentReqDto
-import com.sju18001.petmanagement.restapi.dto.CreateCommentResDto
-import com.sju18001.petmanagement.restapi.dto.FetchCommentReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchCommentResDto
+import com.sju18001.petmanagement.restapi.dto.*
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -102,6 +102,33 @@ class CommunityCommentFragment : Fragment() {
             override fun onClickReply(author: Account) {
                 author.nickname?.let { setViewForReply(author.id, it) }
             }
+
+            override fun onLongClickComment(authorId: Long, commentId: Long){
+                val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchAccountReq(body)
+                call!!.enqueue(object: Callback<FetchAccountResDto> {
+                    override fun onResponse(
+                        call: Call<FetchAccountResDto>,
+                        response: Response<FetchAccountResDto>
+                    ) {
+                        if(isViewDestroyed){
+                            return
+                        }
+
+                        if(response.isSuccessful){
+                            if(response.body()!!.id == authorId){
+                                showCommentDialog(commentId)
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
+                        // Do nothing
+                    }
+
+                })
+            }
         }
 
         binding.recyclerViewComment?.let{
@@ -143,6 +170,58 @@ class CommunityCommentFragment : Fragment() {
         }
     }
 
+    private fun showCommentDialog(commentId: Long){
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setItems(arrayOf("수정", "삭제"), DialogInterface.OnClickListener{ dialog, which ->
+            when(which){
+                0 -> {
+                    // 수정
+                }
+                1 -> {
+                    // 삭제
+                    deleteComment(commentId)
+                }
+            }
+        })
+            .create().show()
+    }
+
+    private fun deleteComment(id: Long){
+        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).deleteCommentReq(
+            DeleteCommentReqDto(id)
+        )
+        call!!.enqueue(object: Callback<DeleteCommentResDto> {
+            override fun onResponse(
+                call: Call<DeleteCommentResDto>,
+                response: Response<DeleteCommentResDto>
+            ) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                if(response.isSuccessful){
+                    Toast.makeText(context, context?.getText(R.string.delete_comment_success), Toast.LENGTH_SHORT).show()
+
+                    resetCommentData()
+                    updateAdapterDataSetByFetchComment(FetchCommentReqDto(
+                        null, null, postId, null, null
+                    ))
+                }else{
+                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<DeleteCommentResDto>, t: Throwable) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
     private fun setViewForReplyCancel(){
         binding.layoutReplyDescription.visibility = View.GONE
         communityCommentViewModel.idForReply = null
@@ -179,7 +258,7 @@ class CommunityCommentFragment : Fragment() {
                         }
                     }
                 }else{
-                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
                 }
 
                 // 새로고침 아이콘 제거
@@ -191,7 +270,7 @@ class CommunityCommentFragment : Fragment() {
                     return
                 }
 
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
 
                 // 새로고침 아이콘 제거
                 binding.layoutSwipeRefresh.isRefreshing = false
@@ -260,10 +339,10 @@ class CommunityCommentFragment : Fragment() {
                     ))
 
                     binding.editTextComment.text = null
-                    Toast.makeText(context, "댓글을 작성하였습니다.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context?.getText(R.string.create_comment_success), Toast.LENGTH_SHORT).show()
                 }else{
                     val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
                 }
 
                 setCommentInputToNormal()
@@ -275,7 +354,7 @@ class CommunityCommentFragment : Fragment() {
                     return
                 }
 
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
 
                 setCommentInputToNormal()
                 setViewForReplyCancel()

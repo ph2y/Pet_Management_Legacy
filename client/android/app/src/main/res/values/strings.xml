@@ -167,6 +167,9 @@
     <string name="comment">댓글</string>
     <string name="comment_input_hint">댓글 내용을 입력하세요.</string>
     <string name="reply_button">답글 달기</string>
+    <string name="create_comment_success">댓글을 작성하였습니다.</string>
+    <string name="delete_comment_success">댓글을 삭제하였습니다.</string>
+
     <!-- Create Update Post Fragment -->
     <string name="create_post_title">글 쓰기</string>
     <string name="update_post_title">글 수정</string>

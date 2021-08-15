@@ -33,6 +33,7 @@ import java.time.ZoneOffset.UTC
 interface CommunityCommentListAdapterInterface{
     fun getActivity(): Activity
     fun onClickReply(author: Account)
+    fun onLongClickComment(authorId: Long, commentId: Long)
 }
 
 class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
@@ -111,6 +112,11 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
 
         holder.replyTextView.setOnClickListener {
             communityCommentListAdapterInterface.onClickReply(dataSet[position].author)
+        }
+
+        holder.communityCommentLayout.setOnLongClickListener { _ ->
+            communityCommentListAdapterInterface.onLongClickComment(dataSet[position].author.id, dataSet[position].id)
+            true
         }
     }
 
