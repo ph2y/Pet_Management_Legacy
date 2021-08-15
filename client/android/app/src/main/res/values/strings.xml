@@ -161,6 +161,7 @@
     <string name="comment">댓글</string>
     <string name="comment_input_hint">댓글 내용을 입력하세요.</string>
     <string name="reply_button">답글 달기</string>
+    <string name="update_comment_title">댓글 수정</string>
     <string name="create_comment_success">댓글을 작성하였습니다.</string>
     <string name="delete_comment_success">댓글을 삭제하였습니다.</string>
 
@@ -189,5 +190,7 @@
     <string name="post_invalid_message">글 내용을 입력하거나, 사진 및 동영상을 올려주세요!</string>
     <string name="pet_not_selected_message">펫을 선택해주세요!</string>
     <string name="create_post_successful">글 쓰기에 성공했어요!</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

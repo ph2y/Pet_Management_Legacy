@@ -20,6 +20,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.PetManagement">
+        <activity android:name=".ui.community.comment.updateComment.UpdateCommentActivity"></activity>
         <activity android:name=".ui.community.comment.CommunityCommentActivity" />
         <activity android:name=".ui.community.createUpdatePost.CreateUpdatePostActivity" />
         <activity android:name=".ui.welcomePage.WelcomePageActivity" />
