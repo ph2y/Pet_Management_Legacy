@@ -150,7 +150,7 @@ class EditAccountFragment : Fragment() {
                         myPageViewModel.accountPwValid = false
                         dialog.findViewById<TextView>(R.id.pw_message2).visibility = View.VISIBLE
                     }
-                    if(s.toString() == dialog.findViewById<EditText>(R.id.new_password_input).text.toString()) {
+                    if(s.toString() == dialog.findViewById<EditText>(R.id.new_password_check_input).text.toString()) {
                         myPageViewModel.accountPwCheckValid = true
                         dialog.findViewById<TextView>(R.id.pw_check_message2).visibility = View.GONE
                     }
@@ -197,6 +197,9 @@ class EditAccountFragment : Fragment() {
             dialog.findViewById<Button>(R.id.password_change_cancel_button).setOnClickListener {
                 dialog.dismiss()
             }
+
+            // for hiding keyboard
+            Util.setupViewsForHideKeyboard(requireActivity(), dialog.findViewById(R.id.password_change_parent_layout))
         }
 
         binding.logoutButton.setOnClickListener {
@@ -412,6 +415,11 @@ class EditAccountFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<UpdateAccountPasswordResDto>, t: Throwable) {
+                // if the view was destroyed(API call canceled) -> return
+                if(_binding == null) {
+                    return
+                }
+
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
                 Log.d("error", t.message.toString())
