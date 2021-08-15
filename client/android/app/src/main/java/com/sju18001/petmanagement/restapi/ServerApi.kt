@@ -99,6 +99,7 @@ interface ServerApi {
     @POST("api/post/media/update")
     fun updatePostMediaReq(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>): Call<UpdatePostMediaResDto>
 
+
     // Follow API
     @POST("api/community/follower/fetch")
     fun fetchFollowerReq(@Body body: RequestBody): Call<FetchFollowerResDto>
@@ -108,4 +109,17 @@ interface ServerApi {
 
     @POST("api/community/follow/delete")
     fun deleteFollowReq(@Body deleteFollowReqDto: DeleteFollowReqDto): Call<DeleteFollowResDto>
+
+    // Comment API
+    @POST("api/comment/create")
+    fun createCommentReq(@Body createCommentReqDto: CreateCommentReqDto): Call<CreateCommentResDto>
+
+    @POST("api/comment/fetch")
+    fun fetchCommentReq(@Body fetchCommentReqDto: FetchCommentReqDto): Call<FetchCommentResDto>
+
+    @POST("api/comment/update")
+    fun updateCommentReq(@Body updateCommentReqDto: UpdateCommentReqDto): Call<UpdateCommentResDto>
+
+    @POST("api/comment/delete")
+    fun deleteCommentReq(@Body deleteCommentReqDto: DeleteCommentReqDto): Call<DeleteCommentResDto>
 }
