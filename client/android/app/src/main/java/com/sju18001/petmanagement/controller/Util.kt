@@ -39,11 +39,14 @@ class Util {
             }
         }
 
-        fun showKeyboard(activity: Activity, view: View){
+        fun showKeyboard(activity: Activity, view: EditText){
             val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
             view.requestFocus()
             imm.showSoftInput(view, 0)
+
+            // Set cursor at the end of view
+            view.setSelection(view.text.toString().length)
         }
 
         fun setupViewsForHideKeyboard(activity: Activity, view: View) {
