@@ -23,11 +23,11 @@ data class DeleteCommentResDto(
 )
 
 data class FetchCommentReqDto(
-    val pageIndex: Integer,
-    val id: Long,
-    val postId: Long,
-    val parentCommentId: Long,
-    val topCommentId: Long
+    val pageIndex: Int?,
+    val topCommentId: Long?,
+    val postId: Long?,
+    val parentCommentId: Long?,
+    val id: Long?
 )
 
 data class FetchCommentResDto(

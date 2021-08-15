@@ -84,9 +84,11 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         }
     }
 
-    fun addItems(items: List<Comment>){
-        for(item in items){
-            dataSet.add(item)
-        }
+    fun addItem(item: Comment){
+        dataSet.add(item)
+    }
+
+    fun resetDataSet(){
+        dataSet = arrayListOf()
     }
 }
