@@ -93,9 +93,10 @@ class CommunityFragment : Fragment() {
     private fun initializeAdapter(){
         adapter = CommunityPostListAdapter(arrayListOf())
         adapter.communityPostListAdapterInterface = object: CommunityPostListAdapterInterface {
-            override fun startCommunityCommentActivity() {
+            override fun startCommunityCommentActivity(postId: Long) {
                 val communityCommentActivityIntent = Intent(context, CommunityCommentActivity::class.java)
-                // TODO: 댓글 정보 전달 ex. communityCommentActivityIntent.putExtra("~", "~")
+                communityCommentActivityIntent.putExtra("postId", postId)
+
                 startActivity(communityCommentActivityIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }

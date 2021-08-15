@@ -14,12 +14,8 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dao.Comment
-import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.FetchCommentReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchCommentResDto
-import com.sju18001.petmanagement.restapi.dto.FetchPostReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchPostResDto
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -41,6 +37,9 @@ class CommunityCommentFragment : Fragment() {
     private var topCommentId: Long? = null
     private var pageIndex: Int = 0
 
+    // 현재 게시글의 postId
+    private var postId: Long = -1
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,12 +49,15 @@ class CommunityCommentFragment : Fragment() {
         // get session manager
         sessionManager = context?.let { SessionManager(it) }!!
 
+        // postId 지정
+        postId = requireActivity().intent.getLongExtra("postId", -1)
+
         // 어뎁터 초기화
         initializeAdapter()
 
         // 초기 댓글 추가
         updateAdapterDataSetByFetchComment(FetchCommentReqDto(
-            null, null, 1, null, null
+            null, null, postId, null, null
         ))
 
         // 리스너 추가
@@ -65,7 +67,7 @@ class CommunityCommentFragment : Fragment() {
         binding.layoutSwipeRefresh.setOnRefreshListener {
             resetCommentData()
             updateAdapterDataSetByFetchComment(FetchCommentReqDto(
-                null, null, 1, null, null
+                null, null, postId, null, null
             ))
         }
 
@@ -96,7 +98,7 @@ class CommunityCommentFragment : Fragment() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if(!recyclerView.canScrollVertically(1)){
                         updateAdapterDataSetByFetchComment(FetchCommentReqDto(
-                            pageIndex, topCommentId, 1, null, null
+                            pageIndex, topCommentId, postId, null, null
                         ))
                         pageIndex += 1
                     }
