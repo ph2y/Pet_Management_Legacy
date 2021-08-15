@@ -19,9 +19,37 @@ class UpdateCommentFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentUpdateCommentBinding.inflate(inflater, container, false)
+        
+        // 초기화
+        loadContents()
+        setListenerOnViews()
 
-        Util.showKeyboard(requireActivity(), binding.editTextUpdateComment)
+        // 키보드 내리기
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentUpdateCommentParentLayout)
+
+        // 포커스
+        val editTextUpdateComment = binding.editTextUpdateComment
+        editTextUpdateComment.postDelayed({
+            Util.showKeyboard(requireActivity(), editTextUpdateComment)
+        }, 100)
 
         return binding.root
+    }
+
+    private fun loadContents(){
+        val intent = requireActivity().intent
+        val contents = intent.getStringExtra("contents")
+
+        if(contents != null && contents.isNotEmpty()){
+            binding.editTextUpdateComment.setText(contents)
+            intent.putExtra("contents", "")
+        }
+    }
+
+    private fun setListenerOnViews(){
+        // 뒤로가기 버튼
+        binding.buttonBack.setOnClickListener {
+            activity?.finish()
+        }
     }
 }
