@@ -79,6 +79,15 @@ class CommunityCommentFragment : Fragment() {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        resetCommentData()
+        updateAdapterDataSetByFetchComment(FetchCommentReqDto(
+            null, null, postId, null, null
+        ))
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
