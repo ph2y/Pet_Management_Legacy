@@ -24,10 +24,10 @@ class CommunityCommentActivity : AppCompatActivity() {
         supportActionBar?.hide()
 
         // 프래그먼트 실행
-        if(supportFragmentManager.findFragmentById(R.id.community_activity_fragment_container) == null){
+        if(supportFragmentManager.findFragmentById(R.id.community_comment_activity_fragment_container) == null){
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.community_activity_fragment_container, CommunityCommentFragment())
+                .add(R.id.community_comment_activity_fragment_container, CommunityCommentFragment())
                 .commit()
         }
     }

@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -22,6 +23,8 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.*
+import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateCommentActivity
+import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Call
@@ -29,7 +32,6 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class CommunityCommentFragment : Fragment() {
-
     private var _binding: FragmentCommunityCommentBinding? = null
     private val binding get() = _binding!!
 
@@ -99,11 +101,11 @@ class CommunityCommentFragment : Fragment() {
                 return requireActivity()
             }
 
-            override fun onClickReply(author: Account) {
-                author.nickname?.let { setViewForReply(author.id, it) }
+            override fun onClickReply(id: Long, nickname: String) {
+                setViewForReply(id, nickname)
             }
 
-            override fun onLongClickComment(authorId: Long, commentId: Long){
+            override fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String){
                 val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchAccountReq(body)
@@ -118,7 +120,7 @@ class CommunityCommentFragment : Fragment() {
 
                         if(response.isSuccessful){
                             if(response.body()!!.id == authorId){
-                                showCommentDialog(commentId)
+                                showCommentDialog(commentId, commentContents)
                             }
                         }
                     }
@@ -170,16 +172,22 @@ class CommunityCommentFragment : Fragment() {
         }
     }
 
-    private fun showCommentDialog(commentId: Long){
+    private fun showCommentDialog(id: Long, contents: String){
         val builder = AlertDialog.Builder(requireActivity())
-        builder.setItems(arrayOf("수정", "삭제"), DialogInterface.OnClickListener{ dialog, which ->
+        builder.setItems(arrayOf("수정", "삭제"), DialogInterface.OnClickListener{ _, which ->
             when(which){
                 0 -> {
                     // 수정
+                    val updateCommunityActivityIntent = Intent(context, UpdateCommentActivity::class.java)
+                    updateCommunityActivityIntent.putExtra("id", id)
+                    updateCommunityActivityIntent.putExtra("contents", contents)
+
+                    startActivity(updateCommunityActivityIntent)
+                    requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
                 }
                 1 -> {
                     // 삭제
-                    deleteComment(commentId)
+                    deleteComment(id)
                 }
             }
         })
