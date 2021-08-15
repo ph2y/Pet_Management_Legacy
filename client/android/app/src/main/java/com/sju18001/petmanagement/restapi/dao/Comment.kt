@@ -7,7 +7,7 @@ data class Comment(
     val postId: Long,
     val parentComment: Comment?,
     val parentCommentId: Comment?,
-    val contents: String,
+    var contents: String,
     val timestamp: String,
     val edited: Boolean
 )

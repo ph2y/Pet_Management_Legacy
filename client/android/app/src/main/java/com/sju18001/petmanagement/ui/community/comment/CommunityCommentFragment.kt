@@ -22,6 +22,7 @@ import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
+import com.sju18001.petmanagement.restapi.dao.Comment
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateCommentActivity
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
@@ -252,6 +253,7 @@ class CommunityCommentFragment : Fragment() {
                     response.body()!!.commentList?.let {
                         if(it.isNotEmpty()){
                             it.map { item ->
+                                item.contents = item.contents.replace("\n", "")
                                 adapter.addItem(item)
                             }
 
