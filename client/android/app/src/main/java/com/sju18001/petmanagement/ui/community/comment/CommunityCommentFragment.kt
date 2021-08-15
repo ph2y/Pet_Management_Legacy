@@ -37,7 +37,7 @@ class CommunityCommentFragment : Fragment() {
 
     // 댓글 새로고침
     private var topCommentId: Long? = null
-    private var pageIndex: Int = 0
+    private var pageIndex: Int = 1
 
     // 현재 게시글의 postId
     private var postId: Long = -1
@@ -128,7 +128,9 @@ class CommunityCommentFragment : Fragment() {
                                 adapter.addItem(item)
                             }
 
-                            topCommentId = it.last().id
+                            if(topCommentId == null){
+                                topCommentId = it.first().id
+                            }
 
                             // 데이터셋 변경 알림
                             binding.recyclerViewComment.post{
@@ -158,7 +160,7 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun resetCommentData(){
-        pageIndex = 0
+        pageIndex = 1
         adapter.resetDataSet()
 
         // 데이터셋 변경 알림

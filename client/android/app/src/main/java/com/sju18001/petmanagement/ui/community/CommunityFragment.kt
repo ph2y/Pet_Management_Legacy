@@ -138,7 +138,9 @@ class CommunityFragment : Fragment() {
                                 adapter.addItem(item)
                             }
 
-                            topPostId = it.last().id
+                            if(topPostId == null){
+                                topPostId = it.first().id
+                            }
 
                             // 데이터셋 변경 알림
                             binding.recyclerViewPost.post{
