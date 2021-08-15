@@ -119,7 +119,7 @@
             android:paddingBottom="3dp"
             android:textSize="14dp"
             android:maxLines="8"
-            android:inputType="text"
+            android:inputType="textMultiLine"
             android:theme="@style/onSelectedThemeCarrot"
             android:imeOptions="actionSend"
             app:layout_constraintBottom_toBottomOf="parent"
