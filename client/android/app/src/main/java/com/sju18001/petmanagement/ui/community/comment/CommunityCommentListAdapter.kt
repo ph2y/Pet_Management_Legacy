@@ -74,8 +74,6 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getTimestampForDisplay(timestamp: String): String{
-        var timestampForDisplay: String = timestamp
-
         val secondDiff: Long = Util.getSecondDifferenceInLocalDateTime(LocalDateTime.parse(timestamp))
         val minuteDiff: Long = secondDiff / 60
         val hourDiff: Long = minuteDiff / 60
@@ -83,7 +81,7 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         val monthDiff: Long = dateDiff / 30
         val yearDiff: Long = monthDiff / 12
 
-        timestampForDisplay = when {
+        return when {
             yearDiff > 0 -> "${yearDiff}년"
             monthDiff > 0 -> "${monthDiff}달"
             dateDiff > 0 -> "${dateDiff}일"
@@ -91,8 +89,6 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
             minuteDiff > 0 -> "${minuteDiff}분"
             else -> "${secondDiff}초"
         }
-
-        return timestampForDisplay
     }
 
     private fun setSpanToContent(nicknameTextView: TextView, contentTextView: TextView){

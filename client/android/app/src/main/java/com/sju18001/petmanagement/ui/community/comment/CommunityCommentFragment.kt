@@ -14,6 +14,8 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.CreateCommentReqDto
+import com.sju18001.petmanagement.restapi.dto.CreateCommentResDto
 import com.sju18001.petmanagement.restapi.dto.FetchCommentReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchCommentResDto
 import retrofit2.Call
@@ -176,7 +178,62 @@ class CommunityCommentFragment : Fragment() {
         
         // 댓글 / 답글 생성
         binding.buttonCreateComment.setOnClickListener {
-            // TODO: 댓글/답글 CREATE
+            // TODO: 답글 CREATE
+            createComment(CreateCommentReqDto(postId, null, binding.editTextComment.text.toString()))
         }
+    }
+
+    private fun createComment(body: CreateCommentReqDto){
+        setCommentInputToLoading()
+
+        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .createCommentReq(body)
+        call!!.enqueue(object: Callback<CreateCommentResDto> {
+            override fun onResponse(
+                call: Call<CreateCommentResDto>,
+                response: Response<CreateCommentResDto>
+            ) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                if(response.isSuccessful){
+                    // 새로고침
+                    resetCommentData()
+                    updateAdapterDataSetByFetchComment(FetchCommentReqDto(
+                        null, null, postId, null, null
+                    ))
+
+                    binding.editTextComment.text = null
+                    Toast.makeText(context, "댓글을 작성하였습니다.", Toast.LENGTH_LONG).show()
+                }else{
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                }
+
+                setCommentInputToNormal()
+            }
+
+            override fun onFailure(call: Call<CreateCommentResDto>, t: Throwable) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                setCommentInputToNormal()
+            }
+        })
+    }
+
+    private fun setCommentInputToLoading(){
+        binding.buttonCreateComment.visibility = View.GONE
+        binding.progressBarComment.visibility = View.VISIBLE
+        binding.editTextComment.isEnabled = false
+    }
+
+    private fun setCommentInputToNormal(){
+        binding.buttonCreateComment.visibility = View.VISIBLE
+        binding.progressBarComment.visibility = View.GONE
+        binding.editTextComment.isEnabled = true
     }
 }
