@@ -156,7 +156,7 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun resetCommentData(){
-        pageIndex = 1
+        pageIndex = 0
         adapter.resetDataSet()
 
         // 데이터셋 변경 알림
