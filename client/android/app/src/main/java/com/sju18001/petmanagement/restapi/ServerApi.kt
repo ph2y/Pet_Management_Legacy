@@ -90,4 +90,17 @@ interface ServerApi {
     @Multipart
     @POST("api/post/media/update")
     fun updatePostMediaReq(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>): Call<UpdatePostMediaResDto>
+
+    // Comment API
+    @POST("api/comment/create")
+    fun createCommentReq(@Body createCommentReqDto: CreateCommentReqDto): Call<CreateCommentResDto>
+
+    @POST("api/comment/fetch")
+    fun fetchCommentReq(@Body fetchCommentReqDto: FetchCommentReqDto): Call<FetchCommentResDto>
+
+    @POST("api/comment/update")
+    fun updateCommentReq(@Body updateCommentReqDto: UpdateCommentReqDto): Call<UpdateCommentResDto>
+
+    @POST("api/comment/delete")
+    fun deleteCommentReq(@Body deleteCommentReqDto: DeleteCommentReqDto): Call<DeleteCommentResDto>
 }

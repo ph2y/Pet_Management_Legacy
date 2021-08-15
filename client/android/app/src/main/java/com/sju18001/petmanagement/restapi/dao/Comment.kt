@@ -1,8 +1,13 @@
 package com.sju18001.petmanagement.restapi.dao
 
 data class Comment(
-    val photoUrl: String?,
-    val nickname: String,
-    val content: String,
-    val time: String
+    val id: Long,
+    val author: Account,
+    val post: Post?,
+    val postId: Long,
+    val parentComment: Comment?,
+    val parentCommentId: Comment?,
+    val contents: String,
+    val timestamp: String,
+    val edited: Boolean
 )
