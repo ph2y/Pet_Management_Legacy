@@ -57,9 +57,14 @@ class MyPageViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("accountUserMessageValue", value)
             field = value
         }
-    var accountPasswordValue = handle.get<String>("accountPasswordValue")?: ""
+    var accountPwValid = handle.get<Boolean>("createAccountPwValid")?: false
         set(value){
-            handle.set("accountPasswordValue", value)
+            handle.set("createAccountPwValid", value)
+            field = value
+        }
+    var accountPwCheckValid = handle.get<Boolean>("createAccountPwCheckValid")?: false
+        set(value){
+            handle.set("createAccountPwCheckValid", value)
             field = value
         }
     var accountApiIsLoading = handle.get<Boolean>("accountApiIsLoading")?: false

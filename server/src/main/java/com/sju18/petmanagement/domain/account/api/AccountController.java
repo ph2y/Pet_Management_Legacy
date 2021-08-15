@@ -98,7 +98,7 @@ public class AccountController {
     public ResponseEntity<?> updatePasswordAccount(Authentication auth, @Valid @RequestBody UpdateAccountPasswordReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
-            accountServ.updateAccountPassword(auth, reqDto.getPassword());
+            accountServ.updateAccountPassword(auth, reqDto.getPassword(), reqDto.getNewPassword());
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());

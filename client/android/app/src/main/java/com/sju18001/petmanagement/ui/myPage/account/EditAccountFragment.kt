@@ -13,9 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -26,10 +24,7 @@ import com.sju18001.petmanagement.databinding.FragmentEditAccountBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.DeleteAccountResDto
-import com.sju18001.petmanagement.restapi.dto.UpdateAccountPhotoResDto
-import com.sju18001.petmanagement.restapi.dto.UpdateAccountReqDto
-import com.sju18001.petmanagement.restapi.dto.UpdateAccountResDto
+import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.login.LoginActivity
 import com.sju18001.petmanagement.ui.myPage.MyPageViewModel
 import okhttp3.MediaType
@@ -59,6 +54,7 @@ class EditAccountFragment : Fragment() {
     // variables for storing API call(for cancel)
     private var updateAccountApiCall: Call<UpdateAccountResDto>? = null
     private var updateAccountPhotoApiCall: Call<UpdateAccountPhotoResDto>? = null
+    private var updateAccountPasswordApiCall: Call<UpdateAccountPasswordResDto>? = null
     private var deleteAccountApiCall: Call<DeleteAccountResDto>? = null
 
     // session manager for user token
@@ -68,6 +64,7 @@ class EditAccountFragment : Fragment() {
     private val patternPhone: Pattern = Pattern.compile("(^02|^\\d{3})-(\\d{3}|\\d{4})-\\d{4}")
     private val patternEmail: Pattern = Patterns.EMAIL_ADDRESS
     private val patternNickname: Pattern = Pattern.compile("(^[가-힣ㄱ-ㅎa-zA-Z0-9]{2,20}$)")
+    private val patternPassword: Pattern = Pattern.compile("^[a-zA-Z0-9!@.#$%^&*?_~]{8,20}$")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -102,13 +99,26 @@ class EditAccountFragment : Fragment() {
         restoreState()
 
         // for button listeners
+        binding.backButton.setOnClickListener {
+            activity?.finish()
+        }
+
+        binding.confirmButton.setOnClickListener {
+            if(checkIsValid()) {
+                updateAccount()
+            }
+            else {
+                Toast.makeText(context, context?.getText(R.string.account_regex_invalid), Toast.LENGTH_SHORT).show()
+            }
+        }
+
         binding.accountPhotoInputButton.setOnClickListener {
             val dialog = Dialog(requireActivity())
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
             dialog.setContentView(R.layout.select_account_photo_dialog)
             dialog.show()
 
-            dialog.findViewById<ImageView>(R.id.close_button).setOnClickListener { dialog.dismiss() }
+            dialog.findViewById<ImageView>(R.id.close_button2).setOnClickListener { dialog.dismiss() }
             dialog.findViewById<Button>(R.id.upload_photo_button).setOnClickListener {
                 dialog.dismiss()
 
@@ -124,16 +134,68 @@ class EditAccountFragment : Fragment() {
             }
         }
 
-        binding.backButton.setOnClickListener {
-            activity?.finish()
-        }
+        binding.passwordChangeButton.setOnClickListener {
+            val dialog = Dialog(requireActivity())
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.chnage_password_dialog)
+            dialog.show()
 
-        binding.confirmButton.setOnClickListener {
-            if(checkIsValid()) {
-                updateAccount()
+            dialog.findViewById<EditText>(R.id.new_password_input).addTextChangedListener(object: TextWatcher {
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if(patternPassword.matcher(s).matches()) {
+                        myPageViewModel.accountPwValid = true
+                        dialog.findViewById<TextView>(R.id.pw_message2).visibility = View.GONE
+                    }
+                    else {
+                        myPageViewModel.accountPwValid = false
+                        dialog.findViewById<TextView>(R.id.pw_message2).visibility = View.VISIBLE
+                    }
+                    if(s.toString() == dialog.findViewById<EditText>(R.id.new_password_input).text.toString()) {
+                        myPageViewModel.accountPwCheckValid = true
+                        dialog.findViewById<TextView>(R.id.pw_check_message2).visibility = View.GONE
+                    }
+                    else {
+                        myPageViewModel.accountPwCheckValid = false
+                        dialog.findViewById<TextView>(R.id.pw_check_message2).visibility = View.VISIBLE
+                    }
+
+                    // check validation
+                    dialog.findViewById<Button>(R.id.password_change_confirm_button).isEnabled =
+                        myPageViewModel.accountPwValid && myPageViewModel.accountPwCheckValid
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            dialog.findViewById<EditText>(R.id.new_password_check_input).addTextChangedListener(object: TextWatcher {
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    if(s.toString() == dialog.findViewById<EditText>(R.id.new_password_input).text.toString()) {
+                         myPageViewModel.accountPwCheckValid = true
+                        dialog.findViewById<TextView>(R.id.pw_check_message2).visibility = View.GONE
+                    }
+                    else {
+                        myPageViewModel.accountPwCheckValid = false
+                        dialog.findViewById<TextView>(R.id.pw_check_message2).visibility = View.VISIBLE
+                    }
+
+                    // check validation
+                    dialog.findViewById<Button>(R.id.password_change_confirm_button).isEnabled =
+                        myPageViewModel.accountPwValid && myPageViewModel.accountPwCheckValid
+                }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            dialog.findViewById<Button>(R.id.password_change_confirm_button).setOnClickListener {
+                val newPassword = dialog.findViewById<EditText>(R.id.new_password_input).text.toString()
+                val password = dialog.findViewById<EditText>(R.id.password_input).text.toString()
+
+                updateAccountPassword(newPassword, password)
+                dialog.dismiss()
+
             }
-            else {
-                Toast.makeText(context, context?.getText(R.string.account_regex_invalid), Toast.LENGTH_SHORT).show()
+            dialog.findViewById<Button>(R.id.password_change_cancel_button).setOnClickListener {
+                dialog.dismiss()
             }
         }
 
@@ -194,13 +256,6 @@ class EditAccountFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
-        binding.passwordEdit.addTextChangedListener(object: TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                myPageViewModel.accountPasswordValue = s.toString()
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
-        })
         binding.emailEdit.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 myPageViewModel.accountEmailValue = s.toString()
@@ -231,6 +286,7 @@ class EditAccountFragment : Fragment() {
 
         updateAccountApiCall?.cancel()
         updateAccountPhotoApiCall?.cancel()
+        updateAccountPasswordApiCall?.cancel()
         deleteAccountApiCall?.cancel()
     }
 
@@ -327,6 +383,40 @@ class EditAccountFragment : Fragment() {
 
             })
         }
+    }
+
+    private fun updateAccountPassword(newPassword: String, password: String) {
+        // create dto
+        val updateAccountPasswordReqDto = UpdateAccountPasswordReqDto(password, newPassword)
+
+        updateAccountPasswordApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .updateAccountPasswordReq(updateAccountPasswordReqDto)
+        updateAccountPasswordApiCall!!.enqueue(object: Callback<UpdateAccountPasswordResDto> {
+            override fun onResponse(
+                call: Call<UpdateAccountPasswordResDto>,
+                response: Response<UpdateAccountPasswordResDto>
+            ) {
+                if(response.isSuccessful) {
+                    if(response.body()?._metadata?.status == true) {
+                        Toast.makeText(context, context?.getText(R.string.account_password_changed), Toast.LENGTH_LONG).show()
+                    }
+                }
+                else {
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, context?.getText(R.string.account_password_mismatch), Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<UpdateAccountPasswordResDto>, t: Throwable) {
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
     }
 
     private fun closeAfterSuccess() {

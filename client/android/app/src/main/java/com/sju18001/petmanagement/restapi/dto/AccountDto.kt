@@ -71,6 +71,15 @@ data class UpdateAccountPhotoResDto(
     val _metadata: DtoMetadata
 )
 
+data class UpdateAccountPasswordReqDto(
+    val password: String,
+    val newPassword: String
+)
+
+data class UpdateAccountPasswordResDto(
+    val _metadata: DtoMetadata
+)
+
 data class RecoverUsernameReqDto(
     val email: String
 )

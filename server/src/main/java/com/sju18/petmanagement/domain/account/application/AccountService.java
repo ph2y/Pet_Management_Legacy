@@ -12,6 +12,7 @@ import com.sju18.petmanagement.global.storage.FileService;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtil;
 import org.springframework.context.MessageSource;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -150,13 +151,18 @@ public class AccountService {
     }
 
     @Transactional
-    public void updateAccountPassword(Authentication auth, String password) {
+    public void updateAccountPassword(Authentication auth, String password, String newPassword) {
         // 기존 사용자 프로필 로드
         Account currentAccount = this.fetchCurrentAccount(auth);
 
+        // 기존 비밀번호 일치 확인
+        if(!pwEncoder.matches(password, currentAccount.getPassword())) {
+            throw new BadCredentialsException(msgSrc.getMessage("error.password.mismatch", null, Locale.ENGLISH));
+        }
+
         // 새로운 비밀번호가 기존 비밀번호와 다르면 업데이트
-        if (!pwEncoder.encode(password).equals(currentAccount.getPassword())) {
-            currentAccount.setPassword(pwEncoder.encode(password));
+        if (!pwEncoder.encode(newPassword).equals(currentAccount.getPassword())) {
+            currentAccount.setPassword(pwEncoder.encode(newPassword));
         }
 
         // 기존 사용자 정보 변경사항 적용
