@@ -22,7 +22,7 @@ import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchPostReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchPostResDto
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
-import com.sju18001.petmanagement.ui.map.CommunityViewModel
+import com.sju18001.petmanagement.ui.community.CommunityViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

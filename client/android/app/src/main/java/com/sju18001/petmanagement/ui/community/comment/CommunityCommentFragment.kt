@@ -1,13 +1,16 @@
 package com.sju18001.petmanagement.ui.community.comment
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.controller.Util
@@ -26,6 +29,9 @@ class CommunityCommentFragment : Fragment() {
 
     private var _binding: FragmentCommunityCommentBinding? = null
     private val binding get() = _binding!!
+
+    // variable for ViewModel
+    val communityCommentViewModel: CommunityCommentViewModel by activityViewModels()
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -54,6 +60,9 @@ class CommunityCommentFragment : Fragment() {
         // postId 지정
         postId = requireActivity().intent.getLongExtra("postId", -1)
 
+        // 뷰모델에 따른 초기화
+        initializeViewForViewModel()
+
         // 어뎁터 초기화
         initializeAdapter()
 
@@ -65,14 +74,6 @@ class CommunityCommentFragment : Fragment() {
         // 리스너 추가
         setListenerOnViews()
 
-        // SwipeRefreshLayout
-        binding.layoutSwipeRefresh.setOnRefreshListener {
-            resetCommentData()
-            updateAdapterDataSetByFetchComment(FetchCommentReqDto(
-                null, null, postId, null, null
-            ))
-        }
-
         return binding.root
     }
 
@@ -83,11 +84,21 @@ class CommunityCommentFragment : Fragment() {
         isViewDestroyed = true
     }
 
+    private fun initializeViewForViewModel(){
+        if(communityCommentViewModel.nicknameForReply.isNotEmpty()){
+            setViewForReply(communityCommentViewModel.nicknameForReply)
+        }
+    }
+
     private fun initializeAdapter(){
         adapter = CommunityCommentListAdapter(arrayListOf())
         adapter.communityCommentListAdapterInterface = object: CommunityCommentListAdapterInterface{
             override fun getActivity(): Activity {
                 return requireActivity()
+            }
+
+            override fun onClickReply(nickname: String) {
+                setViewForReply(nickname)
             }
         }
 
@@ -106,6 +117,25 @@ class CommunityCommentFragment : Fragment() {
                     }
                 }
             })
+        }
+    }
+
+    private fun setViewForReply(nickname: String) {
+        // Show keyboard
+        val editTextComment = binding.editTextComment
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+        editTextComment.requestFocus()
+        imm.showSoftInput(editTextComment, 0)
+
+        // Set view, data for layout_reply_description
+        binding.layoutReplyDescription.visibility = View.VISIBLE
+        binding.textReplyNickname.text = nickname
+        communityCommentViewModel.nicknameForReply = nickname
+
+        binding.buttonReplyCancel.setOnClickListener {
+            binding.layoutReplyDescription.visibility = View.GONE
+            communityCommentViewModel.nicknameForReply = ""
         }
     }
 
@@ -182,6 +212,14 @@ class CommunityCommentFragment : Fragment() {
         binding.buttonCreateComment.setOnClickListener {
             // TODO: 답글 CREATE
             createComment(CreateCommentReqDto(postId, null, binding.editTextComment.text.toString()))
+        }
+
+        // SwipeRefreshLayout
+        binding.layoutSwipeRefresh.setOnRefreshListener {
+            resetCommentData()
+            updateAdapterDataSetByFetchComment(FetchCommentReqDto(
+                null, null, postId, null, null
+            ))
         }
     }
 

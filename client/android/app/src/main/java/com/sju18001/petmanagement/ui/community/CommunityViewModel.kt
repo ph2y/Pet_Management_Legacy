@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.map
+package com.sju18001.petmanagement.ui.community
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
