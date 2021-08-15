@@ -2,6 +2,7 @@ package com.sju18001.petmanagement.ui.community.comment
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
@@ -13,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
@@ -21,6 +23,11 @@ import com.sju18001.petmanagement.restapi.dao.Comment
 import com.sju18001.petmanagement.restapi.dao.PetSchedule
 import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.ui.community.CommunityPostListAdapter
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZoneOffset.UTC
 
 interface CommunityCommentListAdapterInterface{
     fun getActivity(): Activity
@@ -44,6 +51,7 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         return ViewHolder(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // 데이터 동기화
         updateDataSetToViewHolder(holder, dataSet[position])
@@ -57,10 +65,34 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
 
     override fun getItemCount(): Int = dataSet.size
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun updateDataSetToViewHolder(holder: CommunityCommentListAdapter.ViewHolder, data: Comment){
         holder.nicknameTextView.text = data.author.nickname
         holder.contentsTextView.text = data.contents
-        holder.timestampTextView.text = data.timestamp
+        holder.timestampTextView.text = getTimestampForDisplay(data.timestamp)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getTimestampForDisplay(timestamp: String): String{
+        var timestampForDisplay: String = timestamp
+
+        val secondDiff: Long = Util.getSecondDifferenceInLocalDateTime(LocalDateTime.parse(timestamp))
+        val minuteDiff: Long = secondDiff / 60
+        val hourDiff: Long = minuteDiff / 60
+        val dateDiff: Long = hourDiff / 24
+        val monthDiff: Long = dateDiff / 30
+        val yearDiff: Long = monthDiff / 12
+
+        timestampForDisplay = when {
+            yearDiff > 0 -> "${yearDiff}년"
+            monthDiff > 0 -> "${monthDiff}달"
+            dateDiff > 0 -> "${dateDiff}일"
+            hourDiff > 0 -> "${hourDiff}시간"
+            minuteDiff > 0 -> "${minuteDiff}분"
+            else -> "${secondDiff}초"
+        }
+
+        return timestampForDisplay
     }
 
     private fun setSpanToContent(nicknameTextView: TextView, contentTextView: TextView){
