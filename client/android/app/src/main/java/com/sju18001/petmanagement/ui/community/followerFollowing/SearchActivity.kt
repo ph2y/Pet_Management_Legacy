@@ -276,7 +276,7 @@ class SearchActivity : AppCompatActivity() {
                     }
 
                     // if fetched self -> show message
-                    else if(errorMessage == "fetched self") {
+                    else if(errorMessage == "Fetched self") {
                         Toast.makeText(this@SearchActivity,
                             getText(R.string.fetched_self_exception_message), Toast.LENGTH_LONG).show()
                     }

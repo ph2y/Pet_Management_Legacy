@@ -55,15 +55,7 @@ public class AccountController {
                 account = accountServ.fetchAccountByUsername(reqDto.getUsername());
             } else if (reqDto.getNickname() != null && !reqDto.getNickname().isEmpty()) {
                 // 해당 nickname 가진 계정 정보 조회
-                account = accountServ.fetchAccountByNickname(reqDto.getNickname());
-
-                // check if self -> return exception
-                Account myAccount = accountServ.fetchCurrentAccount(auth);
-                if(account == myAccount) {
-                    logger.warn("fetched self");
-                    dtoMetadata = new DtoMetadata("fetched self");
-                    return ResponseEntity.status(400).body(new FetchAccountResDto(dtoMetadata));
-                }
+                account = accountServ.fetchAccountByNickname(auth, reqDto.getNickname());
             } else {
                 // 현재 로그인된 계정 정보 조회
                 account = accountServ.fetchCurrentAccount(auth);
