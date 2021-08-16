@@ -112,7 +112,7 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
 
         holder.replyTextView.setOnClickListener {
             dataSet[position].author.nickname?.let {
-                communityCommentListAdapterInterface.onClickReply(dataSet[position].author.id, it)
+                communityCommentListAdapterInterface.onClickReply(dataSet[position].id, it)
             }
         }
 
