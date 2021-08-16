@@ -45,6 +45,8 @@ class FollowerAdapter(val context: Context, val sessionManager: SessionManager) 
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onBindViewHolder(holder: FollowerAdapter.HistoryListViewHolder, position: Int) {
+        // TODO: navigate to the account's pet profile
+
         // set account photo
         if(resultList[position].getHasPhoto()) {
             if(resultList[position].getPhoto() == null) {

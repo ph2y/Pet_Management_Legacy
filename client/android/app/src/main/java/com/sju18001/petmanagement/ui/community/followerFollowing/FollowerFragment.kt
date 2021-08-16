@@ -37,7 +37,6 @@ class FollowerFragment : Fragment() {
     // variable for storing API call(for cancel)
     private var fetchFollowerApiCall: Call<FetchFollowerResDto>? = null
     private var fetchFollowingApiCall: Call<FetchFollowingResDto>? = null
-    // TODO
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -107,9 +106,8 @@ class FollowerFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchFollowerResDto>, t: Throwable) {
-                // if API call was canceled -> return
-                if(followerFollowingViewModel.apiIsCanceled) {
-                    followerFollowingViewModel.apiIsCanceled = false
+                // if the view was destroyed(API call canceled) -> return
+                if(_binding == null) {
                     return
                 }
 
@@ -170,9 +168,8 @@ class FollowerFragment : Fragment() {
                 // set swipe isRefreshing to false
                 binding.followerSwipeRefreshLayout.isRefreshing = false
 
-                // if API call was canceled -> return
-                if(followerFollowingViewModel.apiIsCanceled) {
-                    followerFollowingViewModel.apiIsCanceled = false
+                // if the view was destroyed(API call canceled) -> return
+                if(_binding == null) {
                     return
                 }
 
@@ -187,10 +184,11 @@ class FollowerFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        // call onDestroy inside adapter
-        // TODO
+        // call onDestroy inside adapter(for API cancel)
+        followerAdapter.onDestroy()
 
         // stop api call when fragment is destroyed
-        // TODO
+        fetchFollowerApiCall?.cancel()
+        fetchFollowingApiCall?.cancel()
     }
 }
