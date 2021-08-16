@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class CreatePlaceResDto {
-    DtoMetadata _metadata;
+    private DtoMetadata _metadata;
 }
