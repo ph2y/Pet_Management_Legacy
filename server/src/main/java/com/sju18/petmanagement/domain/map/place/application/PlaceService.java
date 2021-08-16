@@ -18,7 +18,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 @Service
 public class PlaceService {
-    private final MessageSource msgSrc = MessageConfig.getCommunityMessageSource();
+    private final MessageSource msgSrc = MessageConfig.getMapMessageSource();
     private final PlaceRepository placeRepository;
     private final PlacePositionService placePositionServ;
 
