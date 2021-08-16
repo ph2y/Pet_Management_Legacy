@@ -71,11 +71,6 @@ class CommunityCommentFragment : Fragment() {
         initializeAdapter()
         setListenerOnViews()
 
-        // 초기 댓글 추가
-        updateAdapterDataSetByFetchComment(FetchCommentReqDto(
-            null, null, postId, null, null
-        ))
-
         return binding.root
     }
 
