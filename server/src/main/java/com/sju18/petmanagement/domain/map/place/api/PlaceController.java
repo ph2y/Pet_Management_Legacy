@@ -23,7 +23,7 @@ import java.util.Locale;
 @RestController
 public class PlaceController {
     private static final Logger logger = LogManager.getLogger();
-    private final MessageSource msgSrc = MessageConfig.getCommunityMessageSource();
+    private final MessageSource msgSrc = MessageConfig.getMapMessageSource();
     private final PlaceService placeServ;
 
     // CREATE

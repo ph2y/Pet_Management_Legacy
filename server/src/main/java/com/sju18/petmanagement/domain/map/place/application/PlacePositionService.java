@@ -10,15 +10,15 @@ public class PlacePositionService {
     final double ONE_RADIAN = 180 / Math.PI;
 
     protected Double calcMinLatForRange(Double originalLat, Double rangeByMeter) {
-        return originalLat - (rangeByMeter / RADIUS_OF_EARTH_BY_METER) * ONE_RADIAN;
+        return originalLat - (rangeByMeter / RADIUS_OF_EARTH_BY_METER) *(ONE_RADIAN);
     }
     protected Double calcMaxLatForRange(Double originalLat, Double rangeByMeter) {
-        return originalLat + (rangeByMeter / RADIUS_OF_EARTH_BY_METER) * ONE_RADIAN;
+        return originalLat + (rangeByMeter / RADIUS_OF_EARTH_BY_METER) * (ONE_RADIAN);
     }
     protected Double calcMinLongForRange(Double originalLat, Double originalLong, Double rangeByMeter) {
-        return originalLong - (rangeByMeter / RADIUS_OF_EARTH_BY_METER) * ONE_RADIAN / Math.cos(originalLat * ONE_RADIAN);
+        return originalLong + (rangeByMeter / RADIUS_OF_EARTH_BY_METER) * (ONE_RADIAN) / Math.cos(originalLat * (ONE_RADIAN));
     }
     protected Double calcMaxLongForRange(Double originalLat, Double originalLong, Double rangeByMeter) {
-        return originalLong + (rangeByMeter / RADIUS_OF_EARTH_BY_METER) * ONE_RADIAN / Math.cos(originalLat * ONE_RADIAN);
+        return originalLong - (rangeByMeter / RADIUS_OF_EARTH_BY_METER) * (ONE_RADIAN) / Math.cos(originalLat * (ONE_RADIAN));
     }
 }
