@@ -34,7 +34,7 @@ class FollowerFragment : Fragment() {
     private var followingIdList: MutableList<Long> = mutableListOf()
     private var followerList: MutableList<FollowerFollowingListItem> = mutableListOf()
 
-    // variable for storing API call(for cancel)
+    // variables for storing API call(for cancel)
     private var fetchFollowerApiCall: Call<FetchFollowerResDto>? = null
     private var fetchFollowingApiCall: Call<FetchFollowingResDto>? = null
 
