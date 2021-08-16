@@ -127,7 +127,7 @@ public class AccountService {
         Account currentAccount;
 
         // if id is null(-1) -> fetch self photo
-        if(id == -1) { currentAccount = this.fetchCurrentAccount(auth); }
+        if(id == null) { currentAccount = this.fetchCurrentAccount(auth); }
         // if id is not null -> fetch id's photo
         else { currentAccount = this.fetchAccountById(id); }
 

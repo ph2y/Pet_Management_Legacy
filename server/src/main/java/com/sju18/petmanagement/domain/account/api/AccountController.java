@@ -1,5 +1,6 @@
 package com.sju18.petmanagement.domain.account.api;
 
+import com.sju18.PetManagement.domain.account.dto.FetchAccountPhotoReqDto;
 import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dto.*;
@@ -70,11 +71,11 @@ public class AccountController {
     }
 
     @PostMapping("/api/account/photo/fetch")
-    public ResponseEntity<?> fetchAccountPhoto(Authentication auth, @Valid @RequestBody Long id) {
+    public ResponseEntity<?> fetchAccountPhoto(Authentication auth, @Valid @RequestBody FetchAccountPhotoReqDto reqDto) {
         DtoMetadata dtoMetadata;
         byte[] fileBinData;
         try {
-            fileBinData = accountServ.fetchAccountPhoto(auth, id);
+            fileBinData = accountServ.fetchAccountPhoto(auth, reqDto.getId());
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());

@@ -306,9 +306,12 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun fetchAccountPhoto(id: Long) {
+        // create DTO
+        val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(id)
+
         // API call
         fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .fetchAccountPhotoByIdReq(id)
+            .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
         fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if(response.isSuccessful) {

@@ -49,6 +49,10 @@ data class FetchAccountReqDto(
     val nickname: String?
 )
 
+data class FetchAccountPhotoReqDto(
+    val id: Long?
+)
+
 data class FetchAccountResDto(
     val _metadata: DtoMetadata,
     val id: Long,

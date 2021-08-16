@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.restapi
 
+import androidx.annotation.Nullable
 import com.sju18001.petmanagement.restapi.dto.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -30,10 +31,7 @@ interface ServerApi {
 
     // Account Photo API
     @POST("api/account/photo/fetch")
-    fun fetchAccountPhotoReq(@Body body: RequestBody): Call<ResponseBody>
-
-    @POST("api/account/photo/fetch")
-    fun fetchAccountPhotoByIdReq(@Body id: Long?): Call<ResponseBody>
+    fun fetchAccountPhotoReq(@Body fetchAccountPhotoReqDto: FetchAccountPhotoReqDto): Call<ResponseBody>
 
     @POST("api/account/authcode/send")
     fun sendAuthCodeReq(@Body sendAuthCodeReqDto: SendAuthCodeReqDto): Call<SendAuthCodeResDto>

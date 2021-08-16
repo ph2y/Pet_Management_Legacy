@@ -16,6 +16,7 @@ import com.sju18001.petmanagement.databinding.FragmentMyPageBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
+import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchAccountResDto
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -176,11 +177,11 @@ class MyPageFragment : Fragment() {
 
     // fetch account photo
     private fun fetchAccountPhoto() {
-        // create empty body
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+        // create DTO
+        val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(null)
 
         fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-            .fetchAccountPhotoReq(body)
+            .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
         fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
