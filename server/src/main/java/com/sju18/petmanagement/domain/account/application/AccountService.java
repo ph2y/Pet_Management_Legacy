@@ -4,7 +4,7 @@ import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.account.dto.CreateAccountReqDto;
 import com.sju18.petmanagement.domain.account.dto.UpdateAccountReqDto;
-import com.sju18.petmanagement.domain.pet.application.PetCascadeService;
+import com.sju18.petmanagement.domain.pet.pet.application.PetCascadeService;
 import com.sju18.petmanagement.global.exception.DtoValidityException;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileService;
