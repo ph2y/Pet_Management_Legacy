@@ -67,7 +67,7 @@ public class PlaceService {
 
     // UPDATE
     @Transactional
-    public void updatePlaceByDistance(UpdatePlaceReqDto reqDto) throws Exception {
+    public void updatePlace(UpdatePlaceReqDto reqDto) throws Exception {
         Place currentPlace = placeRepository.findById(reqDto.getId())
                 .orElseThrow(() -> new Exception(
                         msgSrc.getMessage("error.place.notExists", null, Locale.ENGLISH)
@@ -112,7 +112,7 @@ public class PlaceService {
     }
 
     // DELETE
-    public void deletePlaceByDistance(DeletePlaceReqDto reqDto) throws Exception {
+    public void deletePlace(DeletePlaceReqDto reqDto) throws Exception {
         // 받은 장소 id로 장소 정보 삭제
         Place place = placeRepository.findById(reqDto.getId())
                 .orElseThrow(() -> new Exception(

@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class DeletePlaceResDto {
-    DtoMetadata _metadata;
+    private DtoMetadata _metadata;
 }
