@@ -143,7 +143,7 @@ class FollowerFragment : Fragment() {
                         val isFollowing = it.id in followingIdList
 
                         val item = FollowerFollowingListItem()
-                        item.setValues(hasPhoto, id, nickname!!, isFollowing)
+                        item.setValues(hasPhoto, null, id, nickname!!, isFollowing)
                         followerList.add(item)
                     }
 
