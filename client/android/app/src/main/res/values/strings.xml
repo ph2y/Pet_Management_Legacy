@@ -197,7 +197,7 @@
     <string name="post_invalid_message">글 내용을 입력하거나, 사진 및 동영상을 올려주세요!</string>
     <string name="pet_not_selected_message">펫을 선택해주세요!</string>
     <string name="create_post_successful">글 쓰기에 성공했어요!</string>
-<<<<<<< HEAD
+
     <!-- Follower/Following Fragment -->
     <string name="follower_following_menu_title">팔로워/팔로잉</string>
     <string name="follower_fragment_title">팔로워</string>
@@ -210,9 +210,8 @@
     <string name="nickname_regex_exception_message">닉네임은 2~10자의 영문, 숫자, 한글, _기호로만 이루어져 있어요!</string>
     <string name="account_does_not_exist_exception_message">해당 유저가 존재하지 않아요!</string>
     <string name="fetched_self_exception_message">나 자신은 영원한 인생의 친구입니다.</string>
-=======
+
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
->>>>>>> 9145f26 (Add activity, fragment for UpdateComment)
 
 </resources>
