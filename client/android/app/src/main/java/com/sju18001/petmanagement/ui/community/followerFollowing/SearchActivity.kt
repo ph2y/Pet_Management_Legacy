@@ -266,25 +266,23 @@ class SearchActivity : AppCompatActivity() {
                     searchViewModel.apiIsLoading = false
                     setSearchButtonToNormal()
 
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                    // if no such account exists -> show message
-                    if(errorMessage == "Account not exists") {
-                        Toast.makeText(this@SearchActivity,
-                            getText(R.string.account_does_not_exist_exception_message), Toast.LENGTH_LONG).show()
-                    }
-
-                    // if fetched self -> show message
-                    else if(errorMessage == "Fetched self") {
-                        Toast.makeText(this@SearchActivity,
-                            getText(R.string.fetched_self_exception_message), Toast.LENGTH_LONG).show()
-                    }
-
-                    // other exceptions -> show Toast message + log
-                    else{
-                        Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
-                        Log.d("error", errorMessage)
+                    // get error message + handle exceptions
+                    when(val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)) {
+                        // if no such account exists -> show Toast message
+                        "Account not exists" -> {
+                            Toast.makeText(this@SearchActivity,
+                                getText(R.string.account_does_not_exist_exception_message), Toast.LENGTH_LONG).show()
+                        }
+                        // if fetched self -> show Toast message
+                        "Fetched self" -> {
+                            Toast.makeText(this@SearchActivity,
+                                getText(R.string.fetched_self_exception_message), Toast.LENGTH_LONG).show()
+                        }
+                        // other exceptions -> show Toast message + log
+                        else -> {
+                            Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
+                            Log.d("error", errorMessage)
+                        }
                     }
                 }
             }
