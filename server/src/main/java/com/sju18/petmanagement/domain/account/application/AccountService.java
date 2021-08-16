@@ -123,18 +123,13 @@ public class AccountService {
         return account;
     }
 
-    public byte[] fetchAccountPhoto(Authentication auth) throws Exception {
-        Account currentAccount = this.fetchCurrentAccount(auth);
+    public byte[] fetchAccountPhoto(Authentication auth, Long id) throws Exception {
+        Account currentAccount;
 
-        // 사진 파일 인출
-        InputStream imageStream = new FileInputStream(currentAccount.getPhotoUrl());
-        byte[] fileBinData = IOUtil.toByteArray(imageStream);
-        imageStream.close();
-        return fileBinData;
-    }
-
-    public byte[] fetchAccountPhotoById(Long id) throws Exception {
-        Account currentAccount = this.fetchAccountById(id);
+        // if id is null(-1) -> fetch self photo
+        if(id == -1) { currentAccount = this.fetchCurrentAccount(auth); }
+        // if id is not null -> fetch id's photo
+        else { currentAccount = this.fetchAccountById(id); }
 
         // 사진 파일 인출
         InputStream imageStream = new FileInputStream(currentAccount.getPhotoUrl());

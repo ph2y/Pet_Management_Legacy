@@ -74,14 +74,7 @@ public class AccountController {
         DtoMetadata dtoMetadata;
         byte[] fileBinData;
         try {
-            // if id is null -> fetch self photo
-            if(id == -1) {
-                fileBinData = accountServ.fetchAccountPhoto(auth);
-            }
-            // if id is not null -> fetch id's photo
-            else {
-                fileBinData = accountServ.fetchAccountPhotoById(id);
-            }
+            fileBinData = accountServ.fetchAccountPhoto(auth, id);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
