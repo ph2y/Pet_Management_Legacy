@@ -177,14 +177,14 @@ class PetProfileFragment : Fragment(){
             }
 
             override fun onFailure(call: Call<DeletePetResDto>, t: Throwable) {
+                // set api state/button to normal
+                myPetViewModel.petManagerApiIsLoading = false
+                enableButton()
+
                 // if the view was destroyed(API call canceled) -> return
                 if(_binding == null) {
                     return
                 }
-
-                // set api state/button to normal
-                myPetViewModel.petManagerApiIsLoading = false
-                enableButton()
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()

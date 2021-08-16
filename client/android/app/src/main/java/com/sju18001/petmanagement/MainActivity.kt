@@ -1,37 +1,35 @@
 package com.sju18001.petmanagement
 
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import android.view.Menu
+import android.view.MenuItem
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchPetScheduleResDto
 import com.sju18001.petmanagement.ui.community.CommunityFragment
+import com.sju18001.petmanagement.ui.community.followerFollowing.FollowerFollowingActivity
 import com.sju18001.petmanagement.ui.map.MapFragment
 import com.sju18001.petmanagement.ui.myPage.MyPageFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetFragment
-import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
 import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleNotification
-import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleWorker
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.security.MessageDigest
-import java.time.LocalTime
 import java.util.*
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -81,6 +79,7 @@ class MainActivity : AppCompatActivity() {
                 activeFragment = myPetFragment
 
                 activeFragmentIndex = 0
+                invalidateOptionsMenu()
                 actionBar?.setTitle(R.string.title_my_pet)
                 actionBar?.show()
             }
@@ -89,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                 activeFragment = mapFragment
 
                 activeFragmentIndex = 1
+                invalidateOptionsMenu()
                 actionBar?.hide()
             }
             2 -> {
@@ -96,6 +96,7 @@ class MainActivity : AppCompatActivity() {
                 activeFragment = communityFragment
 
                 activeFragmentIndex = 2
+                invalidateOptionsMenu()
                 actionBar?.setTitle(R.string.title_community)
                 actionBar?.show()
             }
@@ -104,6 +105,7 @@ class MainActivity : AppCompatActivity() {
                 activeFragment = myPageFragment
 
                 activeFragmentIndex = 3
+                invalidateOptionsMenu()
                 actionBar?.setTitle(R.string.title_my_page)
                 actionBar?.show()
             }
@@ -112,6 +114,7 @@ class MainActivity : AppCompatActivity() {
                 activeFragment = myPetFragment
 
                 activeFragmentIndex = 0
+                invalidateOptionsMenu()
                 actionBar?.setTitle(R.string.title_my_pet)
                 actionBar?.show()
             }
@@ -128,6 +131,7 @@ class MainActivity : AppCompatActivity() {
 
                     navView.menu.getItem(0).isChecked = true
 
+                    invalidateOptionsMenu()
                     actionBar?.setTitle(R.string.title_my_pet)
                     actionBar?.show()
 
@@ -142,6 +146,7 @@ class MainActivity : AppCompatActivity() {
 
                     navView.menu.getItem(1).isChecked = true
 
+                    invalidateOptionsMenu()
                     actionBar?.setShowHideAnimationEnabled(false)
                     actionBar?.hide()
 
@@ -156,6 +161,7 @@ class MainActivity : AppCompatActivity() {
 
                     navView.menu.getItem(2).isChecked = true
 
+                    invalidateOptionsMenu()
                     actionBar?.setTitle(R.string.title_community)
                     actionBar?.show()
 
@@ -170,6 +176,7 @@ class MainActivity : AppCompatActivity() {
 
                     navView.menu.getItem(3).isChecked = true
 
+                    invalidateOptionsMenu()
                     actionBar?.setTitle(R.string.title_my_page)
                     actionBar?.show()
 
@@ -192,6 +199,34 @@ class MainActivity : AppCompatActivity() {
         outState.putInt("active_fragment_index", activeFragmentIndex)
     }
 
+    // for action bar menu
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        when(activeFragmentIndex) {
+            0 -> { return false }
+            1 -> { return false }
+            2 -> {
+                menuInflater.inflate(R.menu.follower_following_menu, menu)
+                return true
+            }
+            3 -> { return false }
+        }
+        return false
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(activeFragmentIndex) {
+            0 -> { return false }
+            1 -> { return false }
+            2 -> {
+                // start follower following activity
+                startActivity(Intent(this, FollowerFollowingActivity::class.java))
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+
+                return super.onOptionsItemSelected(item)
+            }
+            3 -> { return false }
+        }
+        return false
+    }
 
     // 디버그 전용 Key
     private fun getAppKeyHash() {

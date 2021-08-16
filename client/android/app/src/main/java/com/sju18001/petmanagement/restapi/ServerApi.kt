@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.restapi
 
+import androidx.annotation.Nullable
 import com.sju18001.petmanagement.restapi.dto.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -19,6 +20,9 @@ interface ServerApi {
     @POST("api/account/fetch")
     fun fetchAccountReq(@Body body: RequestBody): Call<FetchAccountResDto>
 
+    @POST("api/account/fetch")
+    fun fetchAccountByNicknameReq(@Body fetchAccountReqDto: FetchAccountReqDto): Call<FetchAccountResDto>
+
     @POST("api/account/update")
     fun updateAccountReq(@Body updateAccountReqDto: UpdateAccountReqDto): Call<UpdateAccountResDto>
 
@@ -26,8 +30,8 @@ interface ServerApi {
     fun deleteAccountReq(@Body body: RequestBody): Call<DeleteAccountResDto>
 
     // Account Photo API
-    @GET("api/account/photo/fetch")
-    fun fetchAccountPhotoReq(): Call<ResponseBody>
+    @POST("api/account/photo/fetch")
+    fun fetchAccountPhotoReq(@Body fetchAccountPhotoReqDto: FetchAccountPhotoReqDto): Call<ResponseBody>
 
     @Multipart
     @POST("api/account/photo/update")
@@ -94,4 +98,14 @@ interface ServerApi {
     @Multipart
     @POST("api/post/media/update")
     fun updatePostMediaReq(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>): Call<UpdatePostMediaResDto>
+
+    // Follow API
+    @POST("api/community/follower/fetch")
+    fun fetchFollowerReq(@Body body: RequestBody): Call<FetchFollowerResDto>
+
+    @POST("api/community/follow/create")
+    fun createFollowReq(@Body createFollowReqDto: CreateFollowReqDto): Call<CreateFollowResDto>
+
+    @POST("api/community/follow/delete")
+    fun deleteFollowReq(@Body deleteFollowReqDto: DeleteFollowReqDto): Call<DeleteFollowResDto>
 }

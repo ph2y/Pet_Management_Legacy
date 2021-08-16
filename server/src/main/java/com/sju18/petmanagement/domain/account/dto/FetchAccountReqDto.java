@@ -9,4 +9,5 @@ public class FetchAccountReqDto {
     @PositiveOrZero(message = "valid.account.id.notNegative")
     private Long id;
     private String username;
+    private String nickname;
 }

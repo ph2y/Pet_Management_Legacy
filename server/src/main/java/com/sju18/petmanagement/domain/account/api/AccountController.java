@@ -1,5 +1,6 @@
 package com.sju18.petmanagement.domain.account.api;
 
+import com.sju18.PetManagement.domain.account.dto.FetchAccountPhotoReqDto;
 import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dto.*;
@@ -53,6 +54,9 @@ public class AccountController {
             } else if (reqDto.getUsername() != null && !reqDto.getUsername().isEmpty()) {
                 // 해당 username 가진 계정 정보 조회
                 account = accountServ.fetchAccountByUsername(reqDto.getUsername());
+            } else if (reqDto.getNickname() != null && !reqDto.getNickname().isEmpty()) {
+                // 해당 nickname 가진 계정 정보 조회
+                account = accountServ.fetchAccountByNickname(auth, reqDto.getNickname());
             } else {
                 // 현재 로그인된 계정 정보 조회
                 account = accountServ.fetchCurrentAccount(auth);
@@ -66,12 +70,12 @@ public class AccountController {
         return ResponseEntity.ok(new FetchAccountResDto(dtoMetadata, account));
     }
 
-    @GetMapping("/api/account/photo/fetch")
-    public ResponseEntity<?> fetchAccountPhoto(Authentication auth) {
+    @PostMapping("/api/account/photo/fetch")
+    public ResponseEntity<?> fetchAccountPhoto(Authentication auth, @Valid @RequestBody FetchAccountPhotoReqDto reqDto) {
         DtoMetadata dtoMetadata;
         byte[] fileBinData;
         try {
-            fileBinData = accountServ.fetchAccountPhoto(auth);
+            fileBinData = accountServ.fetchAccountPhoto(auth, reqDto.getId());
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());

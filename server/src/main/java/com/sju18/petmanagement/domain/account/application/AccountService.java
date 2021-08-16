@@ -110,8 +110,27 @@ public class AccountService {
                 .orElseThrow(() -> new Exception(msgSrc.getMessage("error.notExist", null, Locale.ENGLISH)));
     }
 
-    public byte[] fetchAccountPhoto(Authentication auth) throws Exception {
-        Account currentAccount = this.fetchCurrentAccount(auth);
+    @Transactional(readOnly = true)
+    public Account fetchAccountByNickname(Authentication auth, String nickname) throws Exception {
+        // 해당 nickname 가진 계정 정보 조회
+        Account account = accountRepository.findByNickname(nickname)
+                .orElseThrow(() -> new Exception(msgSrc.getMessage("error.notExist", null, Locale.ENGLISH)));
+
+        // check if self
+        if(account == this.fetchCurrentAccount(auth)) {
+            throw new Exception(msgSrc.getMessage("error.fetchedSelf", null, Locale.ENGLISH));
+        }
+
+        return account;
+    }
+
+    public byte[] fetchAccountPhoto(Authentication auth, Long id) throws Exception {
+        Account currentAccount;
+
+        // if id is null(-1) -> fetch self photo
+        if(id == null) { currentAccount = this.fetchCurrentAccount(auth); }
+        // if id is not null -> fetch id's photo
+        else { currentAccount = this.fetchAccountById(id); }
 
         // 사진 파일 인출
         InputStream imageStream = new FileInputStream(currentAccount.getPhotoUrl());

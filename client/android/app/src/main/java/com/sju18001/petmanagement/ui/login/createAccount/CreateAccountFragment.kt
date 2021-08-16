@@ -266,12 +266,6 @@ class CreateAccountFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<CreateAccountResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> do nothing
-                if(_binding == null) { return }
-
-                //display error toast message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-
                 // log error message
                 Log.d("error", t.message.toString())
 
@@ -280,6 +274,12 @@ class CreateAccountFragment : Fragment() {
 
                 // reset createAccountApiCall variable
                 createAccountApiCall = null
+
+                // if the view was destroyed(API call canceled) -> do nothing
+                if(_binding == null) { return }
+
+                //display error toast message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -321,14 +321,6 @@ class CreateAccountFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<VerifyAuthCodeResDto>, t: Throwable) {
-                    // if the view was destroyed(API call canceled) -> set result to false + return
-                    if(_binding == null) {
-                        return
-                    }
-
-                    //display error toast message
-                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-
                     // log error message
                     Log.d("error", t.message.toString())
 
@@ -337,6 +329,14 @@ class CreateAccountFragment : Fragment() {
 
                     // reset verifyAuthCodeApiCall variable
                     verifyAuthCodeApiCall = null
+
+                    // if the view was destroyed(API call canceled) -> set result to false + return
+                    if(_binding == null) {
+                        return
+                    }
+
+                    //display error toast message
+                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
                 }
             })
         }
