@@ -493,18 +493,19 @@ class CreateUpdatePostFragment : Fragment() {
         if(!createUpdatePostViewModel.isUsingLocation) {
             latAndLong.add(0.0.toBigDecimal())
             latAndLong.add(0.0.toBigDecimal())
-
-            return latAndLong
-        }
-
-        if (ContextCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-            && ContextCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            val location = (requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager)
-                .getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            latAndLong.add(location?.latitude!!.toBigDecimal())
-            latAndLong.add(location?.longitude!!.toBigDecimal())
+        }else{
+            if (ContextCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                val location = (requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager)
+                    .getLastKnownLocation(LocationManager.GPS_PROVIDER)
+                latAndLong.add(location?.latitude!!.toBigDecimal())
+                latAndLong.add(location?.longitude!!.toBigDecimal())
+            }else{
+                latAndLong.add(0.0.toBigDecimal())
+                latAndLong.add(0.0.toBigDecimal())
+            }
         }
 
         return latAndLong
