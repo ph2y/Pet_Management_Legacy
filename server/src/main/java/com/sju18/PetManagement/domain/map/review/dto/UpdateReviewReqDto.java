@@ -8,8 +8,6 @@ import javax.validation.constraints.*;
 public class UpdateReviewReqDto {
     @PositiveOrZero(message = "valid.review.id.notNegative")
     Long id;
-    @PositiveOrZero(message = "valid.review.placeId.notNegative")
-    private Long placeId;
     @Max(value = 5, message = "valid.review.rating.max")
     @Min(value = 1, message = "valid.review.rating.min")
     private Integer rating;

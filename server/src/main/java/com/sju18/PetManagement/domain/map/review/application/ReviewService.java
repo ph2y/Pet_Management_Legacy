@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -54,6 +55,9 @@ public class ReviewService {
         // save
         reviewRepository.save(review);
 
+        // place 평균평점 갱신
+        placeServ.updatePlaceAverageRating(place.getId(), this.fetchAverageRatingByPlaceId(place.getId()));
+
         // 리뷰 파일 저장소 생성
         fileServ.createReviewFileStorage(review.getId());
     }
@@ -78,6 +82,15 @@ public class ReviewService {
         return reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new Exception(
                         msgSrc.getMessage("error.review.notExists", null, Locale.ENGLISH)
+                ));
+    }
+    @Transactional(readOnly = true)
+    public Double fetchAverageRatingByPlaceId(Long placeId) throws Exception {
+        List<Integer> ratingList = reviewRepository.findAllByPlaceId(placeId)
+                .stream().map(Review::getRating).collect(Collectors.toList());
+        return ratingList.stream().mapToDouble(rating -> rating).average()
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.review.avgCalcFailure", null, Locale.ENGLISH)
                 ));
     }
 
@@ -112,6 +125,11 @@ public class ReviewService {
 
         // save
         reviewRepository.save(currentReview);
+
+        // place 평균평점 갱신
+        placeServ.updatePlaceAverageRating(
+                currentReview.getPlaceId(), this.fetchAverageRatingByPlaceId(currentReview.getPlaceId())
+        );
     }
 
     @Transactional
@@ -150,5 +168,10 @@ public class ReviewService {
         // 리뷰 파일 저장소 삭제
         fileServ.deleteReviewFileStorage(review.getId());
         reviewRepository.delete(review);
+
+        // place 평균평점 갱신
+        placeServ.updatePlaceAverageRating(
+                review.getPlaceId(), this.fetchAverageRatingByPlaceId(review.getPlaceId())
+        );
     }
 }
