@@ -1,7 +1,6 @@
 package com.sju18.petmanagement.domain.community.post.application;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.community.post.dao.Post;
@@ -17,7 +16,6 @@ import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileMetadata;
 import com.sju18.petmanagement.global.storage.FileService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.IOUtil;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,9 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -120,14 +115,7 @@ public class PostService {
                 ));
 
         // 미디어 파일 인출
-        Type collectionType = new TypeToken<List<FileMetadata>>(){}.getType();
-        List<FileMetadata> mediaFileMetadataList = new Gson()
-                .fromJson(currentPost.getMediaAttachments(), collectionType);
-        String fileUrl = mediaFileMetadataList.get(fileIndex).getUrl();
-        InputStream mediaStream = new FileInputStream(fileUrl);
-        byte[] fileBinData = IOUtil.toByteArray(mediaStream);
-        mediaStream.close();
-        return fileBinData;
+        return fileServ.readFileFromFileMetadataListJson(currentPost.getMediaAttachments(), fileIndex);
     }
 
     // UPDATE

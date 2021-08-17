@@ -1,5 +1,6 @@
 package com.sju18.petmanagement.domain.map.review.application;
 
+import com.google.gson.Gson;
 import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.map.review.dao.Review;
@@ -8,13 +9,17 @@ import com.sju18.petmanagement.domain.map.place.application.PlaceService;
 import com.sju18.petmanagement.domain.map.place.dao.Place;
 import com.sju18.petmanagement.domain.map.review.dto.CreateReviewReqDto;
 import com.sju18.petmanagement.domain.map.review.dto.DeleteReviewReqDto;
+import com.sju18.petmanagement.domain.map.review.dto.UpdateReviewMediaReqDto;
 import com.sju18.petmanagement.domain.map.review.dto.UpdateReviewReqDto;
 import com.sju18.petmanagement.global.message.MessageConfig;
+import com.sju18.petmanagement.global.storage.FileMetadata;
+import com.sju18.petmanagement.global.storage.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +32,7 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final AccountService accountServ;
     private final PlaceService placeServ;
+    private final FileService fileServ;
 
     // CREATE
     @Transactional
@@ -47,6 +53,9 @@ public class ReviewService {
 
         // save
         reviewRepository.save(review);
+
+        // 리뷰 파일 저장소 생성
+        fileServ.createReviewFileStorage(review.getId());
     }
 
     // READ
@@ -72,6 +81,17 @@ public class ReviewService {
                 ));
     }
 
+    public byte[] fetchReviewMedia(Authentication auth, Long reviewId, Integer fileIndex) throws Exception {
+        Account author = accountServ.fetchCurrentAccount(auth);
+        Review currentReview = reviewRepository.findByAuthorAndId(author, reviewId)
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.review.notExists", null, Locale.ENGLISH)
+                ));
+
+        // 미디어 파일 인출
+        return fileServ.readFileFromFileMetadataListJson(currentReview.getMediaAttachments(), fileIndex);
+    }
+
     // UPDATE
     @Transactional
     public void updateReview(Authentication auth, UpdateReviewReqDto reqDto) throws Exception {
@@ -94,6 +114,30 @@ public class ReviewService {
         reviewRepository.save(currentReview);
     }
 
+    @Transactional
+    public List<FileMetadata> updateReviewMedia(Authentication auth, UpdateReviewMediaReqDto reqDto) throws Exception {
+        // 기존 리뷰 정보 로드
+        Account author = accountServ.fetchCurrentAccount(auth);
+        Review currentReview = reviewRepository.findByAuthorAndId(author, reqDto.getId())
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.review.notExists", null, Locale.ENGLISH)
+                ));
+
+        // 첨부파일 인출
+        List<MultipartFile> uploadedFileList = reqDto.getFileList();
+
+        // 해당 리뷰의 미디어 스토리지에 미디어 파일 저장
+        List<FileMetadata> mediaFileMetadataList = null;
+        if (uploadedFileList.size() != 0) {
+            mediaFileMetadataList = fileServ.saveReviewAttachments(reqDto.getId(), uploadedFileList);
+
+            // 파일정보 DB 데이터 업데이트
+            currentReview.setMediaAttachments(new Gson().toJson(mediaFileMetadataList));
+            reviewRepository.save(currentReview);
+        }
+        return mediaFileMetadataList;
+    }
+
     // DELETE
     public void deleteReview(Authentication auth, DeleteReviewReqDto reqDto) throws Exception {
         Account author = accountServ.fetchCurrentAccount(auth);
@@ -103,6 +147,8 @@ public class ReviewService {
                 .orElseThrow(() -> new Exception(
                         msgSrc.getMessage("error.review.notExists", null, Locale.ENGLISH)
                 ));
+        // 리뷰 파일 저장소 삭제
+        fileServ.deleteReviewFileStorage(review.getId());
         reviewRepository.delete(review);
     }
 }
