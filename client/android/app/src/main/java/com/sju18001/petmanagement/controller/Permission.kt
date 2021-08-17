@@ -12,7 +12,7 @@ import java.util.ArrayList
 
 class Permission {
     companion object{
-        private val REQUEST_CODE = 100
+        private const val REQUEST_CODE = 100
 
         val requiredPermissionsForLocation = arrayOf(
             Manifest.permission.INTERNET,
