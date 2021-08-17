@@ -8,6 +8,11 @@ data class FetchFollowerResDto (
     val followerList: List<Account>
 )
 
+data class FetchFollowingResDto (
+    val _metadata: DtoMetadata,
+    val followingList: List<Account>
+)
+
 data class CreateFollowReqDto (
     val id: Long
 )

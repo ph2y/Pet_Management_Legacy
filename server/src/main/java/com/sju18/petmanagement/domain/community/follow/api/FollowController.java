@@ -73,10 +73,10 @@ public class FollowController {
         catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new FetchFollowerResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new FetchFollowingResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.following.fetch.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new FetchFollowerResDto(dtoMetadata, followingList));
+        return ResponseEntity.ok(new FetchFollowingResDto(dtoMetadata, followingList));
     }
 
     @PostMapping("api/community/follow/delete")

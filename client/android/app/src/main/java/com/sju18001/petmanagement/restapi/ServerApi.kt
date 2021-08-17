@@ -104,6 +104,9 @@ interface ServerApi {
     @POST("api/community/follower/fetch")
     fun fetchFollowerReq(@Body body: RequestBody): Call<FetchFollowerResDto>
 
+    @POST("api/community/following/fetch")
+    fun fetchFollowingReq(@Body body: RequestBody): Call<FetchFollowingResDto>
+
     @POST("api/community/follow/create")
     fun createFollowReq(@Body createFollowReqDto: CreateFollowReqDto): Call<CreateFollowResDto>
 

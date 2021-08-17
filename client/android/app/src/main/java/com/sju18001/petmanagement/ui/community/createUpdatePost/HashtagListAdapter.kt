@@ -10,8 +10,8 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
 
 class HashtagListAdapter(private val createUpdatePostViewModel: CreateUpdatePostViewModel,
-                         private val binding: FragmentCreateUpdatePostBinding
-) : RecyclerView.Adapter<HashtagListAdapter.HistoryListViewHolder>() {
+                         private val binding: FragmentCreateUpdatePostBinding) :
+    RecyclerView.Adapter<HashtagListAdapter.HistoryListViewHolder>() {
 
     private var resultList = mutableListOf<String>()
 

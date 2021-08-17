@@ -261,8 +261,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             return
         }
 
-        // TODO: if item updated
-
         // if there are multiple/no differences -> update list with all changes + no animation
         updatePetListOrder(apiResponse)
         reorderPetList(apiResponse)

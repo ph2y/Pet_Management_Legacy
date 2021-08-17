@@ -12,11 +12,6 @@ class FollowerFollowingActivity : AppCompatActivity() {
     // variable for view binding
     private lateinit var binding: ActivityFollowerFollowingBinding
 
-    // variable for ViewModel
-    private val followerFollowingViewModel: FollowerFollowingViewModel by lazy{
-        ViewModelProvider(this, SavedStateViewModelFactory(application, this)).get(FollowerFollowingViewModel::class.java)
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
