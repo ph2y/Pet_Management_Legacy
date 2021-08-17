@@ -110,6 +110,15 @@ public class PlaceService {
         // save
         placeRepository.save(currentPlace);
     }
+    @Transactional
+    public void updatePlaceAverageRating(Long placeId, Double placeRating) throws Exception {
+        Place currentPlace = placeRepository.findById(placeId)
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.place.notExists", null, Locale.ENGLISH)
+                ));
+        currentPlace.setAverageRating(placeRating);
+        placeRepository.save(currentPlace);
+    }
 
     // DELETE
     public void deletePlace(DeletePlaceReqDto reqDto) throws Exception {
