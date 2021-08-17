@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.community.createUpdatePost
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -29,6 +30,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Permission
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -487,6 +489,7 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     // get geolocation
+    @SuppressLint("MissingPermission")
     private fun getGeolocation(): MutableList<BigDecimal> {
         val latAndLong: MutableList<BigDecimal> = mutableListOf()
 
@@ -494,10 +497,7 @@ class CreateUpdatePostFragment : Fragment() {
             latAndLong.add(0.0.toBigDecimal())
             latAndLong.add(0.0.toBigDecimal())
         }else{
-            if (ContextCompat.checkSelfPermission(requireContext(),
-                    Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(requireContext(),
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            if (Permission.isAllPermissionsGranted(requireContext(), Permission.requiredPermissionsForLocation)) {
                 val location = (requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager)
                     .getLastKnownLocation(LocationManager.GPS_PROVIDER)
                 latAndLong.add(location?.latitude!!.toBigDecimal())
