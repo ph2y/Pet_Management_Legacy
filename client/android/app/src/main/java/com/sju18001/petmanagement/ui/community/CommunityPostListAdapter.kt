@@ -22,7 +22,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         val nicknameTextView: TextView = view.findViewById(R.id.nickname)
         val petNameTextView: TextView = view.findViewById(R.id.pet_name)
-        val contentTextView: TextView = view.findViewById(R.id.content)
+        val contentsTextView: TextView = view.findViewById(R.id.contents)
         val viewMoreTextView: TextView = view.findViewById(R.id.view_more)
         val likeButton: ImageButton = view.findViewById(R.id.like_button)
         val commentButton: ImageButton = view.findViewById(R.id.comment_button)
@@ -39,7 +39,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         updateDataSetToViewHolder(holder, dataSet[position])
-        setViewMore(holder.contentTextView, holder.viewMoreTextView)
+        setViewMore(holder.contentsTextView, holder.viewMoreTextView)
 
         // 댓글 버튼
         holder.commentButton.setOnClickListener {
@@ -57,26 +57,26 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
     private fun updateDataSetToViewHolder(holder: ViewHolder, data: Post){
         holder.nicknameTextView.text = data.author.nickname
         holder.petNameTextView.text = data.pet.name
-        holder.contentTextView.text = data.contents
+        holder.contentsTextView.text = data.contents
         holder.likeCountTextView.text = "0"
     }
 
-    private fun setViewMore(contentTextView: TextView, viewMoreTextView: TextView){
+    private fun setViewMore(contentsTextView: TextView, viewMoreTextView: TextView){
         // TextView 초기화
-        contentTextView.maxLines = MAX_LINE
+        contentsTextView.maxLines = MAX_LINE
         viewMoreTextView.visibility = View.GONE
 
         // getEllipsisCount()을 통한 더보기 표시 및 구현
-        contentTextView.post{
-            val lineCount = contentTextView.layout.lineCount
+        contentsTextView.post{
+            val lineCount = contentsTextView.layout.lineCount
             if (lineCount > 0) {
-                if (contentTextView.layout.getEllipsisCount(lineCount - 1) > 0) {
+                if (contentsTextView.layout.getEllipsisCount(lineCount - 1) > 0) {
                     // 더보기 표시
                     viewMoreTextView.visibility = View.VISIBLE
 
                     // 더보기 클릭 이벤트
                     viewMoreTextView.setOnClickListener {
-                        contentTextView.maxLines = Int.MAX_VALUE
+                        contentsTextView.maxLines = Int.MAX_VALUE
                         viewMoreTextView.visibility = View.GONE
                     }
                 }
