@@ -11,11 +11,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         >
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/pet_photo"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:src="@drawable/marker_pet"
+            app:civ_border_width="1dp"
+            app:civ_border_color="@color/carrot"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>

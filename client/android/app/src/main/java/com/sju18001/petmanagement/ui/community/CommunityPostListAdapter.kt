@@ -1,16 +1,30 @@
 package com.sju18001.petmanagement.ui.community
 
+import android.graphics.BitmapFactory
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.restapi.dao.Post
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
+import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
+    fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder)
+    fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder)
 }
 
 private const val MAX_LINE = 5
@@ -19,6 +33,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
     lateinit var communityPostListAdapterInterface: CommunityPostListAdapterInterface
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
+        val petPhotoImage: ImageView = view.findViewById(R.id.pet_photo)
         val nicknameTextView: TextView = view.findViewById(R.id.nickname)
         val petNameTextView: TextView = view.findViewById(R.id.pet_name)
         val contentsTextView: TextView = view.findViewById(R.id.contents)
@@ -52,6 +67,12 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         holder.petNameTextView.text = data.pet.name
         holder.contentsTextView.text = data.contents
         holder.likeCountTextView.text = "0"
+
+        if(!data.author.photoUrl.isNullOrEmpty()){
+            communityPostListAdapterInterface.setAccountPhoto(data.author.id, holder)
+        }else{
+            communityPostListAdapterInterface.setAccountDefaultPhoto(holder)
+        }
     }
 
     private fun setViewMore(contentsTextView: TextView, viewMoreTextView: TextView){

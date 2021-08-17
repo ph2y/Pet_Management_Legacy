@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.community
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,10 +20,12 @@ import com.sju18001.petmanagement.databinding.FragmentCommunityBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchPostReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchPostResDto
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
 import com.sju18001.petmanagement.ui.community.CommunityViewModel
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -99,6 +102,48 @@ class CommunityFragment : Fragment() {
 
                 startActivity(communityCommentActivityIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+            }
+
+            override fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder){
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                    .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
+                call.enqueue(object: Callback<ResponseBody> {
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        if(response.isSuccessful) {
+                            if(isViewDestroyed){
+                                return
+                            }
+
+                            // convert photo to byte array + get bitmap
+                            val photoByteArray = response.body()!!.byteStream().readBytes()
+                            val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
+
+                            // set account photo + save photo value
+                            holder.petPhotoImage.setImageBitmap(photoBitmap)
+                        }
+                        else {
+                            if(isViewDestroyed){
+                                return
+                            }
+
+                            // get error message
+                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                            // Toast + Log
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                            Log.d("error", errorMessage)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        // log error message
+                        Log.d("error", t.message.toString())
+                    }
+                })
+            }
+
+            override fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder) {
+                holder.petPhotoImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
             }
         }
         binding.recyclerViewPost?.let{
