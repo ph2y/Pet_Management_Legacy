@@ -6,7 +6,7 @@ import javax.validation.constraints.*;
 
 @Data
 public class CreateBookmarkReqDto {
-    @PositiveOrZero(message = "valid.bookmark.placeId.notNegative")
+    @PositiveOrZero(message = "valid.place.id.notNegative")
     private Long placeId;
     @NotBlank(message = "valid.bookmark.name.blank")
     @Size(max = 20, message = "valid.bookmark.name.size")

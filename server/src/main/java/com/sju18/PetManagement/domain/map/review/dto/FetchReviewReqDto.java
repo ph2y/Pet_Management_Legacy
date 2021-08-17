@@ -8,8 +8,8 @@ import javax.validation.constraints.PositiveOrZero;
 public class FetchReviewReqDto {
     @PositiveOrZero(message = "valid.review.id.notNegative")
     private Long id;
-    @PositiveOrZero(message = "valid.review.placeId.notNegative")
+    @PositiveOrZero(message = "valid.place.id.notNegative")
     private Long placeId;
-    @PositiveOrZero(message = "valid.review.authorId.notNegative")
+    @PositiveOrZero(message = "valid.account.id.notNegative")
     private Long authorId;
 }
