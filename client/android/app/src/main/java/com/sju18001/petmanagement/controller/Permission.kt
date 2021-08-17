@@ -11,52 +11,54 @@ import kotlinx.coroutines.*
 import java.util.ArrayList
 
 class Permission {
-    private val REQUEST_CODE = 100
+    companion object{
+        private val REQUEST_CODE = 100
 
-    public val requiredPermissionsForMap = arrayOf(
-        Manifest.permission.INTERNET,
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-    )
-    public val requiredPermissionsForCall = arrayOf(
-        Manifest.permission.CALL_PHONE,
-    )
-    public val requiredPermissionsForContacts = arrayOf(
-        Manifest.permission.WRITE_CONTACTS,
-        Manifest.permission.READ_CONTACTS
-    )
+        val requiredPermissionsForLocation = arrayOf(
+            Manifest.permission.INTERNET,
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+        )
+        val requiredPermissionsForCall = arrayOf(
+            Manifest.permission.CALL_PHONE,
+        )
+        val requiredPermissionsForContacts = arrayOf(
+            Manifest.permission.WRITE_CONTACTS,
+            Manifest.permission.READ_CONTACTS
+        )
 
-    public fun isAllPermissionsGranted(context: Context, permissions: Array<String>): Boolean {
-        for(p in permissions){
-            if(ContextCompat.checkSelfPermission(context, p) != PackageManager.PERMISSION_GRANTED){
-                return false
+        fun isAllPermissionsGranted(context: Context, permissions: Array<String>): Boolean {
+            for(p in permissions){
+                if(ContextCompat.checkSelfPermission(context, p) != PackageManager.PERMISSION_GRANTED){
+                    return false
+                }
             }
+
+            return true
         }
 
-        return true
-    }
-
-    public fun requestNotGrantedPermissions(context: Context, requiredPermissions: Array<String>){
-        val notGrantedPermissions = getNotGrantedPermissions(context, requiredPermissions)
-        requestPermissions(context as Activity, notGrantedPermissions)
-    }
-
-    private fun getNotGrantedPermissions(context: Context, requiredPermissions: Array<String>): ArrayList<String> {
-        var notGrantedPermissions = ArrayList<String>()
-
-        for(p in requiredPermissions){
-            if(ContextCompat.checkSelfPermission(context, p) != PackageManager.PERMISSION_GRANTED){
-                notGrantedPermissions.add(p)
-            }
+        fun requestNotGrantedPermissions(context: Context, requiredPermissions: Array<String>){
+            val notGrantedPermissions = getNotGrantedPermissions(context, requiredPermissions)
+            requestPermissions(context as Activity, notGrantedPermissions)
         }
 
-        return notGrantedPermissions
-    }
+        private fun getNotGrantedPermissions(context: Context, requiredPermissions: Array<String>): ArrayList<String> {
+            var notGrantedPermissions = ArrayList<String>()
 
-    private fun requestPermissions(activity: Activity, permissions: ArrayList<String>){
-        if(permissions.isNotEmpty()){
-            val array = arrayOfNulls<String>(permissions.size)
-            ActivityCompat.requestPermissions(activity, permissions.toArray(array), REQUEST_CODE)
+            for(p in requiredPermissions){
+                if(ContextCompat.checkSelfPermission(context, p) != PackageManager.PERMISSION_GRANTED){
+                    notGrantedPermissions.add(p)
+                }
+            }
+
+            return notGrantedPermissions
+        }
+
+        private fun requestPermissions(activity: Activity, permissions: ArrayList<String>){
+            if(permissions.isNotEmpty()){
+                val array = arrayOfNulls<String>(permissions.size)
+                ActivityCompat.requestPermissions(activity, permissions.toArray(array), REQUEST_CODE)
+            }
         }
     }
 }

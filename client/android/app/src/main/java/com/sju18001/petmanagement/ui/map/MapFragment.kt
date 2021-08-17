@@ -90,7 +90,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
 
         // 맵 권한
-        Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForMap)
+        Permission.requestNotGrantedPermissions(requireActivity(), Permission.requiredPermissionsForLocation)
 
         // MavView 초기화
         val mapView = MapView(this.activity)
@@ -414,17 +414,17 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                     DialogInterface.OnClickListener{ _, which ->
                         when(which){
                             0 -> {
-                                if(Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForCall)){
+                                if(Permission.isAllPermissionsGranted(requireContext(), Permission.requiredPermissionsForCall)){
                                     Util.doCall(requireActivity(), document.phone)
                                 }else{
-                                    Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForCall)
+                                    Permission.requestNotGrantedPermissions(requireActivity(), Permission.requiredPermissionsForCall)
                                 }
                             }
                             1 -> {
-                                if(Permission().isAllPermissionsGranted(requireContext(), Permission().requiredPermissionsForContacts)){
+                                if(Permission.isAllPermissionsGranted(requireContext(), Permission.requiredPermissionsForContacts)){
                                     Util.insertContactsContract(requireActivity(), document)
                                 }else{
-                                    Permission().requestNotGrantedPermissions(requireActivity(), Permission().requiredPermissionsForContacts)
+                                    Permission.requestNotGrantedPermissions(requireActivity(), Permission.requiredPermissionsForContacts)
                                 }
                             }
                             2 -> Util.doCopy(requireActivity(), document.phone)
