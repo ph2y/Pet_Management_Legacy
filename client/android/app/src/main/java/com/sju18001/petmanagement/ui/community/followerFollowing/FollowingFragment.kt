@@ -72,14 +72,19 @@ class FollowingFragment : Fragment() {
         // initialize ViewModel
         followerFollowingViewModel = ViewModelProvider(requireActivity(),
             SavedStateViewModelFactory(requireActivity().application, requireActivity())
-        )
-            .get(FollowerFollowingViewModel::class.java)
+        ).get(FollowerFollowingViewModel::class.java)
 
         // initialize RecyclerView
         followingAdapter = FollowingAdapter(requireContext(), sessionManager, followerFollowingViewModel)
         binding.followingRecyclerView.setHasFixedSize(true)
         binding.followingRecyclerView.adapter = followingAdapter
         binding.followingRecyclerView.layoutManager = LinearLayoutManager(activity)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // update RecyclerView
         fetchFollowing()
     }
 

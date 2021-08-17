@@ -66,7 +66,6 @@ class FollowerFragment : Fragment() {
         binding.followerRecyclerView.setHasFixedSize(true)
         binding.followerRecyclerView.adapter = followerAdapter
         binding.followerRecyclerView.layoutManager = LinearLayoutManager(activity)
-        updateRecyclerView()
 
         // for swipe refresh
         binding.followerSwipeRefreshLayout.setOnRefreshListener {
@@ -84,6 +83,13 @@ class FollowerFragment : Fragment() {
             SavedStateViewModelFactory(requireActivity().application, requireActivity())
         )
             .get(FollowerFollowingViewModel::class.java)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // update RecyclerView
+        updateRecyclerView()
     }
 
     private fun updateRecyclerView() {  // update followingIdList -> fetch follower
