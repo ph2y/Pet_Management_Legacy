@@ -95,6 +95,9 @@ interface ServerApi {
     @POST("api/post/fetch")
     fun fetchPostReq(@Body fetchPostReqDto: FetchPostReqDto): Call<FetchPostResDto>
 
+    @POST("api/post/media/fetch")
+    fun fetchPostMediaReq(@Body fetchPostMediaReqDto: FetchPostMediaReqDto): Call<ResponseBody>
+
     @Multipart
     @POST("api/post/media/update")
     fun updatePostMediaReq(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>): Call<UpdatePostMediaResDto>
