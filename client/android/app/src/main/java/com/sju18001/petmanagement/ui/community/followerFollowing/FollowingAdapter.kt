@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.community.followerFollowing
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Build
@@ -71,14 +72,25 @@ class FollowingAdapter(val context: Context, val sessionManager: SessionManager)
         holder.followUnfollowButton.text = context.getText(R.string.unfollow_button)
 
         holder.followUnfollowButton.setOnClickListener {
-            // show dialog
-            // TODO
+            // show confirm dialog
+            val builder = AlertDialog.Builder(context)
+            val messageText = resultList[position].getNickname() + context.getString(R.string.unfollow_confirm_dialog_message)
+            builder.setMessage(messageText)
+                .setPositiveButton(
+                    R.string.confirm
+                ) { _, _ ->
+                    // set button to loading
+                    holder.followUnfollowButton.isEnabled = false
 
-            // set button to loading
-            holder.followUnfollowButton.isEnabled = false
-
-            // API call
-            deleteFollow(resultList[position].getId(), holder, position)
+                    // API call
+                    deleteFollow(resultList[position].getId(), holder, position)
+                }
+                .setNegativeButton(
+                    R.string.cancel
+                ) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .create().show()
         }
     }
 
