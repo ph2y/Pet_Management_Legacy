@@ -1,4 +1,4 @@
-package com.sju18.PetManagement.domain.account.dto;
+package com.sju18.petmanagement.domain.account.dto;
 
 import lombok.Data;
 

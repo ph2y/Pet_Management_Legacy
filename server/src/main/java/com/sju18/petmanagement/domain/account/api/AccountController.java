@@ -1,6 +1,6 @@
 package com.sju18.petmanagement.domain.account.api;
 
-import com.sju18.PetManagement.domain.account.dto.FetchAccountPhotoReqDto;
+import com.sju18.petmanagement.domain.account.dto.FetchAccountPhotoReqDto;
 import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dto.*;
