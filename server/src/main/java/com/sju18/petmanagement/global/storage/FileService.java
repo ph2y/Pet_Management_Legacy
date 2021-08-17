@@ -1,14 +1,21 @@
 package com.sju18.petmanagement.global.storage;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtil;
 import org.aspectj.util.FileUtil;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -18,7 +25,19 @@ import java.util.*;
 @Service
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
-    private final String storageRootPath = "C:\\Users\\fchop\\Development\\tmp\\Pet-Management\\storage";
+    private final String storageRootPath = "E:\\TempDev\\Pet-Management\\storage";
+
+    // 파일 메타데이터 목록(stringify 된 JSON)을 이용하여 파일 읽기
+    public byte[] readFileFromFileMetadataListJson(String fileMetadataListJson, Integer fileIndex) throws IOException {
+        Type collectionType = new TypeToken<List<FileMetadata>>(){}.getType();
+        List<FileMetadata> fileMetadataList = new Gson()
+                .fromJson(fileMetadataListJson, collectionType);
+        String fileUrl = fileMetadataList.get(fileIndex).getUrl();
+        InputStream mediaStream = new FileInputStream(fileUrl);
+        byte[] fileBinData = IOUtil.toByteArray(mediaStream);
+        mediaStream.close();
+        return fileBinData;
+    }
 
     // 특정 사용자 데이터 폴더 경로 조회
     public Path getAccountFileStoragePath(Long accountId) {
@@ -32,8 +51,12 @@ public class FileService {
     public Path getPostFileStoragePath(Long postId) {
         return Paths.get(storageRootPath, "community", "posts", "post_" + postId);
     }
-    // 특정 게시물 댓글 데이터 폴더 경로 조회 - TODO: 장래 커뮤니티 기능 구현시 같이 구현예정
+    // 특정 게시물 댓글 데이터 폴더 경로 조회 - TODO: 장래 댓글 첨부파일 기능 구현시 같이 구현예정
     // TODO: getCommentFileStoragePath(Long commentId) 구현
+    // 특정 장소 리뷰 데이터 폴더 경로 조회
+    public Path getReviewFileStoragePath(Long reviewId) {
+        return Paths.get(storageRootPath, "map", "reviews", "review_" + reviewId);
+    }
 
     // 사용자 데이터 폴더 생성
     public void createAccountFileStorage(Long accountId) throws Exception {
@@ -70,6 +93,17 @@ public class FileService {
     public void deletePostFileStorage(Long postId) throws Exception {
         Path postAttachedFileStorage = getPostFileStoragePath(postId);
         FileUtils.deleteDirectory(postAttachedFileStorage.toFile());
+    }
+
+    // 리뷰 데이터 폴더 생성
+    public void createReviewFileStorage(Long reviewId) throws Exception {
+        Path reviewStorage = getReviewFileStoragePath(reviewId);
+        Files.createDirectories(reviewStorage);
+    }
+    // 리뷰 데이터 폴더 삭제
+    public void deleteReviewFileStorage(Long reviewId) throws Exception {
+        Path reviewStorage = getReviewFileStoragePath(reviewId);
+        FileUtils.deleteDirectory(reviewStorage.toFile());
     }
 
     // 사용자 프로필 사진 저장
@@ -176,6 +210,49 @@ public class FileService {
                         fileName,
                         uploadedFile.getSize(),
                         "post", "media",
+                        savePath.resolve(fileName).toString()
+                );
+
+                fileMetaDataList.add(fileMetaData);
+            } catch (Exception e) {
+                // 업로드 실패시 해당 게시물 데이터 디렉토리 초기화
+                FileUtils.cleanDirectory(savePath.toFile());
+                throw e;
+            }
+        }
+
+        return fileMetaDataList;
+    }
+
+    // 리뷰 파일 저장
+    public List<FileMetadata> saveReviewAttachments(Long reviewId, List<MultipartFile> uploadedFiles) throws Exception {
+        // 업로드 파일 저장 경로
+        Path savePath = getReviewFileStoragePath(reviewId);
+        // 업로드 가능한 확장자
+        String[] acceptableExtensions = new String[]{
+                "jpg","png","jpeg", "gif", "webp"
+        };
+        // 업로드 개별 파일 용량 제한 (10MB)
+        long fileSizeLimit = 5000000;
+        // 파일 메타데이터 리스트
+        List<FileMetadata> fileMetaDataList = new ArrayList<>();
+
+        // 해당 게시물 데이터 디렉토리 초기화
+        FileUtils.cleanDirectory(savePath.toFile());
+
+        for (MultipartFile uploadedFile : uploadedFiles) {
+            try {
+                // 업로드 파일 저장 파일명 설정
+                String fileName = "review_" + reviewId + "_" + uploadedFile.getOriginalFilename();
+                // 파일 유효성 검사
+                checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
+                // 파일 저장
+                uploadedFile.transferTo(savePath.resolve(fileName));
+                // 파일 메타데이터 정보 생성
+                FileMetadata fileMetaData = new FileMetadata(
+                        fileName,
+                        uploadedFile.getSize(),
+                        "review", "media",
                         savePath.resolve(fileName).toString()
                 );
 
