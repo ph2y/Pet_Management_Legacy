@@ -109,6 +109,9 @@ class FollowingAdapter(val context: Context, val sessionManager: SessionManager,
                 response: Response<DeleteFollowResDto>
             ) {
                 if(response.isSuccessful) {
+                    // set button to normal
+                    holder.followUnfollowButton.isEnabled = true
+
                     // remove from list
                     resultList.removeAt(position)
 
