@@ -8,7 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFollowingBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -22,8 +25,8 @@ import retrofit2.Response
 
 class FollowingFragment : Fragment() {
 
-    // variable for ViewModel
-    val followerFollowingViewModel: FollowerFollowingViewModel by activityViewModels()
+    // for shared ViewModel
+    private lateinit var followerFollowingViewModel: FollowerFollowingViewModel
 
     // variables for view binding
     private var _binding: FragmentFollowingBinding? = null
@@ -55,19 +58,29 @@ class FollowingFragment : Fragment() {
         _binding = FragmentFollowingBinding.inflate(inflater, container, false)
         val root = binding.root
 
-        // initialize RecyclerView
-        followingAdapter = FollowingAdapter(requireContext(), sessionManager)
-        binding.followingRecyclerView.setHasFixedSize(true)
-        binding.followingRecyclerView.adapter = followingAdapter
-        binding.followingRecyclerView.layoutManager = LinearLayoutManager(activity)
-        fetchFollowing()
-
         // for swipe refresh
         binding.followingSwipeRefreshLayout.setOnRefreshListener {
             fetchFollowing()
         }
 
         return root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        // initialize ViewModel
+        followerFollowingViewModel = ViewModelProvider(requireActivity(),
+            SavedStateViewModelFactory(requireActivity().application, requireActivity())
+        )
+            .get(FollowerFollowingViewModel::class.java)
+
+        // initialize RecyclerView
+        followingAdapter = FollowingAdapter(requireContext(), sessionManager, followerFollowingViewModel)
+        binding.followingRecyclerView.setHasFixedSize(true)
+        binding.followingRecyclerView.adapter = followingAdapter
+        binding.followingRecyclerView.layoutManager = LinearLayoutManager(activity)
+        fetchFollowing()
     }
 
     private fun fetchFollowing() {
@@ -95,6 +108,11 @@ class FollowingFragment : Fragment() {
                         item.setValues(hasPhoto, null, id, nickname!!, true)
                         followingList.add(item)
                     }
+
+                    // set following count
+                    val followingText = requireContext().getText(R.string.following_fragment_title).toString() +
+                            ' ' + followingList.size.toString()
+                    followerFollowingViewModel.setFollowingTitle(followingText)
 
                     // set RecyclerView
                     followingAdapter.setResult(followingList)

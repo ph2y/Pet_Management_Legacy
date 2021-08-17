@@ -26,7 +26,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class FollowingAdapter(val context: Context, val sessionManager: SessionManager):
+class FollowingAdapter(val context: Context, val sessionManager: SessionManager,
+                       val followerFollowingViewModel: FollowerFollowingViewModel):
     RecyclerView.Adapter<FollowingAdapter.HistoryListViewHolder>() {
 
     private var resultList = mutableListOf<FollowerFollowingListItem>()
@@ -108,11 +109,13 @@ class FollowingAdapter(val context: Context, val sessionManager: SessionManager)
                 response: Response<DeleteFollowResDto>
             ) {
                 if(response.isSuccessful) {
-                    // set title
-                    // TODO
-
                     // remove from list
                     resultList.removeAt(position)
+
+                    // set following count
+                    val followingText = context.getText(R.string.following_fragment_title).toString() +
+                            ' ' + resultList.size.toString()
+                    followerFollowingViewModel.setFollowingTitle(followingText)
 
                     // show animation
                     notifyItemRemoved(position)

@@ -8,7 +8,11 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFollowerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -22,8 +26,8 @@ import retrofit2.Response
 
 class FollowerFragment : Fragment() {
 
-    // variable for ViewModel
-    val followerFollowingViewModel: FollowerFollowingViewModel by activityViewModels()
+    // for shared ViewModel
+    private lateinit var followerFollowingViewModel: FollowerFollowingViewModel
 
     // variables for view binding
     private var _binding: FragmentFollowerBinding? = null
@@ -70,6 +74,16 @@ class FollowerFragment : Fragment() {
         }
 
         return root
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        // initialize ViewModel
+        followerFollowingViewModel = ViewModelProvider(requireActivity(),
+            SavedStateViewModelFactory(requireActivity().application, requireActivity())
+        )
+            .get(FollowerFollowingViewModel::class.java)
     }
 
     private fun updateRecyclerView() {  // update followingIdList -> fetch follower
@@ -144,6 +158,11 @@ class FollowerFragment : Fragment() {
                         item.setValues(hasPhoto, null, id, nickname!!, isFollowing)
                         followerList.add(item)
                     }
+
+                    // set follower count
+                    val followerText = requireContext().getText(R.string.follower_fragment_title).toString() +
+                            ' ' + followerList.size.toString()
+                    followerFollowingViewModel.setFollowerTitle(followerText)
 
                     // set RecyclerView
                     followerAdapter.setResult(followerList)

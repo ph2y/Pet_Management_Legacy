@@ -8,6 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.SavedStateViewModelFactory
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
@@ -25,6 +28,9 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class FollowerFollowingFragment : Fragment() {
+
+    // for shared ViewModel
+    private lateinit var followerFollowingViewModel: FollowerFollowingViewModel
 
     // variables for view binding
     private var _binding: FragmentFollowerFollowingBinding? = null
@@ -79,6 +85,27 @@ class FollowerFollowingFragment : Fragment() {
         }.attach()
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        // initialize ViewModel
+        followerFollowingViewModel = ViewModelProvider(requireActivity(),
+            SavedStateViewModelFactory(requireActivity().application, requireActivity()))
+            .get(FollowerFollowingViewModel::class.java)
+
+        // observe live data and set title when change
+        followerFollowingViewModel.getFollowerTitle().observe(viewLifecycleOwner, object: Observer<String> {
+            override fun onChanged(followerTitle: String?) {
+                binding.tabLayout.getTabAt(0)!!.text = followerTitle
+            }
+        })
+        followerFollowingViewModel.getFollowingTitle().observe(viewLifecycleOwner, object: Observer<String> {
+            override fun onChanged(followingTitle: String?) {
+                binding.tabLayout.getTabAt(1)!!.text = followingTitle
+            }
+        })
+    }
+
     override fun onStart() {
         super.onStart()
 
@@ -129,7 +156,7 @@ class FollowerFollowingFragment : Fragment() {
                     // set follower count
                     val followerText = requireContext().getText(R.string.follower_fragment_title).toString() +
                             ' ' + followerCount.toString()
-                    binding.tabLayout.getTabAt(0)!!.text = followerText
+                    followerFollowingViewModel.setFollowerTitle(followerText)
                 }
                 else {
                     // get error message
@@ -172,7 +199,7 @@ class FollowerFollowingFragment : Fragment() {
                     // set following count
                     val followingText = requireContext().getText(R.string.following_fragment_title).toString() +
                             ' ' + followingCount.toString()
-                    binding.tabLayout.getTabAt(1)!!.text = followingText
+                    followerFollowingViewModel.setFollowingTitle(followingText)
                 }
                 else {
                     // get error message
