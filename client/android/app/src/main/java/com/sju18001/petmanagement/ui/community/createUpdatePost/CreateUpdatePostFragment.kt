@@ -503,8 +503,9 @@ class CreateUpdatePostFragment : Fragment() {
                 latAndLong.add(location?.latitude!!.toBigDecimal())
                 latAndLong.add(location?.longitude!!.toBigDecimal())
             }else{
-                latAndLong.add(0.0.toBigDecimal())
-                latAndLong.add(0.0.toBigDecimal())
+                // 특수 처리를 위해 (-1, -1)을 넣음
+                latAndLong.add((-1.0).toBigDecimal())
+                latAndLong.add((-1.0).toBigDecimal())
             }
         }
 
@@ -547,6 +548,17 @@ class CreateUpdatePostFragment : Fragment() {
 
         // get location data(if enabled)
         val latAndLong = getGeolocation()
+
+        // 위치 정보 사용에 동의했지만, 권한이 없는 경우
+        if(latAndLong[0] == (-1.0).toBigDecimal()){
+            // 권한 요청
+            Permission.requestNotGrantedPermissions(requireContext(), Permission.requiredPermissionsForLocation)
+
+            setButtonToNormal()
+
+            // 권한 요청이 비동기적이기 때문에, 권한 요청 이후에 CreatePost 버튼을 다시 눌러야한다.
+            return
+        }
 
         // create DTO
         val createPostReqDto = CreatePostReqDto(
