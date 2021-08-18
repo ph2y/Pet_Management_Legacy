@@ -92,6 +92,9 @@ interface ServerApi {
     @POST("api/post/create")
     fun createPostReq(@Body createPostReqDto: CreatePostReqDto): Call<CreatePostResDto>
 
+    @POST("api/post/update")
+    fun updatePostReq(@Body updatePostReqDto: UpdatePostReqDto): Call<UpdatePostResDto>
+
     @POST("api/post/fetch")
     fun fetchPostReq(@Body fetchPostReqDto: FetchPostReqDto): Call<FetchPostResDto>
 

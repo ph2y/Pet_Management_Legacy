@@ -15,7 +15,21 @@ data class CreatePostReqDto(
     val geoTagLong: BigDecimal?
 )
 
+data class UpdatePostReqDto(
+    val id: Long,
+    val petId: Long,
+    val contents: String?,
+    val hashTags: List<String>,
+    val disclosure: String,
+    val geoTagLat: BigDecimal?,
+    val geoTagLong: BigDecimal?
+)
+
 data class CreatePostResDto(
+    val _metadata: DtoMetadata
+)
+
+data class UpdatePostResDto(
     val _metadata: DtoMetadata
 )
 

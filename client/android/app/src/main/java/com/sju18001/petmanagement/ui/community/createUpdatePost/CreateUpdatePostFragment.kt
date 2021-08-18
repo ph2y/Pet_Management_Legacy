@@ -78,6 +78,7 @@ class CreateUpdatePostFragment : Fragment() {
     private var fetchPetApiCall: Call<FetchPetResDto>? = null
     private var fetchPetPhotoApiCall: Call<ResponseBody>? = null
     private var createPostApiCall: Call<CreatePostResDto>? = null
+    private var updatePostApiCall: Call<UpdatePostResDto>? = null
     private var fetchPostApiCall: Call<FetchPostResDto>? = null
     private var updatePostMediaApiCall: Call<UpdatePostMediaResDto>? = null
     private var fetchPostMediaApiCall: Call<ResponseBody>? = null
@@ -123,7 +124,7 @@ class CreateUpdatePostFragment : Fragment() {
 
         // for title
         if(requireActivity().intent.getStringExtra("fragmentType") == "update_post") {
-            binding.backButtonTitle.text = context?.getText(R.string.update_pet_title)
+            binding.backButtonTitle.text = context?.getText(R.string.update_post_title)
         }
 
         // fetch post data for update(if not already fetched)
@@ -224,6 +225,11 @@ class CreateUpdatePostFragment : Fragment() {
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
         }
+        when(createUpdatePostViewModel.disclosure) {
+            DISCLOSURE_PUBLIC -> { binding.disclosureSpinner.setSelection(0) }
+            DISCLOSURE_PRIVATE -> { binding.disclosureSpinner.setSelection(1) }
+            DISCLOSURE_FRIEND -> { binding.disclosureSpinner.setSelection(2) }
+        }
 
         // for hashtag input button
         binding.hashtagInputButton.setOnClickListener {
@@ -273,7 +279,12 @@ class CreateUpdatePostFragment : Fragment() {
                 Toast.makeText(context, context?.getText(R.string.pet_not_selected_message), Toast.LENGTH_LONG).show()
             }
             else {
-                createPost()
+                if(requireActivity().intent.getStringExtra("fragmentType") == "create_post") {
+                    createPost()
+                }
+                else {
+                    updatePost()
+                }
             }
         }
 
@@ -569,9 +580,8 @@ class CreateUpdatePostFragment : Fragment() {
             // 권한 요청
             Permission.requestNotGrantedPermissions(requireContext(), Permission.requiredPermissionsForLocation)
 
-            setButtonToNormal()
-
             // 권한 요청이 비동기적이기 때문에, 권한 요청 이후에 CreatePost 버튼을 다시 눌러야한다.
+            setButtonToNormal()
             return
         }
 
@@ -611,6 +621,84 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<CreatePostResDto>, t: Throwable) {
+                // set api state/button to normal
+                createUpdatePostViewModel.apiIsLoading = false
+                setButtonToNormal()
+
+                // if the view was destroyed(API call canceled) -> return
+                if (_binding == null) {
+                    return
+                }
+
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
+    // create post
+    private fun updatePost() {
+        // set api state/button to loading
+        createUpdatePostViewModel.apiIsLoading = true
+        setButtonToLoading()
+
+        // get location data(if enabled)
+        val latAndLong = getGeolocation()
+
+        // 위치 정보 사용에 동의했지만, 권한이 없는 경우
+        if(latAndLong[0] == (-1.0).toBigDecimal()){
+            // 권한 요청
+            Permission.requestNotGrantedPermissions(requireContext(), Permission.requiredPermissionsForLocation)
+
+            // 권한 요청이 비동기적이기 때문에, 권한 요청 이후에 CreatePost 버튼을 다시 눌러야한다.
+            setButtonToNormal()
+            return
+        }
+
+        // create DTO
+        val updatePostReqDto = UpdatePostReqDto(
+            createUpdatePostViewModel.postId!!,
+            createUpdatePostViewModel.petId!!,
+            createUpdatePostViewModel.postEditText,
+            createUpdatePostViewModel.hashtagList,
+            createUpdatePostViewModel.disclosure,
+            latAndLong[0],
+            latAndLong[1]
+        )
+
+        updatePostApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .updatePostReq(updatePostReqDto)
+        updatePostApiCall!!.enqueue(object: Callback<UpdatePostResDto> {
+            override fun onResponse(
+                call: Call<UpdatePostResDto>,
+                response: Response<UpdatePostResDto>
+            ) {
+                if (response.isSuccessful) {
+                    // no media files
+                    if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
+                        // TODO: delete all media files(server API needed)
+                        closeAfterSuccess()
+                    }
+
+                    // update post media
+                    else { updatePostMedia(createUpdatePostViewModel.postId!!) }
+                }
+                else {
+                    // set api state/button to normal
+                    createUpdatePostViewModel.apiIsLoading = false
+                    setButtonToNormal()
+
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<UpdatePostResDto>, t: Throwable) {
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
@@ -895,7 +983,12 @@ class CreateUpdatePostFragment : Fragment() {
         }
 
         // show message + return to previous activity
-        Toast.makeText(context, context?.getText(R.string.create_post_successful), Toast.LENGTH_LONG).show()
+        if(requireActivity().intent.getStringExtra("fragmentType") == "create_post") {
+            Toast.makeText(context, context?.getText(R.string.create_post_successful), Toast.LENGTH_LONG).show()
+        }
+        else {
+            Toast.makeText(context, context?.getText(R.string.update_post_successful), Toast.LENGTH_LONG).show()
+        }
         activity?.finish()
     }
 
