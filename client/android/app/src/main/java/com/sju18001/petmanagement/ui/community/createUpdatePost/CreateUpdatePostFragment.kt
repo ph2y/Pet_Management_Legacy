@@ -121,8 +121,23 @@ class CreateUpdatePostFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        // fetch post data for update(if not already fetched)
+        if(requireActivity().intent.getStringExtra("fragmentType") == "update_post" &&
+                !createUpdatePostViewModel.fetchedPostDataForUpdate) {
+                // save post id
+                createUpdatePostViewModel.postId = requireActivity().intent.getLongExtra("postId", -1)
+
+                // show loading screen + disable button
+                binding.createEditPostMainScrollView.visibility = View.INVISIBLE
+                binding.postDataLoadingLayout.visibility = View.VISIBLE
+                binding.confirmButton.isEnabled = false
+
+                // fetch post data
+                fetchPostData()
+        }
+
         // for view restore(excluding pet and disclosure)
-        restoreState()
+        else { restoreState() }
 
         // for pet(+ restore)
         setPetSpinnerAndPhoto()
@@ -203,11 +218,6 @@ class CreateUpdatePostFragment : Fragment() {
                 }
             }
             override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-        when(createUpdatePostViewModel.disclosure) {
-            DISCLOSURE_PUBLIC -> { binding.disclosureSpinner.setSelection(0) }
-            DISCLOSURE_PRIVATE -> { binding.disclosureSpinner.setSelection(1) }
-            DISCLOSURE_FRIEND -> { binding.disclosureSpinner.setSelection(2) }
         }
 
         // for hashtag input button
@@ -718,6 +728,73 @@ class CreateUpdatePostFragment : Fragment() {
         })
     }
 
+    private fun fetchPostMediaData() {
+
+    }
+
+    private fun fetchPostData() {
+        // create DTO
+        val fetchPostReqDto = FetchPostReqDto(null, null, null, createUpdatePostViewModel.postId)
+
+        // API call
+        fetchPostApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchPostReq(fetchPostReqDto)
+        fetchPostApiCall!!.enqueue(object: Callback<FetchPostResDto> {
+            override fun onResponse(
+                call: Call<FetchPostResDto>,
+                response: Response<FetchPostResDto>
+            ) {
+                if(response.isSuccessful) {
+                    // fetch post data and save to ViewModel
+                    val post = response.body()?.postList!![0]
+
+                    createUpdatePostViewModel.petId = post.pet.id
+                    createUpdatePostViewModel.isUsingLocation = post.geoTagLat != 0.0
+                    createUpdatePostViewModel.disclosure = post.disclosure
+                    createUpdatePostViewModel.hashtagList = post.serializedHashTags.split(',').toMutableList()
+                    hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
+                    createUpdatePostViewModel.postEditText = post.contents
+
+                    // show loading screen + disable button
+                    binding.createEditPostMainScrollView.visibility = View.VISIBLE
+                    binding.postDataLoadingLayout.visibility = View.GONE
+                    binding.confirmButton.isEnabled = true
+
+                    // set fetched to true
+                    createUpdatePostViewModel.fetchedPostDataForUpdate = true
+
+                    // set views with post data
+                    restoreState()
+                }
+                else {
+                    // close activity
+                    requireActivity().finish()
+
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
+                // close activity
+                requireActivity().finish()
+
+                // if the view was destroyed(API call canceled) -> return
+                if(_binding == null) {
+                    return
+                }
+
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
     // close after success
     private fun closeAfterSuccess() {
         // set api state/button to normal
@@ -743,6 +820,13 @@ class CreateUpdatePostFragment : Fragment() {
 
         // restore photo/video upload layout
         updatePhotoVideoUsage()
+
+        // restore disclosure spinner
+        when(createUpdatePostViewModel.disclosure) {
+            DISCLOSURE_PUBLIC -> { binding.disclosureSpinner.setSelection(0) }
+            DISCLOSURE_PRIVATE -> { binding.disclosureSpinner.setSelection(1) }
+            DISCLOSURE_FRIEND -> { binding.disclosureSpinner.setSelection(2) }
+        }
 
         // restore hashtag layout
         updateHashtagUsage()

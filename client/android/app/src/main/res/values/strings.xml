@@ -197,6 +197,8 @@
     <string name="post_invalid_message">글 내용을 입력하거나, 사진 및 동영상을 올려주세요!</string>
     <string name="pet_not_selected_message">펫을 선택해주세요!</string>
     <string name="create_post_successful">글 쓰기에 성공했어요!</string>
+    <string name="update_post_successful">글 수정에 성공했어요!</string>
+    <string name="post_data_loading_message">글 정보 불러오는 중…</string>
 
     <!-- Follower/Following Fragment -->
     <string name="follower_following_menu_title">팔로워/팔로잉</string>

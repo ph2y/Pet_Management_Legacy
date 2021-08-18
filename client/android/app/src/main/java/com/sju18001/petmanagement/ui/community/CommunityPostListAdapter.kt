@@ -11,6 +11,10 @@ import com.sju18001.petmanagement.R
 
 interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
+    // TODO: the following code(marked with arrows) is temporary and must be changed(use @Hanbit-Kang's code)
+    // TODO: ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+    fun startCreateUpdatePostActivity(postId: Long)
+    // TODO: ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 }
 
 private const val MAX_LINE = 5
@@ -26,6 +30,10 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         val likeButton: ImageButton = view.findViewById(R.id.like_button)
         val commentButton: ImageButton = view.findViewById(R.id.comment_button)
         val likeCountTextView: TextView = view.findViewById(R.id.like_count)
+        // TODO: the following code(marked with arrows) is temporary and must be changed(use @Hanbit-Kang's code)
+        // TODO: ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+        val updatePostButton: ImageButton = view.findViewById(R.id.update_post_button)
+        // TODO: ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -43,6 +51,14 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         holder.commentButton.setOnClickListener {
             communityPostListAdapterInterface.startCommunityCommentActivity(dataSet[position].id)
         }
+
+        // TODO: the following code(marked with arrows) is temporary and must be changed(use @Hanbit-Kang's code)
+        // TODO: ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+        // update post button
+        holder.updatePostButton.setOnClickListener {
+            communityPostListAdapterInterface.startCreateUpdatePostActivity(dataSet[position].id)
+        }
+        // TODO: ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
     }
 
     override fun getItemCount(): Int = dataSet.size
