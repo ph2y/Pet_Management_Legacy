@@ -3,12 +3,20 @@ package com.sju18001.petmanagement.ui.community
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.support.v4.media.session.MediaControllerCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.MediaController
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.restapi.dao.Post
@@ -29,6 +37,10 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.time.LocalDateTime
 
 class CommunityFragment : Fragment() {
 
@@ -159,11 +171,13 @@ class CommunityFragment : Fragment() {
             override fun setPostMedia(
                 holder: CommunityPostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder,
                 id: Long,
-                index: Int
+                index: Int,
+                url: String
             ) {
                 val body = FetchPostMediaReqDto(id, index)
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchPostMediaReq(body)
                 call!!.enqueue(object: Callback<ResponseBody> {
+                    @RequiresApi(Build.VERSION_CODES.O)
                     override fun onResponse(
                         call: Call<ResponseBody>,
                         response: Response<ResponseBody>
@@ -173,12 +187,47 @@ class CommunityFragment : Fragment() {
                         }
 
                         if(response.isSuccessful){
-                            // convert photo to byte array + get bitmap
-                            val photoByteArray = response.body()!!.byteStream().readBytes()
-                            val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
+                            // 영상
+                            if(url.endsWith(".mp4") || url.endsWith(".webm")){
+                                // Save file by byte array
+                                val dir = File(requireContext().getExternalFilesDir(null).toString() + "/pet_management")
+                                if(! dir.exists()){
+                                    dir.mkdir()
+                                }
 
-                            // set account photo + save photo value
-                            holder.postMediaImage.setImageBitmap(photoBitmap)
+                                val file = if(url.endsWith(".mp4")){
+                                    File.createTempFile("post_media", ".mp4", dir)
+                                }else{
+                                    File.createTempFile("post_media", ".webm", dir)
+                                }
+                                val os = FileOutputStream(file)
+                                os.write(response.body()!!.byteStream().readBytes())
+                                os.close()
+
+                                // View
+                                val postMediaVideo = holder.postMediaVideo
+                                postMediaVideo.visibility = View.VISIBLE
+
+                                // Controller
+                                val mediaController = MediaController(requireContext())
+                                mediaController.setAnchorView(postMediaVideo)
+
+                                postMediaVideo.setMediaController(mediaController)
+                                postMediaVideo.requestFocus()
+                                postMediaVideo.setVideoURI(Uri.fromFile(file))
+                                postMediaVideo.start()
+                            }
+                            // 이미지
+                            else{
+                                // Convert photo to byte array + get bitmap
+                                val photoByteArray = response.body()!!.byteStream().readBytes()
+                                val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
+
+                                // Set post image
+                                val postMediaImage = holder.postMediaImage
+                                postMediaImage.visibility = View.VISIBLE
+                                postMediaImage.setImageBitmap(photoBitmap)
+                            }
                         }else{
                             // get error message
                             val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
