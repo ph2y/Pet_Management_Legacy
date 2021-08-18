@@ -142,25 +142,10 @@ class CreateUpdatePostFragment : Fragment() {
                 fetchPostData()
         }
 
-        // for view restore(excluding pet and disclosure)
-        else { restoreState() }
-
-        // for pet(+ restore)
-        setPetSpinnerAndPhoto()
-
-        // for pet spinner
-        binding.petNameSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if(position != 0) {
-                    createUpdatePostViewModel.petId = petIdAndNameList[position - 1].id
-                    setPetPhoto()
-                }
-                else {
-                    createUpdatePostViewModel.petId = null
-                    binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        // for view restore and pet spinner
+        else {
+            setPetSpinnerAndPhoto()
+            restoreState()
         }
 
         // for location switch
@@ -206,6 +191,7 @@ class CreateUpdatePostFragment : Fragment() {
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 binding.disclosureSpinner.adapter = adapter
         }
+        binding.disclosureSpinner.setSelection(0, false)
         binding.disclosureSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 when(position) {
@@ -475,6 +461,21 @@ class CreateUpdatePostFragment : Fragment() {
         val spinnerArrayAdapter: ArrayAdapter<String> =
             ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item, spinnerArray)
         binding.petNameSpinner.adapter = spinnerArrayAdapter
+
+        // set pet spinner listener
+        binding.petNameSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if(position != 0) {
+                    createUpdatePostViewModel.petId = petIdAndNameList[position - 1].id
+                    setPetPhoto()
+                }
+                else {
+                    createUpdatePostViewModel.petId = null
+                    binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
+                }
+            }
+            override fun onNothingSelected(parent: AdapterView<*>?) {}
+        }
 
         // set spinner position
         if(createUpdatePostViewModel.petId != null) {
@@ -870,6 +871,7 @@ class CreateUpdatePostFragment : Fragment() {
                             createUpdatePostViewModel.fetchedPostDataForUpdate = true
 
                             // set views with post data
+                            setPetSpinnerAndPhoto()
                             restoreState()
                         }
                     }
@@ -937,6 +939,7 @@ class CreateUpdatePostFragment : Fragment() {
                         createUpdatePostViewModel.fetchedPostDataForUpdate = true
 
                         // set views with post data
+                        setPetSpinnerAndPhoto()
                         restoreState()
                     }
                 }
