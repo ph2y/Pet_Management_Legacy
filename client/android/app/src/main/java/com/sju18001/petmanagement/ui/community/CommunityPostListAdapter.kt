@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.VideoView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.sju18001.petmanagement.R
@@ -20,7 +21,7 @@ interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
     fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder)
-    fun setPostMedia(holder: CommunityPostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int)
+    fun setPostMedia(holder: CommunityPostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String)
 }
 
 private const val MAX_LINE = 5
@@ -73,12 +74,12 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
         // Media가 있을 경우
         if(!data.mediaAttachments.isNullOrEmpty()){
-            val mediaAttachments: Array<Attachment>? = Gson().fromJson(data.mediaAttachments, Array<Attachment>::class.java)
-            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, mediaAttachments!!.size, data.id)
+            val mediaAttachments: Array<Attachment> = Gson().fromJson(data.mediaAttachments, Array<Attachment>::class.java)
+
+            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, mediaAttachments!!.size, data.id, mediaAttachments)
             holder.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }else{
-            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, 0)
-            holder.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, 0, arrayOf())
         }
     }
 
@@ -114,19 +115,22 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         dataSet = arrayListOf()
     }
 
-    class PostMediaItemCollectionAdapter(private var communityPostListAdapterInterface: CommunityPostListAdapterInterface, private val pageCount: Int, private val id: Long): RecyclerView.Adapter<PostMediaItemCollectionAdapter.ViewPagerHolder>() {
+    class PostMediaItemCollectionAdapter(
+        private var communityPostListAdapterInterface: CommunityPostListAdapterInterface, private val pageCount: Int, private val id: Long, private val mediaAttachments: Array<Attachment>
+        ): RecyclerView.Adapter<PostMediaItemCollectionAdapter.ViewPagerHolder>() {
         override fun getItemCount(): Int = pageCount
 
         inner class ViewPagerHolder(parent: ViewGroup): RecyclerView.ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.post_media_item, parent, false)
         ){
             val postMediaImage: ImageView = itemView.findViewById(R.id.image_post_media)
+            val postMediaVideo: VideoView = itemView.findViewById(R.id.video_post_media)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewPagerHolder(parent)
 
         override fun onBindViewHolder(holder: ViewPagerHolder, position: Int) {
-            communityPostListAdapterInterface.setPostMedia(holder, id, position)
+            communityPostListAdapterInterface.setPostMedia(holder, id, position, mediaAttachments[position].url)
         }
     }
 }

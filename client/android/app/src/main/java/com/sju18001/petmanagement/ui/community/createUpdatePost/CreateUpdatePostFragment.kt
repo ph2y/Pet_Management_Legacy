@@ -500,10 +500,10 @@ class CreateUpdatePostFragment : Fragment() {
             if (Permission.isAllPermissionsGranted(requireContext(), Permission.requiredPermissionsForLocation)) {
                 val location = (requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager)
                     .getLastKnownLocation(LocationManager.GPS_PROVIDER)
-                
+
                 if(location != null){
-                    latAndLong.add(location?.latitude!!.toBigDecimal())
-                    latAndLong.add(location?.longitude!!.toBigDecimal())
+                    latAndLong.add(location.latitude!!.toBigDecimal())
+                    latAndLong.add(location.longitude!!.toBigDecimal())
                 }else{
                     // 정보 로드 실패 예외처리
                     latAndLong.add(0.0.toBigDecimal())
