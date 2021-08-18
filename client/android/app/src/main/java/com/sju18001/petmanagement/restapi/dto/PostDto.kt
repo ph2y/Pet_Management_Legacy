@@ -37,3 +37,8 @@ data class UpdatePostMediaResDto (
     val _metadata: DtoMetadata,
     val fileMetadataList: List<FileMetaData>
 )
+
+data class FetchPostMediaReqDto (
+    val id: Long,
+    val index: Long
+)

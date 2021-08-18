@@ -1,12 +1,10 @@
 package com.sju18001.petmanagement.ui.community.createUpdatePost
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.LocationManager
@@ -20,10 +18,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -39,6 +37,7 @@ import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
+import com.sju18001.petmanagement.restapi.global.FileMetaData
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -81,6 +80,7 @@ class CreateUpdatePostFragment : Fragment() {
     private var createPostApiCall: Call<CreatePostResDto>? = null
     private var fetchPostApiCall: Call<FetchPostResDto>? = null
     private var updatePostMediaApiCall: Call<UpdatePostMediaResDto>? = null
+    private var fetchPostMediaApiCall: Call<ResponseBody>? = null
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
@@ -120,6 +120,11 @@ class CreateUpdatePostFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
+        // for title
+        if(requireActivity().intent.getStringExtra("fragmentType") == "update_post") {
+            binding.backButtonTitle.text = context?.getText(R.string.update_pet_title)
+        }
 
         // fetch post data for update(if not already fetched)
         if(requireActivity().intent.getStringExtra("fragmentType") == "update_post" &&
@@ -294,7 +299,7 @@ class CreateUpdatePostFragment : Fragment() {
                 if(data != null) {
                     // copy selected photo and get real path
                     createUpdatePostViewModel.photoVideoPathList
-                        .add(ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!))
+                        .add(ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!))
 
                     // create bytearray
                     val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoVideoPathList.last())
@@ -322,7 +327,7 @@ class CreateUpdatePostFragment : Fragment() {
                 if(data != null) {
                     // copy selected photo and get real path
                     createUpdatePostViewModel.photoVideoPathList
-                        .add(ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!))
+                        .add(ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!))
 
                     // save thumbnail
                     createUpdatePostViewModel.thumbnailList.add(null)
@@ -728,8 +733,80 @@ class CreateUpdatePostFragment : Fragment() {
         })
     }
 
-    private fun fetchPostMediaData() {
+    private fun fetchPostMediaData(postMedia: Array<FileMetaData>) {
+        for(index in postMedia.indices) {
+            // create DTO
+            val fetchPostMediaReqDto = FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index.toLong())
 
+            // API call
+            fetchPostMediaApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                .fetchPostMediaReq(fetchPostMediaReqDto)
+            fetchPostMediaApiCall!!.enqueue(object: Callback<ResponseBody> {
+                override fun onResponse(
+                    call: Call<ResponseBody>,
+                    response: Response<ResponseBody>
+                ) {
+                    if(response.isSuccessful) {
+                        // get file extension
+                        val extension = postMedia[index].name.split('.').last()
+
+                        // copy file and get real path
+                        val mediaByteArray = response.body()!!.byteStream().readBytes()
+                        createUpdatePostViewModel.photoVideoPathList
+                            .add(ServerUtil.createCopyAndReturnRealPathServer(context!!, mediaByteArray, extension))
+
+                        // check if image and save thumbnail(video thumbnails are created in the RecyclerView adapter)
+                        if("image" in MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)!!) {
+                            val thumbnail = BitmapFactory.decodeByteArray(mediaByteArray, 0, mediaByteArray.size)
+                            createUpdatePostViewModel.thumbnailList.add(thumbnail)
+                        }
+                        else {
+                            createUpdatePostViewModel.thumbnailList.add(null)
+                        }
+
+                        // update RecyclerView
+                        photoVideoAdapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
+                        binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
+
+                        // update photo/video usage
+                        updatePhotoVideoUsage()
+
+                        // show main scrollview when all is done fetching
+                        if(index == postMedia.size - 1) {
+                            // show loading screen + disable button
+                            binding.createEditPostMainScrollView.visibility = View.VISIBLE
+                            binding.postDataLoadingLayout.visibility = View.GONE
+                            binding.confirmButton.isEnabled = true
+
+                            // set fetched to true
+                            createUpdatePostViewModel.fetchedPostDataForUpdate = true
+
+                            // set views with post data
+                            restoreState()
+                        }
+                    }
+                    else {
+                        // get error message
+                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                        // Toast + Log
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                        Log.d("error", errorMessage)
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    // if the view was destroyed(API call canceled) -> return
+                    if(_binding == null) {
+                        return
+                    }
+
+                    // show(Toast)/log error message
+                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                    Log.d("error", t.message.toString())
+                }
+            })
+        }
     }
 
     private fun fetchPostData() {
@@ -745,26 +822,35 @@ class CreateUpdatePostFragment : Fragment() {
                 response: Response<FetchPostResDto>
             ) {
                 if(response.isSuccessful) {
-                    // fetch post data and save to ViewModel
+                    // fetch post data(excluding media) and save to ViewModel
                     val post = response.body()?.postList!![0]
 
                     createUpdatePostViewModel.petId = post.pet.id
                     createUpdatePostViewModel.isUsingLocation = post.geoTagLat != 0.0
                     createUpdatePostViewModel.disclosure = post.disclosure
-                    createUpdatePostViewModel.hashtagList = post.serializedHashTags.split(',').toMutableList()
-                    hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
+                    if(post.serializedHashTags != "") {
+                        createUpdatePostViewModel.hashtagList = post.serializedHashTags.split(',').toMutableList()
+                        hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
+                    }
                     createUpdatePostViewModel.postEditText = post.contents
 
-                    // show loading screen + disable button
-                    binding.createEditPostMainScrollView.visibility = View.VISIBLE
-                    binding.postDataLoadingLayout.visibility = View.GONE
-                    binding.confirmButton.isEnabled = true
+                    // fetch post media data
+                    if(post.mediaAttachments != null) {
+                        val postMedia = Gson().fromJson(post.mediaAttachments, Array<FileMetaData>::class.java)
+                        fetchPostMediaData(postMedia)
+                    }
+                    else {
+                        // show loading screen + disable button
+                        binding.createEditPostMainScrollView.visibility = View.VISIBLE
+                        binding.postDataLoadingLayout.visibility = View.GONE
+                        binding.confirmButton.isEnabled = true
 
-                    // set fetched to true
-                    createUpdatePostViewModel.fetchedPostDataForUpdate = true
+                        // set fetched to true
+                        createUpdatePostViewModel.fetchedPostDataForUpdate = true
 
-                    // set views with post data
-                    restoreState()
+                        // set views with post data
+                        restoreState()
+                    }
                 }
                 else {
                     // close activity
@@ -852,5 +938,6 @@ class CreateUpdatePostFragment : Fragment() {
         createPostApiCall?.cancel()
         fetchPostApiCall?.cancel()
         updatePostMediaApiCall?.cancel()
+        fetchPostMediaApiCall?.cancel()
     }
 }
