@@ -212,6 +212,7 @@ class MainActivity : AppCompatActivity() {
         }
         return false
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(activeFragmentIndex) {
             0 -> { return false }
