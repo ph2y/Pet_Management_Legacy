@@ -11,6 +11,7 @@ import com.sju18001.petmanagement.R
 
 interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
+    fun startCreateUpdatePostActivity(postId: Long)
 }
 
 private const val MAX_LINE = 5
@@ -26,6 +27,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         val likeButton: ImageButton = view.findViewById(R.id.like_button)
         val commentButton: ImageButton = view.findViewById(R.id.comment_button)
         val likeCountTextView: TextView = view.findViewById(R.id.like_count)
+        val updatePostButton: ImageButton = view.findViewById(R.id.update_post_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,6 +44,11 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         // 댓글 버튼
         holder.commentButton.setOnClickListener {
             communityPostListAdapterInterface.startCommunityCommentActivity(dataSet[position].id)
+        }
+
+        // update post button
+        holder.updatePostButton.setOnClickListener {
+            communityPostListAdapterInterface.startCreateUpdatePostActivity(dataSet[position].id)
         }
     }
 

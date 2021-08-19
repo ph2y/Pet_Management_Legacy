@@ -63,4 +63,16 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
         set(value) {
             handle.set("apiIsLoading", value)
         }
+
+    // for update
+    var fetchedPostDataForUpdate = handle.get<Boolean>("fetchedPostDataForUpdate")?: false
+        set(value) {
+            handle.set("fetchedPostDataForUpdate", value)
+            field = value
+        }
+    var postId = handle.get<Long>("postId")
+        set(value) {
+            handle.set("postId", value)
+            field = value
+        }
 }

@@ -92,6 +92,9 @@ interface ServerApi {
     @POST("api/post/create")
     fun createPostReq(@Body createPostReqDto: CreatePostReqDto): Call<CreatePostResDto>
 
+    @POST("api/post/update")
+    fun updatePostReq(@Body updatePostReqDto: UpdatePostReqDto): Call<UpdatePostResDto>
+
     @POST("api/post/fetch")
     fun fetchPostReq(@Body fetchPostReqDto: FetchPostReqDto): Call<FetchPostResDto>
 
@@ -99,6 +102,8 @@ interface ServerApi {
     @POST("api/post/media/update")
     fun updatePostMediaReq(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>): Call<UpdatePostMediaResDto>
 
+    @POST("api/post/media/fetch")
+    fun fetchPostMediaReq(@Body fetchPostMediaReqDto: FetchPostMediaReqDto): Call<ResponseBody>
 
     // Follow API
     @POST("api/community/follower/fetch")

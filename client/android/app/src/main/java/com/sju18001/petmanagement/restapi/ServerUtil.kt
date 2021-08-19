@@ -9,8 +9,7 @@ import java.io.FileOutputStream
 
 class ServerUtil {
     companion object{
-        // for copying selected image
-        fun createCopyAndReturnRealPath(context: Context, uri: Uri): String {
+        fun createCopyAndReturnRealPathLocal(context: Context, uri: Uri): String {
             val mimeTypeMap = MimeTypeMap.getSingleton()
             val extension = '.' + mimeTypeMap.getExtensionFromMimeType(context.contentResolver.getType(uri))!!
 
@@ -25,6 +24,17 @@ class ServerUtil {
             while (inputStream!!.read(buffer).also { len = it } > 0) outputStream.write(buffer, 0, len)
             outputStream.close()
             inputStream.close()
+
+            return newFile.absolutePath
+        }
+
+        fun createCopyAndReturnRealPathServer(context: Context, byteArray: ByteArray, extension: String): String {
+            val newFilePath = context.applicationInfo.dataDir + File.separator +System.currentTimeMillis() + '.' + extension
+            val newFile = File(newFilePath)
+
+            val outputStream = FileOutputStream(newFile)
+            outputStream.write(byteArray)
+            outputStream.close()
 
             return newFile.absolutePath
         }

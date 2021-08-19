@@ -527,7 +527,7 @@ class EditAccountFragment : Fragment() {
                 }
 
                 // copy selected photo and get real path
-                myPageViewModel.accountPhotoPathValue = ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!)
+                myPageViewModel.accountPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!)
 
                 // set photo to view
                 binding.accountPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPageViewModel.accountPhotoPathValue))

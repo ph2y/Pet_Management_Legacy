@@ -78,7 +78,9 @@ class CommunityFragment : Fragment() {
 
         // for create post FAB
         binding.createPostFab.setOnClickListener {
-            startActivity(Intent(context, CreateUpdatePostActivity::class.java))
+            val createUpdatePostActivityIntent = Intent(context, CreateUpdatePostActivity::class.java)
+            createUpdatePostActivityIntent.putExtra("fragmentType", "create_post")
+            startActivity(createUpdatePostActivityIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
     }
@@ -98,6 +100,14 @@ class CommunityFragment : Fragment() {
                 communityCommentActivityIntent.putExtra("postId", postId)
 
                 startActivity(communityCommentActivityIntent)
+                requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+            }
+
+            override fun startCreateUpdatePostActivity(postId: Long) {
+                val createUpdatePostActivityIntent = Intent(context, CreateUpdatePostActivity::class.java)
+                createUpdatePostActivityIntent.putExtra("fragmentType", "update_post")
+                createUpdatePostActivityIntent.putExtra("postId", postId)
+                startActivity(createUpdatePostActivityIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
         }

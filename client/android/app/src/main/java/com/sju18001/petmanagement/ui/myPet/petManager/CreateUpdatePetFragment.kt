@@ -78,6 +78,11 @@ class CreateUpdatePetFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        // for title
+        if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+            binding.backButtonTitle.text = context?.getText(R.string.update_pet_title)
+        }
+
         // for DatePicker
         val calendar = Calendar.getInstance()
         calendar.timeInMillis = System.currentTimeMillis()
@@ -452,11 +457,6 @@ class CreateUpdatePetFragment : Fragment() {
 
     // for restoring views
     private fun restoreState() {
-        // for title
-        if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
-            binding.backButtonTitle.text = context?.getText(R.string.update_pet_title)
-        }
-
         // set selected photo(if any)
         if(myPetViewModel.petPhotoPathValue != "") {
             binding.petPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPetViewModel.petPhotoPathValue))
@@ -558,7 +558,7 @@ class CreateUpdatePetFragment : Fragment() {
                 }
 
                 // copy selected photo and get real path
-                myPetViewModel.petPhotoPathValue = ServerUtil.createCopyAndReturnRealPath(requireActivity(), data.data!!)
+                myPetViewModel.petPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!)
 
                 // set photo to view
                 binding.petPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPetViewModel.petPhotoPathValue))
