@@ -8,10 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.restapi.dao.Post
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.VideoView
+import android.widget.*
 import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
@@ -145,6 +142,8 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
         override fun onBindViewHolder(holder: ViewPagerHolder, position: Int) {
             communityPostListAdapterInterface.setPostMedia(holder, id, position, mediaAttachments[position].url)
+
+            // 페이지 전환 시 자동 재생
             viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
                     super.onPageSelected(position)
@@ -153,6 +152,18 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
                     }
                 }
             })
+
+            // 클릭 -> 재생, 일시정지
+            val postMediaVideo = holder.postMediaVideo
+            postMediaVideo.setOnClickListener {
+                if(postMediaVideo.isVisible){
+                    if(postMediaVideo.isPlaying){
+                        postMediaVideo.pause()
+                    }else{
+                        postMediaVideo.start()
+                    }
+                }
+            }
         }
     }
 }

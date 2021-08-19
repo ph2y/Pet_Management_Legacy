@@ -186,7 +186,6 @@ class CommunityFragment : Fragment() {
                         if(response.isSuccessful){
                             // 영상
                             if(Util.isUrlVideo(url)){
-                                // Save file by byte array
                                 // TODO: Replace it into ServerUtil.createCopyAndReturnRealPathServer()
                                 // Save file
                                 val dir = File(requireContext().getExternalFilesDir(null).toString() + "/pet_management")
@@ -208,7 +207,7 @@ class CommunityFragment : Fragment() {
                                 val postMediaVideo = holder.postMediaVideo
                                 postMediaVideo.visibility = View.VISIBLE
 
-                                // 영상의 사이즈를 가로로 꽉 채우되, 비율을 유지합니다.
+                                // 영상의 비율을 유지한 채로, 영상의 사이즈를 가로로 꽉 채웁니다.
                                 val retriever = MediaMetadataRetriever()
                                 retriever.setDataSource(requireContext(), uri)
 
@@ -219,19 +218,6 @@ class CommunityFragment : Fragment() {
                                 val ratio: Float = screenWidth.toFloat() / videoWidth.toFloat()
 
                                 postMediaVideo.layoutParams.height = (videoHeight.toFloat() * ratio).toInt()
-
-                                // 터치 이벤트
-                                postMediaVideo.setOnTouchListener { _, event ->
-                                    if(event.action == MotionEvent.ACTION_DOWN){
-                                        if(postMediaVideo.isPlaying){
-                                            postMediaVideo.pause()
-                                        }else{
-                                            postMediaVideo.start()
-                                        }
-                                    }
-
-                                    true
-                                }
 
                                 // 반복 재생
                                 postMediaVideo.setOnCompletionListener {
