@@ -1,49 +1,46 @@
 package com.sju18001.petmanagement.ui.community
 
+import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.media.MediaMetadataRetriever
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.support.v4.media.session.MediaControllerCompat
-import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
+import android.util.AttributeSet
+import android.util.DisplayMetrics
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.MediaController
 import android.widget.Toast
+import android.widget.VideoView
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.sju18001.petmanagement.restapi.dao.Post
-import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager2.widget.ViewPager2
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCommunityBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
-import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
+import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
-import com.sju18001.petmanagement.ui.community.CommunityViewModel
+import com.sju18001.petmanagement.ui.login.LoginViewModel
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
-import java.time.LocalDateTime
+import java.net.URI
+
 
 class CommunityFragment : Fragment() {
-
     private lateinit var communityViewModel: CommunityViewModel
     private var _binding: FragmentCommunityBinding? = null
     private val binding get() = _binding!!
@@ -177,7 +174,7 @@ class CommunityFragment : Fragment() {
                 val body = FetchPostMediaReqDto(id, index)
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchPostMediaReq(body)
                 call!!.enqueue(object: Callback<ResponseBody> {
-                    @RequiresApi(Build.VERSION_CODES.O)
+                    @RequiresApi(Build.VERSION_CODES.R)
                     override fun onResponse(
                         call: Call<ResponseBody>,
                         response: Response<ResponseBody>
@@ -188,8 +185,10 @@ class CommunityFragment : Fragment() {
 
                         if(response.isSuccessful){
                             // 영상
-                            if(url.endsWith(".mp4") || url.endsWith(".webm")){
+                            if(Util.isUrlVideo(url)){
                                 // Save file by byte array
+                                // TODO: Replace it into ServerUtil.createCopyAndReturnRealPathServer()
+                                // Save file
                                 val dir = File(requireContext().getExternalFilesDir(null).toString() + "/pet_management")
                                 if(! dir.exists()){
                                     dir.mkdir()
@@ -203,18 +202,45 @@ class CommunityFragment : Fragment() {
                                 val os = FileOutputStream(file)
                                 os.write(response.body()!!.byteStream().readBytes())
                                 os.close()
+                                val uri = Uri.fromFile(file)
 
                                 // View
                                 val postMediaVideo = holder.postMediaVideo
                                 postMediaVideo.visibility = View.VISIBLE
 
-                                // Controller
-                                val mediaController = MediaController(requireContext())
-                                mediaController.setAnchorView(postMediaVideo)
+                                // 영상의 사이즈를 가로로 꽉 채우되, 비율을 유지합니다.
+                                val retriever = MediaMetadataRetriever()
+                                retriever.setDataSource(requireContext(), uri)
 
-                                postMediaVideo.setMediaController(mediaController)
+                                val videoWidth = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH))
+                                val videoHeight = Integer.parseInt(retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT))
+
+                                val screenWidth = Util.getScreenWidthInPixel(requireActivity())
+                                val ratio: Float = screenWidth.toFloat() / videoWidth.toFloat()
+
+                                postMediaVideo.layoutParams.height = (videoHeight.toFloat() * ratio).toInt()
+
+                                // 터치 이벤트
+                                postMediaVideo.setOnTouchListener { _, event ->
+                                    if(event.action == MotionEvent.ACTION_DOWN){
+                                        if(postMediaVideo.isPlaying){
+                                            postMediaVideo.pause()
+                                        }else{
+                                            postMediaVideo.start()
+                                        }
+                                    }
+
+                                    true
+                                }
+
+                                // 반복 재생
+                                postMediaVideo.setOnCompletionListener {
+                                    postMediaVideo.start()
+                                }
+
+                                // 재생
+                                postMediaVideo.setVideoURI(uri)
                                 postMediaVideo.requestFocus()
-                                postMediaVideo.setVideoURI(Uri.fromFile(file))
                                 postMediaVideo.start()
                             }
                             // 이미지
@@ -227,6 +253,11 @@ class CommunityFragment : Fragment() {
                                 val postMediaImage = holder.postMediaImage
                                 postMediaImage.visibility = View.VISIBLE
                                 postMediaImage.setImageBitmap(photoBitmap)
+
+                                // 영상의 사이즈를 가로로 꽉 채우되, 비율을 유지합니다.
+                                val screenWidth = Util.getScreenWidthInPixel(requireActivity())
+                                val ratio: Float = screenWidth.toFloat() / photoBitmap.width.toFloat()
+                                postMediaImage.layoutParams.height = (photoBitmap.height.toFloat() * ratio).toInt()
                             }
                         }else{
                             // get error message

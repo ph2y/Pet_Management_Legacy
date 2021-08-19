@@ -1,5 +1,7 @@
 package com.sju18001.petmanagement.ui.community
 
+import android.content.Context
+import android.media.MediaMetadataRetriever
 import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +15,7 @@ import android.widget.VideoView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Attachment
@@ -83,10 +86,10 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         if(!data.mediaAttachments.isNullOrEmpty()){
             val mediaAttachments: Array<Attachment> = Gson().fromJson(data.mediaAttachments, Array<Attachment>::class.java)
 
-            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, mediaAttachments!!.size, data.id, mediaAttachments)
+            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, data.id, mediaAttachments)
             holder.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }else{
-            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, 0, arrayOf())
+            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, arrayOf())
         }
     }
 
@@ -123,9 +126,11 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
     }
 
     class PostMediaItemCollectionAdapter(
-        private var communityPostListAdapterInterface: CommunityPostListAdapterInterface, private val pageCount: Int, private val id: Long, private val mediaAttachments: Array<Attachment>
+        private var communityPostListAdapterInterface: CommunityPostListAdapterInterface,
+        private val id: Long,
+        private val mediaAttachments: Array<Attachment>
         ): RecyclerView.Adapter<PostMediaItemCollectionAdapter.ViewPagerHolder>() {
-        override fun getItemCount(): Int = pageCount
+        override fun getItemCount(): Int = mediaAttachments.size
 
         inner class ViewPagerHolder(parent: ViewGroup): RecyclerView.ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.post_media_item, parent, false)
