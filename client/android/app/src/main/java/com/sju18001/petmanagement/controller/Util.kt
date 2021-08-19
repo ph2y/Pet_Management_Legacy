@@ -9,10 +9,12 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.provider.ContactsContract
+import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
@@ -26,8 +28,12 @@ import java.time.ZoneId
 
 class Util {
     companion object{
-        fun convertDpToPixel(pixel: Int): Int{
-            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, pixel.toFloat(), Resources.getSystem().displayMetrics).toInt()
+        fun convertDpToPixel(dp: Int): Int{
+            return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), Resources.getSystem().displayMetrics).toInt()
+        }
+
+        fun convertPixelToDp(context: Context, px: Int): Int{
+            return px / (context.resources.displayMetrics.densityDpi / DisplayMetrics.DENSITY_DEFAULT)
         }
 
         fun hideKeyboard(activity: Activity){
@@ -128,6 +134,17 @@ class Util {
             val now = LocalDateTime.now().atZone(ZoneId.of("Asia/Seoul"))
 
             return kotlin.math.abs(now.toEpochSecond() - time.toEpochSecond())
+        }
+
+        fun isUrlVideo(url: String): Boolean{
+            return url.endsWith(".mp4") || url.endsWith(".webm")
+        }
+
+        @RequiresApi(Build.VERSION_CODES.R)
+        fun getScreenWidthInPixel(activity: Activity) : Int{
+            val windowMetrics = activity.windowManager.currentWindowMetrics
+            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            return windowMetrics.bounds.width() - insets.left - insets.right
         }
     }
 }
