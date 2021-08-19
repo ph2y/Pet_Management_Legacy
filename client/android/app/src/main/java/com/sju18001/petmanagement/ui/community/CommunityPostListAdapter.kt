@@ -73,7 +73,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
             communityPostListAdapterInterface.setAccountDefaultPhoto(holder)
         }
 
-        // Media가 있을 경우
+        // Set ViewPager2
         if(!data.mediaAttachments.isNullOrEmpty()){
             val mediaAttachments: Array<Attachment> = Gson().fromJson(data.mediaAttachments, Array<Attachment>::class.java)
 

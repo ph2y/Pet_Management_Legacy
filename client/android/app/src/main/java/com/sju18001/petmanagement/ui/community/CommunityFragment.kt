@@ -66,16 +66,16 @@ class CommunityFragment : Fragment() {
         // get session manager
         sessionManager = context?.let { SessionManager(it) }!!
 
-        // 어뎁터 초기화
-        initializeAdapter()
-
-        // 초기 post 추가
-        updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
-
         // SwipeRefreshLayout
         binding.layoutSwipeRefresh.setOnRefreshListener {
             resetPostData()
             updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
+        }
+
+        // for create post FAB
+        binding.createPostFab.setOnClickListener {
+            startActivity(Intent(context, CreateUpdatePostActivity::class.java))
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
 
         return binding.root
@@ -84,11 +84,11 @@ class CommunityFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        // for create post FAB
-        binding.createPostFab.setOnClickListener {
-            startActivity(Intent(context, CreateUpdatePostActivity::class.java))
-            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-        }
+        // 어뎁터 초기화
+        initializeAdapter()
+
+        // 초기 post 추가
+        updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
     }
 
     override fun onStop() {
