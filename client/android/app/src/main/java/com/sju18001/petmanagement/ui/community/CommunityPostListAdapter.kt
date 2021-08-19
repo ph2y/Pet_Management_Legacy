@@ -12,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.VideoView
+import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.sju18001.petmanagement.R
@@ -79,10 +80,10 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         if(!data.mediaAttachments.isNullOrEmpty()){
             val mediaAttachments: Array<Attachment> = Gson().fromJson(data.mediaAttachments, Array<Attachment>::class.java)
 
-            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, data.id, mediaAttachments)
+            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, data.id, mediaAttachments, holder.viewPager)
             holder.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }else{
-            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, arrayOf())
+            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, arrayOf(), holder.viewPager)
         }
     }
 
@@ -121,7 +122,8 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
     class PostMediaItemCollectionAdapter(
         private var communityPostListAdapterInterface: CommunityPostListAdapterInterface,
         private val id: Long,
-        private val mediaAttachments: Array<Attachment>
+        private val mediaAttachments: Array<Attachment>,
+        private val viewPager: ViewPager2
         ): RecyclerView.Adapter<PostMediaItemCollectionAdapter.ViewPagerHolder>() {
         override fun getItemCount(): Int = mediaAttachments.size
 
@@ -136,6 +138,14 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
         override fun onBindViewHolder(holder: ViewPagerHolder, position: Int) {
             communityPostListAdapterInterface.setPostMedia(holder, id, position, mediaAttachments[position].url)
+            viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    if(holder.postMediaVideo.isVisible){
+                        holder.postMediaVideo.start()
+                    }
+                }
+            })
         }
     }
 }
