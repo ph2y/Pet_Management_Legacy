@@ -50,12 +50,13 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        updateDataSetToViewHolder(holder, dataSet[position])
+        val safePosition = holder.adapterPosition
+        updateDataSetToViewHolder(holder, dataSet[safePosition])
         setViewMore(holder.contentsTextView, holder.viewMoreTextView)
 
         // 댓글 버튼
         holder.commentButton.setOnClickListener {
-            communityPostListAdapterInterface.startCommunityCommentActivity(dataSet[position].id)
+            communityPostListAdapterInterface.startCommunityCommentActivity(dataSet[safePosition].id)
         }
     }
 
