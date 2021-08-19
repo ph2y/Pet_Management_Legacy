@@ -124,6 +124,12 @@ class MainActivity : AppCompatActivity() {
         fragmentManager.beginTransaction().show(activeFragment).commitNow()
 
         navView.setOnNavigationItemSelectedListener {
+            // 커뮤니티 -> 다른 탭 이동 시
+            if(activeFragment.tag == "community"){
+                // 모든 비디오 재생 중지
+                (activeFragment as CommunityFragment).pauseAllVideos()
+            }
+
             when(it.itemId){
                 R.id.navigation_my_pet -> {
                     addFragmentWhenFragmentIsNull(myPetFragment, "myPet")

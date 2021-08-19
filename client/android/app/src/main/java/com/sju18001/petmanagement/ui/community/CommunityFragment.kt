@@ -102,8 +102,10 @@ class CommunityFragment : Fragment() {
     override fun onStop() {
         super.onStop()
 
-        communityViewModel.lastScrolledIndex = (binding.recyclerViewPost.layoutManager as LinearLayoutManager)
-            .findFirstVisibleItemPosition()
+        // 스크롤 인덱스 저장
+        val layoutManager = (binding.recyclerViewPost.layoutManager as LinearLayoutManager)
+        val firstIndex = layoutManager.findFirstVisibleItemPosition()
+        communityViewModel.lastScrolledIndex = firstIndex
     }
 
     override fun onDestroyView() {
@@ -359,6 +361,17 @@ class CommunityFragment : Fragment() {
         // 데이터셋 변경 알림
         binding.recyclerViewPost.post{
             adapter.notifyDataSetChanged()
+        }
+    }
+
+    fun pauseAllVideos(){
+        val layoutManager = (binding.recyclerViewPost.layoutManager as LinearLayoutManager)
+        val firstIndex = layoutManager.findFirstVisibleItemPosition()
+        val lastIndex = layoutManager.findLastVisibleItemPosition()
+
+        for(i in firstIndex..lastIndex){
+            val videoPostMedia = layoutManager.findViewByPosition(i)?.findViewById<VideoView>(R.id.video_post_media)
+            videoPostMedia?.pause()
         }
     }
 }
