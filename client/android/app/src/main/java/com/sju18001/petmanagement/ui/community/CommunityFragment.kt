@@ -103,8 +103,6 @@ class CommunityFragment : Fragment() {
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
 
-            // TODO: the following code(marked with arrows) is temporary and must be changed(use @Hanbit-Kang's code)
-            // TODO: ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
             override fun startCreateUpdatePostActivity(postId: Long) {
                 val createUpdatePostActivityIntent = Intent(context, CreateUpdatePostActivity::class.java)
                 createUpdatePostActivityIntent.putExtra("fragmentType", "update_post")
@@ -112,7 +110,6 @@ class CommunityFragment : Fragment() {
                 startActivity(createUpdatePostActivityIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
-            // TODO: ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
         }
         binding.recyclerViewPost?.let{
             it.adapter = adapter
