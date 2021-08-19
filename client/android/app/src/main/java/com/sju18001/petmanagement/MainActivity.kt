@@ -173,6 +173,9 @@ class MainActivity : AppCompatActivity() {
 
                     activeFragmentIndex = 2
                     activeFragment = communityFragment
+                    
+                    // 모든 동영상 재생
+                    (activeFragment as CommunityFragment).startAllVideos()
 
                     true
                 }

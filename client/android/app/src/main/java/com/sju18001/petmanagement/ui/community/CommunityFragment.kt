@@ -344,6 +344,17 @@ class CommunityFragment : Fragment() {
         }
     }
 
+    fun startAllVideos(){
+        val layoutManager = (binding.recyclerViewPost.layoutManager as LinearLayoutManager)
+        val firstIndex = layoutManager.findFirstVisibleItemPosition()
+        val lastIndex = layoutManager.findLastVisibleItemPosition()
+
+        for(i in firstIndex..lastIndex){
+            val videoPostMedia = layoutManager.findViewByPosition(i)?.findViewById<VideoView>(R.id.video_post_media)
+            videoPostMedia?.start()
+        }
+    }
+
     fun pauseAllVideos(){
         val layoutManager = (binding.recyclerViewPost.layoutManager as LinearLayoutManager)
         val firstIndex = layoutManager.findFirstVisibleItemPosition()
