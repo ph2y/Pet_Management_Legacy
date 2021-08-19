@@ -30,14 +30,12 @@ import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
-import com.sju18001.petmanagement.ui.login.LoginViewModel
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
-import java.net.URI
 
 
 class CommunityFragment : Fragment() {
@@ -100,6 +98,10 @@ class CommunityFragment : Fragment() {
         _binding = null
 
         isViewDestroyed = true
+
+        // Delete saved files
+        val dir = File(requireContext().getExternalFilesDir(null).toString() + "/pet_management")
+        dir.deleteRecursively()
     }
 
     private fun initializeAdapter(){
