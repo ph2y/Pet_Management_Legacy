@@ -56,6 +56,7 @@ class CommunityFragment : Fragment() {
     
     // 글 새로고침
     private var topPostId: Long? = null
+    private var pageIndex: Int = 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,16 +98,8 @@ class CommunityFragment : Fragment() {
         initializeAdapter()
 
         // 초기 post 추가
+        resetPostData()
         updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        // 스크롤 인덱스 저장
-        val layoutManager = (binding.recyclerViewPost.layoutManager as LinearLayoutManager)
-        val firstIndex = layoutManager.findFirstVisibleItemPosition()
-        communityViewModel.lastScrolledIndex = firstIndex
     }
 
     override fun onDestroyView() {
@@ -303,11 +296,11 @@ class CommunityFragment : Fragment() {
             // 스크롤하여, 최하단에 위치할 시 post 추가 로드
             it.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    val itemCount = adapter.itemCount
-                    if(!recyclerView.canScrollVertically(1) && itemCount != 0 && itemCount % 10 == 0){
+                    if(!recyclerView.canScrollVertically(1) && adapter.itemCount != 0){
                         updateAdapterDataSetByFetchPost(FetchPostReqDto(
-                            ceil(itemCount.toDouble() / 10).toInt(), topPostId, null, null
+                            pageIndex, topPostId, null, null
                         ))
+                        pageIndex += 1
                     }
                 }
             })
@@ -340,12 +333,6 @@ class CommunityFragment : Fragment() {
                             // 데이터셋 변경 알림
                             binding.recyclerViewPost.post{
                                 adapter.notifyDataSetChanged()
-
-                                // 스크롤 로드
-                                if(communityViewModel.lastScrolledIndex != -1){
-                                    binding.recyclerViewPost.scrollToPosition(communityViewModel.lastScrolledIndex)
-                                    communityViewModel.lastScrolledIndex = -1
-                                }
                             }
                         }
                     }
@@ -371,6 +358,7 @@ class CommunityFragment : Fragment() {
     }
 
     private fun resetPostData(){
+        pageIndex = 1
         adapter.resetDataSet()
 
         // 데이터셋 변경 알림
