@@ -39,7 +39,8 @@ import java.io.FileOutputStream
 
 
 class CommunityFragment : Fragment() {
-    private lateinit var communityViewModel: CommunityViewModel
+    val communityViewModel: CommunityViewModel by activityViewModels()
+
     private var _binding: FragmentCommunityBinding? = null
     private val binding get() = _binding!!
 
@@ -60,9 +61,6 @@ class CommunityFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        communityViewModel =
-            ViewModelProvider(this).get(CommunityViewModel::class.java)
-
         _binding = FragmentCommunityBinding.inflate(inflater, container, false)
 
         // get session manager
@@ -95,6 +93,13 @@ class CommunityFragment : Fragment() {
         }
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        communityViewModel.lastScrolledIndex = (binding.recyclerViewPost.layoutManager as LinearLayoutManager)
+            .findFirstVisibleItemPosition()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -107,7 +112,10 @@ class CommunityFragment : Fragment() {
     }
 
     private fun initializeAdapter(){
+        // 빈 배열로 초기화
         adapter = CommunityPostListAdapter(arrayListOf())
+
+        // 인터페이스 구현
         adapter.communityPostListAdapterInterface = object: CommunityPostListAdapterInterface {
             override fun startCommunityCommentActivity(postId: Long) {
                 val communityCommentActivityIntent = Intent(context, CommunityCommentActivity::class.java)
@@ -311,6 +319,9 @@ class CommunityFragment : Fragment() {
                             // 데이터셋 변경 알림
                             binding.recyclerViewPost.post{
                                 adapter.notifyDataSetChanged()
+
+                                // 스크롤 로드
+                                binding.recyclerViewPost.scrollToPosition(communityViewModel.lastScrolledIndex)
                             }
                         }
                     }
