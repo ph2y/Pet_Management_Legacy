@@ -83,11 +83,11 @@ public class PostController {
     }
 
     @PostMapping("/api/post/media/fetch")
-    public ResponseEntity<?> fetchPostMedia(Authentication auth, @Valid @RequestBody FetchPostMediaReqDto reqDto) {
+    public ResponseEntity<?> fetchPostMedia(@Valid @RequestBody FetchPostMediaReqDto reqDto) {
         DtoMetadata dtoMetadata;
         byte[] fileBinData;
         try {
-            fileBinData = postServ.fetchPostMedia(auth, reqDto.getId(), reqDto.getIndex());
+            fileBinData = postServ.fetchPostMedia(reqDto.getId(), reqDto.getIndex());
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());

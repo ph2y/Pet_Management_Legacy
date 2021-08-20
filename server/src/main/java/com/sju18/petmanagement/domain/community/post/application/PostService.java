@@ -107,9 +107,8 @@ public class PostService {
                 ));
     }
 
-    public byte[] fetchPostMedia(Authentication auth, Long postId, Integer fileIndex) throws Exception {
-        Account author = accountServ.fetchCurrentAccount(auth);
-        Post currentPost = postRepository.findByAuthorAndId(author, postId)
+    public byte[] fetchPostMedia(Long postId, Integer fileIndex) throws Exception {
+        Post currentPost = postRepository.findById(postId)
                 .orElseThrow(() -> new Exception(
                         msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
                 ));
