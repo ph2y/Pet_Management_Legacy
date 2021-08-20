@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.community
 
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
@@ -14,15 +15,14 @@ import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCommunityBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchPostReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchPostResDto
+import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
 import com.sju18001.petmanagement.ui.community.CommunityViewModel
 import okhttp3.ResponseBody
@@ -123,11 +123,11 @@ class CommunityFragment : Fragment() {
                     .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
                 call.enqueue(object: Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                        if(response.isSuccessful) {
-                            if(isViewDestroyed){
-                                return
-                            }
+                        if(isViewDestroyed){
+                            return
+                        }
 
+                        if(response.isSuccessful) {
                             // convert photo to byte array + get bitmap
                             val photoByteArray = response.body()!!.byteStream().readBytes()
                             val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
@@ -136,10 +136,6 @@ class CommunityFragment : Fragment() {
                             holder.petPhotoImage.setImageBitmap(photoBitmap)
                         }
                         else {
-                            if(isViewDestroyed){
-                                return
-                            }
-
                             // get error message
                             val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
 
@@ -158,6 +154,48 @@ class CommunityFragment : Fragment() {
 
             override fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder) {
                 holder.petPhotoImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
+            }
+
+            override fun setPostMedia(
+                holder: CommunityPostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder,
+                id: Long,
+                index: Int
+            ) {
+                val body = FetchPostMediaReqDto(id, index)
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchPostMediaReq(body)
+                call!!.enqueue(object: Callback<ResponseBody> {
+                    override fun onResponse(
+                        call: Call<ResponseBody>,
+                        response: Response<ResponseBody>
+                    ) {
+                        if(isViewDestroyed){
+                            return
+                        }
+
+                        if(response.isSuccessful){
+                            // convert photo to byte array + get bitmap
+                            val photoByteArray = response.body()!!.byteStream().readBytes()
+                            val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
+
+                            // set account photo + save photo value
+                            holder.postMediaImage.setImageBitmap(photoBitmap)
+                        }else{
+                            // get error message
+                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                            // Toast + Log
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        if(isViewDestroyed){
+                            return
+                        }
+
+                        Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
+                    }
+                })
             }
         }
 
