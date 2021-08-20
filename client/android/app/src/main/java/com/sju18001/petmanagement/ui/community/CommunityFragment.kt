@@ -1,6 +1,8 @@
 package com.sju18001.petmanagement.ui.community
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
@@ -30,6 +32,7 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
+import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateCommentActivity
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -117,12 +120,21 @@ class CommunityFragment : Fragment() {
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
 
-            override fun startCreateUpdatePostActivity(postId: Long) {
-                val createUpdatePostActivityIntent = Intent(context, CreateUpdatePostActivity::class.java)
-                createUpdatePostActivityIntent.putExtra("fragmentType", "update_post")
-                createUpdatePostActivityIntent.putExtra("postId", postId)
-                startActivity(createUpdatePostActivityIntent)
-                requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+            override fun onClickPostFunctionButton(id: Long) {
+                val builder = AlertDialog.Builder(requireActivity())
+                builder.setItems(arrayOf("수정", "삭제"), DialogInterface.OnClickListener{ _, which ->
+                    when(which){
+                        0 -> {
+                            // 수정
+                            startCreateUpdatePostActivity(id)
+                        }
+                        1 -> {
+                            // 삭제
+
+                        }
+                    }
+                })
+                    .create().show()
             }
 
             override fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder){
@@ -352,6 +364,16 @@ class CommunityFragment : Fragment() {
             adapter.notifyDataSetChanged()
         }
     }
+
+
+    private fun startCreateUpdatePostActivity(postId: Long) {
+        val createUpdatePostActivityIntent = Intent(context, CreateUpdatePostActivity::class.java)
+        createUpdatePostActivityIntent.putExtra("fragmentType", "update_post")
+        createUpdatePostActivityIntent.putExtra("postId", postId)
+        startActivity(createUpdatePostActivityIntent)
+        requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
 
     fun startAllVideos(){
         val layoutManager = (binding.recyclerViewPost.layoutManager as LinearLayoutManager)

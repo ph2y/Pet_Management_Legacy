@@ -14,7 +14,7 @@ import com.sju18001.petmanagement.restapi.global.FileMetaData
 
 interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
-    fun startCreateUpdatePostActivity(postId: Long)
+    fun onClickPostFunctionButton(id: Long)
     fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder)
     fun setPostMedia(holder: CommunityPostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String)
@@ -35,7 +35,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         val likeButton: ImageButton = view.findViewById(R.id.like_button)
         val commentButton: ImageButton = view.findViewById(R.id.comment_button)
         val likeCountTextView: TextView = view.findViewById(R.id.like_count)
-        val updatePostButton: ImageButton = view.findViewById(R.id.update_post_button)
+        val postDialogButton: ImageButton = view.findViewById(R.id.post_dialog_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -55,9 +55,9 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
             communityPostListAdapterInterface.startCommunityCommentActivity(dataSet[safePosition].id)
         }
 
-        // update post button
-        holder.updatePostButton.setOnClickListener {
-            communityPostListAdapterInterface.startCreateUpdatePostActivity(dataSet[position].id)
+        // ... 버튼 -> 글 수정 / 글 삭제
+        holder.postDialogButton.setOnClickListener {
+            communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[position].id)
         }
     }
 
