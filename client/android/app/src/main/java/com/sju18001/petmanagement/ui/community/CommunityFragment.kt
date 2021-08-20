@@ -36,6 +36,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.math.ceil
 
 
 class CommunityFragment : Fragment() {
@@ -54,7 +55,6 @@ class CommunityFragment : Fragment() {
     
     // 글 새로고침
     private var topPostId: Long? = null
-    private var pageIndex: Int = 1
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -290,11 +290,11 @@ class CommunityFragment : Fragment() {
             // 스크롤하여, 최하단에 위치할 시 post 추가 로드
             it.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if(!recyclerView.canScrollVertically(1)){
+                    val itemCount = adapter.itemCount
+                    if(!recyclerView.canScrollVertically(1) && itemCount != 0 && itemCount % 10 == 0){
                         updateAdapterDataSetByFetchPost(FetchPostReqDto(
-                            pageIndex, topPostId, null, null
+                            ceil(itemCount.toDouble() / 10).toInt(), topPostId, null, null
                         ))
-                        pageIndex += 1
                     }
                 }
             })
@@ -358,7 +358,6 @@ class CommunityFragment : Fragment() {
     }
 
     private fun resetPostData(){
-        pageIndex = 1
         adapter.resetDataSet()
 
         // 데이터셋 변경 알림
