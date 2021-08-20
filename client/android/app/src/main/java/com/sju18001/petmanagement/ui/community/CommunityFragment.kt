@@ -130,7 +130,15 @@ class CommunityFragment : Fragment() {
                         }
                         1 -> {
                             // 삭제
-                            deletePost(id)
+                            val builder = AlertDialog.Builder(requireActivity())
+                            builder.setMessage(getString(R.string.post_delete_dialog))
+                                .setPositiveButton(R.string.confirm,
+                                    DialogInterface.OnClickListener { _, _ -> deletePost(id) }
+                                )
+                                .setNegativeButton(R.string.cancel,
+                                    DialogInterface.OnClickListener { dialog, _ -> dialog.cancel() }
+                                )
+                                .create().show()
                         }
                     }
                 })
