@@ -34,6 +34,8 @@ import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateCommentActivity
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -120,29 +122,32 @@ class CommunityFragment : Fragment() {
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
 
-            override fun onClickPostFunctionButton(id: Long) {
-                val builder = AlertDialog.Builder(requireActivity())
-                builder.setItems(arrayOf("수정", "삭제"), DialogInterface.OnClickListener{ _, which ->
-                    when(which){
-                        0 -> {
-                            // 수정
-                            startCreateUpdatePostActivity(id)
+            override fun onClickPostFunctionButton(postId: Long, authorId: Long) {
+                val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchAccountReq(body)
+                call!!.enqueue(object: Callback<FetchAccountResDto> {
+                    override fun onResponse(
+                        call: Call<FetchAccountResDto>,
+                        response: Response<FetchAccountResDto>
+                    ) {
+                        if(isViewDestroyed){
+                            return
                         }
-                        1 -> {
-                            // 삭제
-                            val builder = AlertDialog.Builder(requireActivity())
-                            builder.setMessage(getString(R.string.post_delete_dialog))
-                                .setPositiveButton(R.string.confirm,
-                                    DialogInterface.OnClickListener { _, _ -> deletePost(id) }
-                                )
-                                .setNegativeButton(R.string.cancel,
-                                    DialogInterface.OnClickListener { dialog, _ -> dialog.cancel() }
-                                )
-                                .create().show()
+
+                        if(response.isSuccessful){
+                            // 글 작성자 == 현재 로그인해있는 계정
+                            if(response.body()!!.id == authorId){
+                                createPostDialogForAuthor(postId)
+                            }else{
+                                createPostDialogForNonAuthor()
+                            }
                         }
                     }
+
+                    override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
+                        createPostDialogForNonAuthor()
+                    }
                 })
-                    .create().show()
             }
 
             override fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder){
@@ -373,6 +378,31 @@ class CommunityFragment : Fragment() {
     }
 
 
+    private fun createPostDialogForAuthor(postId: Long){
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setItems(arrayOf("수정", "삭제"), DialogInterface.OnClickListener{ _, which ->
+            when(which){
+                0 -> {
+                    // 수정
+                    startCreateUpdatePostActivity(postId)
+                }
+                1 -> {
+                    // 삭제
+                    val builder = AlertDialog.Builder(requireActivity())
+                    builder.setMessage(getString(R.string.post_delete_dialog))
+                        .setPositiveButton(R.string.confirm,
+                            DialogInterface.OnClickListener { _, _ -> deletePost(postId) }
+                        )
+                        .setNegativeButton(R.string.cancel,
+                            DialogInterface.OnClickListener { dialog, _ -> dialog.cancel() }
+                        )
+                        .create().show()
+                }
+            }
+        })
+            .create().show()
+    }
+
     private fun startCreateUpdatePostActivity(postId: Long) {
         val createUpdatePostActivityIntent = Intent(context, CreateUpdatePostActivity::class.java)
         createUpdatePostActivityIntent.putExtra("fragmentType", "update_post")
@@ -409,6 +439,18 @@ class CommunityFragment : Fragment() {
                 Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
             }
         })
+    }
+
+    private fun createPostDialogForNonAuthor(){
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setItems(arrayOf("신고"), DialogInterface.OnClickListener{ _, which ->
+            when(which){
+                0 -> {
+                    // TODO: 기능 추가
+                }
+            }
+        })
+            .create().show()
     }
 
 
