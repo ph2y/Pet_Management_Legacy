@@ -1,8 +1,5 @@
 package com.sju18001.petmanagement.ui.community
 
-import android.content.Context
-import android.media.MediaMetadataRetriever
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.restapi.dao.Post
@@ -13,10 +10,7 @@ import androidx.core.view.isVisible
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.restapi.RetrofitBuilder
-import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dao.Attachment
+import com.sju18001.petmanagement.restapi.global.FileMetaData
 
 interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
@@ -83,7 +77,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
         // Set ViewPager2
         if(!data.mediaAttachments.isNullOrEmpty()){
-            val mediaAttachments: Array<Attachment> = Gson().fromJson(data.mediaAttachments, Array<Attachment>::class.java)
+            val mediaAttachments: Array<FileMetaData> = Gson().fromJson(data.mediaAttachments, Array<FileMetaData>::class.java)
 
             holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, data.id, mediaAttachments, holder.viewPager)
             holder.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
@@ -127,7 +121,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
     class PostMediaItemCollectionAdapter(
         private var communityPostListAdapterInterface: CommunityPostListAdapterInterface,
         private val id: Long,
-        private val mediaAttachments: Array<Attachment>,
+        private val mediaAttachments: Array<FileMetaData>,
         private val viewPager: ViewPager2
         ): RecyclerView.Adapter<PostMediaItemCollectionAdapter.ViewPagerHolder>() {
         override fun getItemCount(): Int = mediaAttachments.size
