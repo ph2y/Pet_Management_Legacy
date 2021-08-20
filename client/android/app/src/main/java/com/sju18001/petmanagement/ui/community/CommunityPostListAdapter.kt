@@ -55,7 +55,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
             communityPostListAdapterInterface.startCommunityCommentActivity(dataSet[safePosition].id)
         }
 
-        // ... 버튼 -> 글 수정 / 글 삭제
+        // ... 버튼 -> Dialog 띄우기
         holder.postDialogButton.setOnClickListener {
             communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[position].id, dataSet[position].author.id, position)
         }

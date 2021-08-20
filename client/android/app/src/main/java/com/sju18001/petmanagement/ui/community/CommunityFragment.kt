@@ -424,6 +424,7 @@ class CommunityFragment : Fragment() {
                 }
 
                 if(response.isSuccessful){
+                    // 데이터셋에서 삭제
                     adapter.removeItem(position)
                     adapter.notifyItemRemoved(position)
 
