@@ -47,6 +47,14 @@ data class FetchPostResDto (
     val isLast: Boolean?
 )
 
+data class DeletePostReqDto (
+    val id: Long
+)
+
+data class DeletePostResDto (
+    val _metadata: DtoMetadata
+)
+
 data class FetchPostMediaReqDto (
     val id: Long,
     val index: Int

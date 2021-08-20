@@ -130,7 +130,7 @@ class CommunityFragment : Fragment() {
                         }
                         1 -> {
                             // 삭제
-
+                            deletePost(id)
                         }
                     }
                 })
@@ -196,7 +196,6 @@ class CommunityFragment : Fragment() {
                         if(response.isSuccessful){
                             // 영상
                             if(Util.isUrlVideo(url)){
-                                // TODO: Replace it into ServerUtil.createCopyAndReturnRealPathServer()
                                 // Save file
                                 val dir = File(requireContext().getExternalFilesDir(null).toString() + "/pet_management")
                                 if(! dir.exists()){
@@ -372,6 +371,36 @@ class CommunityFragment : Fragment() {
         createUpdatePostActivityIntent.putExtra("postId", postId)
         startActivity(createUpdatePostActivityIntent)
         requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    private fun deletePost(id: Long){
+        val body = DeletePostReqDto(id)
+        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).deletePostReq(body)
+        call!!.enqueue(object: Callback<DeletePostResDto> {
+            override fun onResponse(
+                call: Call<DeletePostResDto>,
+                response: Response<DeletePostResDto>
+            ) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                if(response.isSuccessful){
+                    Toast.makeText(context, getString(R.string.delete_post_successful), Toast.LENGTH_LONG).show()
+                }else{
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onFailure(call: Call<DeletePostResDto>, t: Throwable) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
+            }
+        })
     }
 
 

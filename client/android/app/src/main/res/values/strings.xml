@@ -172,7 +172,7 @@
     <string name="update_comment_success">댓글을 수정하였습니다.</string>
     <string name="delete_comment_success">댓글을 삭제하였습니다.</string>
 
-    <!-- Create Update Post Fragment -->
+    <!-- Create Update Delete Post Fragment -->
     <string name="create_post_title">글 쓰기</string>
     <string name="update_post_title">글 수정</string>
     <string name="pet_name_spinner_placeholder">펫 선택</string>
@@ -198,6 +198,7 @@
     <string name="pet_not_selected_message">펫을 선택해주세요!</string>
     <string name="create_post_successful">글 쓰기에 성공했어요!</string>
     <string name="update_post_successful">글 수정에 성공했어요!</string>
+    <string name="delete_post_successful">글 삭제에 성공했어요!</string>
     <string name="post_data_loading_message">글 정보 불러오는 중…</string>
 
     <!-- Follower/Following Fragment -->

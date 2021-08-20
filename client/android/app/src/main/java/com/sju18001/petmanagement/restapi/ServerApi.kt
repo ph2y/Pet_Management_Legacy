@@ -98,6 +98,9 @@ interface ServerApi {
     @POST("api/post/fetch")
     fun fetchPostReq(@Body fetchPostReqDto: FetchPostReqDto): Call<FetchPostResDto>
 
+    @POST("api/post/delete")
+    fun deletePostReq(@Body deletePostReqDto: DeletePostReqDto): Call<DeletePostResDto>
+
     @POST("api/post/media/fetch")
     fun fetchPostMediaReq(@Body fetchPostMediaReqDto: FetchPostMediaReqDto): Call<ResponseBody>
 
