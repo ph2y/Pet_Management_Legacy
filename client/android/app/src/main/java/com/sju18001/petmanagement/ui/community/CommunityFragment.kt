@@ -16,6 +16,7 @@ import android.widget.MediaController
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
@@ -191,15 +192,27 @@ class CommunityFragment : Fragment() {
                                     dir.mkdir()
                                 }
 
-                                val file = if(url.endsWith(".mp4")){
-                                    File.createTempFile("post_media", ".mp4", dir)
+                                // 해당 파일 검색
+                                val filePrefix = "${id}_${index}_"
+                                val prevUri = dir.walk().find { it.name.startsWith(filePrefix) }
+
+                                // 파일이 없을 때만 파일 생성
+                                val uri: Uri = if(prevUri != null){
+                                    prevUri.toUri()
                                 }else{
-                                    File.createTempFile("post_media", ".webm", dir)
+                                    val file = File.createTempFile(
+                                        filePrefix,
+                                        ".${url.substringAfterLast(".", "")}",
+                                        dir
+                                    )
+
+                                    val os = FileOutputStream(file)
+                                    os.write(response.body()!!.byteStream().readBytes())
+                                    os.close()
+
+                                    Uri.fromFile(file)
                                 }
-                                val os = FileOutputStream(file)
-                                os.write(response.body()!!.byteStream().readBytes())
-                                os.close()
-                                val uri = Uri.fromFile(file)
+
 
                                 // View
                                 val postMediaVideo = holder.postMediaVideo
