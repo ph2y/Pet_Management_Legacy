@@ -6,7 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
 class CommunityViewModel(private val handle: SavedStateHandle): ViewModel() {
-    var lastScrolledIndex = handle.get<Int>("lastScrolledIndex")?: 0
+    var lastScrolledIndex = handle.get<Int>("lastScrolledIndex")?: -1
         set(value){
             handle.set("lastScrolledIndex", value)
             field = value
