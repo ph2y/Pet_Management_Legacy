@@ -68,6 +68,13 @@ class CommunityFragment : Fragment() {
         // get session manager
         sessionManager = context?.let { SessionManager(it) }!!
 
+        // 어뎁터 초기화
+        initializeAdapter()
+
+        // 초기 post 추가
+        resetPostData()
+        updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
+
         // SwipeRefreshLayout
         binding.layoutSwipeRefresh.setOnRefreshListener {
             resetPostData()
@@ -81,17 +88,6 @@ class CommunityFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        // 어뎁터 초기화
-        initializeAdapter()
-
-        // 초기 post 추가
-        resetPostData()
-        updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
     }
 
     override fun onDestroyView() {
