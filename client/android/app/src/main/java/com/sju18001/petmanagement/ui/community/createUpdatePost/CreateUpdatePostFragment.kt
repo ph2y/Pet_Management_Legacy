@@ -832,7 +832,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun fetchPostMediaData(postMedia: Array<FileMetaData>) {
         for(index in postMedia.indices) {
             // create DTO
-            val fetchPostMediaReqDto = FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index.toLong())
+            val fetchPostMediaReqDto = FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index)
 
             // API call
             fetchPostMediaApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
