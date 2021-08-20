@@ -329,7 +329,10 @@ class CommunityFragment : Fragment() {
                                 adapter.notifyDataSetChanged()
 
                                 // 스크롤 로드
-                                binding.recyclerViewPost.scrollToPosition(communityViewModel.lastScrolledIndex)
+                                if(communityViewModel.lastScrolledIndex != -1){
+                                    binding.recyclerViewPost.scrollToPosition(communityViewModel.lastScrolledIndex)
+                                    communityViewModel.lastScrolledIndex = -1
+                                }
                             }
                         }
                     }
