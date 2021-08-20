@@ -14,7 +14,7 @@ import com.sju18001.petmanagement.restapi.global.FileMetaData
 
 interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
-    fun onClickPostFunctionButton(postId: Long, authorId: Long)
+    fun onClickPostFunctionButton(postId: Long, authorId: Long, position: Int)
     fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder)
     fun setPostMedia(holder: CommunityPostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String)
@@ -57,7 +57,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
         // ... 버튼 -> 글 수정 / 글 삭제
         holder.postDialogButton.setOnClickListener {
-            communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[position].id, dataSet[position].author.id)
+            communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[position].id, dataSet[position].author.id, position)
         }
     }
 
@@ -112,6 +112,10 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
     fun addItem(item: Post){
         dataSet.add(item)
+    }
+
+    fun removeItem(index: Int){
+        dataSet.removeAt(index)
     }
 
     fun resetDataSet(){

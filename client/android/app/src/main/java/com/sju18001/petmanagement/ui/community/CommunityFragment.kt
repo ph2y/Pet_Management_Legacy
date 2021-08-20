@@ -122,7 +122,7 @@ class CommunityFragment : Fragment() {
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
 
-            override fun onClickPostFunctionButton(postId: Long, authorId: Long) {
+            override fun onClickPostFunctionButton(postId: Long, authorId: Long, position: Int) {
                 val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchAccountReq(body)
                 call!!.enqueue(object: Callback<FetchAccountResDto> {
@@ -137,7 +137,7 @@ class CommunityFragment : Fragment() {
                         if(response.isSuccessful){
                             // 글 작성자 == 현재 로그인해있는 계정
                             if(response.body()!!.id == authorId){
-                                createPostDialogForAuthor(postId)
+                                createPostDialogForAuthor(postId, position)
                             }else{
                                 createPostDialogForNonAuthor()
                             }
@@ -378,7 +378,7 @@ class CommunityFragment : Fragment() {
     }
 
 
-    private fun createPostDialogForAuthor(postId: Long){
+    private fun createPostDialogForAuthor(postId: Long, position: Int){
         val builder = AlertDialog.Builder(requireActivity())
         builder.setItems(arrayOf("수정", "삭제"), DialogInterface.OnClickListener{ _, which ->
             when(which){
@@ -391,7 +391,7 @@ class CommunityFragment : Fragment() {
                     val builder = AlertDialog.Builder(requireActivity())
                     builder.setMessage(getString(R.string.post_delete_dialog))
                         .setPositiveButton(R.string.confirm,
-                            DialogInterface.OnClickListener { _, _ -> deletePost(postId) }
+                            DialogInterface.OnClickListener { _, _ -> deletePost(postId, position) }
                         )
                         .setNegativeButton(R.string.cancel,
                             DialogInterface.OnClickListener { dialog, _ -> dialog.cancel() }
@@ -411,7 +411,7 @@ class CommunityFragment : Fragment() {
         requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
     }
 
-    private fun deletePost(id: Long){
+    private fun deletePost(id: Long, position: Int){
         val body = DeletePostReqDto(id)
         val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).deletePostReq(body)
         call!!.enqueue(object: Callback<DeletePostResDto> {
@@ -424,6 +424,9 @@ class CommunityFragment : Fragment() {
                 }
 
                 if(response.isSuccessful){
+                    adapter.removeItem(position)
+                    adapter.notifyItemRemoved(position)
+
                     Toast.makeText(context, getString(R.string.delete_post_successful), Toast.LENGTH_LONG).show()
                 }else{
                     val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
