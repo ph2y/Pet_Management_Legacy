@@ -842,33 +842,35 @@ class CreateUpdatePostFragment : Fragment() {
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
+                    // if the view was destroyed(API call canceled) -> return
+                    if(_binding == null) {
+                        return
+                    }
+
                     if(response.isSuccessful) {
                         // get file extension
                         val extension = postMedia[index].name.split('.').last()
 
                         // copy file and get real path
                         val mediaByteArray = response.body()!!.byteStream().readBytes()
-                        createUpdatePostViewModel.photoVideoPathList
-                            .add(ServerUtil.createCopyAndReturnRealPathServer(context!!, mediaByteArray, extension))
+                        createUpdatePostViewModel.photoVideoPathList[index] =
+                            ServerUtil.createCopyAndReturnRealPathServer(context!!, mediaByteArray, extension)
 
                         // check if image and save thumbnail(video thumbnails are created in the RecyclerView adapter)
                         if("image" in MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)!!) {
                             val thumbnail = BitmapFactory.decodeByteArray(mediaByteArray, 0, mediaByteArray.size)
-                            createUpdatePostViewModel.thumbnailList.add(thumbnail)
+                            createUpdatePostViewModel.thumbnailList[index] = thumbnail
                         }
                         else {
-                            createUpdatePostViewModel.thumbnailList.add(null)
+                            createUpdatePostViewModel.thumbnailList[index] = null
                         }
 
-                        // update RecyclerView
-                        photoVideoAdapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
-                        binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
+                        // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
+                        if("" !in createUpdatePostViewModel.photoVideoPathList) {
+                            // update RecyclerView and photo/video usage
+                            photoVideoAdapter.setResult(createUpdatePostViewModel.thumbnailList)
+                            updatePhotoVideoUsage()
 
-                        // update photo/video usage
-                        updatePhotoVideoUsage()
-
-                        // show main scrollview when all is done fetching
-                        if(index == postMedia.size - 1) {
                             // show loading screen + disable button
                             binding.createEditPostMainScrollView.visibility = View.VISIBLE
                             binding.postDataLoadingLayout.visibility = View.GONE
@@ -934,6 +936,13 @@ class CreateUpdatePostFragment : Fragment() {
                     // fetch post media data
                     if(post.mediaAttachments != null) {
                         val postMedia = Gson().fromJson(post.mediaAttachments, Array<FileMetaData>::class.java)
+
+                        // initialize lists
+                        for(i in postMedia.indices) {
+                            createUpdatePostViewModel.photoVideoPathList.add("")
+                            createUpdatePostViewModel.thumbnailList.add(null)
+                        }
+
                         fetchPostMediaData(postMedia)
                     }
                     else {
