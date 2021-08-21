@@ -104,7 +104,7 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/policy_lookup"
+                android:id="@+id/terms_and_policies__lookup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -224,7 +224,7 @@
                 android:layout_marginTop="30dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/info_version_title"
-                app:layout_constraintBottom_toTopOf="@+id/policy_lookup"
+                app:layout_constraintBottom_toTopOf="@+id/terms_and_policies__lookup"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/theme_lookup" />
@@ -292,7 +292,7 @@
                         android:layout_marginStart="10dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
-                        android:text="0.0.1"
+                        android:text="@string/version"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -307,7 +307,7 @@
                         android:layout_marginStart="20dp"
                         android:layout_marginTop="5dp"
                         android:layout_marginBottom="5dp"
-                        android:text="@string/version"
+                        android:text="@string/version_title"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/version_text"
@@ -329,7 +329,7 @@
                 app:layout_constraintBottom_toTopOf="@+id/version"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/policy_lookup">
+                app:layout_constraintTop_toBottomOf="@+id/terms_and_policies__lookup">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"

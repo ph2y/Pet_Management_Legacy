@@ -8,8 +8,9 @@ import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.ActivityMyPageBinding
-import com.sju18001.petmanagement.databinding.ActivityMyPetBinding
 import com.sju18001.petmanagement.ui.myPage.account.EditAccountFragment
+import com.sju18001.petmanagement.ui.myPage.information.LicenseFragment
+import com.sju18001.petmanagement.ui.myPage.information.TermsAndPoliciesFragment
 import com.sju18001.petmanagement.ui.myPage.preferences.NotificationPreferencesFragment
 import com.sju18001.petmanagement.ui.myPage.preferences.PreferencesFragment
 import com.sju18001.petmanagement.ui.myPage.preferences.ThemePreferencesFragment
@@ -54,6 +55,14 @@ class MyPageActivity : AppCompatActivity() {
                 "theme_preferences" -> {
                     actionBar?.setTitle(R.string.theme_preferences)
                     ThemePreferencesFragment()
+                }
+                "terms_and_policies" -> {
+                    actionBar?.setTitle(R.string.terms_and_policies_title)
+                    TermsAndPoliciesFragment()
+                }
+                "license" -> {
+                    actionBar?.setTitle(R.string.license_title)
+                    LicenseFragment()
                 }
                 else -> PreferencesFragment()
             }
