@@ -104,6 +104,19 @@ class MyPageFragment : Fragment() {
             startActivity(themePreferencesIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
+
+        binding.termsAndPoliciesLookup.setOnClickListener {
+            val termsAndPoliciesIntent = Intent(context, MyPageActivity::class.java)
+            termsAndPoliciesIntent.putExtra("fragmentType", "terms_and_policies")
+            startActivity(termsAndPoliciesIntent)
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+        }
+        binding.licenseLookup.setOnClickListener {
+            val licenseIntent = Intent(context, MyPageActivity::class.java)
+            licenseIntent.putExtra("fragmentType", "license")
+            startActivity(licenseIntent)
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+        }
     }
 
     override fun onResume() {
