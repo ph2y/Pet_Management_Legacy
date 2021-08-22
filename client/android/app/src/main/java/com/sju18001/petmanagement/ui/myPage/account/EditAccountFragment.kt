@@ -40,6 +40,7 @@ class EditAccountFragment : Fragment() {
 
     // constant variables
     private val PICK_PHOTO = 0
+    private var EDIT_ACCOUNT_DIRECTORY: String = "edit_account"
 
     private lateinit var editAccountViewModel: EditAccountViewModel
     private var _binding: FragmentEditAccountBinding? = null
@@ -527,7 +528,8 @@ class EditAccountFragment : Fragment() {
                 }
 
                 // copy selected photo and get real path
-                myPageViewModel.accountPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!)
+                myPageViewModel.accountPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
+                    data.data!!, EDIT_ACCOUNT_DIRECTORY)
 
                 // set photo to view
                 binding.accountPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPageViewModel.accountPhotoPathValue))

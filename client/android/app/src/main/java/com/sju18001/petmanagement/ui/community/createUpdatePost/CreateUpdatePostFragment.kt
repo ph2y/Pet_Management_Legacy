@@ -59,6 +59,7 @@ class CreateUpdatePostFragment : Fragment() {
     private var DISCLOSURE_PUBLIC: String = "PUBLIC"
     private var DISCLOSURE_PRIVATE: String = "PRIVATE"
     private var DISCLOSURE_FRIEND: String = "FRIEND"
+    private var CREATE_UPDATE_POST_DIRECTORY: String = "create_update_post"
 
     // variable for ViewModel
     private val createUpdatePostViewModel: CreateUpdatePostViewModel by activityViewModels()
@@ -296,7 +297,7 @@ class CreateUpdatePostFragment : Fragment() {
                 if(data != null) {
                     // copy selected photo and get real path
                     createUpdatePostViewModel.photoVideoPathList
-                        .add(ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!))
+                        .add(ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!, CREATE_UPDATE_POST_DIRECTORY))
 
                     // create bytearray
                     val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoVideoPathList.last())
@@ -324,7 +325,7 @@ class CreateUpdatePostFragment : Fragment() {
                 if(data != null) {
                     // copy selected photo and get real path
                     createUpdatePostViewModel.photoVideoPathList
-                        .add(ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!))
+                        .add(ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!, CREATE_UPDATE_POST_DIRECTORY))
 
                     // save thumbnail
                     createUpdatePostViewModel.thumbnailList.add(null)
@@ -854,7 +855,7 @@ class CreateUpdatePostFragment : Fragment() {
                         // copy file and get real path
                         val mediaByteArray = response.body()!!.byteStream().readBytes()
                         createUpdatePostViewModel.photoVideoPathList[index] =
-                            ServerUtil.createCopyAndReturnRealPathServer(context!!, mediaByteArray, extension)
+                            ServerUtil.createCopyAndReturnRealPathServer(context!!, mediaByteArray, extension, CREATE_UPDATE_POST_DIRECTORY)
 
                         // check if image and save thumbnail(video thumbnails are created in the RecyclerView adapter)
                         if("image" in MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)!!) {

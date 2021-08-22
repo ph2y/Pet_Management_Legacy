@@ -9,11 +9,14 @@ import java.io.FileOutputStream
 
 class ServerUtil {
     companion object{
-        fun createCopyAndReturnRealPathLocal(context: Context, uri: Uri): String {
+        fun createCopyAndReturnRealPathLocal(context: Context, uri: Uri, directory: String): String {
             val mimeTypeMap = MimeTypeMap.getSingleton()
-            val extension = '.' + mimeTypeMap.getExtensionFromMimeType(context.contentResolver.getType(uri))!!
+            val extension = mimeTypeMap.getExtensionFromMimeType(context.contentResolver.getType(uri))!!
 
-            val newFilePath = context.applicationInfo.dataDir + File.separator + System.currentTimeMillis() + extension
+            val baseDirectory = context.getExternalFilesDir(null).toString() + File.separator + directory
+            if(!File(baseDirectory).exists()) { File(baseDirectory).mkdir() }
+
+            val newFilePath = baseDirectory + File.separator + System.currentTimeMillis() + '.' + extension
             val newFile = File(newFilePath)
 
             val inputStream = context.contentResolver.openInputStream(uri)
@@ -28,8 +31,11 @@ class ServerUtil {
             return newFile.absolutePath
         }
 
-        fun createCopyAndReturnRealPathServer(context: Context, byteArray: ByteArray, extension: String): String {
-            val newFilePath = context.applicationInfo.dataDir + File.separator +System.currentTimeMillis() + '.' + extension
+        fun createCopyAndReturnRealPathServer(context: Context, byteArray: ByteArray, extension: String, directory: String): String {
+            val baseDirectory = context.getExternalFilesDir(null).toString() + File.separator + directory
+            if(!File(baseDirectory).exists()) { File(baseDirectory).mkdir() }
+
+            val newFilePath = baseDirectory + File.separator + System.currentTimeMillis() + '.' + extension
             val newFile = File(newFilePath)
 
             val outputStream = FileOutputStream(newFile)
