@@ -126,6 +126,7 @@
     <string name="version">0.0.1</string>
 
     <!-- Preferences Fragment -->
+    <string name="preference_file_key">com.sju18.petmanagement.PREFERENCE_FILE_KEY</string>
     <string name="map_radius">지도 반경 설정</string>
 
     <!-- Feed Preferences Fragment -->
@@ -134,16 +135,19 @@
     <string name="ad_notification">광고 알림</string>
 
     <!-- Theme Preferences Fragment -->
+    <string name="saved_theme_preference_key">theme_preference_key</string>
     <string name="light_theme">라이트 테마</string>
     <string name="dark_theme">다크 테마</string>
     <string name="system_theme">시스템 테마</string>
 
     <!-- Terms and Policies Fragment -->
     <string name="terms_and_policies_title">이용약관</string>
+    <!-- TODO: Change text to terms and policies text -->
     <string name="terms_and_policies_content">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
 
     <!-- License Fragment -->
     <string name="license_title">라이센스</string>
+    <!-- TODO: Change text to license text -->
     <string name="license_content">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
 
     <!-- Account Profile Edit Fragment -->
