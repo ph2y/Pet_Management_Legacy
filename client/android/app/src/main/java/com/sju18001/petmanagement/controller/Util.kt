@@ -22,6 +22,7 @@ import androidx.annotation.RequiresApi
 import com.sju18001.petmanagement.restapi.Place
 import okhttp3.ResponseBody
 import org.json.JSONObject
+import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -145,6 +146,12 @@ class Util {
             val windowMetrics = activity.windowManager.currentWindowMetrics
             val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
             return windowMetrics.bounds.width() - insets.left - insets.right
+        }
+
+        fun deleteCopiedFiles(context: Context, directory: String) {
+            val dir = File(context.getExternalFilesDir(null).toString() +
+                    File.separator + "pet_management" + File.separator + directory)
+            dir.deleteRecursively()
         }
     }
 }

@@ -51,6 +51,9 @@ class CommunityFragment : Fragment() {
     private var _binding: FragmentCommunityBinding? = null
     private val binding get() = _binding!!
 
+    // constant variables
+    private var COMMUNITY_DIRECTORY: String = "community"
+
     // session manager for user token
     private lateinit var sessionManager: SessionManager
 
@@ -210,7 +213,8 @@ class CommunityFragment : Fragment() {
                             // 영상
                             if(Util.isUrlVideo(url)){
                                 // Save file
-                                val dir = File(requireContext().getExternalFilesDir(null).toString() + "/pet_management")
+                                val dir = File(requireContext().getExternalFilesDir(null).toString() +
+                                        File.separator + COMMUNITY_DIRECTORY)
                                 if(! dir.exists()){
                                     dir.mkdir()
                                 }

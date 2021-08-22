@@ -40,6 +40,7 @@ class CreateUpdatePetFragment : Fragment() {
 
     // constant variables
     private val PICK_PHOTO = 0
+    private var CREATE_UPDATE_PET_DIRECTORY: String = "create_update_pet"
 
     // variables for view binding
     private var _binding: FragmentCreateUpdatePetBinding? = null
@@ -558,7 +559,8 @@ class CreateUpdatePetFragment : Fragment() {
                 }
 
                 // copy selected photo and get real path
-                myPetViewModel.petPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!)
+                myPetViewModel.petPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
+                    data.data!!, CREATE_UPDATE_PET_DIRECTORY)
 
                 // set photo to view
                 binding.petPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPetViewModel.petPhotoPathValue))
