@@ -574,7 +574,7 @@ class CreateUpdatePetFragment : Fragment() {
 
         // delete copied file(if any)
         if(isRemoving || requireActivity().isFinishing) {
-            File(myPetViewModel.petPhotoPathValue).delete()
+            Util.deleteCopiedFiles(requireContext(), CREATE_UPDATE_PET_DIRECTORY)
         }
 
         // stop api call when fragment is destroyed

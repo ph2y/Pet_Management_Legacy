@@ -149,8 +149,7 @@ class Util {
         }
 
         fun deleteCopiedFiles(context: Context, directory: String) {
-            val dir = File(context.getExternalFilesDir(null).toString() +
-                    File.separator + "pet_management" + File.separator + directory)
+            val dir = File(context.getExternalFilesDir(null).toString() + File.separator + directory)
             dir.deleteRecursively()
         }
     }
