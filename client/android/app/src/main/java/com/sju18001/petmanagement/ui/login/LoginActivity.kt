@@ -26,13 +26,6 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // load preference values
-        val sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
-        val defaultThemeValue = resources.getInteger(R.integer.saved_default_theme_preference_key)
-        val themeValue = sharedPref.getInt(getString(R.string.saved_theme_preference_key), defaultThemeValue)
-
-        AppCompatDelegate.setDefaultNightMode(themeValue)
-        
         // hide action bar
         supportActionBar?.hide()
 
