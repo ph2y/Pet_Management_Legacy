@@ -285,7 +285,7 @@ class EditAccountFragment : Fragment() {
 
         // delete copied file(if any)
         if(isRemoving || requireActivity().isFinishing) {
-            File(myPageViewModel.accountPhotoPathValue).delete()
+            Util.deleteCopiedFiles(requireContext(), EDIT_ACCOUNT_DIRECTORY)
         }
 
         updateAccountApiCall?.cancel()

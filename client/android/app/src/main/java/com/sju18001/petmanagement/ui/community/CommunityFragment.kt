@@ -107,8 +107,7 @@ class CommunityFragment : Fragment() {
         isViewDestroyed = true
 
         // Delete saved files
-        val dir = File(requireContext().getExternalFilesDir(null).toString() + "/pet_management")
-        dir.deleteRecursively()
+        Util.deleteCopiedFiles(requireContext(), COMMUNITY_DIRECTORY)
     }
 
     private fun initializeAdapter(){

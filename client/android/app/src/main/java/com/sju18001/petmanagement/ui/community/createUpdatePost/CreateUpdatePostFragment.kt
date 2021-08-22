@@ -997,9 +997,7 @@ class CreateUpdatePostFragment : Fragment() {
 
         // delete copied files(if any)
         if(isRemoving || requireActivity().isFinishing) {
-            for(path in createUpdatePostViewModel.photoVideoPathList) {
-                File(path).delete()
-            }
+            Util.deleteCopiedFiles(requireContext(), CREATE_UPDATE_POST_DIRECTORY)
         }
 
         // show message + return to previous activity
@@ -1040,9 +1038,7 @@ class CreateUpdatePostFragment : Fragment() {
 
         // delete copied files(if any)
         if(isRemoving || requireActivity().isFinishing) {
-            for(path in createUpdatePostViewModel.photoVideoPathList) {
-                File(path).delete()
-            }
+            Util.deleteCopiedFiles(requireContext(), CREATE_UPDATE_POST_DIRECTORY)
         }
 
         // stop api call when fragment is destroyed
