@@ -176,7 +176,6 @@ class LoginFragment : Fragment() {
         })
     }
 
-    // TODO: apply Hanbit-Kang's code when merging(login currently does not work due to this function)
     // 첫 로그인인지 체킹 후 액티비티 전환
     private fun checkIsFirstLoginAndSwitchActivity(token: String){
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
