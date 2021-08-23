@@ -1,5 +1,7 @@
 package com.sju18001.petmanagement.ui.community
 
+import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.restapi.dao.Post
@@ -7,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.sju18001.petmanagement.R
@@ -18,6 +22,7 @@ interface CommunityPostListAdapterInterface{
     fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder)
     fun setPostMedia(holder: CommunityPostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String)
+    fun getContext(): Context
 }
 
 private const val MAX_LINE = 5
@@ -29,13 +34,16 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         val petPhotoImage: ImageView = view.findViewById(R.id.pet_photo)
         val nicknameTextView: TextView = view.findViewById(R.id.nickname)
         val petNameTextView: TextView = view.findViewById(R.id.pet_name)
+        val dialogButton: ImageButton = view.findViewById(R.id.dialog_button)
+
         val viewPager: ViewPager2 = view.findViewById(R.id.view_pager)
         val contentsTextView: TextView = view.findViewById(R.id.text_contents)
         val viewMoreTextView: TextView = view.findViewById(R.id.view_more)
+        val tagRecyclerView: RecyclerView = view.findViewById(R.id.recycler_view_tag)
+
         val likeButton: ImageButton = view.findViewById(R.id.like_button)
         val commentButton: ImageButton = view.findViewById(R.id.comment_button)
         val likeCountTextView: TextView = view.findViewById(R.id.like_count)
-        val dialogButton: ImageButton = view.findViewById(R.id.dialog_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -83,6 +91,16 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
             holder.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }else{
             holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, arrayOf(), holder.viewPager)
+        }
+
+        // Set tag
+        if(!data.serializedHashTags.isNullOrEmpty()){
+            holder.tagRecyclerView.apply{
+                visibility = View.VISIBLE
+                adapter = PostTagListAdapter(ArrayList(data.serializedHashTags.split(',')))
+                layoutManager = LinearLayoutManager(communityPostListAdapterInterface.getContext())
+                (layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+            }
         }
     }
 

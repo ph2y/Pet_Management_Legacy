@@ -300,6 +300,10 @@ class CommunityFragment : Fragment() {
                     }
                 })
             }
+
+            override fun getContext(): Context {
+                return requireContext()
+            }
         }
 
         binding.recyclerViewPost?.let{
