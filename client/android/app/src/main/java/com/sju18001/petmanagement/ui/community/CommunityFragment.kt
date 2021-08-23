@@ -14,10 +14,7 @@ import android.util.AttributeSet
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.MediaController
-import android.widget.TextView
-import android.widget.Toast
-import android.widget.VideoView
+import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -130,8 +127,68 @@ class CommunityFragment : Fragment() {
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
 
-            override fun onClickLikeButton(postId: Long, likeCountTextView: TextView){
+            override fun createLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder){
+                val body = CreateLikeReqDto(postId, null)
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).createLikeReq(body)
+                call.enqueue(object: Callback<CreateLikeResDto> {
+                    override fun onResponse(
+                        call: Call<CreateLikeResDto>,
+                        response: Response<CreateLikeResDto>
+                    ) {
+                        if(isViewDestroyed){
+                            return
+                        }
 
+                        if(response.isSuccessful){
+                            holder.likeCountTextView.text = ((holder.likeCountTextView.text).toString().toLong() + 1).toString()
+                        }else{
+                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        }
+
+                        adapter.showDeleteLikeButton(holder)
+                    }
+
+                    override fun onFailure(call: Call<CreateLikeResDto>, t: Throwable) {
+                        if(isViewDestroyed){
+                            return
+                        }
+
+                        Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+
+            override fun deleteLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder) {
+                val body = DeleteLikeReqDto(postId, null)
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).deleteLikeReq(body)
+                call.enqueue(object: Callback<DeleteLikeResDto> {
+                    override fun onResponse(
+                        call: Call<DeleteLikeResDto>,
+                        response: Response<DeleteLikeResDto>
+                    ) {
+                        if(isViewDestroyed){
+                            return
+                        }
+
+                        if(response.isSuccessful){
+                            holder.likeCountTextView.text = ((holder.likeCountTextView.text).toString().toLong() - 1).toString()
+                        }else{
+                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        }
+
+                        adapter.showCreateLikeButton(holder)
+                    }
+
+                    override fun onFailure(call: Call<DeleteLikeResDto>, t: Throwable) {
+                        if(isViewDestroyed){
+                            return
+                        }
+
+                        Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                    }
+                })
             }
 
             override fun onClickPostFunctionButton(postId: Long, authorId: Long, position: Int) {

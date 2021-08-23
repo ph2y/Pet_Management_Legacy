@@ -138,7 +138,7 @@
             app:layout_constraintStart_toStartOf="parent"
             >
             <ImageButton
-                android:id="@+id/like_button"
+                android:id="@+id/create_like_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="4dp"
@@ -147,6 +147,17 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
             <ImageButton
+                android:id="@+id/delete_like_button"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="4dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_baseline_favorite_24"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/create_like_button"
+                />
+            <ImageButton
                 android:id="@+id/comment_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -154,7 +165,7 @@
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_baseline_chat_bubble_outline_24"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintStart_toEndOf="@id/like_button"
+                app:layout_constraintStart_toEndOf="@id/delete_like_button"
             />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout

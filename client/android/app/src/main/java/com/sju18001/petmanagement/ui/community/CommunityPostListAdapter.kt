@@ -18,7 +18,8 @@ import com.sju18001.petmanagement.restapi.global.FileMetaData
 
 interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
-    fun onClickLikeButton(postId: Long, likeCountTextView: TextView)
+    fun createLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder)
+    fun deleteLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder)
     fun onClickPostFunctionButton(postId: Long, authorId: Long, position: Int)
     fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder)
@@ -42,7 +43,8 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
         val viewMoreTextView: TextView = view.findViewById(R.id.view_more)
         val tagRecyclerView: RecyclerView = view.findViewById(R.id.recycler_view_tag)
 
-        val likeButton: ImageButton = view.findViewById(R.id.like_button)
+        val createLikeButton: ImageButton = view.findViewById(R.id.create_like_button)
+        val deleteLikeButton: ImageButton = view.findViewById(R.id.delete_like_button)
         val commentButton: ImageButton = view.findViewById(R.id.comment_button)
         val likeCountTextView: TextView = view.findViewById(R.id.like_count)
     }
@@ -66,8 +68,13 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
         }
 
         // 좋아요 버튼
-        holder.likeButton.setOnClickListener {
-            communityPostListAdapterInterface.onClickLikeButton(dataSet[safePosition].id, holder.likeCountTextView)
+        holder.createLikeButton.setOnClickListener {
+            communityPostListAdapterInterface.createLike(dataSet[safePosition].id, holder)
+        }
+        
+        // 좋아요 취소 버튼
+        holder.deleteLikeButton.setOnClickListener {
+            communityPostListAdapterInterface.deleteLike(dataSet[safePosition].id, holder)
         }
 
         // ... 버튼 -> Dialog 띄우기
@@ -139,7 +146,6 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
                 }
             }
         }
-
     }
 
     fun addItem(post: Post){
@@ -153,6 +159,10 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
         likedCounts[position] = value
     }
 
+    fun addLikedCount(position: Int, value: Int){
+        likedCounts[position] = likedCounts[position] + value
+    }
+
     fun removeItem(index: Int){
         dataSet.removeAt(index)
         likedCounts.removeAt(index)
@@ -161,6 +171,16 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
     fun resetItem(){
         dataSet = arrayListOf()
         likedCounts = arrayListOf()
+    }
+
+    fun showCreateLikeButton(holder: ViewHolder){
+        holder.deleteLikeButton.visibility = View.GONE
+        holder.createLikeButton.visibility = View.VISIBLE
+    }
+
+    fun showDeleteLikeButton(holder: ViewHolder){
+        holder.createLikeButton.visibility = View.GONE
+        holder.deleteLikeButton.visibility = View.VISIBLE
     }
 
     class PostMediaItemCollectionAdapter(
