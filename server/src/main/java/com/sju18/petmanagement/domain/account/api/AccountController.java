@@ -99,7 +99,7 @@ public class AccountController {
     }
 
     @PostMapping("/api/account/password/update")
-    public ResponseEntity<?> updatePasswordAccount(Authentication auth, @Valid @RequestBody UpdateAccountPasswordReqDto reqDto) {
+    public ResponseEntity<?> updateAccountPassword(Authentication auth, @Valid @RequestBody UpdateAccountPasswordReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
             accountServ.updateAccountPassword(auth, reqDto.getPassword(), reqDto.getNewPassword());
