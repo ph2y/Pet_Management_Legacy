@@ -2,4 +2,6 @@
 <resources>
     <color name="black">#FFFFFFFF</color>
     <color name="white">#FF000000</color>
+    <color name="carrot">#FFBB86FC</color>
+    <color name="pumpkin">#FF3700B3</color>
 </resources>
