@@ -40,7 +40,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.community_post_item, parent, false)
+            .inflate(R.layout.post_item, parent, false)
 
         return ViewHolder(view)
     }

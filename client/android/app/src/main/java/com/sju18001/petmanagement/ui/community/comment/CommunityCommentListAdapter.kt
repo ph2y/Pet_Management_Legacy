@@ -1,34 +1,21 @@
 package com.sju18001.petmanagement.ui.community.comment
 
 import android.app.Activity
-import android.content.Context
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
-import android.text.SpannableStringBuilder
-import android.text.TextUtils
 import android.text.style.LeadingMarginSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dao.Comment
-import com.sju18001.petmanagement.restapi.dao.PetSchedule
-import com.sju18001.petmanagement.restapi.dao.Post
-import com.sju18001.petmanagement.ui.community.CommunityPostListAdapter
-import java.time.Instant
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.ZoneOffset.UTC
 
 interface CommunityCommentListAdapterInterface{
     fun getActivity(): Activity
@@ -49,7 +36,7 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.community_comment_item, parent, false)
+            .inflate(R.layout.comment_item, parent, false)
 
         return ViewHolder(view)
     }
