@@ -30,12 +30,12 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         val nicknameTextView: TextView = view.findViewById(R.id.nickname)
         val petNameTextView: TextView = view.findViewById(R.id.pet_name)
         val viewPager: ViewPager2 = view.findViewById(R.id.view_pager)
-        val contentsTextView: TextView = view.findViewById(R.id.contents)
+        val contentsTextView: TextView = view.findViewById(R.id.text_contents)
         val viewMoreTextView: TextView = view.findViewById(R.id.view_more)
         val likeButton: ImageButton = view.findViewById(R.id.like_button)
         val commentButton: ImageButton = view.findViewById(R.id.comment_button)
         val likeCountTextView: TextView = view.findViewById(R.id.like_count)
-        val postDialogButton: ImageButton = view.findViewById(R.id.post_dialog_button)
+        val dialogButton: ImageButton = view.findViewById(R.id.dialog_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -56,7 +56,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         }
 
         // ... 버튼 -> Dialog 띄우기
-        holder.postDialogButton.setOnClickListener {
+        holder.dialogButton.setOnClickListener {
             communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[position].id, dataSet[position].author.id, position)
         }
     }
