@@ -94,12 +94,18 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
         }
 
         // Set tag
-        if(!data.serializedHashTags.isNullOrEmpty()){
+        if(!data.serializedHashTags.isNullOrEmpty() && !data.serializedHashTags.isNullOrEmpty()){
             holder.tagRecyclerView.apply{
                 visibility = View.VISIBLE
                 adapter = PostTagListAdapter(ArrayList(data.serializedHashTags.split(',')))
                 layoutManager = LinearLayoutManager(communityPostListAdapterInterface.getContext())
                 (layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+            }
+        }else{
+            holder.tagRecyclerView.apply {
+                // 태그 있는 글을, 수정을 통해 태그를 제거 -> 글 새로고침 시 어뎁터가 그대로 남습니다.
+                visibility = View.GONE
+                adapter = PostTagListAdapter(arrayListOf())
             }
         }
     }
