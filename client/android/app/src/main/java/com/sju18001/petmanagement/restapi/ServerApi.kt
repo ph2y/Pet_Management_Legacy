@@ -41,6 +41,7 @@ interface ServerApi {
     @POST("api/account/password/update")
     fun updateAccountPasswordReq(@Body updateAccountPasswordReqDto: UpdateAccountPasswordReqDto): Call<UpdateAccountPasswordResDto>
 
+
     // Account recover API
     @POST("api/account/authcode/send")
     fun sendAuthCodeReq(@Body sendAuthCodeReqDto: SendAuthCodeReqDto): Call<SendAuthCodeResDto>
@@ -53,6 +54,7 @@ interface ServerApi {
 
     @POST("api/account/recoverPassword")
     fun recoverPasswordReq(@Body recoverPasswordReqDto: RecoverPasswordReqDto): Call<RecoverPasswordResDto>
+
 
     // Pet Profile CRUD API
     @POST("api/pet/create")
@@ -75,6 +77,7 @@ interface ServerApi {
     @POST("api/pet/photo/update")
     fun updatePetPhotoReq(@Part("id") id: Long, @Part file: MultipartBody.Part): Call<UpdatePetPhotoResDto>
 
+
     // PetSchedule API
     @POST("api/pet/schedule/create")
     fun createPetScheduleReq(@Body createPetScheduleReqDto: CreatePetScheduleReqDto): Call<CreatePetScheduleResDto>
@@ -87,6 +90,7 @@ interface ServerApi {
 
     @POST("api/pet/schedule/update")
     fun updatePetScheduleReq(@Body updatePetScheduleReqDto: UpdatePetScheduleReqDto): Call<UpdatePetScheduleResDto>
+
 
     // Post API
     @POST("api/post/create")
@@ -108,6 +112,7 @@ interface ServerApi {
     @POST("api/post/media/update")
     fun updatePostMediaReq(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>): Call<UpdatePostMediaResDto>
 
+
     // Follow API
     @POST("api/community/follower/fetch")
     fun fetchFollowerReq(@Body body: RequestBody): Call<FetchFollowerResDto>
@@ -121,6 +126,7 @@ interface ServerApi {
     @POST("api/community/follow/delete")
     fun deleteFollowReq(@Body deleteFollowReqDto: DeleteFollowReqDto): Call<DeleteFollowResDto>
 
+
     // Comment API
     @POST("api/comment/create")
     fun createCommentReq(@Body createCommentReqDto: CreateCommentReqDto): Call<CreateCommentResDto>
@@ -133,4 +139,15 @@ interface ServerApi {
 
     @POST("api/comment/delete")
     fun deleteCommentReq(@Body deleteCommentReqDto: DeleteCommentReqDto): Call<DeleteCommentResDto>
+
+
+    // Like API
+    @POST("api/like/create")
+    fun createLikeReq(@Body createLikeReq: CreateLikeReqDto): Call<CreateLikeReqDto>
+
+    @POST("api/like/fetch")
+    fun fetchLikeReq(@Body fetchLikeReq: FetchLikeReqDto): Call<FetchLikeReqDto>
+
+    @POST("api/like/delete")
+    fun deleteLikeReq(@Body deleteLikeReq: DeleteLikeReqDto): Call<DeleteLikeReqDto>
 }
