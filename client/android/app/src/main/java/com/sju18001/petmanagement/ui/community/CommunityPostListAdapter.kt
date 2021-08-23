@@ -72,7 +72,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
 
         // ... 버튼 -> Dialog 띄우기
         holder.dialogButton.setOnClickListener {
-            communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[position].id, dataSet[position].author.id, position)
+            communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[safePosition].id, dataSet[safePosition].author.id, safePosition)
         }
     }
 

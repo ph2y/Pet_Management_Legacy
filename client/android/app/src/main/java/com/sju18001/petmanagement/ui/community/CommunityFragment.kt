@@ -364,7 +364,9 @@ class CommunityFragment : Fragment() {
                                 setLikedCounts(adapter.itemCount-1, item.id)
                             }
 
-                            adapter.notifyDataSetChanged()
+                            binding.recyclerViewPost.post{
+                                adapter.notifyDataSetChanged()
+                            }
                         }
                     }
                 }else{
@@ -396,10 +398,6 @@ class CommunityFragment : Fragment() {
                 call: Call<FetchLikeResDto>,
                 response: Response<FetchLikeResDto>
             ) {
-                if(isViewDestroyed){
-                    return
-                }
-
                 if(response.isSuccessful){
                     adapter.setLikedCount(position, response.body()!!.likedCount!!)
                     adapter.notifyItemChanged(position)
