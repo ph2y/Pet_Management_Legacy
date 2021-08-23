@@ -18,6 +18,7 @@ import com.sju18001.petmanagement.restapi.global.FileMetaData
 
 interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
+    fun onClickLikeButton(postId: Long, likeCountTextView: TextView)
     fun onClickPostFunctionButton(postId: Long, authorId: Long, position: Int)
     fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder)
@@ -27,7 +28,7 @@ interface CommunityPostListAdapterInterface{
 
 private const val MAX_LINE = 5
 
-class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerView.Adapter<CommunityPostListAdapter.ViewHolder>() {
+class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var likedCounts: ArrayList<Long>) : RecyclerView.Adapter<CommunityPostListAdapter.ViewHolder>() {
     lateinit var communityPostListAdapterInterface: CommunityPostListAdapterInterface
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
@@ -55,12 +56,18 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val safePosition = holder.adapterPosition
-        updateDataSetToViewHolder(holder, dataSet[safePosition])
+
+        updateDataSetToViewHolder(holder, dataSet[safePosition], likedCounts[safePosition])
         setViewMore(holder.contentsTextView, holder.viewMoreTextView)
 
         // 댓글 버튼
         holder.commentButton.setOnClickListener {
             communityPostListAdapterInterface.startCommunityCommentActivity(dataSet[safePosition].id)
+        }
+
+        // 좋아요 버튼
+        holder.likeButton.setOnClickListener {
+            communityPostListAdapterInterface.onClickLikeButton(dataSet[safePosition].id, holder.likeCountTextView)
         }
 
         // ... 버튼 -> Dialog 띄우기
@@ -71,12 +78,13 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
     override fun getItemCount(): Int = dataSet.size
 
-    private fun updateDataSetToViewHolder(holder: ViewHolder, data: Post){
+    private fun updateDataSetToViewHolder(holder: ViewHolder, data: Post, likedCount: Long){
         holder.nicknameTextView.text = data.author.nickname
         holder.petNameTextView.text = data.pet.name
         holder.contentsTextView.text = data.contents
-        holder.likeCountTextView.text = "0"
+        holder.likeCountTextView.text = likedCount.toString()
 
+        // Set account photo
         if(!data.author.photoUrl.isNullOrEmpty()){
             communityPostListAdapterInterface.setAccountPhoto(data.author.id, holder)
         }else{
@@ -134,16 +142,25 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>) : RecyclerV
 
     }
 
-    fun addItem(item: Post){
-        dataSet.add(item)
+    fun addItem(post: Post){
+        dataSet.add(post)
+
+        // 기본값으로 추가
+        likedCounts.add(0)
+    }
+
+    fun setLikedCount(position: Int, value: Long){
+        likedCounts[position] = value
     }
 
     fun removeItem(index: Int){
         dataSet.removeAt(index)
+        likedCounts.removeAt(index)
     }
 
-    fun resetDataSet(){
+    fun resetItem(){
         dataSet = arrayListOf()
+        likedCounts = arrayListOf()
     }
 
     class PostMediaItemCollectionAdapter(
