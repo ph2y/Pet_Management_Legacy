@@ -15,6 +15,7 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.widget.MediaController
+import android.widget.TextView
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.annotation.RequiresApi
@@ -30,10 +31,15 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCommunityBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateCommentActivity
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -78,15 +84,15 @@ class CommunityFragment : Fragment() {
 
         // 어뎁터 초기화
         initializeAdapter()
-
+        
         // 초기 post 추가
         resetPostData()
-        updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
+        updateAdapterDataSet(FetchPostReqDto(null, null, null, null))
 
         // SwipeRefreshLayout
         binding.layoutSwipeRefresh.setOnRefreshListener {
             resetPostData()
-            updateAdapterDataSetByFetchPost(FetchPostReqDto(null, null, null, null))
+            updateAdapterDataSet(FetchPostReqDto(null, null, null, null))
         }
 
         // for create post FAB
@@ -112,7 +118,7 @@ class CommunityFragment : Fragment() {
 
     private fun initializeAdapter(){
         // 빈 배열로 초기화
-        adapter = CommunityPostListAdapter(arrayListOf())
+        adapter = CommunityPostListAdapter(arrayListOf(), arrayListOf())
 
         // 인터페이스 구현
         adapter.communityPostListAdapterInterface = object: CommunityPostListAdapterInterface {
@@ -122,6 +128,10 @@ class CommunityFragment : Fragment() {
 
                 startActivity(communityCommentActivityIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+            }
+
+            override fun onClickLikeButton(postId: Long, likeCountTextView: TextView){
+
             }
 
             override fun onClickPostFunctionButton(postId: Long, authorId: Long, position: Int) {
@@ -314,7 +324,7 @@ class CommunityFragment : Fragment() {
             it.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if(!recyclerView.canScrollVertically(1) && adapter.itemCount != 0){
-                        updateAdapterDataSetByFetchPost(FetchPostReqDto(
+                        updateAdapterDataSet(FetchPostReqDto(
                             pageIndex, topPostId, null, null
                         ))
                         pageIndex += 1
@@ -324,7 +334,8 @@ class CommunityFragment : Fragment() {
         }
     }
 
-    private fun updateAdapterDataSetByFetchPost(body: FetchPostReqDto){
+    private fun updateAdapterDataSet(body: FetchPostReqDto){
+        // Fetch post
         val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
             .fetchPostReq(body)
         call!!.enqueue(object: Callback<FetchPostResDto> {
@@ -339,18 +350,21 @@ class CommunityFragment : Fragment() {
                 if(response.isSuccessful){
                     response.body()!!.postList?.let {
                         if(it.isNotEmpty()){
-                            it.map { item ->
-                                adapter.addItem(item)
-                            }
+                            // TODO: 이후에, Post에 likedCount 칼럼이 생기면, 이에 따라 효율적으로 변경해야함
+                            // TODO: 추가로, 로딩 중에 뷰가 제거되면 오류가 나는데, 추후 방법이 간단하게 바뀔 것이므로 해결하지 않았음
 
+                            // Set topPostId
                             if(topPostId == null){
                                 topPostId = it.first().id
                             }
-
-                            // 데이터셋 변경 알림
-                            binding.recyclerViewPost.post{
-                                adapter.notifyDataSetChanged()
+                            
+                            // 데이터 추가
+                            it.map { item ->
+                                adapter.addItem(item)
+                                setLikedCounts(adapter.itemCount-1, item.id)
                             }
+
+                            adapter.notifyDataSetChanged()
                         }
                     }
                 }else{
@@ -374,9 +388,33 @@ class CommunityFragment : Fragment() {
         })
     }
 
+    private fun setLikedCounts(position: Int, postId: Long){
+        val body = FetchLikeReqDto(postId, null)
+        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchLikeReq(body)
+        call!!.enqueue(object: Callback<FetchLikeResDto> {
+            override fun onResponse(
+                call: Call<FetchLikeResDto>,
+                response: Response<FetchLikeResDto>
+            ) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                if(response.isSuccessful){
+                    adapter.setLikedCount(position, response.body()!!.likedCount!!)
+                    adapter.notifyItemChanged(position)
+                }
+            }
+
+            override fun onFailure(call: Call<FetchLikeResDto>, t: Throwable) {
+                // Do nothing
+            }
+        })
+    }
+
     private fun resetPostData(){
         pageIndex = 1
-        adapter.resetDataSet()
+        adapter.resetItem()
 
         // 데이터셋 변경 알림
         binding.recyclerViewPost.post{

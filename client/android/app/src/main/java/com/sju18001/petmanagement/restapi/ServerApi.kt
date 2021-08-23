@@ -143,11 +143,11 @@ interface ServerApi {
 
     // Like API
     @POST("api/like/create")
-    fun createLikeReq(@Body createLikeReq: CreateLikeReqDto): Call<CreateLikeReqDto>
+    fun createLikeReq(@Body createLikeReq: CreateLikeReqDto): Call<CreateLikeResDto>
 
     @POST("api/like/fetch")
-    fun fetchLikeReq(@Body fetchLikeReq: FetchLikeReqDto): Call<FetchLikeReqDto>
+    fun fetchLikeReq(@Body fetchLikeReq: FetchLikeReqDto): Call<FetchLikeResDto>
 
     @POST("api/like/delete")
-    fun deleteLikeReq(@Body deleteLikeReq: DeleteLikeReqDto): Call<DeleteLikeReqDto>
+    fun deleteLikeReq(@Body deleteLikeReq: DeleteLikeReqDto): Call<DeleteLikeResDto>
 }
