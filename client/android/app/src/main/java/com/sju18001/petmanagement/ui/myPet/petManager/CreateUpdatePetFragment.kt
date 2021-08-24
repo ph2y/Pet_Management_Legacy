@@ -187,11 +187,27 @@ class CreateUpdatePetFragment : Fragment() {
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateUpdatePetParentLayout)
     }
 
+    // trim text values
+    private fun trimTextValues() {
+        myPetViewModel.petMessageValue = myPetViewModel.petMessageValue.trim()
+        myPetViewModel.petNameValue = myPetViewModel.petNameValue.trim()
+        myPetViewModel.petSpeciesValue = myPetViewModel.petSpeciesValue.trim()
+        myPetViewModel.petBreedValue = myPetViewModel.petBreedValue.trim()
+
+        binding.petMessageInput.setText(myPetViewModel.petMessageValue)
+        binding.petNameInput.setText(myPetViewModel.petNameValue)
+        binding.petSpeciesInput.setText(myPetViewModel.petSpeciesValue)
+        binding.petBreedInput.setText(myPetViewModel.petBreedValue)
+    }
+
     // create pet
     private fun createPet() {
         // set api state/button to loading
         myPetViewModel.petManagerApiIsLoading = true
         setButtonToLoading()
+
+        // trim text values
+        trimTextValues()
 
         // for birth value
         val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){
@@ -259,6 +275,9 @@ class CreateUpdatePetFragment : Fragment() {
         // set api state/button to loading
         myPetViewModel.petManagerApiIsLoading = true
         setButtonToLoading()
+
+        // trim text values
+        trimTextValues()
 
         // for birth value
         val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){
