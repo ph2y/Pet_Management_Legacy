@@ -13,4 +13,6 @@ public class CreateBookmarkReqDto {
     private String name;
     @Size(max = 250, message = "valid.bookmark.description.size")
     private String description;
+    @Size(max = 20, message = "valid.bookmark.folder.name.size")
+    private String folder;
 }

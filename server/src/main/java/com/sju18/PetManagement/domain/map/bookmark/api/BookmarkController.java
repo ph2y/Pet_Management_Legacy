@@ -53,6 +53,8 @@ public class BookmarkController {
             if (reqDto.getId() != null) {
                 bookmarkList = new ArrayList<>();
                 bookmarkList.add(bookmarkServ.fetchBookmarkById(reqDto.getId()));
+            } else if(reqDto.getFolder() != null) {
+                bookmarkList = bookmarkServ.fetchBookmarkAuthorAndFolder(auth, reqDto.getFolder());
             } else {
                 bookmarkList = bookmarkServ.fetchBookmarkByAuthor(auth);
             }
@@ -81,6 +83,22 @@ public class BookmarkController {
         return ResponseEntity.ok(new UpdateBookmarkResDto(dtoMetadata));
     }
 
+    // UPDATE
+    @PostMapping("/api/bookmark/folder/update")
+    public ResponseEntity<?> updateBookmarkFolder(Authentication auth, @Valid @RequestBody UpdateBookmarkFolderReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+
+        try {
+            bookmarkServ.updateBookmarkFolder(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new UpdateBookmarkFolderResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.bookmark.folder.update.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new UpdateBookmarkFolderResDto(dtoMetadata));
+    }
+
     // DELETE
     @PostMapping("/api/bookmark/delete")
     public ResponseEntity<?> deleteBookmark(Authentication auth, @Valid @RequestBody DeleteBookmarkReqDto reqDto) {
@@ -95,5 +113,21 @@ public class BookmarkController {
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.bookmark.delete.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new DeleteBookmarkResDto(dtoMetadata));
+    }
+
+    // DELETE
+    @PostMapping("/api/bookmark/folder/delete")
+    public ResponseEntity<?> deleteBookmarkFolder(Authentication auth, @Valid @RequestBody DeleteBookmarkFolderReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+
+        try {
+            bookmarkServ.deleteBookmarkFolder(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new DeleteBookmarkFolderResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.bookmark.folder.delete.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new DeleteBookmarkFolderResDto(dtoMetadata));
     }
 }

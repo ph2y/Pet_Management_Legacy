@@ -35,4 +35,5 @@ public class Bookmark {
     @Column
     private String name;
     private String description;
+    private String folder;
 }
