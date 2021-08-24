@@ -410,7 +410,7 @@ class CommunityFragment : Fragment() {
                     response.body()!!.postList?.let {
                         if(it.isNotEmpty()){
                             // TODO: 이후에, Post에 likedCount 칼럼이 생기면, 이에 따라 효율적으로 변경해야함
-                            // TODO: 추가로, 로딩 중에 뷰가 제거되면 오류가 나는데, 추후 방법이 간단하게 바뀔 것이므로 해결하지 않았음
+                            // 추가로, 로딩 중에 뷰가 제거되면 오류(Inconsistency detected)가 나는데, 칼럼이 생긴 이후에도 발생 시 fix할 것
 
                             // Set topPostId
                             if(topPostId == null){
