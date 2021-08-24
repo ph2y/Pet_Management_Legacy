@@ -115,7 +115,7 @@ class CommunityFragment : Fragment() {
 
     private fun initializeAdapter(){
         // 빈 배열로 초기화
-        adapter = CommunityPostListAdapter(arrayListOf(), arrayListOf())
+        adapter = CommunityPostListAdapter(arrayListOf(), arrayListOf(), arrayListOf())
 
         // 인터페이스 구현
         adapter.communityPostListAdapterInterface = object: CommunityPostListAdapterInterface {
@@ -127,7 +127,7 @@ class CommunityFragment : Fragment() {
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
 
-            override fun createLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder){
+            override fun createLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder, position: Int){
                 val body = CreateLikeReqDto(postId, null)
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).createLikeReq(body)
                 call.enqueue(object: Callback<CreateLikeResDto> {
@@ -146,6 +146,7 @@ class CommunityFragment : Fragment() {
                             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                         }
 
+                        adapter.setIsPostLiked(position, true)
                         adapter.showDeleteLikeButton(holder)
                     }
 
@@ -159,7 +160,7 @@ class CommunityFragment : Fragment() {
                 })
             }
 
-            override fun deleteLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder) {
+            override fun deleteLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder, position: Int) {
                 val body = DeleteLikeReqDto(postId, null)
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).deleteLikeReq(body)
                 call.enqueue(object: Callback<DeleteLikeResDto> {
@@ -178,6 +179,7 @@ class CommunityFragment : Fragment() {
                             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
                         }
 
+                        adapter.setIsPostLiked(position, false)
                         adapter.showCreateLikeButton(holder)
                     }
 
