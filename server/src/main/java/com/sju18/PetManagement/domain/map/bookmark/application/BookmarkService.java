@@ -2,9 +2,7 @@ package com.sju18.petmanagement.domain.map.bookmark.application;
 
 import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.account.dao.Account;
-import com.sju18.petmanagement.domain.map.bookmark.dto.CreateBookmarkReqDto;
-import com.sju18.petmanagement.domain.map.bookmark.dto.DeleteBookmarkReqDto;
-import com.sju18.petmanagement.domain.map.bookmark.dto.UpdateBookmarkReqDto;
+import com.sju18.petmanagement.domain.map.bookmark.dto.*;
 import com.sju18.petmanagement.domain.map.bookmark.dao.Bookmark;
 import com.sju18.petmanagement.domain.map.bookmark.dao.BookmarkRepository;
 import com.sju18.petmanagement.domain.map.place.application.PlaceService;
@@ -18,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -39,6 +38,7 @@ public class BookmarkService {
                 .place(place)
                 .name(reqDto.getName())
                 .description(reqDto.getDescription())
+                .folder(reqDto.getFolder())
                 .build();
 
         // save
@@ -49,6 +49,7 @@ public class BookmarkService {
     @Transactional(readOnly = true)
     public List<Bookmark> fetchBookmarkByAuthor(Authentication auth) {
         Account author = accountServ.fetchCurrentAccount(auth);
+
         return bookmarkRepository.findAllByAuthor(author);
     }
     @Transactional(readOnly = true)
@@ -57,6 +58,17 @@ public class BookmarkService {
                 .orElseThrow(() -> new Exception(
                         msgSrc.getMessage("error.bookmark.notExists", null, Locale.ENGLISH)
                 ));
+    }
+    @Transactional(readOnly = true)
+    public List<Bookmark> fetchBookmarkAuthorAndFolder(Authentication auth, String folder) throws Exception {
+        Account author = accountServ.fetchCurrentAccount(auth);
+
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByAuthorAndFolder(author, folder)
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.bookmark.folder.notExists", null, Locale.ENGLISH)
+                ));
+
+        return bookmarkList;
     }
 
     // UPDATE
@@ -75,9 +87,33 @@ public class BookmarkService {
         if (!reqDto.getDescription().equals(currentBookmark.getDescription())) {
             currentBookmark.setDescription(reqDto.getDescription());
         }
+        if(!reqDto.getFolder().equals(currentBookmark.getFolder())) {
+            currentBookmark.setFolder(reqDto.getFolder());
+        }
 
-        // save
+        // update
         bookmarkRepository.save(currentBookmark);
+    }
+
+    // UPDATE
+    @Transactional
+    public void updateBookmarkFolder(Authentication auth, UpdateBookmarkFolderReqDto reqDto) throws Exception {
+        Account author = accountServ.fetchCurrentAccount(auth);
+
+        // 받은 사용자 정보와 폴더 이름으로 폴더와 폴더 안 모든 즐겨찾기 정보 수정
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByAuthorAndFolder(author, reqDto.getFolder())
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.bookmark.folder.notExists", null, Locale.ENGLISH)
+                ));
+        bookmarkList.stream().map(bookmark -> {
+            if(!reqDto.getNewFolder().equals(bookmark.getFolder())) {
+                bookmark.setFolder(reqDto.getNewFolder());
+            }
+            return bookmark;
+        }).collect(Collectors.toList());
+
+        // update
+        bookmarkRepository.saveAll(bookmarkList);
     }
 
     // DELETE
@@ -90,5 +126,17 @@ public class BookmarkService {
                         msgSrc.getMessage("error.bookmark.notExists", null, Locale.ENGLISH)
                 ));
         bookmarkRepository.delete(bookmark);
+    }
+
+    // DELETE
+    public void deleteBookmarkFolder(Authentication auth, DeleteBookmarkFolderReqDto reqDto) throws Exception {
+        Account author = accountServ.fetchCurrentAccount(auth);
+
+        // 받은 사용자 정보와 폴더 이름으로 폴더와 폴더 안 모든 즐겨찾기 정보 삭제
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByAuthorAndFolder(author, reqDto.getFolder())
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.bookmark.folder.notExists", null, Locale.ENGLISH)
+                ));
+        bookmarkRepository.deleteAll(bookmarkList);
     }
 }

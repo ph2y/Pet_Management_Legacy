@@ -12,4 +12,6 @@ public class UpdateBookmarkReqDto {
     private String name;
     @Size(max = 250, message = "valid.bookmark.description.size")
     private String description;
+    @Size(max = 10, message = "valid.bookmark.folder.name.size")
+    String folder;
 }

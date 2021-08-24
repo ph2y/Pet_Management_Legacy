@@ -10,5 +10,6 @@ import java.util.Optional;
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     Optional<Bookmark> findByAuthorAndId(Account author, Long id);
+    Optional<List<Bookmark>> findAllByAuthorAndFolder(Account author, String folder);
     List<Bookmark> findAllByAuthor(Account author);
 }
