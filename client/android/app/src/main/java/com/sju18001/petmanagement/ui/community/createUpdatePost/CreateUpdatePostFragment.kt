@@ -218,8 +218,21 @@ class CreateUpdatePostFragment : Fragment() {
             DISCLOSURE_FRIEND -> { binding.disclosureSpinner.setSelection(2) }
         }
 
+        // for hashtag EditText listener
+        binding.hashtagInputEditText.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                createUpdatePostViewModel.hashtagEditText = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
         // for hashtag input button
         binding.hashtagInputButton.setOnClickListener {
+            // trim hashtag
+            createUpdatePostViewModel.hashtagEditText = createUpdatePostViewModel.hashtagEditText.trim()
+            binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
+
             if(binding.hashtagInputEditText.text.toString() == "") {
                 // show message(hashtag empty)
                 Toast.makeText(context, context?.getText(R.string.hashtag_empty_message), Toast.LENGTH_LONG).show()
@@ -256,6 +269,10 @@ class CreateUpdatePostFragment : Fragment() {
 
         // for confirm button
         binding.confirmButton.setOnClickListener {
+            // trim post content
+            createUpdatePostViewModel.postEditText = createUpdatePostViewModel.postEditText.trim()
+            binding.postEditText.setText(createUpdatePostViewModel.postEditText)
+
             if(createUpdatePostViewModel.thumbnailList.size == 0 &&
                 createUpdatePostViewModel.postEditText == "") {
                 // show message(post invalid)
@@ -1026,6 +1043,7 @@ class CreateUpdatePostFragment : Fragment() {
         }
 
         // restore hashtag layout
+        binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
         updateHashtagUsage()
 
         // restore post EditText
