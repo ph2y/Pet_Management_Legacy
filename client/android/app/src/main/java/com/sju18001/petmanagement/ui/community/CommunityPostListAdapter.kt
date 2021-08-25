@@ -60,40 +60,16 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val safePosition = holder.adapterPosition
 
-        updateDataSetToViewHolder(holder, dataSet[safePosition], likedCounts[safePosition])
-        setViewMore(holder.contentsTextView, holder.viewMoreTextView)
+        // 데이터 동기화
+        updateDataSetToViewHolder(holder, dataSet[safePosition], likedCounts[safePosition], safePosition)
 
-        // 좋아요 버튼 세팅
-        if(isPostLiked[position]){
-            showDeleteLikeButton(holder)
-        }else{
-            showCreateLikeButton(holder)
-        }
-
-        // 댓글 버튼
-        holder.commentButton.setOnClickListener {
-            communityPostListAdapterInterface.startCommunityCommentActivity(dataSet[safePosition].id)
-        }
-
-        // 좋아요 버튼
-        holder.createLikeButton.setOnClickListener {
-            communityPostListAdapterInterface.createLike(dataSet[safePosition].id, holder, safePosition)
-        }
-        
-        // 좋아요 취소 버튼
-        holder.deleteLikeButton.setOnClickListener {
-            communityPostListAdapterInterface.deleteLike(dataSet[safePosition].id, holder, safePosition)
-        }
-
-        // ... 버튼 -> Dialog 띄우기
-        holder.dialogButton.setOnClickListener {
-            communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[safePosition].id, dataSet[safePosition].author.id, safePosition)
-        }
+        // 리스너 추가
+        setListenerOnView(holder, position)
     }
 
     override fun getItemCount(): Int = dataSet.size
 
-    private fun updateDataSetToViewHolder(holder: ViewHolder, data: Post, likedCount: Long){
+    private fun updateDataSetToViewHolder(holder: ViewHolder, data: Post, likedCount: Long, position: Int){
         holder.nicknameTextView.text = data.author.nickname
         holder.petNameTextView.text = data.pet.name
         holder.contentsTextView.text = data.contents
@@ -106,7 +82,20 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
             communityPostListAdapterInterface.setAccountDefaultPhoto(holder)
         }
 
-        // Set ViewPager2
+        // 좋아요 버튼 세팅
+        if(isPostLiked[position]){
+            showDeleteLikeButton(holder)
+        }else{
+            showCreateLikeButton(holder)
+        }
+
+        // 저장된 데이터에 따라, ViewPager, Tag, ViewMore 셋팅
+        setViewPager(holder, data)
+        setTag(holder, data)
+        setViewMore(holder.contentsTextView, holder.viewMoreTextView)
+    }
+
+    private fun setViewPager(holder: ViewHolder, data: Post){
         if(!data.mediaAttachments.isNullOrEmpty()){
             val mediaAttachments: Array<FileMetaData> = Gson().fromJson(data.mediaAttachments, Array<FileMetaData>::class.java)
 
@@ -115,8 +104,9 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
         }else{
             holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, arrayOf(), holder.viewPager)
         }
+    }
 
-        // Set tag
+    private fun setTag(holder: ViewHolder, data: Post){
         if(!data.serializedHashTags.isNullOrEmpty() && !data.serializedHashTags.isNullOrEmpty()){
             holder.tagRecyclerView.apply{
                 visibility = View.VISIBLE
@@ -153,6 +143,28 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
                     }
                 }
             }
+        }
+    }
+
+    private fun setListenerOnView(holder: ViewHolder, position: Int){
+        // 댓글 버튼
+        holder.commentButton.setOnClickListener {
+            communityPostListAdapterInterface.startCommunityCommentActivity(dataSet[position].id)
+        }
+
+        // 좋아요 버튼
+        holder.createLikeButton.setOnClickListener {
+            communityPostListAdapterInterface.createLike(dataSet[position].id, holder, position)
+        }
+
+        // 좋아요 취소 버튼
+        holder.deleteLikeButton.setOnClickListener {
+            communityPostListAdapterInterface.deleteLike(dataSet[position].id, holder, position)
+        }
+
+        // ... 버튼 -> Dialog 띄우기
+        holder.dialogButton.setOnClickListener {
+            communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[position].id, dataSet[position].author.id, position)
         }
     }
 
