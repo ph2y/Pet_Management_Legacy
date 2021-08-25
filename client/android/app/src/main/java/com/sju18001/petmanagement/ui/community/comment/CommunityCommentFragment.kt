@@ -6,6 +6,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -28,6 +29,7 @@ import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateComme
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
 import okhttp3.MediaType
 import okhttp3.RequestBody
+import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -135,6 +137,44 @@ class CommunityCommentFragment : Fragment() {
                     }
 
                 })
+            }
+
+            override fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder) {
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                    .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
+                call.enqueue(object: Callback<ResponseBody> {
+                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                        if(isViewDestroyed){
+                            return
+                        }
+
+                        if(response.isSuccessful) {
+                            // convert photo to byte array + get bitmap
+                            val photoByteArray = response.body()!!.byteStream().readBytes()
+                            val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
+
+                            // set account photo + save photo value
+                            holder.profileImage.setImageBitmap(photoBitmap)
+                        }
+                        else {
+                            // get error message
+                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                            // Toast + Log
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                            Log.d("error", errorMessage)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        // log error message
+                        Log.d("error", t.message.toString())
+                    }
+                })
+            }
+
+            override fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder) {
+                holder.profileImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
             }
         }
 

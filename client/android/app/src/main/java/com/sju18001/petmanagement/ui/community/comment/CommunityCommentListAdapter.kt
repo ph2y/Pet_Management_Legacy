@@ -8,6 +8,7 @@ import android.text.style.LeadingMarginSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -15,12 +16,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.dao.Comment
+import com.sju18001.petmanagement.ui.community.CommunityPostListAdapter
 import java.time.LocalDateTime
 
 interface CommunityCommentListAdapterInterface{
     fun getActivity(): Activity
     fun onClickReply(id: Long, nickname: String)
     fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String)
+    fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder)
+    fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder)
 }
 
 class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
@@ -28,10 +32,12 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         val communityCommentLayout: ConstraintLayout = view.findViewById(R.id.layout_community_comment)
+        val profileImage: ImageView = view.findViewById(R.id.image_profile)
         val nicknameTextView: TextView = view.findViewById(R.id.text_nickname)
         val contentsTextView: TextView = view.findViewById(R.id.text_contents)
         val timestampTextView: TextView = view.findViewById(R.id.text_timestamp)
         val replyTextView: TextView = view.findViewById(R.id.text_reply)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -60,6 +66,12 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         holder.nicknameTextView.text = data.author.nickname
         holder.contentsTextView.text = data.contents
         holder.timestampTextView.text = getTimestampForDisplay(data.timestamp)
+
+        if(!data.author.photoUrl.isNullOrEmpty()){
+            communityCommentListAdapterInterface.setAccountPhoto(data.author.id, holder)
+        }else{
+            communityCommentListAdapterInterface.setAccountDefaultPhoto(holder)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
