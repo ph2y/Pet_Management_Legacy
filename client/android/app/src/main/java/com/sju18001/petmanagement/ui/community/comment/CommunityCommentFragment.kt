@@ -133,7 +133,7 @@ class CommunityCommentFragment : Fragment() {
                 holder.profileImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
             }
 
-            override fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long){
+            override fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long, position: Int){
                 val body = FetchCommentReqDto(pageIndex, topCommentId, null, parentCommentId, null)
                 val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchCommentReq(body)
                 call.enqueue(object: Callback<FetchCommentResDto> {
@@ -147,11 +147,19 @@ class CommunityCommentFragment : Fragment() {
                         
                         if(response.isSuccessful){
                             // Add replies to RecyclerView
-                            response.body()!!.commentList?.map {
-                                adapter.addItem(it)
-                            }
+                            response.body()!!.commentList?.let{
+                                for(i in 0 until it.count()){
+                                    adapter.addItemOnPosition(it[i], position+1)
+                                }
 
-                            adapter.notifyDataSetChanged()
+                                // 더이상 불러올 답글이 없을 시 topCommentId 초기화 -> 답글 불러오기 제거
+                                if(it.count() == 0){
+                                    adapter.setTopCommentIdList(-1, position)
+                                    Toast.makeText(requireContext(), getString(R.string.no_more_reply), Toast.LENGTH_SHORT).show()
+                                }
+
+                                adapter.notifyDataSetChanged()
+                            }
                         }else{
                             val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
                             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()

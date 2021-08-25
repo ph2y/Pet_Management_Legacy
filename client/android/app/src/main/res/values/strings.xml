@@ -176,15 +176,6 @@
     <string name="account_delete_success">회원탈퇴를 성공적으로 완료되었습니다</string>
     <string name="account_regex_invalid">형식에 맞지 않는 입력값이 있습니다\n다시 입력해주세요</string>
 
-    <!-- Community Fragment -->
-    <string name="comment">댓글</string>
-    <string name="comment_input_hint">댓글 내용을 입력하세요.</string>
-    <string name="reply_button">답글 달기</string>
-    <string name="update_comment_title">댓글 수정</string>
-    <string name="create_comment_success">댓글을 작성하였습니다.</string>
-    <string name="update_comment_success">댓글을 수정하였습니다.</string>
-    <string name="delete_comment_success">댓글을 삭제하였습니다.</string>
-
     <!-- Create Update Delete Post Fragment -->
     <string name="create_post_title">글 쓰기</string>
     <string name="update_post_title">글 수정</string>
@@ -214,6 +205,16 @@
     <string name="update_post_successful">글 수정에 성공했어요!</string>
     <string name="delete_post_successful">글 삭제에 성공했어요!</string>
     <string name="post_data_loading_message">글 정보 불러오는 중…</string>
+
+    <!-- Community Fragment -->
+    <string name="comment">댓글</string>
+    <string name="comment_input_hint">댓글 내용을 입력하세요.</string>
+    <string name="reply_button">답글 달기</string>
+    <string name="update_comment_title">댓글 수정</string>
+    <string name="create_comment_success">댓글을 작성하였습니다.</string>
+    <string name="update_comment_success">댓글을 수정하였습니다.</string>
+    <string name="delete_comment_success">댓글을 삭제하였습니다.</string>
+    <string name="no_more_reply">모든 답글을 불러왔습니다.</string>
 
     <!-- Follower/Following Fragment -->
     <string name="follower_following_menu_title">팔로워/팔로잉</string>
