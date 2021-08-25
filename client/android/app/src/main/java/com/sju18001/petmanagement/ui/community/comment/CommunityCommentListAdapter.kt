@@ -26,11 +26,10 @@ interface CommunityCommentListAdapterInterface{
     fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String)
     fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder)
-    fun setLoadReplyTextView(parentCommentId: Long, holder: CommunityCommentListAdapter.ViewHolder)
     fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long)
 }
 
-class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
+class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>, private var pageIndices: ArrayList<Int>, private var topCommentIdList: ArrayList<Long>) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
     lateinit var communityCommentListAdapterInterface: CommunityCommentListAdapterInterface
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
@@ -58,8 +57,13 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         // 댓글 내용에 indent 추가
         setSpanToContent(holder.nicknameTextView, holder.contentsTextView)
 
-        // 답글 불러오기 버튼 추가
-        communityCommentListAdapterInterface.setLoadReplyTextView(dataSet[position].id, holder)
+        // 답글 불러오기 버튼 세팅
+        // topCommentIdList가 -1로 초기화되므로, -1이면 해당 댓글의 답글이 없다는 의미임
+        if(topCommentIdList[position] == (-1).toLong()){
+            holder.loadReplyTextView.visibility = View.GONE
+        }else{
+            holder.loadReplyTextView.visibility = View.VISIBLE
+        }
         
         // 리스너 추가
         setListenerOnViews(holder, position)
@@ -125,13 +129,29 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
             communityCommentListAdapterInterface.onLongClickComment(dataSet[position].author.id, dataSet[position].id, dataSet[position].contents)
             true
         }
+
+        holder.loadReplyTextView.setOnClickListener {
+            communityCommentListAdapterInterface.fetchReplyComment(pageIndices[position], topCommentIdList[position], dataSet[position].id)
+            pageIndices[position] += 1
+            notifyItemChanged(position)
+        }
     }
 
     fun addItem(item: Comment){
         dataSet.add(item)
+
+        // 기본값으로 추가
+        pageIndices.add(1)
+        topCommentIdList.add(-1)
+    }
+
+    fun setTopCommentIdList(id: Long, position: Int){
+        topCommentIdList[position] = id
     }
 
     fun resetDataSet(){
         dataSet = arrayListOf()
+        pageIndices = arrayListOf()
+        topCommentIdList = arrayListOf()
     }
 }
