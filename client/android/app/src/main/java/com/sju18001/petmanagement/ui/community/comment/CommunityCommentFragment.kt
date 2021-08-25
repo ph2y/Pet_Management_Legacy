@@ -13,6 +13,7 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,6 +28,7 @@ import com.sju18001.petmanagement.restapi.dao.Comment
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateCommentActivity
 import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
+import de.hdodenhof.circleimageview.CircleImageView
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -56,6 +58,9 @@ class CommunityCommentFragment : Fragment() {
     // 현재 게시글의 postId
     private var postId: Long = -1
 
+    // 현재 로그인된 계정
+    private lateinit var loggedInAccount: Account
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -72,6 +77,7 @@ class CommunityCommentFragment : Fragment() {
         initializeViewForViewModel()
         initializeAdapter()
         setListenerOnViews()
+        setLoggedInAccountIdAndFetchAccountPhoto()
 
         return binding.root
     }
@@ -113,64 +119,13 @@ class CommunityCommentFragment : Fragment() {
             }
 
             override fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String){
-                val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-
-                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchAccountReq(body)
-                call!!.enqueue(object: Callback<FetchAccountResDto> {
-                    override fun onResponse(
-                        call: Call<FetchAccountResDto>,
-                        response: Response<FetchAccountResDto>
-                    ) {
-                        if(isViewDestroyed){
-                            return
-                        }
-
-                        if(response.isSuccessful){
-                            if(response.body()!!.id == authorId){
-                                showCommentDialog(commentId, commentContents)
-                            }
-                        }
-                    }
-
-                    override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
-                        // Do nothing
-                    }
-
-                })
+                if(loggedInAccount.id == authorId){
+                    showCommentDialog(commentId, commentContents)
+                }
             }
 
             override fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder) {
-                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
-                    .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
-                call.enqueue(object: Callback<ResponseBody> {
-                    override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                        if(isViewDestroyed){
-                            return
-                        }
-
-                        if(response.isSuccessful) {
-                            // convert photo to byte array + get bitmap
-                            val photoByteArray = response.body()!!.byteStream().readBytes()
-                            val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
-
-                            // set account photo + save photo value
-                            holder.profileImage.setImageBitmap(photoBitmap)
-                        }
-                        else {
-                            // get error message
-                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                            // Toast + Log
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                            Log.d("error", errorMessage)
-                        }
-                    }
-
-                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        // log error message
-                        Log.d("error", t.message.toString())
-                    }
-                })
+                setAccountPhotoToImageView(id, holder.profileImage)
             }
 
             override fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder) {
@@ -421,5 +376,67 @@ class CommunityCommentFragment : Fragment() {
         binding.buttonCreateComment.visibility = View.VISIBLE
         binding.progressBarComment.visibility = View.GONE
         binding.editTextComment.isEnabled = true
+    }
+
+    private fun setLoggedInAccountIdAndFetchAccountPhoto(){
+        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchAccountReq(body)
+        call!!.enqueue(object: Callback<FetchAccountResDto> {
+            override fun onResponse(
+                call: Call<FetchAccountResDto>,
+                response: Response<FetchAccountResDto>
+            ) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                if(response.isSuccessful){
+                    response.body()?.let{
+                        loggedInAccount = Account(it.id, it.username, it.email, it.phone, null, it.marketing, it.nickname, it.photoUrl, it.userMessage)
+                        if(!it.photoUrl.isNullOrEmpty()){
+                            setAccountPhotoToImageView(it.id, binding.imageProfile)
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
+                // Do nothing
+            }
+        })
+    }
+
+    private fun setAccountPhotoToImageView(id: Long, imageView: ImageView) {
+        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
+        call.enqueue(object: Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                if(response.isSuccessful) {
+                    // convert photo to byte array + get bitmap
+                    val photoByteArray = response.body()!!.byteStream().readBytes()
+                    val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
+
+                    // set account photo
+                    imageView.setImageBitmap(photoBitmap)
+                }
+                else {
+                    // get error message
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                    // Toast + Log
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // log error message
+                Log.d("error", t.message.toString())
+            }
+        })
     }
 }

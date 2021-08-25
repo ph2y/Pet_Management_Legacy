@@ -15,6 +15,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.restapi.global.FileMetaData
+import de.hdodenhof.circleimageview.CircleImageView
 
 interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)

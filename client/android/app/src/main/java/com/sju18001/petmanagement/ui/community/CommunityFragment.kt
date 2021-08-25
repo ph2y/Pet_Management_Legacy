@@ -235,7 +235,7 @@ class CommunityFragment : Fragment() {
                             val photoByteArray = response.body()!!.byteStream().readBytes()
                             val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
 
-                            // set account photo + save photo value
+                            // set account photo
                             holder.petPhotoImage.setImageBitmap(photoBitmap)
                         }
                         else {
