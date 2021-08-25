@@ -423,6 +423,7 @@ class CommunityFragment : Fragment() {
                                 setLikedCounts(adapter.itemCount-1, item.id)
                             }
 
+                            // 데이터셋 변경 알림
                             binding.recyclerViewPost.post{
                                 adapter.notifyDataSetChanged()
                             }

@@ -56,6 +56,7 @@
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_util"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/layout_contents"
@@ -78,5 +79,13 @@
                 app:layout_constraintStart_toEndOf="@id/text_timestamp"
                 />
         </androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/text_load_reply"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="답글 불러오기"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@id/layout_util"
+            app:layout_constraintStart_toStartOf="@id/layout_util"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

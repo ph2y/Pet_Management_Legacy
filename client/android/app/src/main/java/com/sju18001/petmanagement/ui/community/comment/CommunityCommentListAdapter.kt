@@ -26,6 +26,8 @@ interface CommunityCommentListAdapterInterface{
     fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String)
     fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder)
+    fun setLoadReplyTextView(parentCommentId: Long, holder: CommunityCommentListAdapter.ViewHolder)
+    fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long)
 }
 
 class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
@@ -38,7 +40,7 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         val contentsTextView: TextView = view.findViewById(R.id.text_contents)
         val timestampTextView: TextView = view.findViewById(R.id.text_timestamp)
         val replyTextView: TextView = view.findViewById(R.id.text_reply)
-
+        val loadReplyTextView: TextView = view.findViewById(R.id.text_load_reply)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -55,6 +57,9 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>) : Rec
         
         // 댓글 내용에 indent 추가
         setSpanToContent(holder.nicknameTextView, holder.contentsTextView)
+
+        // 답글 불러오기 버튼 추가
+        communityCommentListAdapterInterface.setLoadReplyTextView(dataSet[position].id, holder)
         
         // 리스너 추가
         setListenerOnViews(holder, position)
