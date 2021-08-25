@@ -28,7 +28,7 @@ interface CommunityCommentListAdapterInterface{
     fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String)
     fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder)
-    fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long)
+    fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long, position: Int)
 }
 
 class CommunityCommentListAdapter(
@@ -152,7 +152,7 @@ class CommunityCommentListAdapter(
         }
 
         holder.loadReplyTextView.setOnClickListener {
-            communityCommentListAdapterInterface.fetchReplyComment(pageIndices[position], topCommentIdList[position], dataSet[position].id)
+            communityCommentListAdapterInterface.fetchReplyComment(pageIndices[position], topCommentIdList[position], dataSet[position].id, position)
             pageIndices[position] += 1
             notifyItemChanged(position)
         }
@@ -164,6 +164,14 @@ class CommunityCommentListAdapter(
         // 기본값으로 추가
         pageIndices.add(0)
         topCommentIdList.add(-1)
+    }
+
+    fun addItemOnPosition(item: Comment, position: Int){
+        dataSet.add(position, item)
+
+        // 기본값으로 추가
+        pageIndices.add(position, 0)
+        topCommentIdList.add(position, -1)
     }
 
     fun setTopCommentIdList(id: Long, position: Int){
