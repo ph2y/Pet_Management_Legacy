@@ -1,6 +1,6 @@
 ## Pet-Management Ignore File **
 
-/server/local.properties
+server/local.properties
 *.mwb
 *.bak
 *.sql
