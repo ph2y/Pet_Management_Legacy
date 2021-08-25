@@ -32,9 +32,9 @@ data class FetchCommentReqDto(
 
 data class FetchCommentResDto(
     val _metadata: DtoMetadata,
-    val commentList: List<Comment>,
-    val pageable: Pageable,
-    val isLast: Boolean
+    val commentList: List<Comment>?,
+    val pageable: Pageable?,
+    val isLast: Boolean?
 )
 
 data class UpdateCommentReqDto(

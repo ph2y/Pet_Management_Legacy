@@ -131,6 +131,72 @@ class CommunityCommentFragment : Fragment() {
             override fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder) {
                 holder.profileImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
             }
+
+            override fun setLoadReplyTextView(parentCommentId: Long, holder: CommunityCommentListAdapter.ViewHolder){
+                // TODO: Comment에 reply_count Column이 생기면 그것에 맞춰 변경
+                val body = FetchCommentReqDto(null, null, null, parentCommentId, null)
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchCommentReq(body)
+                call!!.enqueue(object: Callback<FetchCommentResDto> {
+                    override fun onResponse(
+                        call: Call<FetchCommentResDto>,
+                        response: Response<FetchCommentResDto>
+                    ) {
+                        if(isViewDestroyed){
+                            return
+                        }
+
+                        if(response.isSuccessful){
+                            // 답글 불러오기 버튼
+                            if(response.body()!!.commentList!!.count() > 0){
+                                holder.loadReplyTextView.visibility = View.VISIBLE
+                            }else{
+                                holder.loadReplyTextView.visibility = View.GONE
+                            }
+                        }else{
+                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
+                        if(isViewDestroyed){
+                            return
+                        }
+
+                        Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
+
+            override fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long){
+                val body = FetchCommentReqDto(pageIndex, topCommentId, null, parentCommentId, null)
+                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchCommentReq(body)
+                call.enqueue(object: Callback<FetchCommentResDto> {
+                    override fun onResponse(
+                        call: Call<FetchCommentResDto>,
+                        response: Response<FetchCommentResDto>
+                    ) {
+                        if(isViewDestroyed){
+                            return
+                        }
+                        
+                        if(response.isSuccessful){
+                            // Add replies to RecyclerView
+                        }else{
+                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
+                        if(isViewDestroyed){
+                            return
+                        }
+
+                        Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                    }
+                })
+            }
         }
 
         binding.recyclerViewComment?.let{
@@ -246,13 +312,14 @@ class CommunityCommentFragment : Fragment() {
                 if(response.isSuccessful){
                     response.body()!!.commentList?.let {
                         if(it.isNotEmpty()){
+                            // Set topCommentId
+                            if(topCommentId == null){
+                                topCommentId = it.first().id
+                            }
+
                             it.map { item ->
                                 item.contents = item.contents.replace("\n", "")
                                 adapter.addItem(item)
-                            }
-
-                            if(topCommentId == null){
-                                topCommentId = it.first().id
                             }
 
                             // 데이터셋 변경 알림
