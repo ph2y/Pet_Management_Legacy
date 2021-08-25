@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.community.comment
 
 import android.app.Activity
+import android.content.Context
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
@@ -12,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
@@ -29,7 +31,11 @@ interface CommunityCommentListAdapterInterface{
     fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long)
 }
 
-class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>, private var pageIndices: ArrayList<Int>, private var topCommentIdList: ArrayList<Long>) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
+class CommunityCommentListAdapter(
+    private var dataSet: ArrayList<Comment>,
+    private var pageIndices: ArrayList<Int>,
+    private var topCommentIdList: ArrayList<Long>
+    ) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
     lateinit var communityCommentListAdapterInterface: CommunityCommentListAdapterInterface
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
@@ -64,6 +70,9 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>, priva
         }else{
             holder.loadReplyTextView.visibility = View.VISIBLE
         }
+
+        // Comment, Reply를 구분하여 이에 따라 뷰 세팅
+        setViewDependingOnCommentOrReply(holder, position)
         
         // 리스너 추가
         setListenerOnViews(holder, position)
@@ -112,6 +121,18 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>, priva
 
             contentTextView.text = spannable
         }
+    }
+
+    private fun setViewDependingOnCommentOrReply(holder: ViewHolder, position: Int){
+        val isReply = dataSet[position].parentCommentId != null
+        
+        // 답글일 시 Margin 추가
+        val layoutParams = holder.communityCommentLayout.layoutParams as ViewGroup.MarginLayoutParams
+        layoutParams.leftMargin = if(isReply) 96 else 0
+        holder.communityCommentLayout.layoutParams = layoutParams
+
+        // 답글일 시 답글 달기 제거
+        holder.replyTextView.visibility = if(isReply) View.GONE else View.VISIBLE
     }
 
     private fun setListenerOnViews(holder: ViewHolder, position: Int){
