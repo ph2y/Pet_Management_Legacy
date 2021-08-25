@@ -174,11 +174,13 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
     fun removeItem(index: Int){
         dataSet.removeAt(index)
         likedCounts.removeAt(index)
+        isPostLiked.removeAt(index)
     }
 
     fun resetItem(){
         dataSet = arrayListOf()
         likedCounts = arrayListOf()
+        isPostLiked = arrayListOf()
     }
 
     fun showCreateLikeButton(holder: ViewHolder){
