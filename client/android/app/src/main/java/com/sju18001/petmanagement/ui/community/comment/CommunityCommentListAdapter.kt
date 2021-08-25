@@ -141,7 +141,7 @@ class CommunityCommentListAdapter(private var dataSet: ArrayList<Comment>, priva
         dataSet.add(item)
 
         // 기본값으로 추가
-        pageIndices.add(1)
+        pageIndices.add(0)
         topCommentIdList.add(-1)
     }
 
