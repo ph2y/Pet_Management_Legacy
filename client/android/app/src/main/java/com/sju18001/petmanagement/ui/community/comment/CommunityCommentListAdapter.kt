@@ -58,10 +58,29 @@ class CommunityCommentListAdapter(
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // 데이터 동기화
-        updateDataSetToViewHolder(holder, dataSet[position])
+        updateDataSetToViewHolder(holder, dataSet[position], position)
         
         // 댓글 내용에 indent 추가
         setSpanToContent(holder.nicknameTextView, holder.contentsTextView)
+        
+        // 리스너 추가
+        setListenerOnView(holder, position)
+    }
+
+    override fun getItemCount(): Int = dataSet.size
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun updateDataSetToViewHolder(holder: CommunityCommentListAdapter.ViewHolder, data: Comment, position: Int){
+        holder.nicknameTextView.text = data.author.nickname
+        holder.contentsTextView.text = data.contents
+        holder.timestampTextView.text = getTimestampForDisplay(data.timestamp)
+
+        // Set photo
+        if(!data.author.photoUrl.isNullOrEmpty()){
+            communityCommentListAdapterInterface.setAccountPhoto(data.author.id, holder)
+        }else{
+            communityCommentListAdapterInterface.setAccountDefaultPhoto(holder)
+        }
 
         // 답글 불러오기 버튼 세팅
         // topCommentIdList가 -1로 초기화되므로, -1이면 해당 댓글의 답글이 없다는 의미임
@@ -73,24 +92,6 @@ class CommunityCommentListAdapter(
 
         // Comment, Reply를 구분하여 이에 따라 뷰 세팅
         setViewDependingOnCommentOrReply(holder, position)
-        
-        // 리스너 추가
-        setListenerOnViews(holder, position)
-    }
-
-    override fun getItemCount(): Int = dataSet.size
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun updateDataSetToViewHolder(holder: CommunityCommentListAdapter.ViewHolder, data: Comment){
-        holder.nicknameTextView.text = data.author.nickname
-        holder.contentsTextView.text = data.contents
-        holder.timestampTextView.text = getTimestampForDisplay(data.timestamp)
-
-        if(!data.author.photoUrl.isNullOrEmpty()){
-            communityCommentListAdapterInterface.setAccountPhoto(data.author.id, holder)
-        }else{
-            communityCommentListAdapterInterface.setAccountDefaultPhoto(holder)
-        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -135,7 +136,7 @@ class CommunityCommentListAdapter(
         holder.replyTextView.visibility = if(isReply) View.GONE else View.VISIBLE
     }
 
-    private fun setListenerOnViews(holder: ViewHolder, position: Int){
+    private fun setListenerOnView(holder: ViewHolder, position: Int){
         holder.nicknameTextView.setOnClickListener {
             // TODO: 프로필로 이동
         }
