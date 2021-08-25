@@ -147,6 +147,11 @@ class CommunityCommentFragment : Fragment() {
                         
                         if(response.isSuccessful){
                             // Add replies to RecyclerView
+                            response.body()!!.commentList?.map {
+                                adapter.addItem(it)
+                            }
+
+                            adapter.notifyDataSetChanged()
                         }else{
                             val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
                             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
