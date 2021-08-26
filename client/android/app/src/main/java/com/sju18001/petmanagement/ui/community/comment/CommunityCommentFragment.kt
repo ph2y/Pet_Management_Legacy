@@ -117,9 +117,9 @@ class CommunityCommentFragment : Fragment() {
                 setViewForReply(id, nickname)
             }
 
-            override fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String){
+            override fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String, position: Int){
                 if(loggedInAccount.id == authorId){
-                    showCommentDialog(commentId, commentContents)
+                    showCommentDialog(commentId, commentContents, position)
                 }
             }
 
@@ -213,7 +213,7 @@ class CommunityCommentFragment : Fragment() {
         }
     }
 
-    private fun showCommentDialog(id: Long, contents: String){
+    private fun showCommentDialog(id: Long, contents: String, position: Int){
         val builder = AlertDialog.Builder(requireActivity())
         builder.setItems(arrayOf("수정", "삭제"), DialogInterface.OnClickListener{ _, which ->
             when(which){
@@ -228,14 +228,14 @@ class CommunityCommentFragment : Fragment() {
                 }
                 1 -> {
                     // 삭제
-                    deleteComment(id)
+                    deleteComment(id, position)
                 }
             }
         })
             .create().show()
     }
 
-    private fun deleteComment(id: Long){
+    private fun deleteComment(id: Long, position: Int){
         val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).deleteCommentReq(
             DeleteCommentReqDto(id)
         )
@@ -251,10 +251,8 @@ class CommunityCommentFragment : Fragment() {
                 if(response.isSuccessful){
                     Toast.makeText(context, context?.getText(R.string.delete_comment_success), Toast.LENGTH_SHORT).show()
 
-                    resetCommentData()
-                    updateAdapterDataSetByFetchComment(FetchCommentReqDto(
-                        null, null, postId, null, null
-                    ))
+                    adapter.removeItem(position)
+                    adapter.notifyItemRemoved(position)
                 }else{
                     Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
                 }
