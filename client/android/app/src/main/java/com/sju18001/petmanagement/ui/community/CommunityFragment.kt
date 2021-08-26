@@ -492,7 +492,7 @@ class CommunityFragment : Fragment() {
                 1 -> {
                     // 삭제
                     val builder = AlertDialog.Builder(requireActivity())
-                    builder.setMessage(getString(R.string.post_delete_dialog))
+                    builder.setMessage(getString(R.string.delete_post_dialog))
                         .setPositiveButton(R.string.confirm,
                             DialogInterface.OnClickListener { _, _ -> deletePost(postId, position) }
                         )

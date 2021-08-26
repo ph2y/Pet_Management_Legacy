@@ -245,7 +245,15 @@ class CommunityCommentFragment : Fragment() {
                 }
                 1 -> {
                     // 삭제
-                    deleteComment(id, position)
+                    val builder = AlertDialog.Builder(requireActivity())
+                    builder.setMessage(getString(R.string.delete_comment_dialog))
+                        .setPositiveButton(R.string.confirm,
+                            DialogInterface.OnClickListener { _, _ -> deleteComment(id, position) }
+                        )
+                        .setNegativeButton(R.string.cancel,
+                            DialogInterface.OnClickListener { dialog, _ -> dialog.cancel() }
+                        )
+                        .create().show()
                 }
             }
         })
