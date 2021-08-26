@@ -150,6 +150,7 @@ class CommunityCommentFragment : Fragment() {
                             response.body()!!.commentList?.let{
                                 val replyCount = it.count()
                                 for(i in 0 until replyCount){
+                                    it[i].contents = it[i].contents.replace("\n", "")
                                     adapter.addItemOnPosition(it[i], position+1)
                                 }
 
