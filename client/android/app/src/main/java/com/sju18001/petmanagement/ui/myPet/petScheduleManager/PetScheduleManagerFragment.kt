@@ -120,7 +120,7 @@ class PetScheduleManagerFragment : Fragment() {
                             PetScheduleNotification.cancelNotificationWorkManager(requireContext(), item.time)
                             deletePetSchedule(item.id)
                             adapter.removeItem(position)
-                            adapter.notifyDataSetChanged()
+                            adapter.notifyItemRemoved(position)
                         }
                     )
                     .setNegativeButton(
