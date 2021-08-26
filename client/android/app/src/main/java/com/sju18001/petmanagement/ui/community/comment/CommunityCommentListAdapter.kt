@@ -175,6 +175,10 @@ class CommunityCommentListAdapter(
         topCommentIdList.removeAt(position)
     }
 
+    fun updateCommentContents(newContents: String, position: Int){
+        dataSet[position].contents = newContents
+    }
+
     fun addItemOnPosition(item: Comment, position: Int){
         dataSet.add(position, item)
 

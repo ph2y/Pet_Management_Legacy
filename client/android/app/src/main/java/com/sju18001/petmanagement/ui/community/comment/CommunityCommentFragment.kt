@@ -16,6 +16,8 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -46,6 +48,20 @@ class CommunityCommentFragment : Fragment() {
 
     // session manager for user token
     private lateinit var sessionManager: SessionManager
+
+    // For starting update comment activity
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result: ActivityResult ->
+        if(result.resultCode == Activity.RESULT_OK){
+            result.data?.let{
+                val newContents = it.getStringExtra("newContents")?: ""
+                val position = it.getIntExtra("position", -1)
+
+                adapter.updateCommentContents(newContents, position)
+                adapter.notifyItemChanged(position)
+            }
+        }
+    }
 
     // 리싸이클러뷰
     private lateinit var adapter: CommunityCommentListAdapter
@@ -222,8 +238,9 @@ class CommunityCommentFragment : Fragment() {
                     val updateCommunityActivityIntent = Intent(context, UpdateCommentActivity::class.java)
                     updateCommunityActivityIntent.putExtra("id", id)
                     updateCommunityActivityIntent.putExtra("contents", contents)
+                    updateCommunityActivityIntent.putExtra("position", position)
 
-                    startActivity(updateCommunityActivityIntent)
+                    startForResult.launch(updateCommunityActivityIntent)
                     requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
                 }
                 1 -> {
