@@ -43,6 +43,8 @@ class CommunityCommentFragment : Fragment() {
     private var _binding: FragmentCommunityCommentBinding? = null
     private val binding get() = _binding!!
 
+    private val FETCH_POST_LIMIT = 50
+
     // variable for ViewModel
     val communityCommentViewModel: CommunityCommentViewModel by activityViewModels()
 
@@ -169,7 +171,7 @@ class CommunityCommentFragment : Fragment() {
                                 }
 
                                 // 더이상 불러올 답글이 없을 시 topCommentId 초기화 -> 답글 불러오기 제거
-                                if(replyCount == 0){
+                                if(replyCount < FETCH_POST_LIMIT){
                                     adapter.setTopCommentIdList(-1, position)
                                     adapter.notifyItemChanged(position)
 
