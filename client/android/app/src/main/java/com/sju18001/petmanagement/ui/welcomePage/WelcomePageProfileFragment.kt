@@ -58,6 +58,7 @@ class WelcomePageProfileFragment : Fragment() {
 
         // 수락 버튼
         binding.acceptButton.setOnClickListener{
+            // Move to account_edit
             val accountLookupIntent = Intent(context, MyPageActivity::class.java)
             accountLookupIntent.putExtra("fragmentType", "account_edit")
             accountLookupIntent.putExtra("id", accountData.id)
@@ -70,6 +71,9 @@ class WelcomePageProfileFragment : Fragment() {
 
             startActivity(accountLookupIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+
+            // Disable accept button
+            binding.acceptButton.isEnabled = false
         }
         
         // 거절 버튼
