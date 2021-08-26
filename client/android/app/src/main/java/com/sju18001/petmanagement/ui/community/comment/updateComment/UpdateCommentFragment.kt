@@ -1,11 +1,14 @@
 package com.sju18001.petmanagement.ui.community.comment.updateComment
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.setFragmentResult
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentUpdateCommentBinding
@@ -13,6 +16,7 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.UpdateCommentReqDto
 import com.sju18001.petmanagement.restapi.dto.UpdateCommentResDto
+import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -98,8 +102,15 @@ class UpdateCommentFragment : Fragment() {
                 }
 
                 if(response.isSuccessful){
-                    activity?.finish()
+                    // Pass datum for comment
+                    val intent = Intent()
+                    val newContents = binding.editTextUpdateComment.text.toString().replace("\n", "")
+                    intent.putExtra("newContents", newContents)
+                    intent.putExtra("position", requireActivity().intent.getIntExtra("position", -1))
+                    requireActivity().setResult(RESULT_OK, intent)
+
                     Toast.makeText(context, context?.getText(R.string.update_comment_success), Toast.LENGTH_SHORT).show()
+                    activity?.finish()
                 }else{
                     val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
                     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
