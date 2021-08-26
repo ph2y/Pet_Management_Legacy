@@ -82,7 +82,7 @@ class CommunityFragment : Fragment() {
         // 어뎁터 초기화
         initializeAdapter()
         
-        // 초기 post 추가
+        // 초기 Post 추가
         resetPostData()
         updateAdapterDataSet(FetchPostReqDto(null, null, null, null))
 
