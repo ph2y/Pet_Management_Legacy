@@ -25,7 +25,7 @@ import java.time.LocalDateTime
 interface CommunityCommentListAdapterInterface{
     fun getActivity(): Activity
     fun onClickReply(id: Long, nickname: String)
-    fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String)
+    fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String, position: Int)
     fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder)
     fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long, position: Int)
@@ -148,7 +148,7 @@ class CommunityCommentListAdapter(
         }
 
         holder.communityCommentLayout.setOnLongClickListener { _ ->
-            communityCommentListAdapterInterface.onLongClickComment(dataSet[position].author.id, dataSet[position].id, dataSet[position].contents)
+            communityCommentListAdapterInterface.onLongClickComment(dataSet[position].author.id, dataSet[position].id, dataSet[position].contents, position)
             true
         }
 
@@ -167,6 +167,12 @@ class CommunityCommentListAdapter(
         // 기본값으로 추가
         pageIndices.add(0)
         topCommentIdList.add(-1)
+    }
+
+    fun removeItem(position: Int){
+        dataSet.removeAt(position)
+        pageIndices.removeAt(position)
+        topCommentIdList.removeAt(position)
     }
 
     fun addItemOnPosition(item: Comment, position: Int){
