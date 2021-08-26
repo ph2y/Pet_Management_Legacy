@@ -214,6 +214,8 @@
     <string name="create_comment_success">댓글을 작성하였습니다.</string>
     <string name="update_comment_success">댓글을 수정하였습니다.</string>
     <string name="delete_comment_success">댓글을 삭제하였습니다.</string>
+    <string name="load_reply_title">답글 불러오기</string>
+    <string name="load_prev_reply_title">이전 답글 불러오기</string>
     <string name="no_more_reply">모든 답글을 불러왔습니다.</string>
 
     <!-- Follower/Following Fragment -->

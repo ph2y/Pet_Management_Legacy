@@ -155,7 +155,9 @@ class CommunityCommentListAdapter(
         holder.loadReplyTextView.setOnClickListener {
             communityCommentListAdapterInterface.fetchReplyComment(pageIndices[position], topCommentIdList[position], dataSet[position].id, position)
             pageIndices[position] += 1
-            notifyItemChanged(position)
+            
+            // 답글 불러오기 -> 이전 답글 불러오기
+            holder.loadReplyTextView.text = communityCommentListAdapterInterface.getActivity().getString(R.string.load_prev_reply_title)
         }
     }
 
