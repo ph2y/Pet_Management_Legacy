@@ -10,7 +10,8 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="10dp"
+        android:layout_height="2dp"
+        app:tabGravity="fill"
         app:layout_constraintBottom_toTopOf="@id/skip_button"
         />
 
