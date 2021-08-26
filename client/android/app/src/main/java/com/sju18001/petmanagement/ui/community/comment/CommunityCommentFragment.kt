@@ -77,19 +77,17 @@ class CommunityCommentFragment : Fragment() {
         // 초기화
         initializeViewForViewModel()
         initializeAdapter()
-        setListenerOnViews()
-        setLoggedInAccountIdAndFetchAccountPhoto()
 
-        return binding.root
-    }
-
-    override fun onResume() {
-        super.onResume()
-
+        // 초기 Comment 추가
         resetCommentData()
         updateAdapterDataSetByFetchComment(FetchCommentReqDto(
             null, null, postId, null, null
         ))
+
+        setListenerOnViews()
+        setLoggedInAccountIdAndFetchAccountPhoto()
+
+        return binding.root
     }
 
     override fun onDestroyView() {
