@@ -6,6 +6,7 @@ import android.os.Build
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.LeadingMarginSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -115,12 +116,14 @@ class CommunityCommentListAdapter(
 
     private fun setSpanToContent(nicknameTextView: TextView, contentTextView: TextView){
         contentTextView.post{
-            // contents의 첫줄에 닉네임만큼의 indent를 주기 위함
-            val spannable = SpannableString(contentTextView.text)
-            val span = LeadingMarginSpan.Standard(nicknameTextView.width + 10, 0)
-            spannable.setSpan(span, 0, spannable.count(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+            nicknameTextView.post{
+                // contents의 첫줄에 닉네임만큼의 indent를 주기 위함
+                val spannable = SpannableString(contentTextView.text.toString())
+                val span = LeadingMarginSpan.Standard(nicknameTextView.width + 10, 0)
+                spannable.setSpan(span, 0, spannable.count(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
 
-            contentTextView.text = spannable
+                contentTextView.text = spannable
+            }
         }
     }
 
