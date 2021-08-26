@@ -48,6 +48,8 @@ class WelcomePageProfileFragment : Fragment() {
         // get session manager
         sessionManager = context?.let { SessionManager(it) }!!
 
+        fetchAccountProfileData()
+
         return binding.root
     }
 
@@ -76,12 +78,6 @@ class WelcomePageProfileFragment : Fragment() {
             startActivity(intent)
             activity?.finish()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        fetchAccountProfileData()
     }
 
     override fun onDestroyView() {
