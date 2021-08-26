@@ -148,17 +148,19 @@ class CommunityCommentFragment : Fragment() {
                         if(response.isSuccessful){
                             // Add replies to RecyclerView
                             response.body()!!.commentList?.let{
-                                for(i in 0 until it.count()){
+                                val replyCount = it.count()
+                                for(i in 0 until replyCount){
                                     adapter.addItemOnPosition(it[i], position+1)
                                 }
 
                                 // 더이상 불러올 답글이 없을 시 topCommentId 초기화 -> 답글 불러오기 제거
-                                if(it.count() == 0){
+                                if(replyCount == 0){
+                                    adapter.notifyItemChanged(position)
                                     adapter.setTopCommentIdList(-1, position)
                                     Toast.makeText(requireContext(), getString(R.string.no_more_reply), Toast.LENGTH_SHORT).show()
                                 }
 
-                                adapter.notifyDataSetChanged()
+                                adapter.notifyItemRangeInserted(position + 1, replyCount)
                             }
                         }else{
                             val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
