@@ -59,6 +59,7 @@ class WelcomePageProfileFragment : Fragment() {
                 accountLookupIntent.putExtra("marketing", accountData!!.marketing)
                 accountLookupIntent.putExtra("nickname", accountData!!.nickname)
                 accountLookupIntent.putExtra("userMessage", accountData!!.userMessage)
+                // TODO: 사진 데이터 전달
 
                 startActivity(accountLookupIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
