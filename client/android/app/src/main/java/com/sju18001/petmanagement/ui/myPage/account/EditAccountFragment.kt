@@ -440,6 +440,7 @@ class EditAccountFragment : Fragment() {
     private fun logout() {
         // remove user token in SessionManager
         SessionManager.removeUserToken(requireContext())
+        SessionManager.removeLoggedInAccount(requireContext())
 
         // go back to login activity
         val intent = Intent(context, LoginActivity::class.java)
