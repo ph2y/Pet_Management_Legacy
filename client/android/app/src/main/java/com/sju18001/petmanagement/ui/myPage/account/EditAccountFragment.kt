@@ -24,6 +24,7 @@ import com.sju18001.petmanagement.databinding.FragmentEditAccountBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.login.LoginActivity
 import com.sju18001.petmanagement.ui.myPage.MyPageViewModel
@@ -312,6 +313,14 @@ class EditAccountFragment : Fragment() {
                 if(response.isSuccessful) {
                     if(response.body()?._metadata?.status == true) {
                         updateAccountPhoto(myPageViewModel.accountPhotoPathValue)
+
+                        // 세션 갱신
+                        val prevAccount = SessionManager.fetchLoggedInAccount(requireContext())!!
+                        val account = Account(
+                            prevAccount.id, prevAccount.username, myPageViewModel.accountEmailValue, myPageViewModel.accountPhoneValue, null,
+                            myPageViewModel.accountMarketingValue, myPageViewModel.accountNicknameValue, prevAccount.photoUrl, myPageViewModel.accountUserMessageValue
+                        )
+                        SessionManager.saveLoggedInAccount(requireContext(), account)
                     }
                 }
                 else {

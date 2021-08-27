@@ -210,7 +210,8 @@ class LoginFragment : Fragment() {
                             val intent = Intent(context, WelcomePageActivity::class.java)
                             SessionManager.saveUserToken(requireContext(), token)
                             response.body()?.run{
-                                val account = Account(id, username, email, phone, null, marketing, nickname, photoUrl, userMessage)
+                                // nickname에 username을 넣은 것에 유의할 것
+                                val account = Account(id, username, email, phone, null, marketing, username, photoUrl, userMessage)
                                 SessionManager.saveLoggedInAccount(requireContext(), account)
                             }
 
