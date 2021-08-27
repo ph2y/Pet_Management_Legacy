@@ -37,7 +37,7 @@ class WelcomePageProfileFragment : Fragment() {
     private var isViewDestroyed = false
 
     // Account DAO
-    private lateinit var accountData: Account
+    private var accountData: Account? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -56,18 +56,22 @@ class WelcomePageProfileFragment : Fragment() {
 
         // 수락 버튼
         binding.acceptButton.setOnClickListener{
-            val accountLookupIntent = Intent(context, MyPageActivity::class.java)
-            accountLookupIntent.putExtra("fragmentType", "account_edit")
-            accountLookupIntent.putExtra("id", accountData.id)
-            accountLookupIntent.putExtra("username", accountData.username)
-            accountLookupIntent.putExtra("email", accountData.email)
-            accountLookupIntent.putExtra("phone", accountData.phone)
-            accountLookupIntent.putExtra("marketing", accountData.marketing)
-            accountLookupIntent.putExtra("nickname", accountData.nickname)
-            accountLookupIntent.putExtra("userMessage", accountData.userMessage)
+            if(accountData != null){
+                val accountLookupIntent = Intent(context, MyPageActivity::class.java)
+                accountLookupIntent.putExtra("fragmentType", "account_edit")
+                accountLookupIntent.putExtra("id", accountData!!.id)
+                accountLookupIntent.putExtra("username", accountData!!.username)
+                accountLookupIntent.putExtra("email", accountData!!.email)
+                accountLookupIntent.putExtra("phone", accountData!!.phone)
+                accountLookupIntent.putExtra("marketing", accountData!!.marketing)
+                accountLookupIntent.putExtra("nickname", accountData!!.nickname)
+                accountLookupIntent.putExtra("userMessage", accountData!!.userMessage)
 
-            startActivity(accountLookupIntent)
-            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+                startActivity(accountLookupIntent)
+                requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+            }else{
+                Toast.makeText(requireContext(), getString(R.string.try_again), Toast.LENGTH_SHORT).show()
+            }
         }
         
         // 거절 버튼
