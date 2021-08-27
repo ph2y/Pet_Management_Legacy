@@ -153,7 +153,7 @@ class RecoverUsernameFragment : Fragment() {
                     // 버튼 로딩 상태 해제
                     setButtonLoading(false)
 
-                    Toast.makeText(context, "요청에 실패하였습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.fail_request), Toast.LENGTH_SHORT).show()
                 }
             }
         })

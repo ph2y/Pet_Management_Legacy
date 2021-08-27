@@ -4,6 +4,9 @@
 
     <string name="user_token">UserToken</string>
 
+    <string name="fail_request">요청에 실패하였습니다.</string>
+    <string name="try_again">잠시후 다시 시도해주세요.</string>
+
     <!-- Bottom Navigation Buttons -->
     <string name="title_my_pet">마이펫</string>
     <string name="title_map">지도</string>
