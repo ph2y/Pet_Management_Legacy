@@ -26,8 +26,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class FollowingAdapter(val context: Context, val sessionManager: SessionManager,
-                       val followerFollowingViewModel: FollowerFollowingViewModel):
+class FollowingAdapter(val context: Context, val followerFollowingViewModel: FollowerFollowingViewModel):
     RecyclerView.Adapter<FollowingAdapter.HistoryListViewHolder>() {
 
     private var resultList = mutableListOf<FollowerFollowingListItem>()
@@ -100,7 +99,7 @@ class FollowingAdapter(val context: Context, val sessionManager: SessionManager,
         val deleteFollowReqDto = DeleteFollowReqDto(id)
 
         // API call
-        deleteFollowApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        deleteFollowApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .deleteFollowReq(deleteFollowReqDto)
         deleteFollowApiCall!!.enqueue(object: Callback<DeleteFollowResDto> {
             @RequiresApi(Build.VERSION_CODES.M)
@@ -152,7 +151,7 @@ class FollowingAdapter(val context: Context, val sessionManager: SessionManager,
         val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(id)
 
         // API call
-        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
         fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

@@ -57,9 +57,6 @@ class CommunityFragment : Fragment() {
     // constant variables
     private var COMMUNITY_DIRECTORY: String = "community"
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     // 리싸이클러뷰
     private lateinit var adapter: CommunityPostListAdapter
 
@@ -75,9 +72,6 @@ class CommunityFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommunityBinding.inflate(inflater, container, false)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
 
         // 어뎁터 초기화
         initializeAdapter()
@@ -129,7 +123,7 @@ class CommunityFragment : Fragment() {
 
             override fun createLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder, position: Int){
                 val body = CreateLikeReqDto(postId, null)
-                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).createLikeReq(body)
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).createLikeReq(body)
                 call.enqueue(object: Callback<CreateLikeResDto> {
                     override fun onResponse(
                         call: Call<CreateLikeResDto>,
@@ -162,7 +156,7 @@ class CommunityFragment : Fragment() {
 
             override fun deleteLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder, position: Int) {
                 val body = DeleteLikeReqDto(postId, null)
-                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).deleteLikeReq(body)
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).deleteLikeReq(body)
                 call.enqueue(object: Callback<DeleteLikeResDto> {
                     override fun onResponse(
                         call: Call<DeleteLikeResDto>,
@@ -195,7 +189,7 @@ class CommunityFragment : Fragment() {
 
             override fun onClickPostFunctionButton(postId: Long, authorId: Long, position: Int) {
                 val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchAccountReq(body)
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchAccountReq(body)
                 call!!.enqueue(object: Callback<FetchAccountResDto> {
                     override fun onResponse(
                         call: Call<FetchAccountResDto>,
@@ -222,7 +216,7 @@ class CommunityFragment : Fragment() {
             }
 
             override fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder){
-                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
                 call.enqueue(object: Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -266,7 +260,7 @@ class CommunityFragment : Fragment() {
                 url: String
             ) {
                 val body = FetchPostMediaReqDto(id, index)
-                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchPostMediaReq(body)
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchPostMediaReq(body)
                 call!!.enqueue(object: Callback<ResponseBody> {
                     @RequiresApi(Build.VERSION_CODES.R)
                     override fun onResponse(
@@ -395,7 +389,7 @@ class CommunityFragment : Fragment() {
 
     private fun updateAdapterDataSet(body: FetchPostReqDto){
         // Fetch post
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(body)
         call!!.enqueue(object: Callback<FetchPostResDto> {
             override fun onResponse(
@@ -452,7 +446,7 @@ class CommunityFragment : Fragment() {
 
     private fun setLikedCounts(position: Int, postId: Long){
         val body = FetchLikeReqDto(postId, null)
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchLikeReq(body)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchLikeReq(body)
         call!!.enqueue(object: Callback<FetchLikeResDto> {
             override fun onResponse(
                 call: Call<FetchLikeResDto>,
@@ -516,7 +510,7 @@ class CommunityFragment : Fragment() {
 
     private fun deletePost(id: Long, position: Int){
         val body = DeletePostReqDto(id)
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).deletePostReq(body)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).deletePostReq(body)
         call!!.enqueue(object: Callback<DeletePostResDto> {
             override fun onResponse(
                 call: Call<DeletePostResDto>,
@@ -530,6 +524,7 @@ class CommunityFragment : Fragment() {
                     // 데이터셋에서 삭제
                     adapter.removeItem(position)
                     adapter.notifyItemRemoved(position)
+                    adapter.notifyItemRangeChanged(position, adapter.itemCount)
 
                     Toast.makeText(context, getString(R.string.delete_post_successful), Toast.LENGTH_LONG).show()
                 }else{

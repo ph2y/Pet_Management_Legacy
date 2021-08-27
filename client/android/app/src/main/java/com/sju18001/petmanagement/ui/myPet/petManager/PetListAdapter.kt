@@ -35,9 +35,6 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
 
     private var resultList = emptyList<PetListItem>()
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val petPhoto: ImageView = itemView.findViewById(R.id.pet_photo)
         val petName: TextView = itemView.findViewById(R.id.pet_name)
@@ -47,9 +44,6 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.pet_list_item, parent, false)
-
-        // get session manager
-        sessionManager = SessionManager(context)
 
         return HistoryListViewHolder(itemView)
     }
@@ -154,7 +148,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         // create DTO
         val fetchPetPhotoReqDto = FetchPetPhotoReqDto(id)
 
-        RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .fetchPetPhotoReq(fetchPetPhotoReqDto).enqueue(object: Callback<ResponseBody> {
             override fun onResponse(
                 call: Call<ResponseBody>,

@@ -4,26 +4,25 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.sju18001.petmanagement.R
 
-class SessionManager(context: Context) {
-    private var prefs: SharedPreferences = context.getSharedPreferences(context.getString(R.string.user_token), Context.MODE_PRIVATE)
-
+class SessionManager {
     companion object {
-        const val USER_TOKEN = ""
-    }
+        fun saveUserToken(context:Context, token: String) {
+            val prefs = context.getSharedPreferences(context.getString(R.string.user_token), Context.MODE_PRIVATE)
+            val editor = prefs.edit()
+            editor.putString(context.getString(R.string.user_token), token)
+            editor.apply()
+        }
 
-    fun saveUserToken(token: String) {
-        val editor = prefs.edit()
-        editor.putString(USER_TOKEN, token)
-        editor.apply()
-    }
+        fun fetchUserToken(context:Context): String? {
+            val prefs = context.getSharedPreferences(context.getString(R.string.user_token), Context.MODE_PRIVATE)
+            return prefs.getString(context.getString(R.string.user_token), null)
+        }
 
-    fun fetchUserToken(): String? {
-        return prefs.getString(USER_TOKEN, null)
-    }
-
-    fun removeUserToken() {
-        val editor = prefs.edit()
-        editor.remove(USER_TOKEN)
-        editor.apply()
+        fun removeUserToken(context:Context) {
+            val prefs = context.getSharedPreferences(context.getString(R.string.user_token), Context.MODE_PRIVATE)
+            val editor = prefs.edit()
+            editor.remove(context.getString(R.string.user_token))
+            editor.apply()
+        }
     }
 }

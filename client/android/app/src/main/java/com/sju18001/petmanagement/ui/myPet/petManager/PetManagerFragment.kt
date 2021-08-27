@@ -53,16 +53,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     // variable for storing API call(for cancel)
     private var fetchPetApiCall: Call<FetchPetResDto>? = null
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
-    }
-
     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
         touchHelper.startDrag(viewHolder)
     }
@@ -105,7 +95,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         // create DTO
         val fetchPetReqDto = FetchPetReqDto( null )
 
-        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(fetchPetReqDto)
         fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
@@ -254,6 +244,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                 if(petList[i].getPetId() == deletedId[0]) {
                     petList.removeAt(i)
                     adapter.notifyItemRemoved(i)
+                    adapter.notifyItemRangeChanged(i, adapter.itemCount)
                     break
                 }
             }

@@ -47,18 +47,12 @@ class PetScheduleManagerFragment : Fragment() {
     // API Calls
     private var fetchPetScheduleApiCall: Call<FetchPetScheduleResDto>? = null
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentPetScheduleManagerBinding.inflate(inflater, container, false)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
 
         // 어뎁터 초기화
         initializeAdapter()
@@ -72,9 +66,6 @@ class PetScheduleManagerFragment : Fragment() {
         }
 
         return binding.root
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
     }
 
     override fun onStart() {
@@ -119,8 +110,10 @@ class PetScheduleManagerFragment : Fragment() {
                         R.string.confirm, DialogInterface.OnClickListener { _, _ ->
                             PetScheduleNotification.cancelNotificationWorkManager(requireContext(), item.time)
                             deletePetSchedule(item.id)
+
                             adapter.removeItem(position)
                             adapter.notifyItemRemoved(position)
+                            adapter.notifyItemRangeChanged(position, adapter.itemCount)
                         }
                     )
                     .setNegativeButton(
@@ -133,7 +126,7 @@ class PetScheduleManagerFragment : Fragment() {
             }
 
             override fun deletePetSchedule(id: Long) {
-                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .deletePetScheduleReq(DeletePetScheduleReqDto(id))
                 call!!.enqueue(object: Callback<DeletePetScheduleResDto> {
                     override fun onResponse(
@@ -155,7 +148,7 @@ class PetScheduleManagerFragment : Fragment() {
                     data.id, data.petIdList, data.time, data.memo, data.enabled
                 )
 
-                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .updatePetScheduleReq(updatePetScheduleReqDto)
                 call!!.enqueue(object: Callback<UpdatePetScheduleResDto> {
                     override fun onResponse(
@@ -188,7 +181,7 @@ class PetScheduleManagerFragment : Fragment() {
         val dataSet = arrayListOf<PetSchedule>()
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
-        fetchPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetScheduleReq(body)
         fetchPetScheduleApiCall!!.enqueue(object: Callback<FetchPetScheduleResDto> {
             @RequiresApi(Build.VERSION_CODES.O)

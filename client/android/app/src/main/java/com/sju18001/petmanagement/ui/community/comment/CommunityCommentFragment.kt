@@ -48,9 +48,6 @@ class CommunityCommentFragment : Fragment() {
     // variable for ViewModel
     val communityCommentViewModel: CommunityCommentViewModel by activityViewModels()
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     // For starting update comment activity
     private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             result: ActivityResult ->
@@ -85,9 +82,6 @@ class CommunityCommentFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommunityCommentBinding.inflate(inflater, container, false)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
 
         // postId 지정
         postId = requireActivity().intent.getLongExtra("postId", -1)
@@ -151,7 +145,7 @@ class CommunityCommentFragment : Fragment() {
 
             override fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long, position: Int){
                 val body = FetchCommentReqDto(pageIndex, topCommentId, null, parentCommentId, null)
-                val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchCommentReq(body)
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchCommentReq(body)
                 call.enqueue(object: Callback<FetchCommentResDto> {
                     override fun onResponse(
                         call: Call<FetchCommentResDto>,
@@ -263,7 +257,7 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun deleteComment(id: Long, position: Int){
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).deleteCommentReq(
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).deleteCommentReq(
             DeleteCommentReqDto(id)
         )
         call!!.enqueue(object: Callback<DeleteCommentResDto> {
@@ -280,6 +274,7 @@ class CommunityCommentFragment : Fragment() {
 
                     adapter.removeItem(position)
                     adapter.notifyItemRemoved(position)
+                    adapter.notifyItemRangeChanged(position, adapter.itemCount)
                 }else{
                     Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
                 }
@@ -303,7 +298,7 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun updateAdapterDataSetByFetchComment(body: FetchCommentReqDto){
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchCommentReq(body)
         call!!.enqueue(object: Callback<FetchCommentResDto> {
             override fun onResponse(
@@ -358,7 +353,7 @@ class CommunityCommentFragment : Fragment() {
     private fun setTopCommentId(parentCommentId: Long, position: Int){
         // TODO: Comment에 reply_count Column이 생기면 그것에 맞춰 변경
         val body = FetchCommentReqDto(null, null, null, parentCommentId, null)
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchCommentReq(body)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchCommentReq(body)
         call!!.enqueue(object: Callback<FetchCommentResDto> {
             override fun onResponse(
                 call: Call<FetchCommentResDto>,
@@ -432,7 +427,7 @@ class CommunityCommentFragment : Fragment() {
     private fun createComment(body: CreateCommentReqDto){
         setCommentInputToLoading()
 
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createCommentReq(body)
         call!!.enqueue(object: Callback<CreateCommentResDto> {
             override fun onResponse(
@@ -488,7 +483,7 @@ class CommunityCommentFragment : Fragment() {
 
     private fun setLoggedInAccountIdAndFetchAccountPhoto(){
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).fetchAccountReq(body)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchAccountReq(body)
         call!!.enqueue(object: Callback<FetchAccountResDto> {
             override fun onResponse(
                 call: Call<FetchAccountResDto>,
@@ -515,7 +510,7 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun setAccountPhotoToImageView(id: Long, imageView: ImageView) {
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
         call.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

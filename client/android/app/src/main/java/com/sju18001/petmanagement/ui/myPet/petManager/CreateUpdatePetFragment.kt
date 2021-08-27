@@ -55,16 +55,6 @@ class CreateUpdatePetFragment : Fragment() {
     private var updatePetPhotoApiCall: Call<UpdatePetPhotoResDto>? = null
     private var fetchPetApiCall: Call<FetchPetResDto>? = null
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -228,7 +218,7 @@ class CreateUpdatePetFragment : Fragment() {
             binding.petMessageInput.text.toString()
         )
 
-        createPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        createPetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPetReq(createPetRequestDto)
         createPetApiCall!!.enqueue(object: Callback<CreatePetResDto> {
             override fun onResponse(
@@ -299,7 +289,7 @@ class CreateUpdatePetFragment : Fragment() {
             binding.petMessageInput.text.toString()
         )
 
-        updatePetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        updatePetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePetReq(updatePetReqDto)
         updatePetApiCall!!.enqueue(object: Callback<UpdatePetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
@@ -349,7 +339,7 @@ class CreateUpdatePetFragment : Fragment() {
         if(path == "") { closeAfterSuccess() }
 
         else {
-            updatePetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            updatePetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updatePetPhotoReq(id, MultipartBody.Part.createFormData("file", "file.png",
                     RequestBody.create(MediaType.parse("multipart/form-data"), File(path))))
             updatePetPhotoApiCall!!.enqueue(object: Callback<UpdatePetPhotoResDto> {
@@ -397,7 +387,7 @@ class CreateUpdatePetFragment : Fragment() {
         // create DTO
         val fetchPetReqDto = FetchPetReqDto( null )
 
-        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(fetchPetReqDto)
         fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
@@ -544,11 +534,16 @@ class CreateUpdatePetFragment : Fragment() {
     // save pet data to ViewModel(for pet profile)
     @RequiresApi(Build.VERSION_CODES.O)
     private fun savePetDataForPetProfile() {
-        val bitmap = (binding.petPhotoInput.drawable as BitmapDrawable).bitmap
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-        val photoByteArray = stream.toByteArray()
-        myPetViewModel.petPhotoByteArrayProfile = photoByteArray
+        // 사진이 기본 이미지일 때 예외 처리
+        try{
+            val bitmap = (binding.petPhotoInput.drawable as BitmapDrawable).bitmap
+            val stream = ByteArrayOutputStream()
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            val photoByteArray = stream.toByteArray()
+            myPetViewModel.petPhotoByteArrayProfile = photoByteArray
+        }catch(e: Exception){
+            myPetViewModel.petPhotoByteArrayProfile = null
+        }
 
         myPetViewModel.petNameValueProfile = binding.petNameInput.text.toString()
         val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){

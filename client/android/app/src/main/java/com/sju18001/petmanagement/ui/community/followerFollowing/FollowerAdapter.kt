@@ -23,7 +23,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class FollowerAdapter(val context: Context, val sessionManager: SessionManager) :
+class FollowerAdapter(val context: Context) :
     RecyclerView.Adapter<FollowerAdapter.HistoryListViewHolder>() {
 
     private var resultList = mutableListOf<FollowerFollowingListItem>()
@@ -94,7 +94,7 @@ class FollowerAdapter(val context: Context, val sessionManager: SessionManager) 
         val createFollowReqDto = CreateFollowReqDto(id)
 
         // API call
-        createFollowApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        createFollowApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .createFollowReq(createFollowReqDto)
         createFollowApiCall!!.enqueue(object: Callback<CreateFollowResDto> {
             @RequiresApi(Build.VERSION_CODES.M)
@@ -138,7 +138,7 @@ class FollowerAdapter(val context: Context, val sessionManager: SessionManager) 
         val deleteFollowReqDto = DeleteFollowReqDto(id)
 
         // API call
-        deleteFollowApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        deleteFollowApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .deleteFollowReq(deleteFollowReqDto)
         deleteFollowApiCall!!.enqueue(object: Callback<DeleteFollowResDto> {
             @RequiresApi(Build.VERSION_CODES.M)
@@ -185,7 +185,7 @@ class FollowerAdapter(val context: Context, val sessionManager: SessionManager) 
         val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(id)
 
         // API call
-        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
         fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {

@@ -30,10 +30,6 @@ class WelcomePageProfileFragment : Fragment() {
     private var _binding: FragmentWelcomePageProfileBinding? = null
     private val binding get() = _binding!!
 
-
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     private var isViewDestroyed = false
 
     // Account DAO
@@ -44,9 +40,6 @@ class WelcomePageProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentWelcomePageProfileBinding.inflate(layoutInflater)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
 
         return binding.root
     }
@@ -99,7 +92,7 @@ class WelcomePageProfileFragment : Fragment() {
     private fun fetchAccountProfileData() {
         // create empty body
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchAccountReq(body)
         call!!.enqueue(object : Callback<FetchAccountResDto> {
             override fun onResponse(

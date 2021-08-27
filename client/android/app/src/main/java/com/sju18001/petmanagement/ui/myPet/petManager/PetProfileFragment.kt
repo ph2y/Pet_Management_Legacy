@@ -35,16 +35,6 @@ class PetProfileFragment : Fragment(){
     // variable for storing API call(for cancel)
     private var deletePetApiCall: Call<DeletePetResDto>? = null
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -151,7 +141,7 @@ class PetProfileFragment : Fragment(){
             requireActivity().intent.getLongExtra("petId", -1)
         )
 
-        deletePetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        deletePetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deletePetReq(deletePetReqDto)
         deletePetApiCall!!.enqueue(object: Callback<DeletePetResDto> {
             override fun onResponse(

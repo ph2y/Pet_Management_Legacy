@@ -32,9 +32,6 @@ class SearchActivity : AppCompatActivity() {
     // variable for view binding
     private lateinit var binding: ActivitySearchBinding
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     // pattern regex for EditText
     private val patternUsername: Pattern = Pattern.compile("^[a-zA-Z0-9가-힣_]{2,20}$")
 
@@ -53,9 +50,6 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // get session manager
-        sessionManager = SessionManager(this)
 
         // no title bar
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -202,7 +196,7 @@ class SearchActivity : AppCompatActivity() {
         val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         // API call
-        fetchFollowerApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchFollowerApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .fetchFollowerReq(emptyBody)
         fetchFollowerApiCall!!.enqueue(object: Callback<FetchFollowerResDto> {
             override fun onResponse(
@@ -246,7 +240,7 @@ class SearchActivity : AppCompatActivity() {
         val fetchAccountReqDto = FetchAccountReqDto(null, null, nickname)
 
         // API call
-        fetchAccountApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchAccountApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .fetchAccountByNicknameReq(fetchAccountReqDto)
         fetchAccountApiCall!!.enqueue(object: Callback<FetchAccountResDto> {
             override fun onResponse(
@@ -310,7 +304,7 @@ class SearchActivity : AppCompatActivity() {
         val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(id)
 
         // API call
-        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
         fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
@@ -350,7 +344,7 @@ class SearchActivity : AppCompatActivity() {
         val createFollowReqDto = CreateFollowReqDto(searchViewModel.accountId!!)
 
         // API call
-        createFollowApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        createFollowApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .createFollowReq(createFollowReqDto)
         createFollowApiCall!!.enqueue(object: Callback<CreateFollowResDto> {
             override fun onResponse(
@@ -397,7 +391,7 @@ class SearchActivity : AppCompatActivity() {
         val deleteFollowReqDto = DeleteFollowReqDto(searchViewModel.accountId!!)
 
         // API call
-        deleteFollowApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        deleteFollowApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .deleteFollowReq(deleteFollowReqDto)
         deleteFollowApiCall!!.enqueue(object: Callback<DeleteFollowResDto> {
             override fun onResponse(

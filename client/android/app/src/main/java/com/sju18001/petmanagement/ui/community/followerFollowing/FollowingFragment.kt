@@ -39,16 +39,6 @@ class FollowingFragment : Fragment() {
     // variable for storing API call(for cancel)
     private var fetchFollowerApiCall: Call<FetchFollowerResDto>? = null
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -75,7 +65,7 @@ class FollowingFragment : Fragment() {
         ).get(FollowerFollowingViewModel::class.java)
 
         // initialize RecyclerView
-        followingAdapter = FollowingAdapter(requireContext(), sessionManager, followerFollowingViewModel)
+        followingAdapter = FollowingAdapter(requireContext(), followerFollowingViewModel)
         binding.followingRecyclerView.setHasFixedSize(true)
         binding.followingRecyclerView.adapter = followingAdapter
         binding.followingRecyclerView.layoutManager = LinearLayoutManager(activity)
@@ -96,7 +86,7 @@ class FollowingFragment : Fragment() {
         val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         // API call
-        fetchFollowerApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchFollowerApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchFollowerReq(emptyBody)
         fetchFollowerApiCall!!.enqueue(object: Callback<FetchFollowerResDto> {
             override fun onResponse(
