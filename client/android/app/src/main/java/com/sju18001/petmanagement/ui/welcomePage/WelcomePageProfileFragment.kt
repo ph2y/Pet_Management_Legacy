@@ -59,10 +59,8 @@ class WelcomePageProfileFragment : Fragment() {
                 accountLookupIntent.putExtra("marketing", accountData!!.marketing)
                 accountLookupIntent.putExtra("nickname", accountData!!.nickname)
                 accountLookupIntent.putExtra("userMessage", accountData!!.userMessage)
-                // TODO: 사진 데이터 전달
-
-                startActivity(accountLookupIntent)
-                requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+                
+                fetchAccountPhotoAndStartAccountLookupActivity(accountLookupIntent)
             }else{
                 Toast.makeText(requireContext(), getString(R.string.try_again), Toast.LENGTH_SHORT).show()
             }
@@ -87,5 +85,46 @@ class WelcomePageProfileFragment : Fragment() {
         _binding = null
 
         isViewDestroyed = true
+    }
+
+    // fetch account photo
+    private fun fetchAccountPhotoAndStartAccountLookupActivity(accountLookupIntent: Intent) {
+        // 사진이 없을 때 -> 사진 업데이트 없이 바로 시작
+        if(accountData!!.photoUrl == null){
+            startActivity(accountLookupIntent)
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+
+            return
+        }
+        
+        val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(null)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
+        call!!.enqueue(object: Callback<ResponseBody> {
+            override fun onResponse(
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
+            ) {
+                if(response.isSuccessful) {
+                    accountLookupIntent.putExtra("photoByteArray", response.body()!!.byteStream().readBytes())
+
+                    startActivity(accountLookupIntent)
+                    requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+                }
+                else {
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
     }
 }

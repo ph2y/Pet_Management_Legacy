@@ -8,6 +8,6 @@ data class Account(
     val password: String?,
     val marketing: Boolean?,
     val nickname: String?,
-    val photoUrl: String?,
+    var photoUrl: String?,
     val userMessage: String?
 )

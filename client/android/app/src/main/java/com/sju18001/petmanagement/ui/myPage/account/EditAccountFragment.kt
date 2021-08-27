@@ -362,6 +362,11 @@ class EditAccountFragment : Fragment() {
                     response: Response<UpdateAccountPhotoResDto>
                 ) {
                     if(response.isSuccessful) {
+                        // 세션 갱신
+                        val account = SessionManager.fetchLoggedInAccount(requireContext())!!
+                        account.photoUrl = response.body()!!.fileUrl
+                        SessionManager.saveLoggedInAccount(requireContext(), account)
+
                         // delete copied file
                         File(path).delete()
 
