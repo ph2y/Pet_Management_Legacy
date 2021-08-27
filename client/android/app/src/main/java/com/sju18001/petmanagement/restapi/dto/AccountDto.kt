@@ -78,7 +78,8 @@ data class UpdateAccountResDto(
 )
 
 data class UpdateAccountPhotoResDto(
-    val _metadata: DtoMetadata
+    val _metadata: DtoMetadata,
+    val fileUrl: String?
 )
 
 data class UpdateAccountPasswordReqDto(
