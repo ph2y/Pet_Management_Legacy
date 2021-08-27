@@ -247,19 +247,15 @@ class SearchActivity : AppCompatActivity() {
                 call: Call<FetchAccountResDto>,
                 response: Response<FetchAccountResDto>
             ) {
-                if(response.isSuccessful) {
-                    // set api state/button to normal
-                    searchViewModel.apiIsLoading = false
-                    setSearchButtonToNormal()
+                // set api state/button to normal
+                searchViewModel.apiIsLoading = false
+                setSearchButtonToNormal()
 
+                if(response.isSuccessful) {
                     // set account info views
                     setAccountInfoViews(response.body()!!)
                 }
                 else {
-                    // set api state/button to normal
-                    searchViewModel.apiIsLoading = false
-                    setSearchButtonToNormal()
-
                     // get error message + handle exceptions
                     when(val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)) {
                         // if no such account exists -> show Toast message

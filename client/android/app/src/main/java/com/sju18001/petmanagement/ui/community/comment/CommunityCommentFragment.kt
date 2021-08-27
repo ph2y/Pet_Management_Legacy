@@ -482,31 +482,10 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun setLoggedInAccountIdAndFetchAccountPhoto(){
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchAccountReq(body)
-        call!!.enqueue(object: Callback<FetchAccountResDto> {
-            override fun onResponse(
-                call: Call<FetchAccountResDto>,
-                response: Response<FetchAccountResDto>
-            ) {
-                if(isViewDestroyed){
-                    return
-                }
-
-                if(response.isSuccessful){
-                    response.body()?.let{
-                        loggedInAccount = Account(it.id, it.username, it.email, it.phone, null, it.marketing, it.nickname, it.photoUrl, it.userMessage)
-                        if(!it.photoUrl.isNullOrEmpty()){
-                            setAccountPhotoToImageView(it.id, binding.imageProfile)
-                        }
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
-                // Do nothing
-            }
-        })
+        loggedInAccount = SessionManager.fetchLoggedInAccount(requireContext())!!
+        if(!loggedInAccount.photoUrl.isNullOrEmpty()){
+            setAccountPhotoToImageView(loggedInAccount.id, binding.imageProfile)
+        }
     }
 
     private fun setAccountPhotoToImageView(id: Long, imageView: ImageView) {
