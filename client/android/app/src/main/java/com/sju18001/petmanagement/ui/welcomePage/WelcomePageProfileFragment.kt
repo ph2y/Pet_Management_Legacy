@@ -78,7 +78,7 @@ class WelcomePageProfileFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        fetchAccountProfileData()
+        accountData = SessionManager.fetchLoggedInAccount(requireContext())
     }
 
     override fun onDestroyView() {
@@ -86,56 +86,5 @@ class WelcomePageProfileFragment : Fragment() {
         _binding = null
 
         isViewDestroyed = true
-    }
-
-    // fetch account profile
-    private fun fetchAccountProfileData() {
-        // create empty body
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchAccountReq(body)
-        call!!.enqueue(object : Callback<FetchAccountResDto> {
-            override fun onResponse(
-                call: Call<FetchAccountResDto>,
-                response: Response<FetchAccountResDto>
-            ) {
-                if(isViewDestroyed){
-                    return
-                }
-
-                if(response.isSuccessful) {
-                    response.body()?.let {
-                        accountData = Account(
-                            it.id!!,
-                            it.username!!,
-                            it.email!!,
-                            it.phone!!,
-                            null,
-                            it.marketing,
-                            it.nickname,
-                            it.photoUrl,
-                            it.userMessage)
-                    }
-                }
-                else {
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
-                }
-            }
-
-            override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
-                if(isViewDestroyed) {
-                    return
-                }
-
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
-            }
-        })
     }
 }

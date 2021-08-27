@@ -2,7 +2,7 @@
     <string name="app_name">PetManagement</string>
     <string name="title_activity_main">MainActivity</string>
 
-    <string name="user_token">UserToken</string>
+    <string name="user_session">UserSession</string>
 
     <string name="fail_request">요청에 실패하였습니다.</string>
     <string name="try_again">잠시후 다시 시도해주세요.</string>

@@ -188,31 +188,13 @@ class CommunityFragment : Fragment() {
             }
 
             override fun onClickPostFunctionButton(postId: Long, authorId: Long, position: Int) {
-                val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchAccountReq(body)
-                call!!.enqueue(object: Callback<FetchAccountResDto> {
-                    override fun onResponse(
-                        call: Call<FetchAccountResDto>,
-                        response: Response<FetchAccountResDto>
-                    ) {
-                        if(isViewDestroyed){
-                            return
-                        }
+                val loggedInAccount = SessionManager.fetchLoggedInAccount(requireContext())!!
 
-                        if(response.isSuccessful){
-                            // 글 작성자 == 현재 로그인해있는 계정
-                            if(response.body()!!.id == authorId){
-                                createPostDialogForAuthor(postId, position)
-                            }else{
-                                createPostDialogForNonAuthor()
-                            }
-                        }
-                    }
-
-                    override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
-                        createPostDialogForNonAuthor()
-                    }
-                })
+                if(loggedInAccount.id == authorId){
+                    createPostDialogForAuthor(postId, position)
+                }else{
+                    createPostDialogForNonAuthor()
+                }
             }
 
             override fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder){

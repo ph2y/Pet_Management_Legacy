@@ -14,12 +14,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.setFragmentResultListener
 import com.google.android.material.snackbar.Snackbar
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.sju18001.petmanagement.MainActivity
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentLoginBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.login.createAccount.CreateAccountFragment
 import com.sju18001.petmanagement.ui.login.recovery.RecoveryFragment
@@ -29,6 +32,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.reflect.Type
 
 class LoginFragment : Fragment() {
 
@@ -205,6 +209,10 @@ class LoginFragment : Fragment() {
                             // 웰컴 페이지 호출
                             val intent = Intent(context, WelcomePageActivity::class.java)
                             SessionManager.saveUserToken(requireContext(), token)
+                            response.body()?.run{
+                                val account = Account(id, username, email, phone, null, marketing, nickname, photoUrl, userMessage)
+                                SessionManager.saveLoggedInAccount(requireContext(), account)
+                            }
 
                             startActivity(intent)
                             activity?.finish()
@@ -213,6 +221,10 @@ class LoginFragment : Fragment() {
                             // start main activity + send token
                             val intent = Intent(context, MainActivity::class.java)
                             SessionManager.saveUserToken(requireContext(), token)
+                            response.body()?.run{
+                                val account = Account(id, username, email, phone, null, marketing, nickname, photoUrl, userMessage)
+                                SessionManager.saveLoggedInAccount(requireContext(), account)
+                            }
 
                             startActivity(intent)
                             activity?.finish()
