@@ -39,19 +39,9 @@ class MyPageFragment : Fragment() {
     private var fetchAccountApiCall: Call<FetchAccountResDto>? = null
     private var fetchAccountPhotoApiCall: Call<ResponseBody>? = null
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     // Account DAO
     private lateinit var accountData: Account
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
-
-    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -139,7 +129,7 @@ class MyPageFragment : Fragment() {
         // create empty body
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
-        fetchAccountApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchAccountApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchAccountReq(body)
         fetchAccountApiCall!!.enqueue(object : Callback<FetchAccountResDto> {
             override fun onResponse(
@@ -193,7 +183,7 @@ class MyPageFragment : Fragment() {
         // create DTO
         val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(null)
 
-        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
         fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
                 override fun onResponse(

@@ -40,9 +40,6 @@ class PetScheduleEditFragment : Fragment() {
     // variable for storing API call(for cancel)
     private var fetchPetApiCall: Call<FetchPetResDto>? = null
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     // 리싸이클러뷰
     private lateinit var adapter: PetNameListAdapter
 
@@ -56,9 +53,6 @@ class PetScheduleEditFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentPetScheduleEditBinding.inflate(inflater, container, false)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
 
         // for update_pet_schedule
         setViewForUpdate()
@@ -177,7 +171,7 @@ class PetScheduleEditFragment : Fragment() {
         // create DTO
         val fetchPetReqDto = FetchPetReqDto( null )
 
-        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(fetchPetReqDto)
         fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
             override fun onResponse(
@@ -212,7 +206,7 @@ class PetScheduleEditFragment : Fragment() {
             getCheckedPetIdList(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(), binding.memoEditText.text.toString()
         )
 
-        createPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        createPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPetScheduleReq(createPetScheduleReqDto)
         createPetScheduleApiCall!!.enqueue(object: Callback<CreatePetScheduleResDto> {
             override fun onResponse(
@@ -238,7 +232,7 @@ class PetScheduleEditFragment : Fragment() {
             id, getCheckedPetIdList(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(), binding.memoEditText.text.toString(), enabled
         )
 
-        updatePetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        updatePetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePetScheduleReq(updatePetScheduleReqDto)
         updatePetScheduleApiCall!!.enqueue(object: Callback<UpdatePetScheduleResDto> {
             override fun onResponse(

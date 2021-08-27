@@ -58,21 +58,11 @@ class EditAccountFragment : Fragment() {
     private var updateAccountPasswordApiCall: Call<UpdateAccountPasswordResDto>? = null
     private var deleteAccountApiCall: Call<DeleteAccountResDto>? = null
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     // pattern regex for EditTexts
     private val patternPhone: Pattern = Pattern.compile("(^02|^\\d{3})-(\\d{3}|\\d{4})-\\d{4}")
     private val patternEmail: Pattern = Patterns.EMAIL_ADDRESS
     private val patternNickname: Pattern = Pattern.compile("(^[가-힣ㄱ-ㅎa-zA-Z0-9]{2,20}$)")
     private val patternPassword: Pattern = Pattern.compile("^[a-zA-Z0-9!@.#$%^&*?_~]{8,20}$")
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -312,7 +302,7 @@ class EditAccountFragment : Fragment() {
             myPageViewModel.accountUserMessageValue
         )
 
-        updateAccountApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        updateAccountApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updateAccountReq(updateAccountReqDto)
         updateAccountApiCall!!.enqueue(object: Callback<UpdateAccountResDto> {
             override fun onResponse(
@@ -354,7 +344,7 @@ class EditAccountFragment : Fragment() {
             closeAfterSuccess()
         }
         else {
-            updateAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            updateAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updateAccountPhotoReq(MultipartBody.Part.createFormData("file", "file.png",
                 RequestBody.create(MediaType.parse("multipart/form-data"), File(path))))
             updateAccountPhotoApiCall!!.enqueue(object: Callback<UpdateAccountPhotoResDto> {
@@ -393,7 +383,7 @@ class EditAccountFragment : Fragment() {
         // create dto
         val updateAccountPasswordReqDto = UpdateAccountPasswordReqDto(password, newPassword)
 
-        updateAccountPasswordApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        updateAccountPasswordApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updateAccountPasswordReq(updateAccountPasswordReqDto)
         updateAccountPasswordApiCall!!.enqueue(object: Callback<UpdateAccountPasswordResDto> {
             override fun onResponse(
@@ -434,8 +424,8 @@ class EditAccountFragment : Fragment() {
     }
 
     private fun logout() {
-        // remove user token in sessionManager
-        sessionManager.removeUserToken()
+        // remove user token in SessionManager
+        SessionManager.removeUserToken(requireContext())
 
         // go back to login activity
         val intent = Intent(context, LoginActivity::class.java)
@@ -448,7 +438,7 @@ class EditAccountFragment : Fragment() {
     private fun deleteAccount() {
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
-        deleteAccountApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        deleteAccountApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deleteAccountReq(body)
         deleteAccountApiCall!!.enqueue(object: Callback<DeleteAccountResDto> {
             override fun onResponse(

@@ -84,16 +84,6 @@ class CreateUpdatePostFragment : Fragment() {
     private var updatePostMediaApiCall: Call<UpdatePostMediaResDto>? = null
     private var fetchPostMediaApiCall: Call<ResponseBody>? = null
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -371,7 +361,7 @@ class CreateUpdatePostFragment : Fragment() {
         // create DTO
         val fetchPetReqDto = FetchPetReqDto( null )
 
-        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(fetchPetReqDto)
         fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
@@ -426,7 +416,7 @@ class CreateUpdatePostFragment : Fragment() {
         // create DTO
         val fetchPetPhotoReqDto = FetchPetPhotoReqDto(createUpdatePostViewModel.petId!!)
 
-        fetchPetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchPetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetPhotoReq(fetchPetPhotoReqDto)
         fetchPetPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
                 override fun onResponse(
@@ -621,7 +611,7 @@ class CreateUpdatePostFragment : Fragment() {
             latAndLong[1]
         )
 
-        createPostApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        createPostApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPostReq(createPostReqDto)
         createPostApiCall!!.enqueue(object: Callback<CreatePostResDto> {
             override fun onResponse(
@@ -693,7 +683,7 @@ class CreateUpdatePostFragment : Fragment() {
             latAndLong[1]
         )
 
-        updatePostApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        updatePostApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePostReq(updatePostReqDto)
         updatePostApiCall!!.enqueue(object: Callback<UpdatePostResDto> {
             override fun onResponse(
@@ -758,7 +748,7 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             // API call
-            updatePostMediaApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            updatePostMediaApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updatePostMediaReq(id, fileList)
             updatePostMediaApiCall!!.enqueue(object: Callback<UpdatePostMediaResDto> {
                 @RequiresApi(Build.VERSION_CODES.O)
@@ -802,7 +792,7 @@ class CreateUpdatePostFragment : Fragment() {
         // create DTO
         val fetchPostReqDto = FetchPostReqDto(0, null, createUpdatePostViewModel.petId, null)
 
-        fetchPostApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchPostApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(fetchPostReqDto)
         fetchPostApiCall!!.enqueue(object: Callback<FetchPostResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
@@ -853,7 +843,7 @@ class CreateUpdatePostFragment : Fragment() {
             val fetchPostMediaReqDto = FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index)
 
             // API call
-            fetchPostMediaApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+            fetchPostMediaApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .fetchPostMediaReq(fetchPostMediaReqDto)
             fetchPostMediaApiCall!!.enqueue(object: Callback<ResponseBody> {
                 override fun onResponse(
@@ -931,7 +921,7 @@ class CreateUpdatePostFragment : Fragment() {
         val fetchPostReqDto = FetchPostReqDto(null, null, null, createUpdatePostViewModel.postId)
 
         // API call
-        fetchPostApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchPostApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(fetchPostReqDto)
         fetchPostApiCall!!.enqueue(object: Callback<FetchPostResDto> {
             override fun onResponse(

@@ -40,16 +40,6 @@ class FollowerFollowingFragment : Fragment() {
     private var fetchFollowerApiCall: Call<FetchFollowerResDto>? = null
     private var fetchFollowingApiCall: Call<FetchFollowingResDto>? = null
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -143,7 +133,7 @@ class FollowerFollowingFragment : Fragment() {
         val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         // API call
-        fetchFollowingApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchFollowingApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchFollowingReq(emptyBody)
         fetchFollowingApiCall!!.enqueue(object: Callback<FetchFollowingResDto> {
             override fun onResponse(
@@ -186,7 +176,7 @@ class FollowerFollowingFragment : Fragment() {
         val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         // API call
-        fetchFollowerApiCall = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!)
+        fetchFollowerApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchFollowerReq(emptyBody)
         fetchFollowerApiCall!!.enqueue(object: Callback<FetchFollowerResDto> {
             override fun onResponse(

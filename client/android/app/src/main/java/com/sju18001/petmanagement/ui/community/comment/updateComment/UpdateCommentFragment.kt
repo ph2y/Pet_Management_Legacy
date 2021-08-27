@@ -25,9 +25,6 @@ class UpdateCommentFragment : Fragment() {
     private var _binding: FragmentUpdateCommentBinding? = null
     private val binding get() = _binding!!
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     private var isViewDestroyed: Boolean = false
 
     override fun onCreateView(
@@ -36,9 +33,6 @@ class UpdateCommentFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentUpdateCommentBinding.inflate(inflater, container, false)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
 
         // 초기화
         loadContents()
@@ -91,7 +85,7 @@ class UpdateCommentFragment : Fragment() {
         val body = UpdateCommentReqDto(
             requireActivity().intent.getLongExtra("id", -1), binding.editTextUpdateComment.text.toString()
         )
-        val call = RetrofitBuilder.getServerApiWithToken(sessionManager.fetchUserToken()!!).updateCommentReq(body)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).updateCommentReq(body)
         call!!.enqueue(object: Callback<UpdateCommentResDto> {
             override fun onResponse(
                 call: Call<UpdateCommentResDto>,

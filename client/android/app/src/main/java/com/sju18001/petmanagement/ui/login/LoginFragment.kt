@@ -36,9 +36,6 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
-    // session manager for user token
-    private lateinit var sessionManager: SessionManager
-
     // variable for storing API call(for cancel)
     private var loginApiCall: Call<LoginResDto>? = null
     private var fetchAccountApiCall: Call<FetchAccountResDto>? = null
@@ -48,9 +45,6 @@ class LoginFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // get session manager
-        sessionManager = context?.let { SessionManager(it) }!!
 
         // get create account result
         setFragmentResultListener("createAccountResult") { _, bundle ->
@@ -210,7 +204,7 @@ class LoginFragment : Fragment() {
 
                             // 웰컴 페이지 호출
                             val intent = Intent(context, WelcomePageActivity::class.java)
-                            sessionManager.saveUserToken(token)
+                            SessionManager.saveUserToken(requireContext(), token)
 
                             startActivity(intent)
                             activity?.finish()
@@ -218,7 +212,7 @@ class LoginFragment : Fragment() {
                         else{
                             // start main activity + send token
                             val intent = Intent(context, MainActivity::class.java)
-                            sessionManager.saveUserToken(token)
+                            SessionManager.saveUserToken(requireContext(), token)
 
                             startActivity(intent)
                             activity?.finish()
