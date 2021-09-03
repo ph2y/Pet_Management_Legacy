@@ -122,7 +122,9 @@ class EditAccountFragment : Fragment() {
             dialog.findViewById<Button>(R.id.use_default_image).setOnClickListener {
                 dialog.dismiss()
 
-                // TODO: Account photo delete API implement
+                binding.accountPhotoInput.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
+                myPageViewModel.accountPhotoByteArray = null
+                myPageViewModel.accountPhotoPathValue = ""
             }
         }
 
@@ -294,14 +296,20 @@ class EditAccountFragment : Fragment() {
 
     // update account
     private fun updateAccount() {
-        // create dto
+        // Set photoUrl
+        val prevAccount = SessionManager.fetchLoggedInAccount(requireContext())!!
+        val photoUrl = if(myPageViewModel.accountPhotoPathValue == "") null else prevAccount.photoUrl
+
+        // Create dto
         val updateAccountReqDto = UpdateAccountReqDto(
             myPageViewModel.accountEmailValue,
             myPageViewModel.accountPhoneValue,
             myPageViewModel.accountNicknameValue,
             myPageViewModel.accountMarketingValue,
+            photoUrl,
             myPageViewModel.accountUserMessageValue
         )
+
 
         updateAccountApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updateAccountReq(updateAccountReqDto)
@@ -315,10 +323,9 @@ class EditAccountFragment : Fragment() {
                         updateAccountPhoto(myPageViewModel.accountPhotoPathValue)
 
                         // 세션 갱신
-                        val prevAccount = SessionManager.fetchLoggedInAccount(requireContext())!!
                         val account = Account(
                             prevAccount.id, prevAccount.username, myPageViewModel.accountEmailValue, myPageViewModel.accountPhoneValue, null,
-                            myPageViewModel.accountMarketingValue, myPageViewModel.accountNicknameValue, prevAccount.photoUrl, myPageViewModel.accountUserMessageValue
+                            myPageViewModel.accountMarketingValue, myPageViewModel.accountNicknameValue, photoUrl, myPageViewModel.accountUserMessageValue
                         )
                         SessionManager.saveLoggedInAccount(requireContext(), account)
                     }

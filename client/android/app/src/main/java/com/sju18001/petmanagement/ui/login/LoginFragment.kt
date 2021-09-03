@@ -190,7 +190,7 @@ class LoginFragment : Fragment() {
                         // 첫 로그인일 시
                         if(it.nickname == "#"){
                             // nickname => username 변경
-                            val updateAccountReqDto = UpdateAccountReqDto(it.email, it.phone, it.username, it.marketing, it.userMessage)
+                            val updateAccountReqDto = UpdateAccountReqDto(it.email, it.phone, it.username, it.marketing, it.photoUrl, it.userMessage)
 
                             val call = RetrofitBuilder.getServerApiWithToken(token).updateAccountReq(updateAccountReqDto)
                             call.enqueue(object: Callback<UpdateAccountResDto> {

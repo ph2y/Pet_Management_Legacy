@@ -70,6 +70,7 @@ data class UpdateAccountReqDto(
     val phone: String,
     val nickname: String?,
     val marketing: Boolean?,
+    val photoUrl: String?,
     val userMessage: String?
 )
 
