@@ -21,4 +21,5 @@ public class UpdatePetReqDto {
     private Boolean yearOnly;
     private Boolean gender;
     private String message;
+    private String photoUrl;
 }

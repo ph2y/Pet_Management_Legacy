@@ -70,7 +70,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         }
 
         // set values to views
-        if(currentItem.getPetPhotoUrl() != null) {
+        if(!currentItem.getPetPhotoUrl().isNullOrEmpty()) {
             fetchPetPhoto(currentItem.getPetId()!!, holder.petPhoto)
         }
         else {
@@ -89,7 +89,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         holder.itemView.setOnClickListener {
             // set pet values to Intent
             val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
-            if(currentItem.getPetPhotoUrl() != null) {
+            if(!currentItem.getPetPhotoUrl().isNullOrEmpty()) {
                 val bitmap = (holder.petPhoto.drawable as BitmapDrawable).bitmap
                 val stream = ByteArrayOutputStream()
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)

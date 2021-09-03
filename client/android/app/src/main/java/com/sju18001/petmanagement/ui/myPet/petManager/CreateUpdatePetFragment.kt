@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,6 +13,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -95,10 +99,28 @@ class CreateUpdatePetFragment : Fragment() {
 
         // for pet photo picker
         binding.petPhotoInputButton.setOnClickListener {
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
+            val dialog = Dialog(requireActivity())
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.select_account_photo_dialog)
+            dialog.show()
+
+            dialog.findViewById<ImageView>(R.id.close_button2).setOnClickListener { dialog.dismiss() }
+            dialog.findViewById<Button>(R.id.upload_photo_button).setOnClickListener {
+                dialog.dismiss()
+
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
+            }
+            dialog.findViewById<Button>(R.id.use_default_image).setOnClickListener {
+                dialog.dismiss()
+
+                binding.petPhotoInput.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
+                myPetViewModel.petPhotoByteArray = null
+                myPetViewModel.petPhotoPathValue = ""
+                myPetViewModel.petPhotoUrlValue = ""
+            }
         }
 
         // for EditText text change listeners
@@ -286,7 +308,8 @@ class CreateUpdatePetFragment : Fragment() {
             petBirthStringValue,
             binding.yearOnlyCheckbox.isChecked,
             binding.genderFemale.isChecked,
-            binding.petMessageInput.text.toString()
+            binding.petMessageInput.text.toString(),
+            myPetViewModel.petPhotoUrlValue
         )
 
         updatePetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)

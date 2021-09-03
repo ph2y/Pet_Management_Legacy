@@ -130,6 +130,11 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("petBirthIsYearOnlyValue", value)
             field = value
         }
+    var petPhotoUrlValue = handle.get<String>("petPhotoUrlValue")?: ""
+        set(value){
+            handle.set("petPhotoUrlValue", value)
+            field = value
+        }
     var petManagerApiIsLoading = handle.get<Boolean>("petManagerApiIsLoading")?: false
         set(value) {
             handle.set("petManagerApiIsLoading", value)

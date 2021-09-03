@@ -37,7 +37,8 @@ data class UpdatePetReqDto (
     val birth: String?,
     val yearOnly: Boolean?,
     val gender: Boolean?,
-    val message: String?
+    val message: String?,
+    val photoUrl: String?
     )
 
 data class UpdatePetResDto (

@@ -134,6 +134,9 @@ public class PetService {
         if (reqDto.getMessage() != null && !reqDto.getMessage().equals(currentPet.getMessage())) {
             currentPet.setMessage(reqDto.getMessage());
         }
+        if (reqDto.getPhotoUrl() != null && !reqDto.getPhotoUrl().equals(currentPet.getPhotoUrl())) {
+            currentPet.setPhotoUrl(reqDto.getPhotoUrl());
+        }
 
         // save(id가 있는 detached 상태의 객체) -> EntityManger.merge() => update
         petRepository.save(currentPet);
