@@ -161,6 +161,9 @@ public class AccountService {
         if (reqDto.getNickname() != null && !reqDto.getNickname().equals(currentAccount.getNickname())) {
             currentAccount.setNickname(reqDto.getNickname());
         }
+        if (reqDto.getPhotoUrl() != null && !reqDto.getPhotoUrl().equals(currentAccount.getPhotoUrl())) {
+            currentAccount.setPhotoUrl(reqDto.getPhotoUrl());
+        }
         if (reqDto.getUserMessage() != null && !reqDto.getUserMessage().equals(currentAccount.getUserMessage())) {
             currentAccount.setUserMessage(reqDto.getUserMessage());
         }

@@ -16,6 +16,7 @@ public class UpdateAccountReqDto {
     private String phone;
     @Size(max = 20, message = "valid.account.nickname.size")
     private String nickname;
+    private String photoUrl;
     private Boolean marketing;
     @Size(max = 200, message = "valid.account.userMessage.size")
     private String userMessage;
