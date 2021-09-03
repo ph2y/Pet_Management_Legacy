@@ -298,7 +298,7 @@ class EditAccountFragment : Fragment() {
     private fun updateAccount() {
         // Set photoUrl
         val prevAccount = SessionManager.fetchLoggedInAccount(requireContext())!!
-        val photoUrl = if(myPageViewModel.accountPhotoPathValue == "") null else prevAccount.photoUrl
+        val photoUrl = if(myPageViewModel.accountPhotoPathValue == "") "" else prevAccount.photoUrl
 
         // Create dto
         val updateAccountReqDto = UpdateAccountReqDto(

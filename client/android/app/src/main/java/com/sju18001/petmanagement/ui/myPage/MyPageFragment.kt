@@ -66,7 +66,7 @@ class MyPageFragment : Fragment() {
             accountLookupIntent.putExtra("nickname", accountData.nickname)
             accountLookupIntent.putExtra("userMessage", accountData.userMessage)
 
-            if(accountData.photoUrl != null) {
+            if(!accountData.photoUrl.isNullOrEmpty()) {
                 accountLookupIntent.putExtra("photoByteArray", myPageViewModel.accountPhotoProfileByteArray)
             }
 
@@ -136,7 +136,7 @@ class MyPageFragment : Fragment() {
 
     // fetch account photo
     private fun fetchAccountPhotoAndSetView() {
-        if(accountData.photoUrl == null){
+        if(accountData.photoUrl.isNullOrEmpty()){
             binding.accountPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
             return
         }

@@ -309,7 +309,7 @@ class CreateUpdatePetFragment : Fragment() {
             binding.yearOnlyCheckbox.isChecked,
             binding.genderFemale.isChecked,
             binding.petMessageInput.text.toString(),
-            myPetViewModel.petPhotoUrlValue
+            myPetViewModel.petPhotoUrlValue?:""
         )
 
         updatePetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
