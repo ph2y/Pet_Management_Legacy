@@ -2,13 +2,10 @@ package com.sju18.petmanagement.domain.pet.pet.application;
 
 import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.account.dao.Account;
+import com.sju18.petmanagement.domain.pet.pet.dto.*;
 import com.sju18.petmanagement.domain.pet.schedule.application.PetScheduleCascadeService;
 import com.sju18.petmanagement.domain.pet.pet.dao.Pet;
 import com.sju18.petmanagement.domain.pet.pet.dao.PetRepository;
-import com.sju18.petmanagement.domain.pet.pet.dto.CreatePetReqDto;
-import com.sju18.petmanagement.domain.pet.pet.dto.DeletePetReqDto;
-import com.sju18.petmanagement.domain.pet.pet.dto.UpdatePetPhotoReqDto;
-import com.sju18.petmanagement.domain.pet.pet.dto.UpdatePetReqDto;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileService;
 import lombok.RequiredArgsConstructor;
@@ -165,6 +162,23 @@ public class PetService {
     }
 
     // DELETE
+    @Transactional
+    public void deletePetPhoto(Authentication auth, DeletePetPhotoReqDto reqDto) throws Exception {
+        // 기존 반려동물 프로필 로드
+        Account currentAccount = accountServ.fetchCurrentAccount(auth);
+        Pet currentPet = petRepository.findByOwnernameAndId(currentAccount.getUsername(), reqDto.getId())
+                .orElseThrow(() -> new IllegalArgumentException(
+                        msgSrc.getMessage("error.pet.notExists", null, Locale.ENGLISH)
+                ));
+
+        // 반려동물 프로필 사진 디렉토리 삭제
+        fileServ.deletePetFileStorage(currentAccount.getId(), currentPet.getId());
+
+        // 반려동물 프로필에서 photoUrl 컬럼 null 설정 후 업데이트
+        currentPet.setPhotoUrl(null);
+        petRepository.save(currentPet);
+    }
+
     @Transactional
     public void deletePet(Authentication auth, DeletePetReqDto reqDto) throws Exception {
         // 받은 사용자 정보와 반려동물 id로 반려동물 정보 삭제
