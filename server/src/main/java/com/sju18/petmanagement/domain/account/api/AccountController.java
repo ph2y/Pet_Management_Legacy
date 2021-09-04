@@ -127,6 +127,21 @@ public class AccountController {
         return ResponseEntity.ok(new UpdateAccountPhotoResDto(dtoMetadata, fileUrl));
     }
 
+    @PostMapping("/api/account/photo/delete")
+    public ResponseEntity<?> deleteAccountPhoto(Authentication auth) {
+        DtoMetadata dtoMetadata;
+        try {
+            accountServ.deleteAccountPhoto(auth);
+        } catch (Exception e) {
+
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new DeleteAccountPhotoResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.photo.delete.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new DeleteAccountPhotoResDto(dtoMetadata));
+    }
+
     @PostMapping("/api/account/delete")
     public ResponseEntity<?> deleteAccount(Authentication auth) {
         DtoMetadata dtoMetadata;

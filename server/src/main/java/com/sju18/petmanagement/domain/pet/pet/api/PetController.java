@@ -103,8 +103,22 @@ public class PetController {
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
             return ResponseEntity.status(400).body(new UpdatePetPhotoResDto(dtoMetadata, null));
         }
-        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.petPhoto.update.success", null, Locale.ENGLISH));
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.pet.photo.update.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new UpdatePetPhotoResDto(dtoMetadata, fileUrl));
+    }
+
+    @PostMapping("/api/pet/photo/delete")
+    public ResponseEntity<?> deletePetPhoto(Authentication auth, @Valid @RequestBody DeletePetPhotoReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        try {
+            petServ.deletePetPhoto(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new DeletePetPhotoResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.pet.photo.delete.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new DeletePetPhotoResDto(dtoMetadata));
     }
 
     // DELETE

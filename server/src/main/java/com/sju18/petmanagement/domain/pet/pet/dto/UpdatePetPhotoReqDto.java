@@ -7,7 +7,7 @@ import javax.validation.constraints.PositiveOrZero;
 
 @Data
 public class UpdatePetPhotoReqDto {
-    @PositiveOrZero
-    Long id;
+    @PositiveOrZero(message = "valid.pet.id.notNegative")
+    private Long id;
     MultipartFile file;
 }
