@@ -69,6 +69,7 @@ interface ServerApi {
     @POST("api/pet/delete")
     fun deletePetReq(@Body deletePetReqDto: DeletePetReqDto): Call<DeletePetResDto>
 
+    
     // Pet Photo API
     @POST("api/pet/photo/fetch")
     fun fetchPetPhotoReq(@Body fetchPetPhotoReqDto: FetchPetPhotoReqDto): Call<ResponseBody>
@@ -76,6 +77,9 @@ interface ServerApi {
     @Multipart
     @POST("api/pet/photo/update")
     fun updatePetPhotoReq(@Part("id") id: Long, @Part file: MultipartBody.Part): Call<UpdatePetPhotoResDto>
+
+    @POST("api/pet/photo/delete")
+    fun deletePetPhotoReq(@Body deletePetPhotoReqDto: DeletePetPhotoReqDto): Call<DeletePetPhotoResDto>
 
 
     // PetSchedule API
