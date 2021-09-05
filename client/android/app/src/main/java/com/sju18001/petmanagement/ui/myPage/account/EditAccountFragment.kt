@@ -59,6 +59,8 @@ class EditAccountFragment : Fragment() {
     private var updateAccountPasswordApiCall: Call<UpdateAccountPasswordResDto>? = null
     private var deleteAccountApiCall: Call<DeleteAccountResDto>? = null
 
+    private var isViewDestroyed = false
+
     // pattern regex for EditTexts
     private val patternPhone: Pattern = Pattern.compile("(^02|^\\d{3})-(\\d{3}|\\d{4})-\\d{4}")
     private val patternEmail: Pattern = Patterns.EMAIL_ADDRESS
@@ -122,7 +124,9 @@ class EditAccountFragment : Fragment() {
             dialog.findViewById<Button>(R.id.use_default_image).setOnClickListener {
                 dialog.dismiss()
 
-                // TODO: Account photo delete API implement
+                binding.accountPhotoInput.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
+                myPageViewModel.accountPhotoByteArray = null
+                myPageViewModel.accountPhotoPathValue = ""
             }
         }
 
@@ -274,6 +278,8 @@ class EditAccountFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
+        isViewDestroyed = true
+
         // delete copied file(if any)
         if(isRemoving || requireActivity().isFinishing) {
             Util.deleteCopiedFiles(requireContext(), EDIT_ACCOUNT_DIRECTORY)
@@ -350,7 +356,47 @@ class EditAccountFragment : Fragment() {
     private fun updateAccountPhoto(path: String) {
         // if no photo selected -> don't update photo + close
         if(path == "") {
-            closeAfterSuccess()
+            val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
+
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                .deleteAccountPhotoReq(body)
+            call.enqueue(object: Callback<DeleteAccountPhotoResDto> {
+                override fun onResponse(
+                    call: Call<DeleteAccountPhotoResDto>,
+                    response: Response<DeleteAccountPhotoResDto>
+                ) {
+                    if(isViewDestroyed){
+                        return
+                    }
+
+                    if(response.isSuccessful){
+                        // 세션 갱신
+                        val account = SessionManager.fetchLoggedInAccount(requireContext())!!
+                        account.photoUrl = null
+                        SessionManager.saveLoggedInAccount(requireContext(), account)
+
+                        // close after success
+                        closeAfterSuccess()
+                    }else{
+                        // get error message + show(Toast)
+                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                        // log error message
+                        Log.d("error", errorMessage)
+                    }
+                }
+
+                override fun onFailure(call: Call<DeleteAccountPhotoResDto>, t: Throwable) {
+                    if(isViewDestroyed){
+                        return
+                    }
+
+                    // show(Toast)/log error message
+                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                    Log.d("error", t.message.toString())
+                }
+            })
         }
         else {
             updateAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
