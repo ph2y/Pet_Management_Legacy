@@ -136,6 +136,12 @@ class MyPageFragment : Fragment() {
 
     // fetch account photo
     private fun fetchAccountPhotoAndSetView() {
+        // 사진이 없을 때, 기본 사진으로 셋팅
+        if(accountData!!.photoUrl == null){
+            binding.accountPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
+            return
+        }
+        
         // create DTO
         val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(null)
 
@@ -154,10 +160,6 @@ class MyPageFragment : Fragment() {
                     else {
                         // get error message + show(Toast)
                         val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                        // if null: set to default image
-                        // Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                        binding.accountPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
 
                         // log error message
                         Log.d("error", errorMessage)
