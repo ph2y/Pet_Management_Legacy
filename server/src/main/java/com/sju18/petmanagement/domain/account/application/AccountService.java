@@ -214,9 +214,6 @@ public class AccountService {
         // 기존 사용자 프로필 로드
         Account currentAccount = this.fetchCurrentAccount(auth);
 
-        // 사용자 프로필 사진 디렉토리 삭제
-        fileServ.deleteAccountFileStorage(currentAccount.getId());
-
         // 사용자 프로필에서 photoUrl 컬럼 null 설정 후 업데이트
         currentAccount.setPhotoUrl(null);
         accountRepository.save(currentAccount);

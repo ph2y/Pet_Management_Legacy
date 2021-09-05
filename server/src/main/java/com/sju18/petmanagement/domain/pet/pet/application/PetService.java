@@ -171,9 +171,6 @@ public class PetService {
                         msgSrc.getMessage("error.pet.notExists", null, Locale.ENGLISH)
                 ));
 
-        // 반려동물 프로필 사진 디렉토리 삭제
-        fileServ.deletePetFileStorage(currentAccount.getId(), currentPet.getId());
-
         // 반려동물 프로필에서 photoUrl 컬럼 null 설정 후 업데이트
         currentPet.setPhotoUrl(null);
         petRepository.save(currentPet);

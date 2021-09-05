@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,6 +13,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.Window
+import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -55,6 +59,8 @@ class CreateUpdatePetFragment : Fragment() {
     private var updatePetPhotoApiCall: Call<UpdatePetPhotoResDto>? = null
     private var fetchPetApiCall: Call<FetchPetResDto>? = null
 
+    private var isViewDestroyed = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -95,10 +101,28 @@ class CreateUpdatePetFragment : Fragment() {
 
         // for pet photo picker
         binding.petPhotoInputButton.setOnClickListener {
-            val intent = Intent()
-            intent.type = "image/*"
-            intent.action = Intent.ACTION_GET_CONTENT
-            startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
+            val dialog = Dialog(requireActivity())
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+            dialog.setContentView(R.layout.select_photo_dialog)
+            dialog.show()
+
+            dialog.findViewById<ImageView>(R.id.close_button2).setOnClickListener { dialog.dismiss() }
+            dialog.findViewById<Button>(R.id.upload_photo_button).setOnClickListener {
+                dialog.dismiss()
+
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
+            }
+            dialog.findViewById<Button>(R.id.use_default_image).setOnClickListener {
+                dialog.dismiss()
+
+                binding.petPhotoInput.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
+                myPetViewModel.petPhotoByteArray = null
+                myPetViewModel.petPhotoPathValue = ""
+            }
         }
 
         // for EditText text change listeners
@@ -335,10 +359,47 @@ class CreateUpdatePetFragment : Fragment() {
     // update pet photo
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updatePetPhoto(id: Long, path: String) {
-        // if no photo selected -> don't update photo + close
-        if(path == "") { closeAfterSuccess() }
+        // If basic photo selected
+        if(path == "") {
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                .deletePetPhotoReq(DeletePetPhotoReqDto(id))
+            call.enqueue(object: Callback<DeletePetPhotoResDto> {
+                override fun onResponse(
+                    call: Call<DeletePetPhotoResDto>,
+                    response: Response<DeletePetPhotoResDto>
+                ) {
+                    if(isViewDestroyed){
+                        return
+                    }
 
-        else {
+                    if(response.isSuccessful){
+                        closeAfterSuccess()
+                    }else{
+                        // set api state/button to normal
+                        myPetViewModel.petManagerApiIsLoading = false
+                        setButtonToNormal()
+
+                        // get error message + show(Toast)
+                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                        // log error message
+                        Log.d("error", errorMessage)
+                    }
+                }
+
+                override fun onFailure(call: Call<DeletePetPhotoResDto>, t: Throwable) {
+                    // set api state/button to normal
+                    myPetViewModel.petManagerApiIsLoading = false
+                    setButtonToNormal()
+
+                    // show(Toast)/log error message
+                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                    Log.d("error", t.message.toString())
+                }
+            }
+            )
+        } else {
             updatePetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updatePetPhotoReq(id, MultipartBody.Part.createFormData("file", "file.png",
                     RequestBody.create(MediaType.parse("multipart/form-data"), File(path))))
@@ -585,6 +646,8 @@ class CreateUpdatePetFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        isViewDestroyed = true
 
         // delete copied file(if any)
         if(isRemoving || requireActivity().isFinishing) {
