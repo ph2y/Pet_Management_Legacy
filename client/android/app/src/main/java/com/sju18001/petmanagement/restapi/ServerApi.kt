@@ -69,7 +69,7 @@ interface ServerApi {
     @POST("api/pet/delete")
     fun deletePetReq(@Body deletePetReqDto: DeletePetReqDto): Call<DeletePetResDto>
 
-    
+
     // Pet Photo API
     @POST("api/pet/photo/fetch")
     fun fetchPetPhotoReq(@Body fetchPetPhotoReqDto: FetchPetPhotoReqDto): Call<ResponseBody>

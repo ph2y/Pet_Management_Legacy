@@ -107,7 +107,7 @@ class EditAccountFragment : Fragment() {
         binding.accountPhotoInputButton.setOnClickListener {
             val dialog = Dialog(requireActivity())
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setContentView(R.layout.select_account_photo_dialog)
+            dialog.setContentView(R.layout.select_photo_dialog)
             dialog.show()
 
             dialog.findViewById<ImageView>(R.id.close_button2).setOnClickListener { dialog.dismiss() }
