@@ -37,6 +37,9 @@ interface ServerApi {
     @POST("api/account/photo/update")
     fun updateAccountPhotoReq(@Part file: MultipartBody.Part): Call<UpdateAccountPhotoResDto>
 
+    @POST("api/account/photo/delete")
+    fun deleteAccountPhotoReq(@Body body: RequestBody): Call<DeleteAccountPhotoResDto>
+
     // Account Password Change API
     @POST("api/account/password/update")
     fun updateAccountPasswordReq(@Body updateAccountPasswordReqDto: UpdateAccountPasswordReqDto): Call<UpdateAccountPasswordResDto>
