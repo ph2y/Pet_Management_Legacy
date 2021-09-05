@@ -25,7 +25,7 @@ import java.util.*;
 @Service
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
-    private final String storageRootPath = "C:\\TempDev\\Pet-Management\\storage";
+    private final String storageRootPath = "C:\\Users\\fchop\\Development\\tmp\\Pet-Management\\storage";
 
     // 파일 메타데이터 목록(stringify 된 JSON)을 이용하여 파일 읽기
     public byte[] readFileFromFileMetadataListJson(String fileMetadataListJson, Integer fileIndex) throws IOException {
