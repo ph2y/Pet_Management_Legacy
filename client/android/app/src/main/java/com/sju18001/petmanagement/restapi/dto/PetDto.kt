@@ -63,3 +63,11 @@ data class UpdatePetPhotoResDto (
     val _metadata: DtoMetadata,
     val fileUrl: String?
     )
+
+data class DeletePetPhotoReqDto (
+    val id: Long
+        )
+
+data class DeletePetPhotoResDto (
+    val _metadata: DtoMetadata
+        )
