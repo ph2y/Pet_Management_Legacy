@@ -389,6 +389,10 @@ class CreateUpdatePetFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<DeletePetPhotoResDto>, t: Throwable) {
+                    if(isViewDestroyed){
+                        return
+                    }
+
                     // set api state/button to normal
                     myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
