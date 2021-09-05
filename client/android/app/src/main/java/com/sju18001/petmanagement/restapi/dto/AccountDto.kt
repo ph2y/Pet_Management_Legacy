@@ -112,3 +112,7 @@ data class RecoverPasswordResDto(
 data class DeleteAccountResDto(
     val _metadata: DtoMetadata
 )
+
+data class DeleteAccountPhotoResDto (
+    val _metadata: DtoMetadata
+        )
