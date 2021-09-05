@@ -35,16 +35,17 @@ public class PostController {
     @PostMapping("/api/post/create")
     public ResponseEntity<?> createPost(Authentication auth, @Valid @RequestBody CreatePostReqDto reqDto) {
         DtoMetadata dtoMetadata;
+        Long postId;
 
         try {
-            postServ.createPost(auth, reqDto);
+            postId = postServ.createPost(auth, reqDto);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
             return ResponseEntity.status(400).body(new CreatePostResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.post.create.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new CreatePostResDto(dtoMetadata));
+        return ResponseEntity.ok(new CreatePostResDto(dtoMetadata, postId));
     }
 
     //READ

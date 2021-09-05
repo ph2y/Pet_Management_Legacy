@@ -29,16 +29,17 @@ public class PetController {
     @PostMapping("/api/pet/create")
     public ResponseEntity<?> createPet(Authentication auth, @Valid @RequestBody CreatePetReqDto reqDto) {
         DtoMetadata dtoMetadata;
+        Long petId;
 
         try {
-            petServ.createPet(auth, reqDto);
+            petId = petServ.createPet(auth, reqDto);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
             return ResponseEntity.status(400).body(new CreatePetResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.pet.create.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new CreatePetResDto(dtoMetadata));
+        return ResponseEntity.ok(new CreatePetResDto(dtoMetadata, petId));
     }
 
     // READ

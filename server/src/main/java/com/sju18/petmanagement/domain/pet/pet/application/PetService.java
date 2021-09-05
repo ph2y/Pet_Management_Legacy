@@ -34,7 +34,7 @@ public class PetService {
 
     // CREATE
     @Transactional
-    public void createPet(Authentication auth, CreatePetReqDto reqDto) throws Exception {
+    public Long createPet(Authentication auth, CreatePetReqDto reqDto) throws Exception {
         Account owner = accountServ.fetchCurrentAccount(auth);
 
         // 받은 사용자 정보와 새 입력 정보로 새 반려동물 정보 생성
@@ -54,6 +54,9 @@ public class PetService {
 
         // 반려동물 파일 저장소 생성
         fileServ.createPetFileStorage(owner.getId(), pet.getId());
+
+        // 반려동물 id 반환
+        return pet.getId();
     }
 
     // READ

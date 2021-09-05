@@ -42,7 +42,7 @@ public class PostService {
 
     // CREATE
     @Transactional
-    public void createPost(Authentication auth, CreatePostReqDto reqDto) throws Exception {
+    public Long createPost(Authentication auth, CreatePostReqDto reqDto) throws Exception {
         Account author = accountServ.fetchCurrentAccount(auth);
         Pet taggedPet = petServ.fetchPetById(auth, reqDto.getPetId());
 
@@ -64,6 +64,9 @@ public class PostService {
         
         // 게시물 파일 저장소 생성
         fileServ.createPostFileStorage(post.getId());
+
+        // 게시물 id 반환
+        return post.getId();
     }
 
     // READ
