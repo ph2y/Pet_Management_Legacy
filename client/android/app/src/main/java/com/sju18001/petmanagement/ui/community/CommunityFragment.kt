@@ -78,7 +78,7 @@ class CommunityFragment : Fragment() {
                 if(postId != (-1).toLong()){
                     fetchOnePostAndInvoke(postId) { item ->
                         adapter.addItemToTop(item)
-                        adapter.notifyItemRangeInserted(0, 1)
+                        adapter.notifyItemInserted(0)
                         adapter.notifyItemRangeChanged(0, adapter.itemCount)
 
                         // 최하단 post를 삭제해야한다. 이 작업으로, 다음 페이지를 로드할 때
@@ -86,6 +86,7 @@ class CommunityFragment : Fragment() {
                         if(adapter.itemCount >= 1){
                             adapter.removeItem(adapter.itemCount-1)
                             adapter.notifyItemRemoved(adapter.itemCount-1)
+                            adapter.notifyItemRangeRemoved(adapter.itemCount-1, 1)
                         }
 
                         binding.recyclerViewPost.scrollToPosition(0)
