@@ -5,10 +5,7 @@ import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.community.post.dao.Post;
 import com.sju18.petmanagement.domain.community.post.dao.PostRepository;
-import com.sju18.petmanagement.domain.community.post.dto.CreatePostReqDto;
-import com.sju18.petmanagement.domain.community.post.dto.DeletePostReqDto;
-import com.sju18.petmanagement.domain.community.post.dto.UpdatePostMediaReqDto;
-import com.sju18.petmanagement.domain.community.post.dto.UpdatePostReqDto;
+import com.sju18.petmanagement.domain.community.post.dto.*;
 import com.sju18.petmanagement.domain.community.follow.application.FollowService;
 import com.sju18.petmanagement.domain.pet.pet.application.PetService;
 import com.sju18.petmanagement.domain.pet.pet.dao.Pet;
@@ -120,6 +117,16 @@ public class PostService {
         return fileServ.readFileFromFileMetadataListJson(currentPost.getMediaAttachments(), fileIndex);
     }
 
+    public byte[] fetchPostFile(Long postId, Integer fileIndex) throws Exception {
+        Post currentPost = postRepository.findById(postId)
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
+                ));
+
+        // 미디어 파일 인출
+        return fileServ.readFileFromFileMetadataListJson(currentPost.getFileAttachments(), fileIndex);
+    }
+
     // UPDATE
     @Transactional
     public void updatePost(Authentication auth, UpdatePostReqDto reqDto) throws Exception {
@@ -179,6 +186,30 @@ public class PostService {
         return mediaFileMetadataList;
     }
 
+    @Transactional
+    public List<FileMetadata> updatePostFile(Authentication auth, UpdatePostFileReqDto reqDto) throws Exception {
+        // 기존 게시물 정보 로드
+        Account author = accountServ.fetchCurrentAccount(auth);
+        Post currentPost = postRepository.findByAuthorAndId(author, reqDto.getId())
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
+                ));
+
+        // 첨부파일 인출
+        List<MultipartFile> uploadedFileList = reqDto.getFileList();
+
+        // 해당 게시물의 파일 스토리지에 일반 파일 저장
+        List<FileMetadata> generalFileMetadataList = null;
+        if (uploadedFileList.size() != 0) {
+            generalFileMetadataList = fileServ.savePostFileAttachments(reqDto.getId(), uploadedFileList);
+
+            // 파일정보 DB 데이터 업데이트
+            currentPost.setFileAttachments(new Gson().toJson(generalFileMetadataList));
+            postRepository.save(currentPost);
+        }
+        return generalFileMetadataList;
+    }
+
     // DELETE
     @Transactional
     public void deletePost(Authentication auth, DeletePostReqDto reqDto) throws Exception {
@@ -190,5 +221,39 @@ public class PostService {
                 ));
         fileServ.deletePostFileStorage(post.getId());
         postRepository.delete(post);
+    }
+
+    @Transactional
+    public void deletePostMedia(Authentication auth, DeletePostMediaReqDto reqDto) throws Exception {
+        // 기존 게시물 정보 로드
+        Account author = accountServ.fetchCurrentAccount(auth);
+        Post currentPost = postRepository.findByAuthorAndId(author, reqDto.getId())
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
+                ));
+
+        // 기존 게시물의 모든 미디어 파일 삭제
+        fileServ.deletePostFiles(currentPost.getMediaAttachments());
+
+        // 기존 게시물의 mediaAttachments, fileAttachments 컬럼 null 설정 후 업데이트
+        currentPost.setMediaAttachments(null);
+        postRepository.save(currentPost);
+    }
+
+    @Transactional
+    public void deletePostFile(Authentication auth, DeletePostFileReqDto reqDto) throws Exception {
+        // 기존 게시물 정보 로드
+        Account author = accountServ.fetchCurrentAccount(auth);
+        Post currentPost = postRepository.findByAuthorAndId(author, reqDto.getId())
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
+                ));
+
+        // 기존 게시물의 모든 일반 파일 삭제
+        fileServ.deletePostFiles(currentPost.getFileAttachments());
+
+        // 기존 게시물의 mediaAttachments, fileAttachments 컬럼 null 설정 후 업데이트
+        currentPost.setFileAttachments(null);
+        postRepository.save(currentPost);
     }
 }

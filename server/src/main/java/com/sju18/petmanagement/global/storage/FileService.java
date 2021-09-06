@@ -26,6 +26,8 @@ import java.util.*;
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
     private final String storageRootPath = "C:\\Users\\Komputer\\Pet-Management-Storage";
+    private final Integer MEDIA_FILE = 1;
+    private final Integer GENERAL_FILE = 2;
 
     // 파일 메타데이터 목록(stringify 된 JSON)을 이용하여 파일 읽기
     public byte[] readFileFromFileMetadataListJson(String fileMetadataListJson, Integer fileIndex) throws IOException {
@@ -107,8 +109,19 @@ public class FileService {
     }
 
     // 데이터 파일 삭제
-    public void deleteFile(String filePath) throws Exception {
+    public void deleteFile(String filePath) {
         FileUtils.fileDelete(filePath);
+    }
+
+    // 게시물 데이터 리스트 전체 삭제 (임시)
+    public void deletePostFiles(String fileMetadataListJson) {
+        Type collectionType = new TypeToken<List<FileMetadata>>(){}.getType();
+        List<FileMetadata> fileMetadataList = new Gson()
+                .fromJson(fileMetadataListJson, collectionType);
+
+        fileMetadataList.forEach(fileMetadata -> {
+            deleteFile(fileMetadata.getUrl());
+        });
     }
 
     // 사용자 프로필 사진 저장
@@ -169,7 +182,7 @@ public class FileService {
             throw new Exception(msgSrc.getMessage("error.file.count", null, Locale.ENGLISH));
         }
 
-        return this.savePostAttachments(savePath, postId, acceptableExtensions, uploadedFiles);
+        return this.savePostAttachments(savePath, postId, acceptableExtensions, uploadedFiles, MEDIA_FILE);
     }
 
     // 게시물 첨부파일 저장 전처리
@@ -187,12 +200,12 @@ public class FileService {
             throw new Exception(msgSrc.getMessage("error.file.count", null, Locale.ENGLISH));
         }
 
-        return this.savePostAttachments(savePath, postId, acceptableExtensions, uploadedFiles);
+        return this.savePostAttachments(savePath, postId, acceptableExtensions, uploadedFiles, GENERAL_FILE);
     }
 
     // 게시물 파일 저장
     private List<FileMetadata> savePostAttachments(
-            Path savePath, Long postId, String[] acceptableExtensions, List<MultipartFile> uploadedFiles
+            Path savePath, Long postId, String[] acceptableExtensions, List<MultipartFile> uploadedFiles, Integer fileType
     ) throws Exception {
         // 업로드 개별 파일 용량 제한 (100MB)
         long fileSizeLimit = 100000000;
@@ -214,7 +227,7 @@ public class FileService {
                 FileMetadata fileMetaData = new FileMetadata(
                         fileName,
                         uploadedFile.getSize(),
-                        "post", "media",
+                        "post", fileType.equals(MEDIA_FILE) ? "media" : "general",
                         savePath.resolve(fileName).toString()
                 );
 
