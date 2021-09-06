@@ -70,14 +70,14 @@ class CommunityFragment : Fragment() {
     private var pageIndex: Int = 1
 
     // For starting create post activity
-    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+    private val startForCreateResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
             result: ActivityResult ->
         if(result.resultCode == Activity.RESULT_OK){
             result.data?.let{
-                val id = it.getLongExtra("id", -1)
-                if(id != (-1).toLong()){
+                val postId = it.getLongExtra("postId", -1)
+                if(postId != (-1).toLong()){
                     val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                        .fetchPostReq(FetchPostReqDto(null, null, null, id))
+                        .fetchPostReq(FetchPostReqDto(null, null, null, postId))
                     call.enqueue(object: Callback<FetchPostResDto> {
                         override fun onResponse(
                             call: Call<FetchPostResDto>,
@@ -95,12 +95,55 @@ class CommunityFragment : Fragment() {
 
                                 // 최하단 post를 삭제해야한다. 이 작업으로, 다음 페이지를 로드할 때
                                 // 최하단 post를 로드하여 이 post가 총 2번 나타나는 버그를 방지한다.
-                                adapter.removeItem(adapter.itemCount-1)
-                                adapter.notifyItemRemoved(adapter.itemCount-1)
+                                if(adapter.itemCount >= 1){
+                                    adapter.removeItem(adapter.itemCount-1)
+                                    adapter.notifyItemRemoved(adapter.itemCount-1)
+                                }
 
                                 binding.recyclerViewPost.scrollToPosition(0)
 
-                                topPostId = id
+                                topPostId = postId
+                            }
+                        }
+
+                        override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
+                            if(isViewDestroyed){
+                                return
+                            }
+
+                            Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
+                        }
+                    })
+                }
+            }
+        }
+    }
+
+    // For starting update post activity
+    private val startForUpdateResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            result: ActivityResult ->
+        if(result.resultCode == Activity.RESULT_OK){
+            result.data?.let{
+                val postId = it.getLongExtra("postId", -1)
+                val position = it.getIntExtra("position", -1)
+
+                if(postId != (-1).toLong() && position != -1){
+                    val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                        .fetchPostReq(FetchPostReqDto(null, null, null, postId))
+                    call.enqueue(object: Callback<FetchPostResDto> {
+                        override fun onResponse(
+                            call: Call<FetchPostResDto>,
+                            response: Response<FetchPostResDto>
+                        ) {
+                            if(isViewDestroyed){
+                                return
+                            }
+
+                            if(response.isSuccessful){
+                                response.body()?.postList?.get(0)?.let{ item ->
+                                    adapter.setPost(position, item)
+                                }
+                                adapter.notifyItemChanged(position)
                             }
                         }
 
@@ -142,7 +185,7 @@ class CommunityFragment : Fragment() {
             val createUpdatePostActivityIntent = Intent(context, CreateUpdatePostActivity::class.java)
             createUpdatePostActivityIntent.putExtra("fragmentType", "create_post")
 
-            startForResult.launch(createUpdatePostActivityIntent)
+            startForCreateResult.launch(createUpdatePostActivityIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
 
@@ -518,8 +561,9 @@ class CommunityFragment : Fragment() {
                     val createUpdatePostActivityIntent = Intent(context, CreateUpdatePostActivity::class.java)
                     createUpdatePostActivityIntent.putExtra("fragmentType", "update_post")
                     createUpdatePostActivityIntent.putExtra("postId", postId)
+                    createUpdatePostActivityIntent.putExtra("position", position)
 
-                    startActivity(createUpdatePostActivityIntent)
+                    startForUpdateResult.launch(createUpdatePostActivityIntent)
                     requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
                 }
                 1 -> {

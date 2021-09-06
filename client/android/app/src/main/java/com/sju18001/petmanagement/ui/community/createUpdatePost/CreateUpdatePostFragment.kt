@@ -620,13 +620,11 @@ class CreateUpdatePostFragment : Fragment() {
                 response: Response<CreatePostResDto>
             ) {
                 if (response.isSuccessful) {
+                    // closeAfterSuccess()에서 현재 액티비티의 인덴트를 참조하여 결과를 반환한다는 점을 상기하라.
+                    requireActivity().intent.putExtra("postId", response.body()!!.id)
+                    
                     // get created post id + update post media
                     getIdAndUpdateMedia()
-
-                    // Pass post.id to Community
-                    val intent = Intent()
-                    intent.putExtra("id", response.body()!!.id)
-                    requireActivity().setResult(Activity.RESULT_OK, intent)
                 }
                 else {
                     // set api state/button to normal
@@ -1020,6 +1018,12 @@ class CreateUpdatePostFragment : Fragment() {
         else {
             Toast.makeText(context, context?.getText(R.string.update_post_successful), Toast.LENGTH_LONG).show()
         }
+
+        // Pass post.id to Community
+        val intent = Intent()
+        intent.putExtra("postId", requireActivity().intent.getLongExtra("postId", -1))
+        intent.putExtra("position", requireActivity().intent.getIntExtra("position", -1))
+        requireActivity().setResult(Activity.RESULT_OK, intent)
         activity?.finish()
     }
 

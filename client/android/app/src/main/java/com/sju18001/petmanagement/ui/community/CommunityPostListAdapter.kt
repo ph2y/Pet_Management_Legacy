@@ -184,14 +184,6 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
         isPostLiked.add(0, false)
     }
 
-    fun setLikedCount(position: Int, value: Long){
-        likedCounts[position] = value
-    }
-
-    fun setIsPostLiked(position: Int, flag: Boolean){
-        isPostLiked[position] = flag
-    }
-
     fun removeItem(index: Int){
         dataSet.removeAt(index)
         likedCounts.removeAt(index)
@@ -202,6 +194,18 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
         dataSet = arrayListOf()
         likedCounts = arrayListOf()
         isPostLiked = arrayListOf()
+    }
+
+    fun setLikedCount(position: Int, value: Long){
+        likedCounts[position] = value
+    }
+
+    fun setIsPostLiked(position: Int, flag: Boolean){
+        isPostLiked[position] = flag
+    }
+
+    fun setPost(position: Int, post: Post){
+        dataSet[position] = post
     }
 
     fun showCreateLikeButton(holder: ViewHolder){
