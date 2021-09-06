@@ -620,8 +620,10 @@ class CreateUpdatePostFragment : Fragment() {
                 response: Response<CreatePostResDto>
             ) {
                 if (response.isSuccessful) {
-                    // closeAfterSuccess()에서 현재 액티비티의 인덴트를 참조하여 결과를 반환한다는 점을 상기하라.
-                    requireActivity().intent.putExtra("postId", response.body()!!.id)
+                    // Pass post id to Community
+                    val intent = Intent()
+                    intent.putExtra("postId", response.body()!!.id)
+                    requireActivity().setResult(Activity.RESULT_OK, intent)
                     
                     // get created post id + update post media
                     getIdAndUpdateMedia()
@@ -698,6 +700,13 @@ class CreateUpdatePostFragment : Fragment() {
                     // no media files
                     if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
                         // TODO: delete all media files(server API needed)
+
+                        // Pass post id, position to Community
+                        val intent = Intent()
+                        intent.putExtra("postId", requireActivity().intent.getLongExtra("postId", -1))
+                        intent.putExtra("position", requireActivity().intent.getIntExtra("position", -1))
+                        requireActivity().setResult(Activity.RESULT_OK, intent)
+
                         closeAfterSuccess()
                     }
 
@@ -1019,11 +1028,6 @@ class CreateUpdatePostFragment : Fragment() {
             Toast.makeText(context, context?.getText(R.string.update_post_successful), Toast.LENGTH_LONG).show()
         }
 
-        // Pass post.id to Community
-        val intent = Intent()
-        intent.putExtra("postId", requireActivity().intent.getLongExtra("postId", -1))
-        intent.putExtra("position", requireActivity().intent.getIntExtra("position", -1))
-        requireActivity().setResult(Activity.RESULT_OK, intent)
         activity?.finish()
     }
 
