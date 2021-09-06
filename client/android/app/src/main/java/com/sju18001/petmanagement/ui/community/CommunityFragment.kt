@@ -76,44 +76,21 @@ class CommunityFragment : Fragment() {
             result.data?.let{
                 val postId = it.getLongExtra("postId", -1)
                 if(postId != (-1).toLong()){
-                    val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                        .fetchPostReq(FetchPostReqDto(null, null, null, postId))
-                    call.enqueue(object: Callback<FetchPostResDto> {
-                        override fun onResponse(
-                            call: Call<FetchPostResDto>,
-                            response: Response<FetchPostResDto>
-                        ) {
-                            if(isViewDestroyed){
-                                return
-                            }
+                    fetchOnePostAndInvoke(postId) { item ->
+                        adapter.addItemToTop(item)
+                        adapter.notifyItemRangeInserted(0, 1)
 
-                            if(response.isSuccessful){
-                                response.body()?.postList?.get(0)?.let{ item ->
-                                    adapter.addItemToTop(item)
-                                }
-                                adapter.notifyItemRangeInserted(0, 1)
-
-                                // 최하단 post를 삭제해야한다. 이 작업으로, 다음 페이지를 로드할 때
-                                // 최하단 post를 로드하여 이 post가 총 2번 나타나는 버그를 방지한다.
-                                if(adapter.itemCount >= 1){
-                                    adapter.removeItem(adapter.itemCount-1)
-                                    adapter.notifyItemRemoved(adapter.itemCount-1)
-                                }
-
-                                binding.recyclerViewPost.scrollToPosition(0)
-
-                                topPostId = postId
-                            }
+                        // 최하단 post를 삭제해야한다. 이 작업으로, 다음 페이지를 로드할 때
+                        // 최하단 post를 로드하여 이 post가 총 2번 나타나는 버그를 방지한다.
+                        if(adapter.itemCount >= 1){
+                            adapter.removeItem(adapter.itemCount-1)
+                            adapter.notifyItemRemoved(adapter.itemCount-1)
                         }
 
-                        override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
-                            if(isViewDestroyed){
-                                return
-                            }
+                        binding.recyclerViewPost.scrollToPosition(0)
 
-                            Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
-                        }
-                    })
+                        topPostId = postId
+                    }
                 }
             }
         }
@@ -128,36 +105,42 @@ class CommunityFragment : Fragment() {
                 val position = it.getIntExtra("position", -1)
 
                 if(postId != (-1).toLong() && position != -1){
-                    val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                        .fetchPostReq(FetchPostReqDto(null, null, null, postId))
-                    call.enqueue(object: Callback<FetchPostResDto> {
-                        override fun onResponse(
-                            call: Call<FetchPostResDto>,
-                            response: Response<FetchPostResDto>
-                        ) {
-                            if(isViewDestroyed){
-                                return
-                            }
-
-                            if(response.isSuccessful){
-                                response.body()?.postList?.get(0)?.let{ item ->
-                                    adapter.setPost(position, item)
-                                }
-                                adapter.notifyItemChanged(position)
-                            }
-                        }
-
-                        override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
-                            if(isViewDestroyed){
-                                return
-                            }
-
-                            Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
-                        }
-                    })
+                    fetchOnePostAndInvoke(postId) { item ->
+                        adapter.setPost(position, item)
+                        adapter.notifyItemChanged(position)
+                    }
                 }
             }
         }
+    }
+
+    private fun fetchOnePostAndInvoke(postId: Long, callback: ((Post)->Unit)){
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            .fetchPostReq(FetchPostReqDto(null, null, null, postId))
+        call.enqueue(object: Callback<FetchPostResDto> {
+            override fun onResponse(
+                call: Call<FetchPostResDto>,
+                response: Response<FetchPostResDto>
+            ) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                if(response.isSuccessful){
+                    response.body()?.postList?.get(0)?.let{ item ->
+                        callback.invoke(item)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     override fun onCreateView(
