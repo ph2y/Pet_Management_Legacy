@@ -97,6 +97,20 @@ public class PostController {
         return ResponseEntity.ok(fileBinData);
     }
 
+    @PostMapping("/api/post/file/fetch")
+    public ResponseEntity<?> fetchPostFile(@Valid @RequestBody FetchPostFileReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        byte[] fileBinData;
+        try {
+            fileBinData = postServ.fetchPostFile(reqDto.getId(), reqDto.getIndex());
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new FetchPostFileResDto(dtoMetadata));
+        }
+        return ResponseEntity.ok(fileBinData);
+    }
+
     // UPDATE
     @PostMapping("/api/post/update")
     public ResponseEntity<?> updatePost(Authentication auth, @Valid @RequestBody UpdatePostReqDto reqDto) {
@@ -127,6 +141,21 @@ public class PostController {
         return ResponseEntity.ok(new UpdatePostMediaResDto(dtoMetadata, fileMetadataList));
     }
 
+    @PostMapping("/api/post/file/update")
+    public ResponseEntity<?> updatePostFile(Authentication auth, @ModelAttribute UpdatePostFileReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        List<FileMetadata> fileMetadataList;
+        try {
+            fileMetadataList = postServ.updatePostFile(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new UpdatePostFileResDto(dtoMetadata, null));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.postFile.update.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new UpdatePostFileResDto(dtoMetadata, fileMetadataList));
+    }
+
     // DELETE
     @PostMapping("/api/post/delete")
     public ResponseEntity<?> deletePost(Authentication auth, @Valid @RequestBody DeletePostReqDto reqDto) {
@@ -140,5 +169,33 @@ public class PostController {
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.post.delete.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new DeletePostResDto(dtoMetadata));
+    }
+
+    @PostMapping("/api/post/media/delete")
+    public ResponseEntity<?> deletePostMedia(Authentication auth, @Valid @RequestBody DeletePostMediaReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        try {
+            postServ.deletePostMedia(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new DeletePostMediaResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.postMedia.delete.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new DeletePostMediaResDto(dtoMetadata));
+    }
+
+    @PostMapping("/api/post/file/delete")
+    public ResponseEntity<?> deletePostFile(Authentication auth, @Valid @RequestBody DeletePostFileReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        try {
+            postServ.deletePostFile(auth, reqDto);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new DeletePostFileResDto(dtoMetadata));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.postFile.delete.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new DeletePostFileResDto(dtoMetadata));
     }
 }
