@@ -79,6 +79,7 @@ class CommunityFragment : Fragment() {
                     fetchOnePostAndInvoke(postId) { item ->
                         adapter.addItemToTop(item)
                         adapter.notifyItemRangeInserted(0, 1)
+                        adapter.notifyItemRangeChanged(0, adapter.itemCount)
 
                         // 최하단 post를 삭제해야한다. 이 작업으로, 다음 페이지를 로드할 때
                         // 최하단 post를 로드하여 이 post가 총 2번 나타나는 버그를 방지한다.
