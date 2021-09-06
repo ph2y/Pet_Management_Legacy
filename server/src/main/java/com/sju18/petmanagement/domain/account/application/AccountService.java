@@ -214,6 +214,9 @@ public class AccountService {
         // 기존 사용자 프로필 로드
         Account currentAccount = this.fetchCurrentAccount(auth);
 
+        // 사용자 프로필에서 photoUrl 컬럼 값 (파일 Path)를 가져와 파일 삭제
+        fileServ.deleteFile(currentAccount.getPhotoUrl());
+
         // 사용자 프로필에서 photoUrl 컬럼 null 설정 후 업데이트
         currentAccount.setPhotoUrl(null);
         accountRepository.save(currentAccount);
