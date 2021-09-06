@@ -25,7 +25,7 @@ import java.util.*;
 @Service
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
-    private final String storageRootPath = "C:\\Users\\fchop\\Development\\tmp\\Pet-Management\\storage";
+    private final String storageRootPath = "C:\\Users\\Komputer\\Pet-Management-Storage";
 
     // 파일 메타데이터 목록(stringify 된 JSON)을 이용하여 파일 읽기
     public byte[] readFileFromFileMetadataListJson(String fileMetadataListJson, Integer fileIndex) throws IOException {
@@ -104,6 +104,11 @@ public class FileService {
     public void deleteReviewFileStorage(Long reviewId) throws Exception {
         Path reviewStorage = getReviewFileStoragePath(reviewId);
         FileUtils.deleteDirectory(reviewStorage.toFile());
+    }
+
+    // 데이터 파일 삭제
+    public void deleteFile(String filePath) throws Exception {
+        FileUtils.fileDelete(filePath);
     }
 
     // 사용자 프로필 사진 저장
