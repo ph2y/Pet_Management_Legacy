@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.community.createUpdatePost
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -621,6 +622,11 @@ class CreateUpdatePostFragment : Fragment() {
                 if (response.isSuccessful) {
                     // get created post id + update post media
                     getIdAndUpdateMedia()
+
+                    // Pass post.id to Community
+                    val intent = Intent()
+                    intent.putExtra("id", response.body()!!.id)
+                    requireActivity().setResult(Activity.RESULT_OK, intent)
                 }
                 else {
                     // set api state/button to normal

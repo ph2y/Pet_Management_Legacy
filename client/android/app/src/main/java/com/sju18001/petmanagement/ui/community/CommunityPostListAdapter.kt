@@ -176,6 +176,14 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
         isPostLiked.add(false)
     }
 
+    fun addItemToTop(post: Post){
+        dataSet.add(0, post)
+
+        // 기본값으로 추가
+        likedCounts.add(0, 0)
+        isPostLiked.add(0, false)
+    }
+
     fun setLikedCount(position: Int, value: Long){
         likedCounts[position] = value
     }
