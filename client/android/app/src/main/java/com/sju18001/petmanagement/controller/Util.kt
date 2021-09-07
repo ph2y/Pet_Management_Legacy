@@ -25,6 +25,7 @@ import org.json.JSONObject
 import java.io.File
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.*
 
 
 class Util {
@@ -151,6 +152,42 @@ class Util {
         fun deleteCopiedFiles(context: Context, directory: String) {
             val dir = File(context.getExternalFilesDir(null).toString() + File.separator + directory)
             dir.deleteRecursively()
+        }
+
+        fun getTemporaryFilesSize(context: Context): Long {
+            // set File path
+            val file = File(context.getExternalFilesDir(null).toString())
+
+            // no such file/directory exception
+            if (!file.exists()) {
+                return 0
+            }
+            // if file
+            if (!file.isDirectory) {
+                return file.length()
+            }
+
+            // if directory
+            val dirs: MutableList<File> = LinkedList()
+            dirs.add(file)
+
+            var result: Long = 0
+            while (dirs.isNotEmpty()) {
+                val dir = dirs.removeAt(0)
+                if (!dir.exists()) {
+                    continue
+                }
+                val listFiles = dir.listFiles()
+                if (listFiles == null || listFiles.isEmpty()) {
+                    continue
+                }
+                for (child in listFiles) {
+                    result += child.length()
+                    if (child.isDirectory) dirs.add(child)
+                }
+            }
+
+            return result
         }
     }
 }
