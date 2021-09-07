@@ -702,11 +702,9 @@ class CreateUpdatePostFragment : Fragment() {
                         // TODO: delete all media files(server API needed)
 
                         // Pass post id, position to Community
-                        val intent = Intent()
-                        intent.putExtra("postId", requireActivity().intent.getLongExtra("postId", -1))
-                        intent.putExtra("position", requireActivity().intent.getIntExtra("position", -1))
-                        requireActivity().setResult(Activity.RESULT_OK, intent)
+                        passDataToCommunity()
 
+                        // close after success
                         closeAfterSuccess()
                     }
 
@@ -770,6 +768,9 @@ class CreateUpdatePostFragment : Fragment() {
                     response: Response<UpdatePostMediaResDto>
                 ) {
                     if(response.isSuccessful) {
+                        // Pass post id, position to Community
+                        passDataToCommunity()
+
                         // close after success
                         closeAfterSuccess()
                     }
@@ -1007,6 +1008,14 @@ class CreateUpdatePostFragment : Fragment() {
                 Log.d("error", t.message.toString())
             }
         })
+    }
+
+    // Pass post id, position to Community(for post edit)
+    private fun passDataToCommunity() {
+        val intent = Intent()
+        intent.putExtra("postId", requireActivity().intent.getLongExtra("postId", -1))
+        intent.putExtra("position", requireActivity().intent.getIntExtra("position", -1))
+        requireActivity().setResult(Activity.RESULT_OK, intent)
     }
 
     // close after success
