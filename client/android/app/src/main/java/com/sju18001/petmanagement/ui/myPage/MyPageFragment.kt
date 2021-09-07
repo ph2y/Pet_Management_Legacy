@@ -95,6 +95,10 @@ class MyPageFragment : Fragment() {
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
 
+        binding.deleteTemporaryFilesButton.setOnClickListener {
+            // TODO: 
+        }
+
         binding.termsAndPoliciesLookup.setOnClickListener {
             val termsAndPoliciesIntent = Intent(context, MyPageActivity::class.java)
             termsAndPoliciesIntent.putExtra("fragmentType", "terms_and_policies")
