@@ -178,7 +178,7 @@ class Util {
                     continue
                 }
                 val listFiles = dir.listFiles()
-                if (listFiles == null || listFiles.isEmpty()) {
+                if (listFiles.isNullOrEmpty()) {
                     continue
                 }
                 for (child in listFiles) {
