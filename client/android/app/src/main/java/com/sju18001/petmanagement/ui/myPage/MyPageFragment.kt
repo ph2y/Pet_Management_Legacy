@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPage
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
@@ -18,12 +19,11 @@ import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchAccountResDto
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 class MyPageFragment : Fragment() {
     private var _binding: FragmentMyPageBinding? = null
@@ -95,6 +95,24 @@ class MyPageFragment : Fragment() {
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
 
+        binding.deleteTemporaryFilesButton.setOnClickListener {
+            val builder = AlertDialog.Builder(activity)
+            builder.setMessage(context?.getString(R.string.delete_temporary_files_message))
+                .setPositiveButton(
+                    R.string.confirm
+                ) { _, _ ->
+                    // delete temporary files + set size to 0 after deletion
+                    File(requireContext().getExternalFilesDir(null).toString()).deleteRecursively()
+                    setTemporaryFilesSize()
+                }
+                .setNegativeButton(
+                    R.string.cancel
+                ) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .create().show()
+        }
+
         binding.termsAndPoliciesLookup.setOnClickListener {
             val termsAndPoliciesIntent = Intent(context, MyPageActivity::class.java)
             termsAndPoliciesIntent.putExtra("fragmentType", "terms_and_policies")
@@ -113,6 +131,7 @@ class MyPageFragment : Fragment() {
         super.onResume()
 
         fetchAccountProfileData()
+        setTemporaryFilesSize()
     }
 
     override fun onDestroyView() {
@@ -178,5 +197,11 @@ class MyPageFragment : Fragment() {
     private fun setViewsWithAccountProfileData() {
         fetchAccountPhotoAndSetView()
         binding.nicknameText.text = myPageViewModel.accountNicknameProfileValue
+    }
+
+    // set temporary files size
+    private fun setTemporaryFilesSize() {
+        val size = String.format("%.1f", (Util.getTemporaryFilesSize(requireContext()) / 1e6)) + "MB"
+        binding.temporaryFilesSize.text = size
     }
 }

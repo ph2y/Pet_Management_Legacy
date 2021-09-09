@@ -120,9 +120,12 @@
     <!-- MyPage Fragment -->
     <string name="preferences_title">설정</string>
     <string name="info_version_title">버전 및 정보</string>
+    <string name="storage_title">저장소</string>
     <string name="preferences">환경 설정</string>
     <string name="notification_preferences">알림 설정</string>
     <string name="theme_preferences">테마 설정</string>
+    <string name="delete_temporary_files_button">임시파일 삭제</string>
+    <string name="delete_temporary_files_message">임시파일을 삭제할까요?</string>
     <string name="policy">약관 및 정책</string>
     <string name="license">라이센스</string>
     <string name="version_title">현재 버전</string>
