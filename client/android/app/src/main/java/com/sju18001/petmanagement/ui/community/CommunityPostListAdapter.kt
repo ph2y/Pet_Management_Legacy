@@ -176,12 +176,12 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
         isPostLiked.add(false)
     }
 
-    fun setLikedCount(position: Int, value: Long){
-        likedCounts[position] = value
-    }
+    fun addItemToTop(post: Post){
+        dataSet.add(0, post)
 
-    fun setIsPostLiked(position: Int, flag: Boolean){
-        isPostLiked[position] = flag
+        // 기본값으로 추가
+        likedCounts.add(0, 0)
+        isPostLiked.add(0, false)
     }
 
     fun removeItem(index: Int){
@@ -194,6 +194,18 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
         dataSet = arrayListOf()
         likedCounts = arrayListOf()
         isPostLiked = arrayListOf()
+    }
+
+    fun setLikedCount(position: Int, value: Long){
+        likedCounts[position] = value
+    }
+
+    fun setIsPostLiked(position: Int, flag: Boolean){
+        isPostLiked[position] = flag
+    }
+
+    fun setPost(position: Int, post: Post){
+        dataSet[position] = post
     }
 
     fun showCreateLikeButton(holder: ViewHolder){

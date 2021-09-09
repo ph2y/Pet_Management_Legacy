@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.community.createUpdatePost
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -619,6 +620,11 @@ class CreateUpdatePostFragment : Fragment() {
                 response: Response<CreatePostResDto>
             ) {
                 if (response.isSuccessful) {
+                    // Pass post id to Community
+                    val intent = Intent()
+                    intent.putExtra("postId", response.body()!!.id)
+                    requireActivity().setResult(Activity.RESULT_OK, intent)
+                    
                     // get created post id + update post media
                     getIdAndUpdateMedia()
                 }
@@ -694,6 +700,11 @@ class CreateUpdatePostFragment : Fragment() {
                     // no media files
                     if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
                         // TODO: delete all media files(server API needed)
+
+                        // Pass post id, position to Community
+                        passDataToCommunity()
+
+                        // close after success
                         closeAfterSuccess()
                     }
 
@@ -757,6 +768,9 @@ class CreateUpdatePostFragment : Fragment() {
                     response: Response<UpdatePostMediaResDto>
                 ) {
                     if(response.isSuccessful) {
+                        // Pass post id, position to Community
+                        passDataToCommunity()
+
                         // close after success
                         closeAfterSuccess()
                     }
@@ -996,6 +1010,14 @@ class CreateUpdatePostFragment : Fragment() {
         })
     }
 
+    // Pass post id, position to Community(for post edit)
+    private fun passDataToCommunity() {
+        val intent = Intent()
+        intent.putExtra("postId", requireActivity().intent.getLongExtra("postId", -1))
+        intent.putExtra("position", requireActivity().intent.getIntExtra("position", -1))
+        requireActivity().setResult(Activity.RESULT_OK, intent)
+    }
+
     // close after success
     private fun closeAfterSuccess() {
         // set api state/button to normal
@@ -1014,6 +1036,7 @@ class CreateUpdatePostFragment : Fragment() {
         else {
             Toast.makeText(context, context?.getText(R.string.update_post_successful), Toast.LENGTH_LONG).show()
         }
+
         activity?.finish()
     }
 
