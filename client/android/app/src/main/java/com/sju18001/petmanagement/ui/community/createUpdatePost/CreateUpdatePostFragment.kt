@@ -698,6 +698,10 @@ class CreateUpdatePostFragment : Fragment() {
                 call: Call<UpdatePostResDto>,
                 response: Response<UpdatePostResDto>
             ) {
+                if(isViewDestroyed){
+                    return
+                }
+
                 if (response.isSuccessful) {
                     // no media files
                     if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
@@ -727,14 +731,13 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<UpdatePostResDto>, t: Throwable) {
+                if(isViewDestroyed){
+                    return
+                }
+
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
-
-                // if the view was destroyed(API call canceled) -> return
-                if (_binding == null) {
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
