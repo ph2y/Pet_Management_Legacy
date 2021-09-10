@@ -19,7 +19,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import com.google.gson.Gson
 import com.sju18001.petmanagement.restapi.Place
+import com.sju18001.petmanagement.restapi.global.FileMetaData
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import java.io.File
@@ -188,6 +190,10 @@ class Util {
             }
 
             return result
+        }
+
+        fun getArrayFromMediaAttachments(mediaAttachments: String?): Array<FileMetaData>{
+            return if (mediaAttachments != null) Gson().fromJson(mediaAttachments, Array<FileMetaData>::class.java) else arrayOf()
         }
     }
 }

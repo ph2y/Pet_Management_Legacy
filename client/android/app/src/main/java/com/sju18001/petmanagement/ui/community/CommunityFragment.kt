@@ -267,11 +267,11 @@ class CommunityFragment : Fragment() {
                 })
             }
 
-            override fun onClickPostFunctionButton(postId: Long, authorId: Long, position: Int) {
+            override fun onClickPostFunctionButton(post: Post, position: Int) {
                 val loggedInAccount = SessionManager.fetchLoggedInAccount(requireContext())!!
 
-                if(loggedInAccount.id == authorId){
-                    createPostDialogForAuthor(postId, position)
+                if(loggedInAccount.id == post.author.id){
+                    createPostDialogForAuthor(post, position)
                 }else{
                     createPostDialogForNonAuthor()
                 }
@@ -537,7 +537,7 @@ class CommunityFragment : Fragment() {
     }
 
 
-    private fun createPostDialogForAuthor(postId: Long, position: Int){
+    private fun createPostDialogForAuthor(post: Post, position: Int){
         val builder = AlertDialog.Builder(requireActivity())
         builder.setItems(arrayOf("수정", "삭제"), DialogInterface.OnClickListener{ _, which ->
             when(which){
@@ -545,8 +545,9 @@ class CommunityFragment : Fragment() {
                     // 수정
                     val createUpdatePostActivityIntent = Intent(context, CreateUpdatePostActivity::class.java)
                     createUpdatePostActivityIntent.putExtra("fragmentType", "update_post")
-                    createUpdatePostActivityIntent.putExtra("postId", postId)
+                    createUpdatePostActivityIntent.putExtra("postId", post.id)
                     createUpdatePostActivityIntent.putExtra("position", position)
+                    createUpdatePostActivityIntent.putExtra("originalMediaCount", Util.getArrayFromMediaAttachments(post.mediaAttachments).size)
 
                     startForUpdateResult.launch(createUpdatePostActivityIntent)
                     requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
@@ -556,7 +557,7 @@ class CommunityFragment : Fragment() {
                     val builder = AlertDialog.Builder(requireActivity())
                     builder.setMessage(getString(R.string.delete_post_dialog))
                         .setPositiveButton(R.string.confirm,
-                            DialogInterface.OnClickListener { _, _ -> deletePost(postId, position) }
+                            DialogInterface.OnClickListener { _, _ -> deletePost(post.id, position) }
                         )
                         .setNegativeButton(R.string.cancel,
                             DialogInterface.OnClickListener { dialog, _ -> dialog.cancel() }

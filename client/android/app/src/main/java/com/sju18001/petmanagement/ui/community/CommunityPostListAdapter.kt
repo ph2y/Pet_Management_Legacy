@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.google.gson.Gson
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.global.FileMetaData
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -21,7 +22,7 @@ interface CommunityPostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
     fun createLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder, position: Int)
     fun deleteLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder, position: Int)
-    fun onClickPostFunctionButton(postId: Long, authorId: Long, position: Int)
+    fun onClickPostFunctionButton(post: Post, position: Int)
     fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder)
     fun setPostMedia(holder: CommunityPostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String)
@@ -97,7 +98,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
 
     private fun setViewPager(holder: ViewHolder, data: Post){
         if(!data.mediaAttachments.isNullOrEmpty()){
-            val mediaAttachments: Array<FileMetaData> = Gson().fromJson(data.mediaAttachments, Array<FileMetaData>::class.java)
+            val mediaAttachments = Util.getArrayFromMediaAttachments(data.mediaAttachments)
 
             holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, data.id, mediaAttachments, holder.viewPager)
             holder.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
@@ -164,7 +165,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
 
         // ... 버튼 -> Dialog 띄우기
         holder.dialogButton.setOnClickListener {
-            communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[position].id, dataSet[position].author.id, position)
+            communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[position], position)
         }
     }
 
