@@ -119,6 +119,8 @@ interface ServerApi {
     @POST("api/post/media/update")
     fun updatePostMediaReq(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>): Call<UpdatePostMediaResDto>
 
+    @POST("api/post/media/delete")
+    fun deletePostMediaReq(@Body deletePostMediaReqDto: DeletePostMediaReqDto): Call<DeletePostMediaResDto>
 
     // Follow API
     @POST("api/community/follower/fetch")

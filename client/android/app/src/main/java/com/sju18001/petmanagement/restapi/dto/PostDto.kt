@@ -65,3 +65,11 @@ data class UpdatePostMediaResDto (
     val _metadata: DtoMetadata,
     val fileMetadataList: List<FileMetaData>
 )
+
+data class DeletePostMediaReqDto (
+    val id: Long
+)
+
+data class DeletePostMediaResDto (
+    val _metadata: DtoMetadata
+)
