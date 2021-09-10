@@ -69,6 +69,8 @@ class CreateUpdatePostFragment : Fragment() {
     private var _binding: FragmentCreateUpdatePostBinding? = null
     private val binding get() = _binding!!
 
+    private var isViewDestroyed = false
+
     // variables for pet
     private var petIdAndNameList: MutableList<Pet> = mutableListOf()
 
@@ -699,17 +701,16 @@ class CreateUpdatePostFragment : Fragment() {
                 if (response.isSuccessful) {
                     // no media files
                     if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
-                        // TODO: delete all media files(server API needed)
-
-                        // Pass post id, position to Community
-                        passDataToCommunity()
-
-                        // close after success
-                        closeAfterSuccess()
+                        // 기존에 Media가 0개였다면 DeletePostMedia를 호출하지 않는다.
+                        if(requireActivity().intent.getIntExtra("originalMediaCount", 0) > 0){
+                            deletePostMedia(createUpdatePostViewModel.postId!!)
+                        }else{
+                            passDataToCommunity()
+                            closeAfterSuccess()
+                        }
+                    } else {
+                        updatePostMedia(createUpdatePostViewModel.postId!!)
                     }
-
-                    // update post media
-                    else { updatePostMedia(createUpdatePostViewModel.postId!!) }
                 }
                 else {
                     // set api state/button to normal
@@ -734,6 +735,51 @@ class CreateUpdatePostFragment : Fragment() {
                 if (_binding == null) {
                     return
                 }
+
+                // show(Toast)/log error message
+                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
+    private fun deletePostMedia(id: Long) {
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            .deletePostMediaReq(DeletePostMediaReqDto(id))
+        call.enqueue(object: Callback<DeletePostMediaResDto> {
+            override fun onResponse(
+                call: Call<DeletePostMediaResDto>,
+                response: Response<DeletePostMediaResDto>
+            ) {
+                if(isViewDestroyed){
+                    return
+                }
+
+                if(response.isSuccessful){
+                    passDataToCommunity()
+                    closeAfterSuccess()
+                }else{
+                    // set api state/button to normal
+                    createUpdatePostViewModel.apiIsLoading = false
+                    setButtonToNormal()
+
+                    // get error message + show(Toast)
+                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
+                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                    // log error message
+                    Log.d("error", errorMessage)
+                }
+            }
+
+            override fun onFailure(call: Call<DeletePostMediaResDto>, t: Throwable) {
+                if(isViewDestroyed){
+                    return
+                }
+                
+                // set api state/button to normal
+                createUpdatePostViewModel.apiIsLoading = false
+                setButtonToNormal()
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -1066,6 +1112,8 @@ class CreateUpdatePostFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+
+        isViewDestroyed = true
 
         // delete copied files(if any)
         if(isRemoving || requireActivity().isFinishing) {
