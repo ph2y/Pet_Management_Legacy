@@ -35,9 +35,7 @@ class MyPageFragment : Fragment() {
     // variable for ViewModel
     val myPageViewModel: MyPageViewModel by activityViewModels()
 
-    // variables for storing API call(for cancel)
-    private var fetchAccountApiCall: Call<FetchAccountResDto>? = null
-    private var fetchAccountPhotoApiCall: Call<ResponseBody>? = null
+    private var isViewDestroyed = false
 
     // Account DAO
     private lateinit var accountData: Account
@@ -138,9 +136,7 @@ class MyPageFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        // stop api call when fragment is destroyed
-        fetchAccountApiCall?.cancel()
-        fetchAccountPhotoApiCall?.cancel()
+        isViewDestroyed = true
     }
 
     // fetch account profile
@@ -164,13 +160,15 @@ class MyPageFragment : Fragment() {
         // create DTO
         val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(null)
 
-        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
-        fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
+        call.enqueue(object: Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
+                    if(isViewDestroyed) return
+
                     if(response.isSuccessful) {
                         // save in ViewModel by byte array
                         myPageViewModel.accountPhotoProfileByteArray = response.body()!!.byteStream().readBytes()
@@ -186,6 +184,8 @@ class MyPageFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                    if(isViewDestroyed) return
+
                     // show(Toast)/log error message
                     Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
                     Log.d("error", t.message.toString())
