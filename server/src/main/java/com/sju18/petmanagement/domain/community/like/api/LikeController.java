@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Locale;
 
 @RequiredArgsConstructor
@@ -45,16 +46,17 @@ public class LikeController {
     public ResponseEntity<?> fetchLike(@Valid @RequestBody FetchLikeReqDto reqDto) {
         DtoMetadata dtoMetadata;
         final Long likeCount;
-
+        final List<Long> likedAccountIdList;
         try {
-            likeCount = likeServ.fetchLike(reqDto);
+            likeCount = likeServ.fetchLikeCount(reqDto);
+            likedAccountIdList = likeServ.fetchLikeAccountIdList(reqDto);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new FetchLikeResDto(dtoMetadata, null));
+            return ResponseEntity.status(400).body(new FetchLikeResDto(dtoMetadata, null, null));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.like.fetch.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new FetchLikeResDto(dtoMetadata, likeCount));
+        return ResponseEntity.ok(new FetchLikeResDto(dtoMetadata, likeCount, likedAccountIdList));
     }
 
     // DELETE
