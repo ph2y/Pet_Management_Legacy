@@ -27,7 +27,7 @@ class RecoverUsernameFragment : Fragment() {
     private val EMAIL = 0
     private val isValidInput: HashMap<Int, Boolean> = HashMap()
 
-    private var isViewDestroyed: Boolean = false
+    private var isViewDestroyed = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -134,27 +134,27 @@ class RecoverUsernameFragment : Fragment() {
                 call: Call<RecoverUsernameResDto>,
                 response: Response<RecoverUsernameResDto>
             ) {
-                if(!isViewDestroyed){
-                    // 버튼 로딩 상태 해제
-                    setButtonLoading(false)
+                if(isViewDestroyed) return
 
-                    if(response.isSuccessful){
-                        response.body()?.let{
-                            setViewForResult(it.username)
-                        }
-                    }else{
-                        Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
+                // 버튼 로딩 상태 해제
+                setButtonLoading(false)
+
+                if(response.isSuccessful){
+                    response.body()?.let{
+                        setViewForResult(it.username)
                     }
+                }else{
+                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<RecoverUsernameResDto>, t: Throwable) {
-                if(!isViewDestroyed){
-                    // 버튼 로딩 상태 해제
-                    setButtonLoading(false)
+                if(isViewDestroyed) return
 
-                    Toast.makeText(context, getString(R.string.fail_request), Toast.LENGTH_SHORT).show()
-                }
+                // 버튼 로딩 상태 해제
+                setButtonLoading(false)
+
+                Toast.makeText(context, getString(R.string.fail_request), Toast.LENGTH_SHORT).show()
             }
         })
     }

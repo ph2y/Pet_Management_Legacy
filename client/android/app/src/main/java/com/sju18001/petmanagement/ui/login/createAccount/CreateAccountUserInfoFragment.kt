@@ -35,7 +35,9 @@ class CreateAccountUserInfoFragment : Fragment() {
     private var _binding: FragmentCreateAccountUserInfoBinding? = null
     private val binding get() = _binding!!
 
-    // variable for storing API call(for cancel)
+    private var isViewDestroyed = false
+
+    // variable for storing API call
     private var codeRequestApiCall: Call<SendAuthCodeResDto>? = null
 
     override fun onCreateView(
@@ -206,6 +208,8 @@ class CreateAccountUserInfoFragment : Fragment() {
                 call: Call<SendAuthCodeResDto>,
                 response: Response<SendAuthCodeResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     // if success -> display a toast message
                     Toast.makeText(context, R.string.email_code_sent, Toast.LENGTH_LONG).show()
@@ -240,6 +244,8 @@ class CreateAccountUserInfoFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<SendAuthCodeResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // log error message
                 Log.d("error", t.message.toString())
 
@@ -248,9 +254,6 @@ class CreateAccountUserInfoFragment : Fragment() {
 
                 // reset codeRequestApiCall variable
                 codeRequestApiCall = null
-
-                // if the view was destroyed(API call canceled) -> do nothing
-                if(_binding == null) { return }
 
                 //display error toast message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -300,7 +303,6 @@ class CreateAccountUserInfoFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        // stop api call when fragment is destroyed
-        codeRequestApiCall?.cancel()
+        isViewDestroyed = true
     }
 }

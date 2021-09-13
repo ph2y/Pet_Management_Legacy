@@ -33,6 +33,8 @@ class CreateAccountFragment : Fragment() {
     private var _binding: FragmentCreateAccountBinding? = null
     private val binding get() = _binding!!
 
+    private var isViewDestroyed = false
+
     // const variables for fragment tags
     private val FRAGMENT_TAG_TERMS: String = "terms"
     private val FRAGMENT_TAG_USERNAME_PASSWORD: String = "username_password"
@@ -43,7 +45,7 @@ class CreateAccountFragment : Fragment() {
     private val MESSAGE_PHONE_OVERLAP: String = "Phone number already exists"
     private val MESSAGE_EMAIL_OVERLAP: String = "Email already exists"
 
-    // variables for storing API call(for cancel)
+    // variables for storing API call
     private var createAccountApiCall: Call<CreateAccountResDto>? = null
     private var verifyAuthCodeApiCall: Call<VerifyAuthCodeResDto>? = null
 
@@ -223,41 +225,45 @@ class CreateAccountFragment : Fragment() {
                 call: Call<CreateAccountResDto>,
                 response: Response<CreateAccountResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
-                    // return to previous fragment
                     returnToPreviousFragment()
                 }
                 else {
-                    // get error message(overlap)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
                     // if email overlap + show message
-                    if(errorMessage == MESSAGE_EMAIL_OVERLAP) {
-                        loginViewModel.createAccountEmailIsOverlap = true
+                    when (Util.getMessageFromErrorBody(response.errorBody()!!)) {
+                        MESSAGE_EMAIL_OVERLAP -> {
+                            loginViewModel.createAccountEmailIsOverlap = true
 
-                        // set email code valid to false + reset chronometer/requested email + unlock email views
-                        loginViewModel.emailCodeValid = false
-                        loginViewModel.emailCodeChronometerBase = 0
-                        loginViewModel.currentCodeRequestedEmail = ""
-                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
-                            .unlockEmailViews()
+                            // set email code valid to false + reset chronometer/requested email + unlock email views
+                            loginViewModel.emailCodeValid = false
+                            loginViewModel.emailCodeChronometerBase = 0
+                            loginViewModel.currentCodeRequestedEmail = ""
+                            (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
+                                .unlockEmailViews()
 
-                        // show message
-                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
-                            .showOverlapMessage(loginViewModel)
-                        setNextButtonToNormal()
-                    }
-                    // if username overlap -> go to credentials fragment + show message
-                    else if(errorMessage == MESSAGE_USERNAME_OVERLAP) {
-                        loginViewModel.createAccountUsernameIsOverlap = true
-                        childFragmentManager.popBackStack()
-                    }
-                    // if phone overlap + show message
-                    else if(errorMessage == MESSAGE_PHONE_OVERLAP) {
-                        loginViewModel.createAccountPhoneIsOverlap = true
-                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
-                            .showOverlapMessage(loginViewModel)
-                        setNextButtonToNormal()
+                            // show message
+                            (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
+                                .showOverlapMessage(loginViewModel)
+                            setNextButtonToNormal()
+                        }
+                        // if username overlap -> go to credentials fragment + show message
+                        MESSAGE_USERNAME_OVERLAP -> {
+                            loginViewModel.createAccountUsernameIsOverlap = true
+                            childFragmentManager.popBackStack()
+                        }
+                        // if phone overlap + show message
+                        MESSAGE_PHONE_OVERLAP -> {
+                            loginViewModel.createAccountPhoneIsOverlap = true
+                            (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
+                                .showOverlapMessage(loginViewModel)
+                            setNextButtonToNormal()
+                        }
+                        else -> {
+                            Toast.makeText(requireContext(), context?.getText(R.string.fail_request), Toast.LENGTH_SHORT).show()
+                            setNextButtonToNormal()
+                        }
                     }
                 }
 
@@ -266,6 +272,8 @@ class CreateAccountFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<CreateAccountResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // log error message
                 Log.d("error", t.message.toString())
 
@@ -274,9 +282,6 @@ class CreateAccountFragment : Fragment() {
 
                 // reset createAccountApiCall variable
                 createAccountApiCall = null
-
-                // if the view was destroyed(API call canceled) -> do nothing
-                if(_binding == null) { return }
 
                 //display error toast message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -298,6 +303,8 @@ class CreateAccountFragment : Fragment() {
                     call: Call<VerifyAuthCodeResDto>,
                     response: Response<VerifyAuthCodeResDto>
                 ) {
+                    if(isViewDestroyed) return
+
                     if(response.isSuccessful) {
                         // set email code valid to true + lock email views
                         loginViewModel.emailCodeValid = true
@@ -321,6 +328,8 @@ class CreateAccountFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<VerifyAuthCodeResDto>, t: Throwable) {
+                    if(isViewDestroyed) return
+
                     // log error message
                     Log.d("error", t.message.toString())
 
@@ -329,11 +338,6 @@ class CreateAccountFragment : Fragment() {
 
                     // reset verifyAuthCodeApiCall variable
                     verifyAuthCodeApiCall = null
-
-                    // if the view was destroyed(API call canceled) -> set result to false + return
-                    if(_binding == null) {
-                        return
-                    }
 
                     //display error toast message
                     Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -359,8 +363,6 @@ class CreateAccountFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        // stop api calls when fragment is destroyed
-        createAccountApiCall?.cancel()
-        verifyAuthCodeApiCall?.cancel()
+        isViewDestroyed = true
     }
 }

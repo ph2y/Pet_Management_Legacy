@@ -172,27 +172,27 @@ class RecoverPasswordFragment : Fragment() {
                 call: Call<SendAuthCodeResDto>,
                 response: Response<SendAuthCodeResDto>
             ) {
-                if(!isViewDestroyed){
-                    // 버튼 로딩 상태 해제
-                    setEmailInputButtonLoading(false)
+                if(isViewDestroyed) return
 
-                    if(response.isSuccessful){
-                        // 코드 입력
-                        setViewForCodeInput()
-                    }else{
-                        // 어떤 이메일이든 코드 전송은 하기 때문에, 보통 실패할 수 없다.
-                        Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
-                    }
+                // 버튼 로딩 상태 해제
+                setEmailInputButtonLoading(false)
+
+                if(response.isSuccessful){
+                    // 코드 입력
+                    setViewForCodeInput()
+                }else{
+                    // 어떤 이메일이든 코드 전송은 하기 때문에, 보통 실패할 수 없다.
+                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<SendAuthCodeResDto>, t: Throwable) {
-                if(!isViewDestroyed) {
-                    // 버튼 로딩 상태 해제
-                    setEmailInputButtonLoading(false)
+                if(isViewDestroyed) return
 
-                    Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
-                }
+                // 버튼 로딩 상태 해제
+                setEmailInputButtonLoading(false)
+
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }
@@ -228,26 +228,26 @@ class RecoverPasswordFragment : Fragment() {
                 call: Call<RecoverPasswordResDto>,
                 response: Response<RecoverPasswordResDto>
             ) {
-                if(!isViewDestroyed) {
-                    // 버튼 로딩 상태 해제
-                    setCodeInputButtonLoading(false)
+                if(isViewDestroyed) return
 
-                    if (response.isSuccessful) {
-                        setViewForResult()
-                    } else {
-                        binding.codeMessage.visibility = View.VISIBLE
-                        Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
-                    }
+                // 버튼 로딩 상태 해제
+                setCodeInputButtonLoading(false)
+
+                if (response.isSuccessful) {
+                    setViewForResult()
+                } else {
+                    binding.codeMessage.visibility = View.VISIBLE
+                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                 }
             }
 
             override fun onFailure(call: Call<RecoverPasswordResDto>, t: Throwable) {
-                if(!isViewDestroyed) {
-                    // 버튼 로딩 상태 해제
-                    setCodeInputButtonLoading(false)
+                if(isViewDestroyed) return
 
-                    Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
-                }
+                // 버튼 로딩 상태 해제
+                setCodeInputButtonLoading(false)
+
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
             }
         })
     }
