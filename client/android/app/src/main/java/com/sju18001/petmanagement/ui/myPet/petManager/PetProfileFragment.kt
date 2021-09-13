@@ -32,8 +32,7 @@ class PetProfileFragment : Fragment(){
     // variable for ViewModel
     private val myPetViewModel: MyPetViewModel by activityViewModels()
 
-    // variable for storing API call(for cancel)
-    private var deletePetApiCall: Call<DeletePetResDto>? = null
+    private var isViewDestroyed = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -141,13 +140,15 @@ class PetProfileFragment : Fragment(){
             requireActivity().intent.getLongExtra("petId", -1)
         )
 
-        deletePetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deletePetReq(deletePetReqDto)
-        deletePetApiCall!!.enqueue(object: Callback<DeletePetResDto> {
+        call.enqueue(object: Callback<DeletePetResDto> {
             override fun onResponse(
                 call: Call<DeletePetResDto>,
                 response: Response<DeletePetResDto>
             ) {
+                if(isViewDestroyed) return
+
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
                 enableButton()
@@ -167,14 +168,11 @@ class PetProfileFragment : Fragment(){
             }
 
             override fun onFailure(call: Call<DeletePetResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
                 enableButton()
-
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -235,8 +233,8 @@ class PetProfileFragment : Fragment(){
         super.onDestroyView()
         _binding = null
 
-        // stop api call when fragment is destroyed
-        deletePetApiCall?.cancel()
+        isViewDestroyed = true
+
         myPetViewModel.petManagerApiIsLoading = false
     }
 }

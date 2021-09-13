@@ -44,8 +44,7 @@ class PetScheduleManagerFragment : Fragment() {
     // 리싸이클러뷰
     private lateinit var adapter: PetScheduleListAdapter
 
-    // API Calls
-    private var fetchPetScheduleApiCall: Call<FetchPetScheduleResDto>? = null
+    private var isViewDestroyed = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -77,7 +76,7 @@ class PetScheduleManagerFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
 
-        fetchPetScheduleApiCall?.cancel()
+        isViewDestroyed = true
     }
 
     override fun onDestroyView() {
@@ -155,6 +154,8 @@ class PetScheduleManagerFragment : Fragment() {
                         call: Call<UpdatePetScheduleResDto>,
                         response: Response<UpdatePetScheduleResDto>
                     ) {
+                        if(isViewDestroyed) return
+
                         if(response.isSuccessful){
                             // Do nothing
                         }else{
@@ -163,6 +164,8 @@ class PetScheduleManagerFragment : Fragment() {
                     }
 
                     override fun onFailure(call: Call<UpdatePetScheduleResDto>, t: Throwable) {
+                        if(isViewDestroyed) return
+
                         Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
                     }
                 })
@@ -181,14 +184,16 @@ class PetScheduleManagerFragment : Fragment() {
         val dataSet = arrayListOf<PetSchedule>()
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
-        fetchPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetScheduleReq(body)
-        fetchPetScheduleApiCall!!.enqueue(object: Callback<FetchPetScheduleResDto> {
+        call.enqueue(object: Callback<FetchPetScheduleResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<FetchPetScheduleResDto>,
                 response: Response<FetchPetScheduleResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful){
                     // dataSet에 값 저장
                     response.body()?.petScheduleList?.map{
@@ -207,6 +212,8 @@ class PetScheduleManagerFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchPetScheduleResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 Toast.makeText(context, "${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
