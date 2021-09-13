@@ -30,8 +30,8 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
     RecyclerView.Adapter<FollowingAdapter.HistoryListViewHolder>() {
 
     private var resultList = mutableListOf<FollowerFollowingListItem>()
-    private var deleteFollowApiCall: Call<DeleteFollowResDto>? = null
-    private var fetchAccountPhotoApiCall: Call<ResponseBody>? = null
+
+    private var isViewDestroyed = false
 
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val accountPhoto: CircleImageView = itemView.findViewById(R.id.account_photo)
@@ -99,14 +99,16 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
         val deleteFollowReqDto = DeleteFollowReqDto(id)
 
         // API call
-        deleteFollowApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .deleteFollowReq(deleteFollowReqDto)
-        deleteFollowApiCall!!.enqueue(object: Callback<DeleteFollowResDto> {
+        call.enqueue(object: Callback<DeleteFollowResDto> {
             @RequiresApi(Build.VERSION_CODES.M)
             override fun onResponse(
                 call: Call<DeleteFollowResDto>,
                 response: Response<DeleteFollowResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     // set button to normal
                     holder.followUnfollowButton.isEnabled = true
@@ -137,6 +139,8 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
             }
 
             override fun onFailure(call: Call<DeleteFollowResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // set button to normal
                 holder.followUnfollowButton.isEnabled = true
 
@@ -151,10 +155,12 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
         val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(id)
 
         // API call
-        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
-        fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
+        call.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     // convert photo to byte array + get bitmap
                     val photoByteArray = response.body()!!.byteStream().readBytes()
@@ -193,8 +199,6 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
     }
 
     public fun onDestroy() {
-        // stop api call when fragment is destroyed
-        deleteFollowApiCall?.cancel()
-        fetchAccountPhotoApiCall?.cancel()
+        isViewDestroyed = true
     }
 }

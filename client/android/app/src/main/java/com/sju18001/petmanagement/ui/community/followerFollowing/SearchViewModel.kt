@@ -50,9 +50,4 @@ class SearchViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("apiIsLoading", value)
             field = value
         }
-    var apiIsCanceled = handle.get<Boolean>("apiIsCanceled")?: false
-        set(value){
-            handle.set("apiIsCanceled", value)
-            field = value
-        }
 }
