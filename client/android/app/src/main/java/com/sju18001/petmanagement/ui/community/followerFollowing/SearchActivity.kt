@@ -40,13 +40,7 @@ class SearchActivity : AppCompatActivity() {
         ViewModelProvider(this, SavedStateViewModelFactory(application, this)).get(SearchViewModel::class.java)
     }
 
-    // variable for storing API call(for cancel)
-    private var fetchAccountApiCall: Call<FetchAccountResDto>? = null
-    private var fetchAccountPhotoApiCall: Call<ResponseBody>? = null
-    private var fetchFollowerApiCall: Call<FetchFollowerResDto>? = null
-    private var createFollowApiCall: Call<CreateFollowResDto>? = null
-    private var deleteFollowApiCall: Call<DeleteFollowResDto>? = null
-
+    private var isViewDestroyed = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -196,13 +190,15 @@ class SearchActivity : AppCompatActivity() {
         val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         // API call
-        fetchFollowerApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .fetchFollowerReq(emptyBody)
-        fetchFollowerApiCall!!.enqueue(object: Callback<FetchFollowerResDto> {
+        call.enqueue(object: Callback<FetchFollowerResDto> {
             override fun onResponse(
                 call: Call<FetchFollowerResDto>,
                 response: Response<FetchFollowerResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     response.body()!!.followerList.map {
                         searchViewModel.followerIdList!!.add(it.id)
@@ -222,11 +218,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<FetchFollowerResDto>, t: Throwable) {
-                // if API call was canceled -> return
-                if(searchViewModel.apiIsCanceled) {
-                    searchViewModel.apiIsCanceled = false
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -240,13 +232,15 @@ class SearchActivity : AppCompatActivity() {
         val fetchAccountReqDto = FetchAccountReqDto(null, null, nickname)
 
         // API call
-        fetchAccountApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .fetchAccountByNicknameReq(fetchAccountReqDto)
-        fetchAccountApiCall!!.enqueue(object: Callback<FetchAccountResDto> {
+        call.enqueue(object: Callback<FetchAccountResDto> {
             override fun onResponse(
                 call: Call<FetchAccountResDto>,
                 response: Response<FetchAccountResDto>
             ) {
+                if(isViewDestroyed) return
+
                 // set api state/button to normal
                 searchViewModel.apiIsLoading = false
                 setSearchButtonToNormal()
@@ -278,15 +272,11 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // set api state/button to normal
                 searchViewModel.apiIsLoading = false
                 setSearchButtonToNormal()
-
-                // if API call was canceled -> return
-                if(searchViewModel.apiIsCanceled) {
-                    searchViewModel.apiIsCanceled = false
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -300,10 +290,12 @@ class SearchActivity : AppCompatActivity() {
         val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(id)
 
         // API call
-        fetchAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
-        fetchAccountPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
+        call.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     // save photo as byte array
                     searchViewModel.accountPhotoByteArray = response.body()!!.byteStream().readBytes()
@@ -322,11 +314,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // if API call was canceled -> return
-                if(searchViewModel.apiIsCanceled) {
-                    searchViewModel.apiIsCanceled = false
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -340,13 +328,15 @@ class SearchActivity : AppCompatActivity() {
         val createFollowReqDto = CreateFollowReqDto(searchViewModel.accountId!!)
 
         // API call
-        createFollowApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .createFollowReq(createFollowReqDto)
-        createFollowApiCall!!.enqueue(object: Callback<CreateFollowResDto> {
+        call.enqueue(object: Callback<CreateFollowResDto> {
             override fun onResponse(
                 call: Call<CreateFollowResDto>,
                 response: Response<CreateFollowResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     // update follower id list(update button state)
                     updateFollowerIdList()
@@ -369,11 +359,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<CreateFollowResDto>, t: Throwable) {
-                // if API call was canceled -> return
-                if(searchViewModel.apiIsCanceled) {
-                    searchViewModel.apiIsCanceled = false
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -387,13 +373,15 @@ class SearchActivity : AppCompatActivity() {
         val deleteFollowReqDto = DeleteFollowReqDto(searchViewModel.accountId!!)
 
         // API call
-        deleteFollowApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .deleteFollowReq(deleteFollowReqDto)
-        deleteFollowApiCall!!.enqueue(object: Callback<DeleteFollowResDto> {
+        call.enqueue(object: Callback<DeleteFollowResDto> {
             override fun onResponse(
                 call: Call<DeleteFollowResDto>,
                 response: Response<DeleteFollowResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     // update follower id list(update button state)
                     updateFollowerIdList()
@@ -416,11 +404,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<DeleteFollowResDto>, t: Throwable) {
-                // if API call was canceled -> return
-                if(searchViewModel.apiIsCanceled) {
-                    searchViewModel.apiIsCanceled = false
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -455,12 +439,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        // stop api call when fragment is destroyed
-        searchViewModel.apiIsCanceled = true
-        fetchAccountApiCall?.cancel()
-        fetchAccountPhotoApiCall?.cancel()
-        fetchFollowerApiCall?.cancel()
-        createFollowApiCall?.cancel()
-        deleteFollowApiCall?.cancel()
+        isViewDestroyed = true
     }
 }
