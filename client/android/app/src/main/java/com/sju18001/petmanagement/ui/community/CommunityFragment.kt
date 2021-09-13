@@ -465,7 +465,6 @@ class CommunityFragment : Fragment() {
                 if(response.isSuccessful){
                     response.body()!!.postList?.let {
                         if(it.isNotEmpty()){
-                            // TODO: 이후에, Post에 likedCount 칼럼이 생기면, 이에 따라 효율적으로 변경해야함
                             // 추가로, 로딩 중에 뷰가 제거되면 오류(Inconsistency detected)가 나는데, 칼럼이 생긴 이후에도 발생 시 fix할 것
 
                             // Set topPostId
@@ -476,7 +475,7 @@ class CommunityFragment : Fragment() {
                             // 데이터 추가
                             it.map { item ->
                                 adapter.addItem(item)
-                                setLikedCounts(adapter.itemCount-1, item.id)
+                                setLiked(adapter.itemCount-1, item.id)
                             }
 
                             // 데이터셋 변경 알림
@@ -506,7 +505,7 @@ class CommunityFragment : Fragment() {
         })
     }
 
-    private fun setLikedCounts(position: Int, postId: Long){
+    private fun setLiked(position: Int, postId: Long){
         val body = FetchLikeReqDto(postId, null)
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchLikeReq(body)
         call.enqueue(object: Callback<FetchLikeResDto> {
@@ -516,6 +515,14 @@ class CommunityFragment : Fragment() {
             ) {
                 if(response.isSuccessful){
                     adapter.setLikedCount(position, response.body()!!.likedCount!!)
+
+                    // likedAccountIdList에 자신의 Account Id가 있으면 PostIsLiked = true 아니면 false
+                    if(response.body()!!.likedAccountIdList?.contains(SessionManager.fetchLoggedInAccount(requireContext())!!.id) == true) {
+                        adapter.setIsPostLiked(position, true)
+                    }
+                    else {
+                        adapter.setIsPostLiked(position, false)
+                    }
                     adapter.notifyItemChanged(position)
                 }
             }

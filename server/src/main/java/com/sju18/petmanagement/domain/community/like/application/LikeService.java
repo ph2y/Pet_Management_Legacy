@@ -19,7 +19,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -79,12 +81,22 @@ public class LikeService {
 
     // READ
     @Transactional
-    public Long fetchLike(FetchLikeReqDto reqDto) {
+    public Long fetchLikeCount(FetchLikeReqDto reqDto) {
         // 게시물/댓글/댓답글 id로 좋아요 갯수 인출
         if (reqDto.getCommentId() != null) {
             return likeRepository.countAllByLikedCommentId(reqDto.getCommentId());
         } else {
             return likeRepository.countAllByLikedPostId(reqDto.getPostId());
+        }
+    }
+
+    @Transactional
+    public List<Long> fetchLikeAccountIdList(FetchLikeReqDto reqDto) {
+        // 게시물/댓글/댓답글 id로 좋아요를 누른 Account Id 리스트 인출
+        if (reqDto.getCommentId() != null) {
+            return likeRepository.findAllByLikedCommentId(reqDto.getCommentId()).stream().map(like -> like.getLikedAccountId()).collect(Collectors.toList());
+        } else {
+            return likeRepository.findAllByLikedPostId(reqDto.getPostId()).stream().map(like -> like.getLikedAccountId()).collect(Collectors.toList());
         }
     }
 

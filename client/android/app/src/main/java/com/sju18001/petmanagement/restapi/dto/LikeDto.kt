@@ -27,5 +27,6 @@ data class FetchLikeReqDto(
 
 data class FetchLikeResDto(
     val _metadata: DtoMetadata,
-    val likedCount: Long?
+    val likedCount: Long?,
+    val likedAccountIdList: List<Long>?
 )
