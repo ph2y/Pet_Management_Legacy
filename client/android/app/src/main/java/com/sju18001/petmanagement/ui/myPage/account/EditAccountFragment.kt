@@ -53,12 +53,6 @@ class EditAccountFragment : Fragment() {
     // variable for ViewModel
     private val myPageViewModel: MyPageViewModel by activityViewModels()
 
-    // variables for storing API call(for cancel)
-    private var updateAccountApiCall: Call<UpdateAccountResDto>? = null
-    private var updateAccountPhotoApiCall: Call<UpdateAccountPhotoResDto>? = null
-    private var updateAccountPasswordApiCall: Call<UpdateAccountPasswordResDto>? = null
-    private var deleteAccountApiCall: Call<DeleteAccountResDto>? = null
-
     private var isViewDestroyed = false
 
     // pattern regex for EditTexts
@@ -284,11 +278,6 @@ class EditAccountFragment : Fragment() {
         if(isRemoving || requireActivity().isFinishing) {
             Util.deleteCopiedFiles(requireContext(), EDIT_ACCOUNT_DIRECTORY)
         }
-
-        updateAccountApiCall?.cancel()
-        updateAccountPhotoApiCall?.cancel()
-        updateAccountPasswordApiCall?.cancel()
-        deleteAccountApiCall?.cancel()
     }
 
     // check regex validation
@@ -309,13 +298,15 @@ class EditAccountFragment : Fragment() {
             myPageViewModel.accountUserMessageValue
         )
 
-        updateAccountApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updateAccountReq(updateAccountReqDto)
-        updateAccountApiCall!!.enqueue(object: Callback<UpdateAccountResDto> {
+        call.enqueue(object: Callback<UpdateAccountResDto> {
             override fun onResponse(
                 call: Call<UpdateAccountResDto>,
                 response: Response<UpdateAccountResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     if(response.body()?._metadata?.status == true) {
                         updateAccountPhoto(myPageViewModel.accountPhotoPathValue)
@@ -340,10 +331,7 @@ class EditAccountFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<UpdateAccountResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -399,14 +387,16 @@ class EditAccountFragment : Fragment() {
             })
         }
         else {
-            updateAccountPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updateAccountPhotoReq(MultipartBody.Part.createFormData("file", "file.png",
                 RequestBody.create(MediaType.parse("multipart/form-data"), File(path))))
-            updateAccountPhotoApiCall!!.enqueue(object: Callback<UpdateAccountPhotoResDto> {
+            call.enqueue(object: Callback<UpdateAccountPhotoResDto> {
                 override fun onResponse(
                     call: Call<UpdateAccountPhotoResDto>,
                     response: Response<UpdateAccountPhotoResDto>
                 ) {
+                    if(isViewDestroyed) return
+
                     if(response.isSuccessful) {
                         // 세션 갱신
                         val account = SessionManager.fetchLoggedInAccount(requireContext())!!
@@ -430,11 +420,12 @@ class EditAccountFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<UpdateAccountPhotoResDto>, t: Throwable) {
+                    if(isViewDestroyed) return
+
                     // show(Toast)/log error message
                     Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
                     Log.d("error", t.message.toString())
                 }
-
             })
         }
     }
@@ -443,13 +434,15 @@ class EditAccountFragment : Fragment() {
         // create dto
         val updateAccountPasswordReqDto = UpdateAccountPasswordReqDto(password, newPassword)
 
-        updateAccountPasswordApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updateAccountPasswordReq(updateAccountPasswordReqDto)
-        updateAccountPasswordApiCall!!.enqueue(object: Callback<UpdateAccountPasswordResDto> {
+        call.enqueue(object: Callback<UpdateAccountPasswordResDto> {
             override fun onResponse(
                 call: Call<UpdateAccountPasswordResDto>,
                 response: Response<UpdateAccountPasswordResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     if(response.body()?._metadata?.status == true) {
                         Toast.makeText(context, context?.getText(R.string.account_password_changed), Toast.LENGTH_LONG).show()
@@ -466,10 +459,7 @@ class EditAccountFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<UpdateAccountPasswordResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -499,13 +489,15 @@ class EditAccountFragment : Fragment() {
     private fun deleteAccount() {
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
-        deleteAccountApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deleteAccountReq(body)
-        deleteAccountApiCall!!.enqueue(object: Callback<DeleteAccountResDto> {
+        call.enqueue(object: Callback<DeleteAccountResDto> {
             override fun onResponse(
                 call: Call<DeleteAccountResDto>,
                 response: Response<DeleteAccountResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     if(response.body()?._metadata?.status == true) {
                         Toast.makeText(context, context?.getText(R.string.account_delete_success), Toast.LENGTH_LONG).show()
@@ -523,10 +515,7 @@ class EditAccountFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<DeleteAccountResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
