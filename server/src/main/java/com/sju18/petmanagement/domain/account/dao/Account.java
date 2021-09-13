@@ -2,7 +2,6 @@ package com.sju18.petmanagement.domain.account.dao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-
 import javax.persistence.*;
 
 @Entity
@@ -35,4 +34,7 @@ public class Account {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String photoUrl;
     private String userMessage;
+
+    @Column
+    private Long representativePetId;
 }

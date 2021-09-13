@@ -4,6 +4,7 @@ import lombok.Data;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 
 @Data
@@ -19,4 +20,6 @@ public class UpdateAccountReqDto {
     private Boolean marketing;
     @Size(max = 200, message = "valid.account.userMessage.size")
     private String userMessage;
+    @PositiveOrZero(message = "valid.pet.id.notNegative")
+    private Long representativePetId;
 }

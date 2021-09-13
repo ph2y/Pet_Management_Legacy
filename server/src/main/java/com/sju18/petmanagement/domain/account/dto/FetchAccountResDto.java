@@ -17,6 +17,7 @@ public class FetchAccountResDto {
     private String nickname;
     private String photoUrl;
     private String userMessage;
+    private Long representativePetId;
 
     // 정상 조회시 사용할 생성자
     public FetchAccountResDto(DtoMetadata dtoMetadata, Account account) {
@@ -29,6 +30,7 @@ public class FetchAccountResDto {
         this.nickname = account.getNickname();
         this.photoUrl = account.getPhotoUrl();
         this.userMessage = account.getUserMessage();
+        this.representativePetId = account.getRepresentativePetId();
     }
 
     // 오류시 사용할 생성자
@@ -42,5 +44,6 @@ public class FetchAccountResDto {
         this.nickname = null;
         this.photoUrl = null;
         this.userMessage = null;
+        this.representativePetId = null;
     }
 }
