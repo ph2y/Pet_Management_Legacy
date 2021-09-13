@@ -53,12 +53,6 @@ class CreateUpdatePetFragment : Fragment() {
     // variable for ViewModel
     val myPetViewModel: MyPetViewModel by activityViewModels()
 
-    // variables for storing API call(for cancel)
-    private var createPetApiCall: Call<CreatePetResDto>? = null
-    private var updatePetApiCall: Call<UpdatePetResDto>? = null
-    private var updatePetPhotoApiCall: Call<UpdatePetPhotoResDto>? = null
-    private var fetchPetApiCall: Call<FetchPetResDto>? = null
-
     private var isViewDestroyed = false
 
     override fun onCreateView(
@@ -242,13 +236,15 @@ class CreateUpdatePetFragment : Fragment() {
             binding.petMessageInput.text.toString()
         )
 
-        createPetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPetReq(createPetRequestDto)
-        createPetApiCall!!.enqueue(object: Callback<CreatePetResDto> {
+        call.enqueue(object: Callback<CreatePetResDto> {
             override fun onResponse(
                 call: Call<CreatePetResDto>,
                 response: Response<CreatePetResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     // get created pet id + update pet photo
                     getIdAndUpdatePhoto()
@@ -268,14 +264,11 @@ class CreateUpdatePetFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<CreatePetResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
                 setButtonToNormal()
-
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -313,14 +306,16 @@ class CreateUpdatePetFragment : Fragment() {
             binding.petMessageInput.text.toString()
         )
 
-        updatePetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePetReq(updatePetReqDto)
-        updatePetApiCall!!.enqueue(object: Callback<UpdatePetResDto> {
+        call.enqueue(object: Callback<UpdatePetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<UpdatePetResDto>,
                 response: Response<UpdatePetResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     // update pet photo(if selected)
                     updatePetPhoto(myPetViewModel.petIdValue!!, myPetViewModel.petPhotoPathValue)
@@ -340,14 +335,11 @@ class CreateUpdatePetFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<UpdatePetResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
                 setButtonToNormal()
-
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -404,15 +396,17 @@ class CreateUpdatePetFragment : Fragment() {
             }
             )
         } else {
-            updatePetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updatePetPhotoReq(id, MultipartBody.Part.createFormData("file", "file.png",
                     RequestBody.create(MediaType.parse("multipart/form-data"), File(path))))
-            updatePetPhotoApiCall!!.enqueue(object: Callback<UpdatePetPhotoResDto> {
+            call.enqueue(object: Callback<UpdatePetPhotoResDto> {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun onResponse(
                     call: Call<UpdatePetPhotoResDto>,
                     response: Response<UpdatePetPhotoResDto>
                 ) {
+                    if(isViewDestroyed) return
+
                     if(response.isSuccessful) {
                         // delete copied file
                         File(path).delete()
@@ -435,6 +429,8 @@ class CreateUpdatePetFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<UpdatePetPhotoResDto>, t: Throwable) {
+                    if(isViewDestroyed) return
+
                     // set api state/button to normal
                     myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
@@ -452,14 +448,16 @@ class CreateUpdatePetFragment : Fragment() {
         // create DTO
         val fetchPetReqDto = FetchPetReqDto( null )
 
-        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(fetchPetReqDto)
-        fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
+        call.enqueue(object: Callback<FetchPetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<FetchPetResDto>,
                 response: Response<FetchPetResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     val petIdList: ArrayList<Long> = ArrayList()
                     response.body()?.petList?.map {
@@ -484,14 +482,11 @@ class CreateUpdatePetFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
                 setButtonToNormal()
-
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -658,11 +653,6 @@ class CreateUpdatePetFragment : Fragment() {
             Util.deleteCopiedFiles(requireContext(), CREATE_UPDATE_PET_DIRECTORY)
         }
 
-        // stop api call when fragment is destroyed
-        createPetApiCall?.cancel()
-        updatePetApiCall?.cancel()
-        updatePetPhotoApiCall?.cancel()
-        fetchPetApiCall?.cancel()
         myPetViewModel.petManagerApiIsLoading = false
     }
 }

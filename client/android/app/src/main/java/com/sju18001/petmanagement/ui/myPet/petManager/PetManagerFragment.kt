@@ -50,8 +50,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     lateinit var touchHelper: ItemTouchHelper
     public var PET_LIST_ORDER: String = "pet_list_id_order"
 
-    // variable for storing API call(for cancel)
-    private var fetchPetApiCall: Call<FetchPetResDto>? = null
+    private var isViewDestroyed = false
 
     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
         touchHelper.startDrag(viewHolder)
@@ -95,14 +94,16 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         // create DTO
         val fetchPetReqDto = FetchPetReqDto( null )
 
-        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(fetchPetReqDto)
-        fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
+        call.enqueue(object: Callback<FetchPetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<FetchPetResDto>,
                 response: Response<FetchPetResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     val petListApi: ArrayList<PetListItem> = ArrayList()
                     response.body()?.petList?.map {
@@ -149,10 +150,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             }
 
             override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -290,7 +288,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         super.onDestroyView()
         _binding = null
 
-        // stop api call when fragment is destroyed
-        fetchPetApiCall?.cancel()
+        isViewDestroyed = true
     }
 }
