@@ -40,9 +40,7 @@ class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
 
-    // variable for storing API call(for cancel)
-    private var loginApiCall: Call<LoginResDto>? = null
-    private var fetchAccountApiCall: Call<FetchAccountResDto>? = null
+    private var isViewDestroyed = false
 
     // Snackbar variable(for dismiss)
     private var snackBar: Snackbar? = null
@@ -140,12 +138,14 @@ class LoginFragment : Fragment() {
         val loginReqDto = LoginReqDto(username, password)
 
         // call API using Retrofit
-        loginApiCall = RetrofitBuilder.getServerApi().loginReq(loginReqDto)
-        loginApiCall!!.enqueue(object: Callback<LoginResDto> {
+        val call = RetrofitBuilder.getServerApi().loginReq(loginReqDto)
+        call.enqueue(object: Callback<LoginResDto> {
             override fun onResponse(
                 call: Call<LoginResDto>,
                 response: Response<LoginResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     checkIsFirstLoginAndSwitchActivity(response.body()!!.token!!)
                 }
@@ -159,8 +159,7 @@ class LoginFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<LoginResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> do nothing
-                if(_binding == null) { return }
+                if(isViewDestroyed) return
 
                 // create custom snack bar to display error message
                 displayErrorMessage(t.message.toString())
@@ -178,15 +177,17 @@ class LoginFragment : Fragment() {
     private fun checkIsFirstLoginAndSwitchActivity(token: String){
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
-        fetchAccountApiCall = RetrofitBuilder.getServerApiWithToken(token).fetchAccountReq(body)
-        fetchAccountApiCall!!.enqueue(object: Callback<FetchAccountResDto> {
+        val call = RetrofitBuilder.getServerApiWithToken(token).fetchAccountReq(body)
+        call.enqueue(object: Callback<FetchAccountResDto> {
             override fun onResponse(
                 call: Call<FetchAccountResDto>,
                 response: Response<FetchAccountResDto>
             ) {
+                if(isViewDestroyed) return
+
                 response.body()?.let{
                     // 조회 성공
-                    if(it._metadata.status){
+                    if(response.isSuccessful){
                         // 첫 로그인일 시
                         if(it.nickname == "#"){
                             // nickname => username 변경
@@ -237,14 +238,13 @@ class LoginFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // enable buttons
                 enableButtons()
 
                 // log error message
                 Log.d("error", t.message.toString())
-
-                // if the view was destroyed(API call canceled) -> do nothing
-                if(_binding == null) { return }
 
                 // create custom snack bar to display error message
                 displayErrorMessage(t.message.toString())
@@ -300,11 +300,9 @@ class LoginFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
+        isViewDestroyed = true
+
         // dismiss Snackbar
         snackBar?.dismiss()
-
-        // stop api call when fragment is destroyed
-        loginApiCall?.cancel()
-        fetchAccountApiCall?.cancel()
     }
 }
