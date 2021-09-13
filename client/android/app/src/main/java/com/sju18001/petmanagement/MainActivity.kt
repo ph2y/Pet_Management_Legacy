@@ -262,8 +262,8 @@ class MainActivity : AppCompatActivity() {
         // PetSchedule Fetch한 뒤, 알림 등록
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
         
-        val fetchPetScheduleApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!).fetchPetScheduleReq(body)
-        fetchPetScheduleApiCall!!.enqueue(object: Callback<FetchPetScheduleResDto> {
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!).fetchPetScheduleReq(body)
+        call!!.enqueue(object: Callback<FetchPetScheduleResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<FetchPetScheduleResDto>,
