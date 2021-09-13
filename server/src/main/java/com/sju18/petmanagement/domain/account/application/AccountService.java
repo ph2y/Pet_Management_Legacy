@@ -5,6 +5,7 @@ import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.account.dto.CreateAccountReqDto;
 import com.sju18.petmanagement.domain.account.dto.UpdateAccountReqDto;
 import com.sju18.petmanagement.domain.pet.pet.application.PetCascadeService;
+import com.sju18.petmanagement.domain.pet.pet.application.PetService;
 import com.sju18.petmanagement.global.exception.DtoValidityException;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileService;
@@ -51,6 +52,7 @@ public class AccountService {
                 .marketing(reqDto.getMarketing())
                 .nickname(reqDto.getNickname())
                 .userMessage(reqDto.getUserMessage())
+                .representativePetId(null)
                 .build();
 
         // DB에 계정정보 저장
@@ -164,6 +166,9 @@ public class AccountService {
         if (reqDto.getUserMessage() != null && !reqDto.getUserMessage().equals(currentAccount.getUserMessage())) {
             currentAccount.setUserMessage(reqDto.getUserMessage());
         }
+        if (reqDto.getRepresentativePetId() != null && !reqDto.getRepresentativePetId().equals(currentAccount.getRepresentativePetId())) {
+            currentAccount.setRepresentativePetId(reqDto.getRepresentativePetId());
+        }
 
         // 기존 사용자 정보 변경사항 적용
         accountRepository.save(currentAccount);
@@ -228,5 +233,16 @@ public class AccountService {
         fileServ.deleteAccountFileStorage(currentAccount.getId());
         petCascadeServ.deleteAccountCascadeToPet(currentAccount);
         accountRepository.deleteById(currentAccount.getId());
+    }
+
+    public void setRepresentativePetToNull(Long ownerId, Long petId) throws Exception {
+        // 기존 사용자 프로필 로드
+        Account currentAccount = this.fetchAccountById(ownerId);
+
+        // 삭제되는 펫이 사용자의 대표펫이면
+        // 사용자 프로필에서 representative_pet_id 컬럼 SET NULL
+        if(petId.equals(currentAccount.getRepresentativePetId())) {
+            currentAccount.setRepresentativePetId(null);
+        }
     }
 }

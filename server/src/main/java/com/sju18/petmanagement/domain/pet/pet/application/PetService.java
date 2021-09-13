@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -190,6 +191,8 @@ public class PetService {
                 .orElseThrow(() -> new IllegalArgumentException(
                         msgSrc.getMessage("error.pet.notExists", null, Locale.ENGLISH)
                 ));
+
+        accountServ.setRepresentativePetToNull(owner.getId(), pet.getId());
         fileServ.deletePetFileStorage(owner.getId(), pet.getId());
         petScheduleCascadeServ.deletePetCascadeToPetSchedule(pet);
         petRepository.delete(pet);
