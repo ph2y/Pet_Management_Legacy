@@ -76,14 +76,7 @@ class CreateUpdatePostFragment : Fragment() {
     private lateinit var photoVideoAdapter: PhotoVideoListAdapter
     private lateinit var hashtagAdapter: HashtagListAdapter
 
-    // variables for storing API call(for cancel)
-    private var fetchPetApiCall: Call<FetchPetResDto>? = null
-    private var fetchPetPhotoApiCall: Call<ResponseBody>? = null
-    private var createPostApiCall: Call<CreatePostResDto>? = null
-    private var updatePostApiCall: Call<UpdatePostResDto>? = null
-    private var fetchPostApiCall: Call<FetchPostResDto>? = null
-    private var updatePostMediaApiCall: Call<UpdatePostMediaResDto>? = null
-    private var fetchPostMediaApiCall: Call<ResponseBody>? = null
+    private var isViewDestroyed = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -362,14 +355,16 @@ class CreateUpdatePostFragment : Fragment() {
         // create DTO
         val fetchPetReqDto = FetchPetReqDto( null )
 
-        fetchPetApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(fetchPetReqDto)
-        fetchPetApiCall!!.enqueue(object: Callback<FetchPetResDto> {
+        call.enqueue(object: Callback<FetchPetResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<FetchPetResDto>,
                 response: Response<FetchPetResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     // get pet id and name
                     val apiResponse: MutableList<Pet> = mutableListOf()
@@ -397,10 +392,7 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -417,13 +409,15 @@ class CreateUpdatePostFragment : Fragment() {
         // create DTO
         val fetchPetPhotoReqDto = FetchPetPhotoReqDto(createUpdatePostViewModel.petId!!)
 
-        fetchPetPhotoApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetPhotoReq(fetchPetPhotoReqDto)
-        fetchPetPhotoApiCall!!.enqueue(object: Callback<ResponseBody> {
+        call.enqueue(object: Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
+                    if(isViewDestroyed) return
+
                     if(response.isSuccessful) {
                         // set fetched photo to view
                         binding.petPhotoCircleView.setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
@@ -445,10 +439,7 @@ class CreateUpdatePostFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    // if the view was destroyed(API call canceled) -> return
-                    if(_binding == null) {
-                        return
-                    }
+                    if(isViewDestroyed) return
 
                     // show(Toast)/log error message
                     Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -612,13 +603,15 @@ class CreateUpdatePostFragment : Fragment() {
             latAndLong[1]
         )
 
-        createPostApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPostReq(createPostReqDto)
-        createPostApiCall!!.enqueue(object: Callback<CreatePostResDto> {
+        call.enqueue(object: Callback<CreatePostResDto> {
             override fun onResponse(
                 call: Call<CreatePostResDto>,
                 response: Response<CreatePostResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if (response.isSuccessful) {
                     // Pass post id to Community
                     val intent = Intent()
@@ -643,14 +636,11 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<CreatePostResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
-
-                // if the view was destroyed(API call canceled) -> return
-                if (_binding == null) {
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -689,13 +679,15 @@ class CreateUpdatePostFragment : Fragment() {
             latAndLong[1]
         )
 
-        updatePostApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePostReq(updatePostReqDto)
-        updatePostApiCall!!.enqueue(object: Callback<UpdatePostResDto> {
+        call.enqueue(object: Callback<UpdatePostResDto> {
             override fun onResponse(
                 call: Call<UpdatePostResDto>,
                 response: Response<UpdatePostResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if (response.isSuccessful) {
                     // no media files
                     if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
@@ -726,14 +718,11 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<UpdatePostResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
-
-                // if the view was destroyed(API call canceled) -> return
-                if (_binding == null) {
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -759,14 +748,16 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             // API call
-            updatePostMediaApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updatePostMediaReq(id, fileList)
-            updatePostMediaApiCall!!.enqueue(object: Callback<UpdatePostMediaResDto> {
+            call.enqueue(object: Callback<UpdatePostMediaResDto> {
                 @RequiresApi(Build.VERSION_CODES.O)
                 override fun onResponse(
                     call: Call<UpdatePostMediaResDto>,
                     response: Response<UpdatePostMediaResDto>
                 ) {
+                    if(isViewDestroyed) return
+
                     if(response.isSuccessful) {
                         // Pass post id, position to Community
                         passDataToCommunity()
@@ -806,14 +797,16 @@ class CreateUpdatePostFragment : Fragment() {
         // create DTO
         val fetchPostReqDto = FetchPostReqDto(0, null, createUpdatePostViewModel.petId, null)
 
-        fetchPostApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(fetchPostReqDto)
-        fetchPostApiCall!!.enqueue(object: Callback<FetchPostResDto> {
+        call.enqueue(object: Callback<FetchPostResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<FetchPostResDto>,
                 response: Response<FetchPostResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     val postId = (response.body()?.postList?.get(0) as Post).id
 
@@ -835,14 +828,11 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
-
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -857,17 +847,14 @@ class CreateUpdatePostFragment : Fragment() {
             val fetchPostMediaReqDto = FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index)
 
             // API call
-            fetchPostMediaApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .fetchPostMediaReq(fetchPostMediaReqDto)
-            fetchPostMediaApiCall!!.enqueue(object: Callback<ResponseBody> {
+            call.enqueue(object: Callback<ResponseBody> {
                 override fun onResponse(
                     call: Call<ResponseBody>,
                     response: Response<ResponseBody>
                 ) {
-                    // if the view was destroyed(API call canceled) -> return
-                    if(_binding == null) {
-                        return
-                    }
+                    if(isViewDestroyed) return
 
                     if(response.isSuccessful) {
                         // get file extension
@@ -918,9 +905,7 @@ class CreateUpdatePostFragment : Fragment() {
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     // if the view was destroyed(API call canceled) -> return
-                    if(_binding == null) {
-                        return
-                    }
+                    if(isViewDestroyed) return
 
                     // show(Toast)/log error message
                     Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -935,13 +920,15 @@ class CreateUpdatePostFragment : Fragment() {
         val fetchPostReqDto = FetchPostReqDto(null, null, null, createUpdatePostViewModel.postId)
 
         // API call
-        fetchPostApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(fetchPostReqDto)
-        fetchPostApiCall!!.enqueue(object: Callback<FetchPostResDto> {
+        call.enqueue(object: Callback<FetchPostResDto> {
             override fun onResponse(
                 call: Call<FetchPostResDto>,
                 response: Response<FetchPostResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     // fetch post data(excluding media) and save to ViewModel
                     val post = response.body()?.postList!![0]
@@ -995,13 +982,10 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // close activity
                 requireActivity().finish()
-
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
@@ -1072,12 +1056,6 @@ class CreateUpdatePostFragment : Fragment() {
             Util.deleteCopiedFiles(requireContext(), CREATE_UPDATE_POST_DIRECTORY)
         }
 
-        // stop api call when fragment is destroyed
-        fetchPetApiCall?.cancel()
-        fetchPetPhotoApiCall?.cancel()
-        createPostApiCall?.cancel()
-        fetchPostApiCall?.cancel()
-        updatePostMediaApiCall?.cancel()
-        fetchPostMediaApiCall?.cancel()
+        isViewDestroyed = true
     }
 }

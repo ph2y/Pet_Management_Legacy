@@ -36,8 +36,7 @@ class FollowingFragment : Fragment() {
     private lateinit var followingAdapter: FollowingAdapter
     private var followingList: MutableList<FollowerFollowingListItem> = mutableListOf()
 
-    // variable for storing API call(for cancel)
-    private var fetchFollowerApiCall: Call<FetchFollowerResDto>? = null
+    private var isViewDestroyed = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -86,13 +85,15 @@ class FollowingFragment : Fragment() {
         val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         // API call
-        fetchFollowerApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchFollowerReq(emptyBody)
-        fetchFollowerApiCall!!.enqueue(object: Callback<FetchFollowerResDto> {
+        call.enqueue(object: Callback<FetchFollowerResDto> {
             override fun onResponse(
                 call: Call<FetchFollowerResDto>,
                 response: Response<FetchFollowerResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     response.body()!!.followerList.map {
                         val hasPhoto = it.photoUrl != null
@@ -129,13 +130,10 @@ class FollowingFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchFollowerResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // set swipe isRefreshing to false
                 binding.followingSwipeRefreshLayout.isRefreshing = false
-
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
 
                 // show(Toast)/log error message
                 Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_LONG).show()
@@ -151,7 +149,6 @@ class FollowingFragment : Fragment() {
         // call onDestroy inside adapter(for API cancel)
         followingAdapter.onDestroy()
 
-        // stop api call when fragment is destroyed
-        fetchFollowerApiCall?.cancel()
+        isViewDestroyed = true
     }
 }
