@@ -516,13 +516,9 @@ class CommunityFragment : Fragment() {
                 if(response.isSuccessful){
                     adapter.setLikedCount(position, response.body()!!.likedCount!!)
 
-                    // likedAccountIdList에 자신의 Account Id가 있으면 PostIsLiked = true 아니면 false
-                    if(response.body()!!.likedAccountIdList?.contains(SessionManager.fetchLoggedInAccount(requireContext())!!.id) == true) {
-                        adapter.setIsPostLiked(position, true)
-                    }
-                    else {
-                        adapter.setIsPostLiked(position, false)
-                    }
+                    val flag = response.body()!!.likedAccountIdList?.contains(SessionManager.fetchLoggedInAccount(requireContext())!!.id)?: false
+                    adapter.setIsPostLiked(position, flag)
+
                     adapter.notifyItemChanged(position)
                 }
             }
