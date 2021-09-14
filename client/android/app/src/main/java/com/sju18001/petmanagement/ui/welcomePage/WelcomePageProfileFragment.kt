@@ -100,7 +100,7 @@ class WelcomePageProfileFragment : Fragment() {
         val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(null)
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
-        call!!.enqueue(object: Callback<ResponseBody> {
+        call.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(
                 call: Call<ResponseBody>,
                 response: Response<ResponseBody>
@@ -121,6 +121,8 @@ class WelcomePageProfileFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                if(isViewDestroyed) return
+
                 // show(Toast)/log error message
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
                 Log.d("error", t.message.toString())

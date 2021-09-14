@@ -263,7 +263,7 @@ class MainActivity : AppCompatActivity() {
         val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
         
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!).fetchPetScheduleReq(body)
-        call!!.enqueue(object: Callback<FetchPetScheduleResDto> {
+        call.enqueue(object: Callback<FetchPetScheduleResDto> {
             @RequiresApi(Build.VERSION_CODES.O)
             override fun onResponse(
                 call: Call<FetchPetScheduleResDto>,

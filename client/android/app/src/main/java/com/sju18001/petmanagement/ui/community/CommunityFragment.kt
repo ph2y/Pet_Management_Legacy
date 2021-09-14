@@ -323,7 +323,7 @@ class CommunityFragment : Fragment() {
             ) {
                 val body = FetchPostMediaReqDto(id, index)
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchPostMediaReq(body)
-                call!!.enqueue(object: Callback<ResponseBody> {
+                call.enqueue(object: Callback<ResponseBody> {
                     @RequiresApi(Build.VERSION_CODES.R)
                     override fun onResponse(
                         call: Call<ResponseBody>,
@@ -453,7 +453,7 @@ class CommunityFragment : Fragment() {
         // Fetch post
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(body)
-        call!!.enqueue(object: Callback<FetchPostResDto> {
+        call.enqueue(object: Callback<FetchPostResDto> {
             override fun onResponse(
                 call: Call<FetchPostResDto>,
                 response: Response<FetchPostResDto>
@@ -509,7 +509,7 @@ class CommunityFragment : Fragment() {
     private fun setLikedCounts(position: Int, postId: Long){
         val body = FetchLikeReqDto(postId, null)
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchLikeReq(body)
-        call!!.enqueue(object: Callback<FetchLikeResDto> {
+        call.enqueue(object: Callback<FetchLikeResDto> {
             override fun onResponse(
                 call: Call<FetchLikeResDto>,
                 response: Response<FetchLikeResDto>
@@ -571,7 +571,7 @@ class CommunityFragment : Fragment() {
     private fun deletePost(id: Long, position: Int){
         val body = DeletePostReqDto(id)
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).deletePostReq(body)
-        call!!.enqueue(object: Callback<DeletePostResDto> {
+        call.enqueue(object: Callback<DeletePostResDto> {
             override fun onResponse(
                 call: Call<DeletePostResDto>,
                 response: Response<DeletePostResDto>
