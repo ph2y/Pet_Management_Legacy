@@ -306,8 +306,18 @@ class CreateUpdatePostFragment : Fragment() {
             PICK_PHOTO -> {
                 if(data != null) {
                     // copy selected photo and get real path
-                    createUpdatePostViewModel.photoVideoPathList
-                        .add(ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!, CREATE_UPDATE_POST_DIRECTORY))
+                    val postPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
+                        data.data!!, CREATE_UPDATE_POST_DIRECTORY)
+
+                    // file type exception -> delete copied file + show Toast message
+                    if (!Util.isUrlPhoto(postPhotoPathValue)) {
+                        Toast.makeText(context, context?.getText(R.string.photo_file_type_exception_message), Toast.LENGTH_LONG).show()
+                        File(postPhotoPathValue).delete()
+                        return
+                    }
+
+                    // add path to list
+                    createUpdatePostViewModel.photoVideoPathList.add(postPhotoPathValue)
 
                     // create bytearray
                     val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoVideoPathList.last())
@@ -333,9 +343,19 @@ class CreateUpdatePostFragment : Fragment() {
             }
             PICK_VIDEO -> {
                 if(data != null) {
-                    // copy selected photo and get real path
-                    createUpdatePostViewModel.photoVideoPathList
-                        .add(ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(), data.data!!, CREATE_UPDATE_POST_DIRECTORY))
+                    // copy selected video and get real path
+                    val postVideoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
+                        data.data!!, CREATE_UPDATE_POST_DIRECTORY)
+
+                    // file type exception -> delete copied file + show Toast message
+                    if (!Util.isUrlVideo(postVideoPathValue)) {
+                        Toast.makeText(context, context?.getText(R.string.video_file_type_exception_message), Toast.LENGTH_LONG).show()
+                        File(postVideoPathValue).delete()
+                        return
+                    }
+
+                    // add path to list
+                    createUpdatePostViewModel.photoVideoPathList.add(postVideoPathValue)
 
                     // save thumbnail
                     createUpdatePostViewModel.thumbnailList.add(null)
@@ -351,10 +371,6 @@ class CreateUpdatePostFragment : Fragment() {
                     // show message(file null exception)
                     Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
                 }
-            }
-            else -> {
-                // show message(file type exception)
-                Toast.makeText(context, context?.getText(R.string.file_type_exception_message), Toast.LENGTH_LONG).show()
             }
         }
     }
@@ -928,7 +944,7 @@ class CreateUpdatePostFragment : Fragment() {
                             ServerUtil.createCopyAndReturnRealPathServer(context!!, mediaByteArray, extension, CREATE_UPDATE_POST_DIRECTORY)
 
                         // check if image and save thumbnail(video thumbnails are created in the RecyclerView adapter)
-                        if("image" in MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)!!) {
+                        if(Util.isUrlPhoto(postMedia[index].name)) {
                             val thumbnail = BitmapFactory.decodeByteArray(mediaByteArray, 0, mediaByteArray.size)
                             createUpdatePostViewModel.thumbnailList[index] = thumbnail
                         }

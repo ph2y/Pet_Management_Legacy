@@ -7,6 +7,9 @@
     <string name="fail_request">요청에 실패하였습니다.</string>
     <string name="try_again">잠시후 다시 시도해주세요.</string>
 
+    <string name="photo_file_type_exception_message">이미지 파일 확장자는 jpg, png, jpeg, gif, webp만 지원해요!</string>
+    <string name="video_file_type_exception_message">동영상 파일 확장자는 mp4, webm만 지원해요!</string>
+
     <!-- Bottom Navigation Buttons -->
     <string name="title_my_pet">마이펫</string>
     <string name="title_map">지도</string>

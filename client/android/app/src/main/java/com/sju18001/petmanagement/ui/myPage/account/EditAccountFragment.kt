@@ -570,17 +570,27 @@ class EditAccountFragment : Fragment() {
         // get + save account photo value
         if(resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_PHOTO) {
             if (data != null) {
+                // copy selected photo and get real path
+                val accountPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
+                    data.data!!, EDIT_ACCOUNT_DIRECTORY)
+
+                // file type exception -> delete copied file + show Toast message
+                if (!Util.isUrlPhoto(accountPhotoPathValue)) {
+                    Toast.makeText(context, context?.getText(R.string.photo_file_type_exception_message), Toast.LENGTH_LONG).show()
+                    File(accountPhotoPathValue).delete()
+                    return
+                }
+
                 // delete previous profile photo data
-                    myPageViewModel.accountPhotoByteArray = null
+                myPageViewModel.accountPhotoByteArray = null
 
                 // delete previously copied file(if any)
                 if(myPageViewModel.accountPhotoPathValue != "") {
                     File(myPageViewModel.accountPhotoPathValue).delete()
                 }
 
-                // copy selected photo and get real path
-                myPageViewModel.accountPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
-                    data.data!!, EDIT_ACCOUNT_DIRECTORY)
+                // save path to ViewModel
+                myPageViewModel.accountPhotoPathValue = accountPhotoPathValue
 
                 // set photo to view
                 binding.accountPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPageViewModel.accountPhotoPathValue))
