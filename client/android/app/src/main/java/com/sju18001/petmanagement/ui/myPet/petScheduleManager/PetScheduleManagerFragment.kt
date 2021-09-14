@@ -127,7 +127,7 @@ class PetScheduleManagerFragment : Fragment() {
             override fun deletePetSchedule(id: Long) {
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .deletePetScheduleReq(DeletePetScheduleReqDto(id))
-                call!!.enqueue(object: Callback<DeletePetScheduleResDto> {
+                call.enqueue(object: Callback<DeletePetScheduleResDto> {
                     override fun onResponse(
                         call: Call<DeletePetScheduleResDto>,
                         response: Response<DeletePetScheduleResDto>
@@ -149,7 +149,7 @@ class PetScheduleManagerFragment : Fragment() {
 
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .updatePetScheduleReq(updatePetScheduleReqDto)
-                call!!.enqueue(object: Callback<UpdatePetScheduleResDto> {
+                call.enqueue(object: Callback<UpdatePetScheduleResDto> {
                     override fun onResponse(
                         call: Call<UpdatePetScheduleResDto>,
                         response: Response<UpdatePetScheduleResDto>

@@ -820,6 +820,8 @@ class CreateUpdatePostFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<UpdatePostMediaResDto>, t: Throwable) {
+                    if(isViewDestroyed) return
+
                     // set api state/button to normal
                     createUpdatePostViewModel.apiIsLoading = false
                     setButtonToNormal()

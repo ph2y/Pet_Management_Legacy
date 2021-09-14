@@ -86,7 +86,7 @@ class UpdateCommentFragment : Fragment() {
             requireActivity().intent.getLongExtra("id", -1), binding.editTextUpdateComment.text.toString()
         )
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).updateCommentReq(body)
-        call!!.enqueue(object: Callback<UpdateCommentResDto> {
+        call.enqueue(object: Callback<UpdateCommentResDto> {
             override fun onResponse(
                 call: Call<UpdateCommentResDto>,
                 response: Response<UpdateCommentResDto>

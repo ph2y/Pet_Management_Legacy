@@ -260,7 +260,7 @@ class CommunityCommentFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).deleteCommentReq(
             DeleteCommentReqDto(id)
         )
-        call!!.enqueue(object: Callback<DeleteCommentResDto> {
+        call.enqueue(object: Callback<DeleteCommentResDto> {
             override fun onResponse(
                 call: Call<DeleteCommentResDto>,
                 response: Response<DeleteCommentResDto>
@@ -300,7 +300,7 @@ class CommunityCommentFragment : Fragment() {
     private fun updateAdapterDataSetByFetchComment(body: FetchCommentReqDto){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchCommentReq(body)
-        call!!.enqueue(object: Callback<FetchCommentResDto> {
+        call.enqueue(object: Callback<FetchCommentResDto> {
             override fun onResponse(
                 call: Call<FetchCommentResDto>,
                 response: Response<FetchCommentResDto>
@@ -354,7 +354,7 @@ class CommunityCommentFragment : Fragment() {
         // TODO: Comment에 reply_count Column이 생기면 그것에 맞춰 변경
         val body = FetchCommentReqDto(null, null, null, parentCommentId, null)
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchCommentReq(body)
-        call!!.enqueue(object: Callback<FetchCommentResDto> {
+        call.enqueue(object: Callback<FetchCommentResDto> {
             override fun onResponse(
                 call: Call<FetchCommentResDto>,
                 response: Response<FetchCommentResDto>
@@ -429,7 +429,7 @@ class CommunityCommentFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createCommentReq(body)
-        call!!.enqueue(object: Callback<CreateCommentResDto> {
+        call.enqueue(object: Callback<CreateCommentResDto> {
             override fun onResponse(
                 call: Call<CreateCommentResDto>,
                 response: Response<CreateCommentResDto>
