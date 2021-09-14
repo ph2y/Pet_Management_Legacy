@@ -36,9 +36,7 @@ class FollowerFollowingFragment : Fragment() {
     private var _binding: FragmentFollowerFollowingBinding? = null
     private val binding get() = _binding!!
 
-    // variable for storing API call(for cancel)
-    private var fetchFollowerApiCall: Call<FetchFollowerResDto>? = null
-    private var fetchFollowingApiCall: Call<FetchFollowingResDto>? = null
+    private var isViewDestroyed = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -133,13 +131,15 @@ class FollowerFollowingFragment : Fragment() {
         val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         // API call
-        fetchFollowingApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchFollowingReq(emptyBody)
-        fetchFollowingApiCall!!.enqueue(object: Callback<FetchFollowingResDto> {
+        call.enqueue(object: Callback<FetchFollowingResDto> {
             override fun onResponse(
                 call: Call<FetchFollowingResDto>,
                 response: Response<FetchFollowingResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     val followerCount = response.body()!!.followingList.size
 
@@ -159,10 +159,7 @@ class FollowerFollowingFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchFollowingResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_LONG).show()
@@ -176,13 +173,15 @@ class FollowerFollowingFragment : Fragment() {
         val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         // API call
-        fetchFollowerApiCall = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchFollowerReq(emptyBody)
-        fetchFollowerApiCall!!.enqueue(object: Callback<FetchFollowerResDto> {
+        call.enqueue(object: Callback<FetchFollowerResDto> {
             override fun onResponse(
                 call: Call<FetchFollowerResDto>,
                 response: Response<FetchFollowerResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     val followingCount = response.body()!!.followerList.size
 
@@ -202,10 +201,7 @@ class FollowerFollowingFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchFollowerResDto>, t: Throwable) {
-                // if the view was destroyed(API call canceled) -> return
-                if(_binding == null) {
-                    return
-                }
+                if(isViewDestroyed) return
 
                 // show(Toast)/log error message
                 Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_LONG).show()
@@ -218,8 +214,6 @@ class FollowerFollowingFragment : Fragment() {
         super.onDestroyView()
         _binding = null
 
-        // stop api call when fragment is destroyed
-        fetchFollowerApiCall?.cancel()
-        fetchFollowingApiCall?.cancel()
+        isViewDestroyed = true
     }
 }
