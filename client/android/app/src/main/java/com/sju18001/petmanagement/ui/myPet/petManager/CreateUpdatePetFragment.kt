@@ -627,14 +627,24 @@ class CreateUpdatePetFragment : Fragment() {
         // get + save pet photo value
         if (resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_PHOTO){
             if (data != null) {
+                // copy selected photo and get real path
+                val petPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
+                    data.data!!, CREATE_UPDATE_PET_DIRECTORY)
+
+                // file type exception -> delete copied file + show Toast message
+                if (!Util.isUrlPhoto(petPhotoPathValue)) {
+                    Toast.makeText(context, context?.getText(R.string.photo_file_type_exception_message), Toast.LENGTH_LONG).show()
+                    File(petPhotoPathValue).delete()
+                    return
+                }
+
                 // delete previously copied file(if any)
                 if(myPetViewModel.petPhotoPathValue != "") {
                     File(myPetViewModel.petPhotoPathValue).delete()
                 }
 
-                // copy selected photo and get real path
-                myPetViewModel.petPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
-                    data.data!!, CREATE_UPDATE_PET_DIRECTORY)
+                // save path to ViewModel
+                myPetViewModel.petPhotoPathValue = petPhotoPathValue
 
                 // set photo to view
                 binding.petPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPetViewModel.petPhotoPathValue))

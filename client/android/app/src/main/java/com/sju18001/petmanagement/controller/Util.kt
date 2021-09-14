@@ -140,6 +140,11 @@ class Util {
             return kotlin.math.abs(now.toEpochSecond() - time.toEpochSecond())
         }
 
+        fun isUrlPhoto(url: String): Boolean{
+            return url.endsWith(".jpg") || url.endsWith(".png") || url.endsWith(".jpeg") ||
+                    url.endsWith(".gif") || url.endsWith(".webp")
+        }
+
         fun isUrlVideo(url: String): Boolean{
             return url.endsWith(".mp4") || url.endsWith(".webm")
         }
