@@ -2,6 +2,7 @@ package com.sju18001.petmanagement.ui.login.createAccount
 
 import android.os.Bundle
 import android.os.SystemClock
+import android.telephony.PhoneNumberFormattingTextWatcher
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -60,6 +61,7 @@ class CreateAccountUserInfoFragment : Fragment() {
         restoreState(loginViewModel)
 
         // for phone text change listener
+        binding.phoneEditText.addTextChangedListener(PhoneNumberFormattingTextWatcher("KR"))
         binding.phoneEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(patternPhone.matcher(s).matches()) {
