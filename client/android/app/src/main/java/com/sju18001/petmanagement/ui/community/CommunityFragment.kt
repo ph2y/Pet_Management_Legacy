@@ -63,7 +63,7 @@ class CommunityFragment : Fragment() {
     // 리싸이클러뷰
     private lateinit var adapter: CommunityPostListAdapter
 
-    private var isViewDestroyed: Boolean = false
+    private var isViewDestroyed = false
     
     // 글 새로고침
     private var topPostId: Long? = null
@@ -151,6 +151,7 @@ class CommunityFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommunityBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
 
         // 어뎁터 초기화
         initializeAdapter()

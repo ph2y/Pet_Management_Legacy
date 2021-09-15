@@ -39,8 +39,9 @@ class PetProfileFragment : Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // view binding
         _binding = FragmentPetProfileBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         val view = binding.root
 
         // save pet data to ViewModel(for pet profile) if not already loaded

@@ -47,6 +47,8 @@ class FollowerFragment : Fragment() {
     ): View? {
         // view binding
         _binding = FragmentFollowerBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         val root = binding.root
 
         // initialize RecyclerView

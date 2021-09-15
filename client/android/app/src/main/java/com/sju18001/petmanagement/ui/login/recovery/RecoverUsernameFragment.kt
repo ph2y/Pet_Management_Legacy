@@ -35,6 +35,7 @@ class RecoverUsernameFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentRecoverUsernameBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
 
         if(savedInstanceState?.getBoolean("is_result_shown") == true){
             val username = savedInstanceState.getString("result_username")

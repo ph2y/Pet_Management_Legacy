@@ -50,6 +50,8 @@ class SearchActivity : AppCompatActivity() {
 
         // view binding
         binding = ActivitySearchBinding.inflate(layoutInflater)
+        isViewDestroyed = false
+
         setContentView(binding.root)
 
         // searchEditText listener

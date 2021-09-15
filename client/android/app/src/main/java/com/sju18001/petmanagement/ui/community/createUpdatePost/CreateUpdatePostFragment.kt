@@ -85,6 +85,8 @@ class CreateUpdatePostFragment : Fragment() {
     ): View? {
         // view binding
         _binding = FragmentCreateUpdatePostBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         val root: View = binding.root
 
         // initialize RecyclerView(photos and videos)

@@ -45,6 +45,8 @@ class FollowingFragment : Fragment() {
     ): View? {
         // view binding
         _binding = FragmentFollowingBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         val root = binding.root
 
         // for swipe refresh

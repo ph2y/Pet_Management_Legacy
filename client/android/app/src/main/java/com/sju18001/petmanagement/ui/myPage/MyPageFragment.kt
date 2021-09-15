@@ -46,6 +46,7 @@ class MyPageFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMyPageBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
 
         return binding.root
     }

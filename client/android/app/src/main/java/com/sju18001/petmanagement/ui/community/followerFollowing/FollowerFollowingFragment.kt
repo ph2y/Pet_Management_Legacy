@@ -45,6 +45,8 @@ class FollowerFollowingFragment : Fragment() {
     ): View? {
         // view binding
         _binding = FragmentFollowerFollowingBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+        
         return binding.root
     }
 
