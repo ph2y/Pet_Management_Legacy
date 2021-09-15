@@ -70,6 +70,7 @@
                 android:drawableStart="@drawable/ic_baseline_email_24"
                 android:drawablePadding="4dp"
                 android:inputType="textEmailAddress"
+                android:imeOptions="actionDone"
                 android:hint="@string/email_hint"
                 android:theme="@style/onSelectedThemeCarrot"/>
 

@@ -88,7 +88,11 @@ class CreateAccountCredentialsFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for pw check text change listener
+        // pwCheckEditText Listener
+        binding.pwCheckEditText.setOnEditorActionListener { _, _, _ ->
+            Util.hideKeyboard(requireActivity())
+            true
+        }
         binding.pwCheckEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(s.toString() == binding.pwEditText.text.toString()) {

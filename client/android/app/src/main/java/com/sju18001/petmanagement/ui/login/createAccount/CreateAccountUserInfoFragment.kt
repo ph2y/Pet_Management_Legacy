@@ -81,7 +81,11 @@ class CreateAccountUserInfoFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for email text change listener
+        // emailEditText Listener
+        binding.emailEditText.setOnEditorActionListener { _, _, _ ->
+            Util.hideKeyboard(requireActivity())
+            true
+        }
         binding.emailEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 if(patternEmail.matcher(s).matches()) {
@@ -103,7 +107,11 @@ class CreateAccountUserInfoFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for email code text change listener
+        // emailCodeEditText Listener
+        binding.emailCodeEditText.setOnEditorActionListener { _, _, _ ->
+            Util.hideKeyboard(requireActivity())
+            true
+        }
         binding.emailCodeEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 loginViewModel.createAccountEmailCodeEditText = s.toString()
