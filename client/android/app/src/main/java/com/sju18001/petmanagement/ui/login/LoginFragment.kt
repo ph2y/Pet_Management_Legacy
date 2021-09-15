@@ -92,6 +92,14 @@ class LoginFragment : Fragment() {
         })
 
         // for pw text change listener
+        binding.pwEditText.setOnEditorActionListener { _, _, _ ->
+            Util.hideKeyboard(requireActivity())
+
+            disableButtons()
+            login(binding.usernameEditText.text.toString(), binding.pwEditText.text.toString())
+
+            true
+        }
         binding.pwEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 loginViewModel.loginPwEditText = s.toString()
@@ -102,10 +110,7 @@ class LoginFragment : Fragment() {
 
         // for login button
         binding.loginButton.setOnClickListener {
-            // disable buttons
             disableButtons()
-
-            // call login function
             login(binding.usernameEditText.text.toString(), binding.pwEditText.text.toString())
         }
 
