@@ -203,6 +203,10 @@ class CreateUpdatePostFragment : Fragment() {
         }
 
         // for hashtag EditText listener
+        binding.hashtagInputEditText.setOnEditorActionListener{ _, _, _ ->
+            addHashtag()
+            true
+        }
         binding.hashtagInputEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 createUpdatePostViewModel.hashtagEditText = s.toString()
@@ -213,33 +217,7 @@ class CreateUpdatePostFragment : Fragment() {
 
         // for hashtag input button
         binding.hashtagInputButton.setOnClickListener {
-            // trim hashtag
-            createUpdatePostViewModel.hashtagEditText = createUpdatePostViewModel.hashtagEditText.trim()
-            binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
-
-            if(binding.hashtagInputEditText.text.toString() == "") {
-                // show message(hashtag empty)
-                Toast.makeText(context, context?.getText(R.string.hashtag_empty_message), Toast.LENGTH_LONG).show()
-            }
-            else if(createUpdatePostViewModel.hashtagList.size == 5) {
-                // show message(hashtag usage full)
-                Toast.makeText(context, context?.getText(R.string.hashtag_usage_full_message), Toast.LENGTH_LONG).show()
-            }
-            else {
-                // save hashtag
-                val hashtag = binding.hashtagInputEditText.text.toString()
-                createUpdatePostViewModel.hashtagList.add(hashtag)
-
-                // update RecyclerView
-                hashtagAdapter.notifyItemInserted(createUpdatePostViewModel.hashtagList.size)
-                binding.hashtagRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.hashtagList.size - 1)
-
-                // reset hashtag EditText
-                binding.hashtagInputEditText.setText("")
-
-                // update hashtag usage
-                updateHashtagUsage()
-            }
+            addHashtag()
         }
 
         // for post EditText listener
@@ -588,6 +566,35 @@ class CreateUpdatePostFragment : Fragment() {
     private fun setButtonToNormal() {
         binding.confirmButton.visibility = View.VISIBLE
         binding.createUpdatePostProgressBar.visibility = View.GONE
+    }
+
+    private fun addHashtag(){
+        createUpdatePostViewModel.hashtagEditText = createUpdatePostViewModel.hashtagEditText.trim()
+        binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
+
+        if(binding.hashtagInputEditText.text.toString() == "") {
+            // show message(hashtag empty)
+            Toast.makeText(context, context?.getText(R.string.hashtag_empty_message), Toast.LENGTH_LONG).show()
+        }
+        else if(createUpdatePostViewModel.hashtagList.size == 5) {
+            // show message(hashtag usage full)
+            Toast.makeText(context, context?.getText(R.string.hashtag_usage_full_message), Toast.LENGTH_LONG).show()
+        }
+        else {
+            // save hashtag
+            val hashtag = binding.hashtagInputEditText.text.toString()
+            createUpdatePostViewModel.hashtagList.add(hashtag)
+
+            // update RecyclerView
+            hashtagAdapter.notifyItemInserted(createUpdatePostViewModel.hashtagList.size)
+            binding.hashtagRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.hashtagList.size - 1)
+
+            // reset hashtag EditText
+            binding.hashtagInputEditText.setText("")
+
+            // update hashtag usage
+            updateHashtagUsage()
+        }
     }
 
     // create post
