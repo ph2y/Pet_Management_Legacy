@@ -378,9 +378,7 @@ class EditAccountFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<DeleteAccountPhotoResDto>, t: Throwable) {
-                    if(isViewDestroyed){
-                        return
-                    }
+                    if(isViewDestroyed) return
 
                     // show(Toast)/log error message
                     Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()

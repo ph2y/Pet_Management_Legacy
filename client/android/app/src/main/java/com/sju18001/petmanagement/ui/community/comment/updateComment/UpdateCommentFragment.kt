@@ -92,9 +92,7 @@ class UpdateCommentFragment : Fragment() {
                 call: Call<UpdateCommentResDto>,
                 response: Response<UpdateCommentResDto>
             ) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 if(response.isSuccessful){
                     // Pass datum for comment
@@ -115,9 +113,7 @@ class UpdateCommentFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<UpdateCommentResDto>, t: Throwable) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 setButtonToNormal()
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()

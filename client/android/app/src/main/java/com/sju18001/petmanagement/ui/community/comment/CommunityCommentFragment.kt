@@ -152,9 +152,7 @@ class CommunityCommentFragment : Fragment() {
                         call: Call<FetchCommentResDto>,
                         response: Response<FetchCommentResDto>
                     ) {
-                        if(isViewDestroyed){
-                            return
-                        }
+                        if(isViewDestroyed) return
                         
                         if(response.isSuccessful){
                             // Add replies to RecyclerView
@@ -182,9 +180,7 @@ class CommunityCommentFragment : Fragment() {
                     }
 
                     override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
-                        if(isViewDestroyed){
-                            return
-                        }
+                        if(isViewDestroyed) return
 
                         Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
                     }
@@ -266,9 +262,7 @@ class CommunityCommentFragment : Fragment() {
                 call: Call<DeleteCommentResDto>,
                 response: Response<DeleteCommentResDto>
             ) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 if(response.isSuccessful){
                     Toast.makeText(context, context?.getText(R.string.delete_comment_success), Toast.LENGTH_SHORT).show()
@@ -282,9 +276,7 @@ class CommunityCommentFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<DeleteCommentResDto>, t: Throwable) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
             }
@@ -306,9 +298,7 @@ class CommunityCommentFragment : Fragment() {
                 call: Call<FetchCommentResDto>,
                 response: Response<FetchCommentResDto>
             ) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 if(response.isSuccessful){
                     response.body()!!.commentList?.let {
@@ -339,9 +329,7 @@ class CommunityCommentFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
 
@@ -360,9 +348,7 @@ class CommunityCommentFragment : Fragment() {
                 call: Call<FetchCommentResDto>,
                 response: Response<FetchCommentResDto>
             ) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 if(response.isSuccessful){
                     // 답글 불러오기 버튼
@@ -377,9 +363,7 @@ class CommunityCommentFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
             }
@@ -435,9 +419,7 @@ class CommunityCommentFragment : Fragment() {
                 call: Call<CreateCommentResDto>,
                 response: Response<CreateCommentResDto>
             ) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 if(response.isSuccessful){
                     // 새로고침
@@ -458,9 +440,7 @@ class CommunityCommentFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<CreateCommentResDto>, t: Throwable) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
 
@@ -494,9 +474,7 @@ class CommunityCommentFragment : Fragment() {
             .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
         call.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 if(response.isSuccessful) {
                     // convert photo to byte array + get bitmap

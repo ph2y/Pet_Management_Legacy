@@ -361,9 +361,7 @@ class CreateUpdatePetFragment : Fragment() {
                     call: Call<DeletePetPhotoResDto>,
                     response: Response<DeletePetPhotoResDto>
                 ) {
-                    if(isViewDestroyed){
-                        return
-                    }
+                    if(isViewDestroyed) return
 
                     if(response.isSuccessful){
                         closeAfterSuccess()
@@ -382,9 +380,7 @@ class CreateUpdatePetFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<DeletePetPhotoResDto>, t: Throwable) {
-                    if(isViewDestroyed){
-                        return
-                    }
+                    if(isViewDestroyed) return
 
                     // set api state/button to normal
                     myPetViewModel.petManagerApiIsLoading = false
