@@ -25,7 +25,7 @@ class UpdateCommentFragment : Fragment() {
     private var _binding: FragmentUpdateCommentBinding? = null
     private val binding get() = _binding!!
 
-    private var isViewDestroyed: Boolean = false
+    private var isViewDestroyed = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +33,7 @@ class UpdateCommentFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         _binding = FragmentUpdateCommentBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
 
         // 초기화
         loadContents()

@@ -60,8 +60,9 @@ class CreateUpdatePetFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // view binding
         _binding = FragmentCreateUpdatePetBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         return binding.root
     }
 

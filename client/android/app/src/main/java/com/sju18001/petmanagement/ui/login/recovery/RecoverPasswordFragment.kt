@@ -26,7 +26,7 @@ class RecoverPasswordFragment : Fragment() {
     // 정규식
     private val patternUsername: Pattern = Pattern.compile("^[a-z0-9]{5,16}$")
 
-    private var isViewDestroyed: Boolean = false
+    private var isViewDestroyed = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +34,7 @@ class RecoverPasswordFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentRecoverPasswordBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
 
         when(savedInstanceState?.getInt("page")){
             1 -> setViewForCodeInput()

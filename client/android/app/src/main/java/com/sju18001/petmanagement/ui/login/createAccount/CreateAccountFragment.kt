@@ -74,6 +74,8 @@ class CreateAccountFragment : Fragment() {
     ): View? {
         // view binding
         _binding = FragmentCreateAccountBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         return binding.root
     }
 

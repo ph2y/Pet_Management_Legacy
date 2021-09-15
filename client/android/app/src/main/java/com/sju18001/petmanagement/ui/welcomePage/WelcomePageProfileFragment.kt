@@ -40,6 +40,7 @@ class WelcomePageProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentWelcomePageProfileBinding.inflate(layoutInflater)
+        isViewDestroyed = false
 
         return binding.root
     }

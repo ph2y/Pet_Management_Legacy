@@ -66,6 +66,8 @@ class LoginFragment : Fragment() {
     ): View? {
         // view binding
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         return binding.root
     }
 

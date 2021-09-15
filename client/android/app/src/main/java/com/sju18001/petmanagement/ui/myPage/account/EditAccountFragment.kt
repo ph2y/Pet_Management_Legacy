@@ -71,6 +71,8 @@ class EditAccountFragment : Fragment() {
             ViewModelProvider(this).get(EditAccountViewModel::class.java)
 
         _binding = FragmentEditAccountBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         val root: View = binding.root
 
         (activity as AppCompatActivity)!!.supportActionBar!!.hide()
@@ -355,9 +357,7 @@ class EditAccountFragment : Fragment() {
                     call: Call<DeleteAccountPhotoResDto>,
                     response: Response<DeleteAccountPhotoResDto>
                 ) {
-                    if(isViewDestroyed){
-                        return
-                    }
+                    if(isViewDestroyed) return
 
                     if(response.isSuccessful){
                         // 세션 갱신

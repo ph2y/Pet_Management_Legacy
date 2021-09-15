@@ -48,6 +48,7 @@ class PetScheduleEditFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentPetScheduleEditBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
 
         // for update_pet_schedule
         setViewForUpdate()

@@ -48,6 +48,8 @@ class CreateAccountUserInfoFragment : Fragment() {
     ): View? {
         // view binding
         _binding = FragmentCreateAccountUserInfoBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         return binding.root
     }
 

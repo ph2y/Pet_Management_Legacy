@@ -63,6 +63,8 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     ): View? {
         // view binding
         _binding = FragmentPetManagerBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         val root: View = binding.root
 
         // initialize RecyclerView

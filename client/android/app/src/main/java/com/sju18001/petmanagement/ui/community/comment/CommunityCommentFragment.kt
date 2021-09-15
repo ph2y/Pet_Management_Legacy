@@ -65,7 +65,7 @@ class CommunityCommentFragment : Fragment() {
     // 리싸이클러뷰
     private lateinit var adapter: CommunityCommentListAdapter
 
-    private var isViewDestroyed: Boolean = false
+    private var isViewDestroyed = false
 
     // 댓글 새로고침
     private var topCommentId: Long? = null
@@ -82,6 +82,7 @@ class CommunityCommentFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommunityCommentBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
 
         // postId 지정
         postId = requireActivity().intent.getLongExtra("postId", -1)
