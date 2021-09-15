@@ -365,15 +365,19 @@ class EditAccountFragment : Fragment() {
                         account.photoUrl = null
                         SessionManager.saveLoggedInAccount(requireContext(), account)
 
-                        // close after success
                         closeAfterSuccess()
                     }else{
-                        // get error message + show(Toast)
                         val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
 
-                        // log error message
-                        Log.d("error", errorMessage)
+                        // 사진이 애초에 없었을 경우
+                        if(errorMessage == "null"){
+                            closeAfterSuccess()
+                        }else{
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                            // log error message
+                            Log.d("error", errorMessage)
+                        }
                     }
                 }
 
