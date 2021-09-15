@@ -91,7 +91,7 @@ class LoginFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for pw text change listener
+        // pwEditText Listener
         binding.pwEditText.setOnEditorActionListener { _, _, _ ->
             Util.hideKeyboard(requireActivity())
 
