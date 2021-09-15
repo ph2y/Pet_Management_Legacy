@@ -102,6 +102,14 @@ class RecoverPasswordFragment : Fragment() {
         setMessageGone()
 
         // 이메일 입력란 입력
+        binding.emailEditText.setOnEditorActionListener{ _, _, _ ->
+            if(binding.emailInputButton.isEnabled){
+                Util.hideKeyboard(requireActivity())
+                sendAuthCode(binding.emailEditText.text.toString())
+            }
+
+            true
+        }
         binding.emailEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 checkEmailValidation(s)
@@ -112,7 +120,6 @@ class RecoverPasswordFragment : Fragment() {
 
         // 버튼 클릭
         binding.emailInputButton.setOnClickListener{
-            // 인증코드 전송
             sendAuthCode(binding.emailEditText.text.toString())
         }
     }
@@ -137,9 +144,18 @@ class RecoverPasswordFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        // 인증 코드 입력
+        binding.codeEditText.setOnEditorActionListener{ _, _, _ ->
+            if(binding.codeInputButton.isEnabled){
+                Util.hideKeyboard(requireActivity())
+                recoverPassword(binding.usernameEditText.text.toString(), binding.codeEditText.text.toString())
+            }
+
+            true
+        }
+
         // 버튼 클릭
         binding.codeInputButton.setOnClickListener{
-            // 코드 확인
             recoverPassword(binding.usernameEditText.text.toString(), binding.codeEditText.text.toString())
         }
     }
