@@ -366,16 +366,21 @@ class CreateUpdatePetFragment : Fragment() {
                     if(response.isSuccessful){
                         closeAfterSuccess()
                     }else{
-                        // set api state/button to normal
-                        myPetViewModel.petManagerApiIsLoading = false
-                        setButtonToNormal()
-
-                        // get error message + show(Toast)
                         val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                        
+                        // 사진이 애초에 없었을 경우
+                        if(errorMessage == "null"){
+                            closeAfterSuccess()
+                        }else{
+                            // set api state/button to normal
+                            myPetViewModel.petManagerApiIsLoading = false
+                            setButtonToNormal()
 
-                        // log error message
-                        Log.d("error", errorMessage)
+                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+
+                            // log error message
+                            Log.d("error", errorMessage)
+                        }
                     }
                 }
 
