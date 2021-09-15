@@ -59,6 +59,14 @@ class RecoverUsernameFragment : Fragment() {
         }
 
         // 이메일 입력란 입력
+        binding.emailEditText.setOnEditorActionListener{ _, _, _ ->
+            if(binding.recoverUsernameButton.isEnabled){
+                Util.hideKeyboard(requireActivity())
+                recoverUsername(binding.emailEditText.text.toString())
+            }
+
+            true
+        }
         binding.emailEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 checkEmailValidation(s)
