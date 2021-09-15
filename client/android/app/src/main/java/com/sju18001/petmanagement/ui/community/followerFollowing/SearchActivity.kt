@@ -52,7 +52,11 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // for search EditText listener
+        // searchEditText listener
+        binding.searchEditText.setOnEditorActionListener{ _, _, _ ->
+            checkPatternUsernameAndSearchAccount()
+            true
+        }
         binding.searchEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 searchViewModel.searchEditText = s.toString()
@@ -63,17 +67,7 @@ class SearchActivity : AppCompatActivity() {
 
         // for search button
         binding.searchButton.setOnClickListener {
-            // verify regex + show message if invalid
-            if(!patternUsername.matcher(searchViewModel.searchEditText).matches()) {
-                Toast.makeText(this, getString(R.string.nickname_regex_exception_message), Toast.LENGTH_LONG).show()
-            }
-            else {
-                // set api state/button to loading
-                searchViewModel.apiIsLoading = true
-                setSearchButtonToLoading()
-
-                searchAccount(searchViewModel.searchEditText)
-            }
+            checkPatternUsernameAndSearchAccount()
         }
 
         // for follow unfollow button
@@ -108,6 +102,19 @@ class SearchActivity : AppCompatActivity() {
 
         // restore views
         restoreState()
+    }
+
+    private fun checkPatternUsernameAndSearchAccount(){
+        if(!patternUsername.matcher(searchViewModel.searchEditText).matches()) {
+            Toast.makeText(this, getString(R.string.nickname_regex_exception_message), Toast.LENGTH_LONG).show()
+        }
+        else {
+            // set api state/button to loading
+            searchViewModel.apiIsLoading = true
+            setSearchButtonToLoading()
+
+            searchAccount(searchViewModel.searchEditText)
+        }
     }
 
     private fun setSearchButtonToLoading() {
