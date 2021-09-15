@@ -232,6 +232,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_species_hint"
                             android:inputType="textPersonName"
+                            android:nextFocusDown="@id/pet_breed_input"
                             android:maxLength="8"
                             android:theme="@style/onSelectedThemeCarrot" />
 
@@ -256,6 +257,7 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_breed_hint"
                             android:inputType="textPersonName"
+                            android:imeOptions="actionDone"
                             android:maxLength="8"
                             android:theme="@style/onSelectedThemeCarrot" />
 
