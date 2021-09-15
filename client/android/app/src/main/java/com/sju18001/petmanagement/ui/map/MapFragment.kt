@@ -48,6 +48,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     private var _binding: FragmentMapBinding? = null
     private val binding get() = _binding!!
 
+    private var isViewDestroyed = false
+
     // 지도 관련
     private var currentMapPoint: MapPoint? = null
     private var isLoadingCurrentMapPoint: Boolean = false
@@ -85,6 +87,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             ViewModelProvider(this).get(MapViewModel::class.java)
 
         _binding = FragmentMapBinding.inflate(inflater, container, false)
+        isViewDestroyed = false
+
         val root: View = binding.root
 
         navView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
@@ -180,6 +184,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        isViewDestroyed = true
     }
 
 
@@ -268,6 +273,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                     call: Call<Documents>,
                     response: Response<Documents>
                 ) {
+                    if(isViewDestroyed) return
+
                     val body = response.body()
                     if(body != null){
                         currentDocuments = body.documents

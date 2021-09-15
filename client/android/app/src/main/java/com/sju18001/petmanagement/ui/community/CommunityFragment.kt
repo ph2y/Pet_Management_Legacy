@@ -124,9 +124,7 @@ class CommunityFragment : Fragment() {
                 call: Call<FetchPostResDto>,
                 response: Response<FetchPostResDto>
             ) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 if(response.isSuccessful){
                     response.body()?.postList?.get(0)?.let{ item ->
@@ -136,9 +134,7 @@ class CommunityFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
             }
@@ -210,9 +206,7 @@ class CommunityFragment : Fragment() {
                         call: Call<CreateLikeResDto>,
                         response: Response<CreateLikeResDto>
                     ) {
-                        if(isViewDestroyed){
-                            return
-                        }
+                        if(isViewDestroyed) return
 
                         if(response.isSuccessful){
                             holder.likeCountTextView.text = ((holder.likeCountTextView.text).toString().toLong() + 1).toString()
@@ -226,9 +220,7 @@ class CommunityFragment : Fragment() {
                     }
 
                     override fun onFailure(call: Call<CreateLikeResDto>, t: Throwable) {
-                        if(isViewDestroyed){
-                            return
-                        }
+                        if(isViewDestroyed) return
 
                         Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                     }
@@ -243,9 +235,7 @@ class CommunityFragment : Fragment() {
                         call: Call<DeleteLikeResDto>,
                         response: Response<DeleteLikeResDto>
                     ) {
-                        if(isViewDestroyed){
-                            return
-                        }
+                        if(isViewDestroyed) return
 
                         if(response.isSuccessful){
                             holder.likeCountTextView.text = ((holder.likeCountTextView.text).toString().toLong() - 1).toString()
@@ -259,9 +249,7 @@ class CommunityFragment : Fragment() {
                     }
 
                     override fun onFailure(call: Call<DeleteLikeResDto>, t: Throwable) {
-                        if(isViewDestroyed){
-                            return
-                        }
+                        if(isViewDestroyed) return
 
                         Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
                     }
@@ -283,9 +271,7 @@ class CommunityFragment : Fragment() {
                     .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
                 call.enqueue(object: Callback<ResponseBody> {
                     override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                        if(isViewDestroyed){
-                            return
-                        }
+                        if(isViewDestroyed) return
 
                         if(response.isSuccessful) {
                             // convert photo to byte array + get bitmap
@@ -330,9 +316,7 @@ class CommunityFragment : Fragment() {
                         call: Call<ResponseBody>,
                         response: Response<ResponseBody>
                     ) {
-                        if(isViewDestroyed){
-                            return
-                        }
+                        if(isViewDestroyed) return
 
                         if(response.isSuccessful){
                             // 영상
@@ -418,9 +402,7 @@ class CommunityFragment : Fragment() {
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        if(isViewDestroyed){
-                            return
-                        }
+                        if(isViewDestroyed) return
 
                         Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
                     }
@@ -459,9 +441,7 @@ class CommunityFragment : Fragment() {
                 call: Call<FetchPostResDto>,
                 response: Response<FetchPostResDto>
             ) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 if(response.isSuccessful){
                     response.body()!!.postList?.let {
@@ -494,9 +474,7 @@ class CommunityFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
 
@@ -514,6 +492,8 @@ class CommunityFragment : Fragment() {
                 call: Call<FetchLikeResDto>,
                 response: Response<FetchLikeResDto>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful){
                     adapter.setLikedCount(position, response.body()!!.likedCount!!)
 
@@ -581,9 +561,7 @@ class CommunityFragment : Fragment() {
                 call: Call<DeletePostResDto>,
                 response: Response<DeletePostResDto>
             ) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 if(response.isSuccessful){
                     // 데이터셋에서 삭제
@@ -599,9 +577,7 @@ class CommunityFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<DeletePostResDto>, t: Throwable) {
-                if(isViewDestroyed){
-                    return
-                }
+                if(isViewDestroyed) return
 
                 Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
             }

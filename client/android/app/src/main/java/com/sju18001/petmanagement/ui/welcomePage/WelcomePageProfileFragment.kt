@@ -106,6 +106,8 @@ class WelcomePageProfileFragment : Fragment() {
                 call: Call<ResponseBody>,
                 response: Response<ResponseBody>
             ) {
+                if(isViewDestroyed) return
+
                 if(response.isSuccessful) {
                     accountLookupIntent.putExtra("photoByteArray", response.body()!!.byteStream().readBytes())
 
