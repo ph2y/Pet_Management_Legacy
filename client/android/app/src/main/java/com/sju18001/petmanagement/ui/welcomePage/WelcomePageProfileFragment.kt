@@ -32,7 +32,6 @@ class WelcomePageProfileFragment : Fragment() {
 
     private var isViewDestroyed = false
 
-    // Account DAO
     private var accountData: Account? = null
 
     override fun onCreateView(
