@@ -152,8 +152,8 @@ class MyPageFragment : Fragment() {
 
     // fetch account photo
     private fun fetchAccountPhotoAndSetView() {
-        // 사진이 없을 때, 기본 사진으로 셋팅
         if(accountData!!.photoUrl == null){
+            // 기본 사진으로 세팅
             binding.accountPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
             return
         }
