@@ -118,9 +118,8 @@ class MainActivity : AppCompatActivity() {
         fragmentManager.beginTransaction().show(activeFragment).commitNow()
 
         navView.setOnNavigationItemSelectedListener {
-            // 커뮤니티 -> 다른 탭 이동 시
+            // 커뮤니티에서 다른 탭으로 이동 시
             if(activeFragment.tag == "community"){
-                // 모든 비디오 재생 중지
                 (activeFragment as CommunityFragment).pauseAllVideos()
             }
 
@@ -167,8 +166,7 @@ class MainActivity : AppCompatActivity() {
 
                     activeFragmentIndex = 2
                     activeFragment = communityFragment
-                    
-                    // 모든 동영상 재생
+
                     (activeFragment as CommunityFragment).startAllVideos()
 
                     true
@@ -191,8 +189,7 @@ class MainActivity : AppCompatActivity() {
             }
             false
         }
-        
-        // 모든 알람 취소하고, PetSchedule에 따라 알림 등록
+
         synchronizeNotificationWorkManager()
     }
 
@@ -256,7 +253,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun synchronizeNotificationWorkManager(){
-        // 모든 알림 취소
         PetScheduleNotification.cancelAllWorkManager(applicationContext)
         
         // PetSchedule Fetch한 뒤, 알림 등록
