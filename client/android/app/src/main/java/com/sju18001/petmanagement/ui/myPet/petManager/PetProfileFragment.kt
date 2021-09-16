@@ -313,6 +313,7 @@ class PetProfileFragment : Fragment(){
         myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
         myPetViewModel.petPhotoByteArray = myPetViewModel.petPhotoByteArrayProfile
         myPetViewModel.petPhotoPathValue = ""
+        myPetViewModel.isDeletePhoto = false
         myPetViewModel.petMessageValue = myPetViewModel.petMessageValueProfile
         myPetViewModel.petNameValue = myPetViewModel.petNameValueProfile
         myPetViewModel.petGenderValue = myPetViewModel.petGenderValueProfile == "♀"

@@ -133,6 +133,12 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
     var petManagerApiIsLoading = handle.get<Boolean>("petManagerApiIsLoading")?: false
         set(value) {
             handle.set("petManagerApiIsLoading", value)
+            field = value
+        }
+    var isDeletePhoto = handle.get<Boolean>("isDeletePhoto")?: false
+        set(value) {
+            handle.set("isDeletePhoto", value)
+            field = value
         }
 
     // variables for schedule manager
