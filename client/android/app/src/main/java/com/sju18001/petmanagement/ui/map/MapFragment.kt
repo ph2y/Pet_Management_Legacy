@@ -172,10 +172,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
         }
 
 
-        // 애니메이션 초기화
         initializeAnimations()
 
-        // for hiding keyboard
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentMapParentLayout)
 
         return root
