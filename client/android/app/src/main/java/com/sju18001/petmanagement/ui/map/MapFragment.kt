@@ -283,7 +283,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                 }
 
                 override fun onFailure(call: Call<Documents>, t: Throwable) {
-                    Log.i("MapFragment", "Failed To Get Request: ${t.message}")
+                    Util.showToastAndLog(requireContext(), t.message.toString())
                 }
 
             })

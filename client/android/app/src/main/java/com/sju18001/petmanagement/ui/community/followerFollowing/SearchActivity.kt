@@ -217,21 +217,14 @@ class SearchActivity : AppCompatActivity() {
                     setButtonState()
                 }
                 else {
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                    // Toast + Log
-                    Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<FetchFollowerResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(this@SearchActivity, t.message.toString())
             }
         })
     }
@@ -263,18 +256,15 @@ class SearchActivity : AppCompatActivity() {
                     when(val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)) {
                         // if no such account exists -> show Toast message
                         "Account not exists" -> {
-                            Toast.makeText(this@SearchActivity,
-                                getText(R.string.account_does_not_exist_exception_message), Toast.LENGTH_LONG).show()
+                            Util.showToastAndLog(this@SearchActivity, getString(R.string.account_does_not_exist_exception_message))
                         }
                         // if fetched self -> show Toast message
                         "Fetched self" -> {
-                            Toast.makeText(this@SearchActivity,
-                                getText(R.string.fetched_self_exception_message), Toast.LENGTH_LONG).show()
+                            Util.showToastAndLog(this@SearchActivity, getString(R.string.fetched_self_exception_message))
                         }
                         // other exceptions -> show Toast message + log
                         else -> {
-                            Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
-                            Log.d("error", errorMessage)
+                            Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
                         }
                     }
                 }
@@ -287,9 +277,7 @@ class SearchActivity : AppCompatActivity() {
                 searchViewModel.apiIsLoading = false
                 setSearchButtonToNormal()
 
-                // show(Toast)/log error message
-                Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(this@SearchActivity, t.message.toString())
             }
         })
     }
@@ -316,18 +304,14 @@ class SearchActivity : AppCompatActivity() {
                     // get error message
                     val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
 
-                    // Toast + Log
-                    Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(this@SearchActivity, t.message.toString())
             }
         })
     }
@@ -361,18 +345,14 @@ class SearchActivity : AppCompatActivity() {
                     // get error message
                     val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
 
-                    // Toast + Log
-                    Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<CreateFollowResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(this@SearchActivity, t.message.toString())
             }
         })
     }
@@ -406,18 +386,14 @@ class SearchActivity : AppCompatActivity() {
                     // get error message
                     val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
 
-                    // Toast + Log
-                    Toast.makeText(this@SearchActivity, errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<DeleteFollowResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(this@SearchActivity, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(this@SearchActivity, t.message.toString())
             }
         })
     }

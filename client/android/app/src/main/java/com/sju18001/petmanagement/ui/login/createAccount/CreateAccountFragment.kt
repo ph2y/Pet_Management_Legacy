@@ -276,17 +276,13 @@ class CreateAccountFragment : Fragment() {
             override fun onFailure(call: Call<CreateAccountResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // log error message
-                Log.d("error", t.message.toString())
-
                 // set next button to normal
                 setNextButtonToNormal()
 
                 // reset createAccountApiCall variable
                 createAccountApiCall = null
 
-                //display error toast message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -317,12 +313,10 @@ class CreateAccountFragment : Fragment() {
                         createAccount(loginViewModel)
                     }
                     else {
-                        // code invalid Toast message
-                        Toast.makeText(context, context?.getText(R.string.email_message_code_invalid),
-                            Toast.LENGTH_LONG).show()
-
                         // set next button to normal
                         setNextButtonToNormal()
+
+                        Util.showToastAndLog(requireContext(), requireContext().getString(R.string.email_message_code_invalid))
                     }
 
                     // reset verifyAuthCodeApiCall variable
@@ -332,17 +326,13 @@ class CreateAccountFragment : Fragment() {
                 override fun onFailure(call: Call<VerifyAuthCodeResDto>, t: Throwable) {
                     if(isViewDestroyed) return
 
-                    // log error message
-                    Log.d("error", t.message.toString())
-
                     // set next button to normal
                     setNextButtonToNormal()
 
                     // reset verifyAuthCodeApiCall variable
                     verifyAuthCodeApiCall = null
 
-                    //display error toast message
-                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                    Util.showToastAndLog(requireContext(), t.message.toString())
                 }
             })
         }

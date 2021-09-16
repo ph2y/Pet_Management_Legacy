@@ -255,12 +255,7 @@ class CreateUpdatePetFragment : Fragment() {
                     myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
 
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -271,9 +266,7 @@ class CreateUpdatePetFragment : Fragment() {
                 myPetViewModel.petManagerApiIsLoading = false
                 setButtonToNormal()
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -326,12 +319,7 @@ class CreateUpdatePetFragment : Fragment() {
                     myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
 
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -342,9 +330,7 @@ class CreateUpdatePetFragment : Fragment() {
                 myPetViewModel.petManagerApiIsLoading = false
                 setButtonToNormal()
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -376,10 +362,7 @@ class CreateUpdatePetFragment : Fragment() {
                             myPetViewModel.petManagerApiIsLoading = false
                             setButtonToNormal()
 
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                            // log error message
-                            Log.d("error", errorMessage)
+                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
                     }
                 }
@@ -391,9 +374,7 @@ class CreateUpdatePetFragment : Fragment() {
                     myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
 
-                    // show(Toast)/log error message
-                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                    Log.d("error", t.message.toString())
+                    Util.showToastAndLog(requireContext(), t.message.toString())
                 }
             }
             )
@@ -421,12 +402,7 @@ class CreateUpdatePetFragment : Fragment() {
                         myPetViewModel.petManagerApiIsLoading = false
                         setButtonToNormal()
 
-                        // get error message + show(Toast)
-                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                        // log error message
-                        Log.d("error", errorMessage)
+                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                     }
                 }
 
@@ -437,9 +413,7 @@ class CreateUpdatePetFragment : Fragment() {
                     myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
 
-                    // show(Toast)/log error message
-                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                    Log.d("error", t.message.toString())
+                    Util.showToastAndLog(requireContext(), t.message.toString())
                 }
             })
         }
@@ -474,12 +448,7 @@ class CreateUpdatePetFragment : Fragment() {
                     myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
 
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -490,9 +459,7 @@ class CreateUpdatePetFragment : Fragment() {
                 myPetViewModel.petManagerApiIsLoading = false
                 setButtonToNormal()
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

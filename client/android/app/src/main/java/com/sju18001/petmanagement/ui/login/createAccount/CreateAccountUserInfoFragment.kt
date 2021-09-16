@@ -238,14 +238,7 @@ class CreateAccountUserInfoFragment : Fragment() {
                     startTimer(loginViewModel)
                 }
                 else {
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                    //display error toast message
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
 
                 // set request code button to normal
@@ -258,17 +251,13 @@ class CreateAccountUserInfoFragment : Fragment() {
             override fun onFailure(call: Call<SendAuthCodeResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // log error message
-                Log.d("error", t.message.toString())
-
                 // set request code button to normal
                 setRequestCodeButtonToNormal()
 
                 // reset codeRequestApiCall variable
                 codeRequestApiCall = null
 
-                //display error toast message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

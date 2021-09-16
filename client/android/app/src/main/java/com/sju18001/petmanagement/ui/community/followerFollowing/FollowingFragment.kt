@@ -122,12 +122,7 @@ class FollowingFragment : Fragment() {
                     // set swipe isRefreshing to false
                     binding.followingSwipeRefreshLayout.isRefreshing = false
 
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                    // Toast + Log
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -137,9 +132,7 @@ class FollowingFragment : Fragment() {
                 // set swipe isRefreshing to false
                 binding.followingSwipeRefreshLayout.isRefreshing = false
 
-                // show(Toast)/log error message
-                Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

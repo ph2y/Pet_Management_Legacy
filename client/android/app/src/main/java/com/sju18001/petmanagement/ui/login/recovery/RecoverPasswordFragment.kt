@@ -199,7 +199,7 @@ class RecoverPasswordFragment : Fragment() {
                     setViewForCodeInput()
                 }else{
                     // 어떤 이메일이든 코드 전송은 하기 때문에, 보통 실패할 수 없다.
-                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -209,7 +209,7 @@ class RecoverPasswordFragment : Fragment() {
                 // 버튼 로딩 상태 해제
                 setEmailInputButtonLoading(false)
 
-                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -254,7 +254,8 @@ class RecoverPasswordFragment : Fragment() {
                     setViewForResult()
                 } else {
                     binding.codeMessage.visibility = View.VISIBLE
-                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
+
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -264,7 +265,7 @@ class RecoverPasswordFragment : Fragment() {
                 // 버튼 로딩 상태 해제
                 setCodeInputButtonLoading(false)
 
-                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_LONG).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

@@ -137,7 +137,7 @@ class PetScheduleManagerFragment : Fragment() {
                     }
 
                     override fun onFailure(call: Call<DeletePetScheduleResDto>, t: Throwable) {
-                        Log.e("ScheduleAdapter", t.message.toString())
+                        Util.showToastAndLog(requireContext(), t.message.toString())
                     }
                 })
             }
@@ -160,14 +160,14 @@ class PetScheduleManagerFragment : Fragment() {
                         if(response.isSuccessful){
                             // Do nothing
                         }else{
-                            Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
                     }
 
                     override fun onFailure(call: Call<UpdatePetScheduleResDto>, t: Throwable) {
                         if(isViewDestroyed) return
 
-                        Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
+                        Util.showToastAndLog(requireContext(), t.message.toString())
                     }
                 })
             }
@@ -208,14 +208,14 @@ class PetScheduleManagerFragment : Fragment() {
                     adapter.setDataSet(dataSet)
                     adapter.notifyDataSetChanged()
                 }else{
-                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<FetchPetScheduleResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                Toast.makeText(context, "${t.message}", Toast.LENGTH_SHORT).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

@@ -153,7 +153,7 @@ class RecoverUsernameFragment : Fragment() {
                         setViewForResult(it.username)
                     }
                 }else{
-                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -163,7 +163,7 @@ class RecoverUsernameFragment : Fragment() {
                 // 버튼 로딩 상태 해제
                 setButtonLoading(false)
 
-                Toast.makeText(context, getString(R.string.fail_request), Toast.LENGTH_SHORT).show()
+                Util.showToastAndLog(requireContext(), getString(R.string.fail_request))
             }
         })
     }

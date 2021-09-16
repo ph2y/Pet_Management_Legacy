@@ -214,14 +214,14 @@ class PetScheduleEditFragment : Fragment() {
                 if(response.isSuccessful){
                     activity?.finish()
                 }else{
-                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<CreatePetScheduleResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -244,14 +244,14 @@ class PetScheduleEditFragment : Fragment() {
                 if(response.isSuccessful){
                     activity?.finish()
                 }else{
-                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<UpdatePetScheduleResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                Toast.makeText(context, t.message, Toast.LENGTH_SHORT).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

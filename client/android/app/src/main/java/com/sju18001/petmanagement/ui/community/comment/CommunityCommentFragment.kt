@@ -174,15 +174,14 @@ class CommunityCommentFragment : Fragment() {
                                 adapter.notifyItemRangeInserted(position + 1, replyCount)
                             }
                         }else{
-                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
                     }
 
                     override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
                         if(isViewDestroyed) return
 
-                        Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                        Util.showToastAndLog(requireContext(), t.message.toString())
                     }
                 })
             }
@@ -271,14 +270,14 @@ class CommunityCommentFragment : Fragment() {
                     adapter.notifyItemRemoved(position)
                     adapter.notifyItemRangeChanged(position, adapter.itemCount)
                 }else{
-                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<DeleteCommentResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -321,7 +320,7 @@ class CommunityCommentFragment : Fragment() {
                         }
                     }
                 }else{
-                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_SHORT).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
 
                 // 새로고침 아이콘 제거
@@ -331,10 +330,10 @@ class CommunityCommentFragment : Fragment() {
             override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
-
                 // 새로고침 아이콘 제거
                 binding.layoutSwipeRefresh.isRefreshing = false
+
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -357,15 +356,14 @@ class CommunityCommentFragment : Fragment() {
                         adapter.notifyItemChanged(position)
                     }
                 }else{
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -431,8 +429,7 @@ class CommunityCommentFragment : Fragment() {
                     binding.editTextComment.text = null
                     Toast.makeText(context, context?.getText(R.string.create_comment_success), Toast.LENGTH_SHORT).show()
                 }else{
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
 
                 setCommentInputToNormal()
@@ -442,10 +439,10 @@ class CommunityCommentFragment : Fragment() {
             override fun onFailure(call: Call<CreateCommentResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
-
                 setCommentInputToNormal()
                 setViewForReplyCancel()
+
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -485,18 +482,12 @@ class CommunityCommentFragment : Fragment() {
                     imageView.setImageBitmap(photoBitmap)
                 }
                 else {
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                    // Toast + Log
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // log error message
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

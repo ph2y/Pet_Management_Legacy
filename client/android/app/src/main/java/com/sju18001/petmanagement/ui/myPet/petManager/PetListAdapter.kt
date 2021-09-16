@@ -159,18 +159,12 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
                     (view as ImageView).setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
                 }
                 else {
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(context, response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // log error message
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(context, t.message.toString())
             }
         })
     }

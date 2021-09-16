@@ -325,21 +325,14 @@ class EditAccountFragment : Fragment() {
                     }
                 }
                 else {
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<UpdateAccountResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -373,10 +366,7 @@ class EditAccountFragment : Fragment() {
                         if(errorMessage == "null"){
                             closeAfterSuccess()
                         }else{
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                            // log error message
-                            Log.d("error", errorMessage)
+                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
                     }
                 }
@@ -384,9 +374,7 @@ class EditAccountFragment : Fragment() {
                 override fun onFailure(call: Call<DeleteAccountPhotoResDto>, t: Throwable) {
                     if(isViewDestroyed) return
 
-                    // show(Toast)/log error message
-                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                    Log.d("error", t.message.toString())
+                    Util.showToastAndLog(requireContext(), t.message.toString())
                 }
             })
         }
@@ -414,21 +402,14 @@ class EditAccountFragment : Fragment() {
                         closeAfterSuccess()
                     }
                     else {
-                        // get error message + show(Toast)
-                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                        // log error message
-                        Log.d("error", errorMessage)
+                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                     }
                 }
 
                 override fun onFailure(call: Call<UpdateAccountPhotoResDto>, t: Throwable) {
                     if(isViewDestroyed) return
 
-                    // show(Toast)/log error message
-                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                    Log.d("error", t.message.toString())
+                    Util.showToastAndLog(requireContext(), t.message.toString())
                 }
             })
         }
@@ -453,21 +434,14 @@ class EditAccountFragment : Fragment() {
                     }
                 }
                 else {
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, context?.getText(R.string.account_password_mismatch), Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLog(requireContext(), requireContext().getString(R.string.account_password_mismatch))
                 }
             }
 
             override fun onFailure(call: Call<UpdateAccountPasswordResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -509,21 +483,14 @@ class EditAccountFragment : Fragment() {
                     }
                 }
                 else {
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<DeleteAccountResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

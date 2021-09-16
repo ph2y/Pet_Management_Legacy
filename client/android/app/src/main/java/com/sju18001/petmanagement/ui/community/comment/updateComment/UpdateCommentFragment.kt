@@ -105,10 +105,9 @@ class UpdateCommentFragment : Fragment() {
                     Toast.makeText(context, context?.getText(R.string.update_comment_success), Toast.LENGTH_SHORT).show()
                     activity?.finish()
                 }else{
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-
                     setButtonToNormal()
+
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -116,7 +115,8 @@ class UpdateCommentFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 setButtonToNormal()
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
+
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
