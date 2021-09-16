@@ -142,7 +142,6 @@ class CreateAccountUserInfoFragment : Fragment() {
         binding.requestEmailCodeProgressBar.visibility = View.GONE
         binding.requestEmailCodeButton.isEnabled = true
 
-        // enable email edit text
         binding.emailEditText.isEnabled = true
     }
 
@@ -153,7 +152,6 @@ class CreateAccountUserInfoFragment : Fragment() {
         binding.requestEmailCodeProgressBar.visibility = View.VISIBLE
         binding.requestEmailCodeButton.isEnabled = false
 
-        // disable email edit text
         binding.emailEditText.isEnabled = false
     }
 
@@ -251,7 +249,6 @@ class CreateAccountUserInfoFragment : Fragment() {
             override fun onFailure(call: Call<SendAuthCodeResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // set request code button to normal
                 setRequestCodeButtonToNormal()
 
                 // reset codeRequestApiCall variable
