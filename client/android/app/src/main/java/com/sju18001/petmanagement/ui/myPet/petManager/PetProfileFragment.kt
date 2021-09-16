@@ -327,6 +327,7 @@ class PetProfileFragment : Fragment(){
     }
 
     private fun getAccountPhotoAndInitializeRecyclerView() {
+        binding.postDataLoadingLayout.visibility = View.VISIBLE
         isAdapterInitialized = true
 
         val accountId = SessionManager.fetchLoggedInAccount(requireContext())!!.id
@@ -633,6 +634,9 @@ class PetProfileFragment : Fragment(){
                             }
                         }
                     }
+
+                    // hide loading screen
+                    binding.postDataLoadingLayout.visibility = View.GONE
                 }else{
                     Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
                 }
