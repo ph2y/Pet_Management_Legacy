@@ -110,7 +110,6 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful) {
-                    // set button to normal
                     holder.followUnfollowButton.isEnabled = true
 
                     // remove from list
@@ -126,7 +125,6 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
                     notifyItemRangeChanged(position, resultList.size)
                 }
                 else {
-                    // set button to normal
                     holder.followUnfollowButton.isEnabled = true
 
                     Util.showToastAndLogForFailedResponse(context, response.errorBody())
@@ -136,7 +134,6 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
             override fun onFailure(call: Call<DeleteFollowResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // set button to normal
                 holder.followUnfollowButton.isEnabled = true
 
                 Util.showToastAndLog(context, t.message.toString())

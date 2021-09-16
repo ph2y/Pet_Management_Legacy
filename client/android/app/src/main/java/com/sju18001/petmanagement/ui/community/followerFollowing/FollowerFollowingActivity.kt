@@ -19,7 +19,6 @@ class FollowerFollowingActivity : AppCompatActivity() {
         binding = ActivityFollowerFollowingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // hide action bar
         supportActionBar?.hide()
 
         // open fragment

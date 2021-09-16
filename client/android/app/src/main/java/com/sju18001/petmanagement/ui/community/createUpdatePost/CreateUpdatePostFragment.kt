@@ -125,7 +125,6 @@ class CreateUpdatePostFragment : Fragment() {
                 binding.postDataLoadingLayout.visibility = View.VISIBLE
                 binding.confirmButton.isEnabled = false
 
-                // fetch post data
                 fetchPostData()
         }
 
@@ -143,7 +142,6 @@ class CreateUpdatePostFragment : Fragment() {
         // for post photo/video picker
         binding.uploadPhotosAndVideosButton.setOnClickListener {
             if(createUpdatePostViewModel.thumbnailList.size == 10) {
-                // show message(photo/video usage full)
                 Toast.makeText(context, context?.getText(R.string.photo_video_usage_full_message), Toast.LENGTH_LONG).show()
             }
             else {
@@ -239,11 +237,9 @@ class CreateUpdatePostFragment : Fragment() {
 
             if(createUpdatePostViewModel.thumbnailList.size == 0 &&
                 createUpdatePostViewModel.postEditText == "") {
-                // show message(post invalid)
                 Toast.makeText(context, context?.getText(R.string.post_invalid_message), Toast.LENGTH_LONG).show()
             }
             else if(createUpdatePostViewModel.petId == null) {
-                // show message(pet not selected)
                 Toast.makeText(context, context?.getText(R.string.pet_not_selected_message), Toast.LENGTH_LONG).show()
             }
             else {
@@ -261,7 +257,6 @@ class CreateUpdatePostFragment : Fragment() {
             activity?.finish()
         }
 
-        // for hiding keyboard
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateUpdatePostParentLayout)
     }
 
@@ -294,11 +289,9 @@ class CreateUpdatePostFragment : Fragment() {
                     photoVideoAdapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
                     binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
 
-                    // update photo/video usage
                     updatePhotoVideoUsage()
                 }
                 else {
-                    // show message(file null exception)
                     Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
                 }
             }
@@ -315,16 +308,13 @@ class CreateUpdatePostFragment : Fragment() {
                     photoVideoAdapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
                     binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
 
-                    // update photo/video usage
                     updatePhotoVideoUsage()
                 }
                 else {
-                    // show message(file null exception)
                     Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
                 }
             }
             else -> {
-                // show message(file type exception)
                 Toast.makeText(context, context?.getText(R.string.file_type_exception_message), Toast.LENGTH_LONG).show()
             }
         }
@@ -355,10 +345,7 @@ class CreateUpdatePostFragment : Fragment() {
                         apiResponse.add(item)
                     }
 
-                    // reorder items
                     reorderPetList(apiResponse)
-
-                    // set spinner + photo
                     setPetSpinner()
                 }
                 else {
@@ -396,14 +383,10 @@ class CreateUpdatePostFragment : Fragment() {
                         binding.petPhotoCircleView.setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
                     }
                     else {
-                        // get error message
-                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                        // if null -> set default
-                        if(errorMessage == "null") {
+                        if(Util.getMessageFromErrorBody(response.errorBody()!!) == "null") {
+                            // Set default
                             binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
                         }
-                        // else -> show(Toast)/log error message
                         else{
                             Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
@@ -549,11 +532,9 @@ class CreateUpdatePostFragment : Fragment() {
         binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
 
         if(binding.hashtagInputEditText.text.toString() == "") {
-            // show message(hashtag empty)
             Toast.makeText(context, context?.getText(R.string.hashtag_empty_message), Toast.LENGTH_LONG).show()
         }
         else if(createUpdatePostViewModel.hashtagList.size == 5) {
-            // show message(hashtag usage full)
             Toast.makeText(context, context?.getText(R.string.hashtag_usage_full_message), Toast.LENGTH_LONG).show()
         }
         else {
@@ -568,7 +549,6 @@ class CreateUpdatePostFragment : Fragment() {
             // reset hashtag EditText
             binding.hashtagInputEditText.setText("")
 
-            // update hashtag usage
             updateHashtagUsage()
         }
     }
@@ -584,7 +564,6 @@ class CreateUpdatePostFragment : Fragment() {
 
         // 위치 정보 사용에 동의했지만, 권한이 없는 경우
         if(latAndLong[0] == (-1.0).toBigDecimal()){
-            // 권한 요청
             Permission.requestNotGrantedPermissions(requireContext(), Permission.requiredPermissionsForLocation)
 
             // 권한 요청이 비동기적이기 때문에, 권한 요청 이후에 CreatePost 버튼을 다시 눌러야한다.
@@ -616,8 +595,7 @@ class CreateUpdatePostFragment : Fragment() {
                     val intent = Intent()
                     intent.putExtra("postId", response.body()!!.id)
                     requireActivity().setResult(Activity.RESULT_OK, intent)
-                    
-                    // get created post id + update post media
+
                     getIdAndUpdateMedia()
                 }
                 else {
@@ -652,7 +630,6 @@ class CreateUpdatePostFragment : Fragment() {
 
         // 위치 정보 사용에 동의했지만, 권한이 없는 경우
         if(latAndLong[0] == (-1.0).toBigDecimal()){
-            // 권한 요청
             Permission.requestNotGrantedPermissions(requireContext(), Permission.requiredPermissionsForLocation)
 
             // 권한 요청이 비동기적이기 때문에, 권한 요청 이후에 CreatePost 버튼을 다시 눌러야한다.
@@ -777,10 +754,7 @@ class CreateUpdatePostFragment : Fragment() {
                     if(isViewDestroyed) return
 
                     if(response.isSuccessful) {
-                        // Pass post id, position to Community
                         passDataToCommunity()
-
-                        // close after success
                         closeAfterSuccess()
                     }
                     else {
@@ -822,8 +796,6 @@ class CreateUpdatePostFragment : Fragment() {
 
                 if(response.isSuccessful) {
                     val postId = (response.body()?.postList?.get(0) as Post).id
-
-                    // update post media
                     updatePostMedia(postId)
                 }
                 else {
@@ -905,7 +877,6 @@ class CreateUpdatePostFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    // if the view was destroyed(API call canceled) -> return
                     if(isViewDestroyed) return
 
                     Util.showToastAndLog(requireContext(), t.message.toString())
