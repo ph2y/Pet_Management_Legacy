@@ -136,7 +136,6 @@ class LoginFragment : Fragment() {
                 .commit()
         }
 
-        // for hiding keyboard
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentLoginParentLayout)
     }
 
@@ -171,10 +170,8 @@ class LoginFragment : Fragment() {
                 // create custom snack bar to display error message
                 displayErrorMessage(t.message.toString())
 
-                // enable buttons
                 enableButtons()
 
-                // log error message
                 Log.d("error", t.message.toString())
             }
         })
@@ -225,7 +222,8 @@ class LoginFragment : Fragment() {
 
                             startActivity(intent)
                             activity?.finish()
-                        } // 첫 로그인이 아닐 시
+                        }
+                        // 첫 로그인이 아닐 시
                         else{
                             // start main activity + send token
                             val intent = Intent(context, MainActivity::class.java)
@@ -247,10 +245,8 @@ class LoginFragment : Fragment() {
             override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // enable buttons
                 enableButtons()
 
-                // log error message
                 Log.d("error", t.message.toString())
 
                 // create custom snack bar to display error message
@@ -259,7 +255,6 @@ class LoginFragment : Fragment() {
         })
     }
 
-    // disable buttons
     private fun disableButtons() {
         // set login button status to loading
         binding.loginButton.text = ""
@@ -271,7 +266,6 @@ class LoginFragment : Fragment() {
         binding.recoveryButton.isEnabled = false
     }
 
-    // enable buttons
     private fun enableButtons() {
         // set login button status to active
         binding.loginButton.text = context?.getText(R.string.login_button)
@@ -283,7 +277,6 @@ class LoginFragment : Fragment() {
         binding.recoveryButton.isEnabled = true
     }
 
-    // display error message(Snackbar)
     private fun displayErrorMessage(message: String) {
         snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_parent_layout)!!,
             message, Snackbar.LENGTH_LONG)
@@ -293,7 +286,6 @@ class LoginFragment : Fragment() {
         snackBar!!.show()
     }
 
-    // display success message(Snackbar)
     private fun displaySuccessMessage(message: String) {
         snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_parent_layout)!!,
             message, Snackbar.LENGTH_LONG)
@@ -309,7 +301,6 @@ class LoginFragment : Fragment() {
 
         isViewDestroyed = true
 
-        // dismiss Snackbar
         snackBar?.dismiss()
     }
 }

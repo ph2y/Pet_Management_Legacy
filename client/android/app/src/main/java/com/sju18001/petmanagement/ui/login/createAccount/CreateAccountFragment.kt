@@ -109,7 +109,7 @@ class CreateAccountFragment : Fragment() {
             childFragmentManager.popBackStack()
         }
 
-        //for next step button
+        // for next step button
         binding.nextStepButton.setOnClickListener {
             var nextFragment: Fragment? = null
             var nextFragmentTag: String? = null
@@ -150,23 +150,19 @@ class CreateAccountFragment : Fragment() {
             }
         }
 
-        // for hiding keyboard
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateAccountParentLayout)
     }
 
-    // show previous step button
     public fun showPreviousButton() {
         if(createAccountApiCall == null && verifyAuthCodeApiCall == null) {
             binding.previousStepButton.visibility = View.VISIBLE
         }
     }
 
-    // hide previous step button
     public fun hidePreviousButton() {
         binding.previousStepButton.visibility = View.INVISIBLE
     }
 
-    // enable next step button
     public fun enableNextButton() {
         if(createAccountApiCall == null && verifyAuthCodeApiCall == null) {
             binding.nextStepButton.isEnabled = true
@@ -180,7 +176,6 @@ class CreateAccountFragment : Fragment() {
         }
     }
 
-    // disable next step button
     public fun disableNextButton() {
         binding.nextStepButton.isEnabled = false
 
@@ -192,7 +187,6 @@ class CreateAccountFragment : Fragment() {
         }
     }
 
-    // set next step button to normal
     private fun setNextButtonToNormal() {
         // set create account button status to normal + enable
         binding.nextStepButton.text = context?.getText(R.string.create_account_button)
@@ -203,7 +197,6 @@ class CreateAccountFragment : Fragment() {
         binding.previousStepButton.visibility = View.VISIBLE
     }
 
-    // set next step button to loading
     private fun setNextButtonToLoading() {
         // set create account button status to loading + disable
         binding.nextStepButton.text = ""
@@ -276,7 +269,6 @@ class CreateAccountFragment : Fragment() {
             override fun onFailure(call: Call<CreateAccountResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // set next button to normal
                 setNextButtonToNormal()
 
                 // reset createAccountApiCall variable
@@ -313,7 +305,6 @@ class CreateAccountFragment : Fragment() {
                         createAccount(loginViewModel)
                     }
                     else {
-                        // set next button to normal
                         setNextButtonToNormal()
 
                         Util.showToastAndLog(requireContext(), requireContext().getString(R.string.email_message_code_invalid))
@@ -326,7 +317,6 @@ class CreateAccountFragment : Fragment() {
                 override fun onFailure(call: Call<VerifyAuthCodeResDto>, t: Throwable) {
                     if(isViewDestroyed) return
 
-                    // set next button to normal
                     setNextButtonToNormal()
 
                     // reset verifyAuthCodeApiCall variable

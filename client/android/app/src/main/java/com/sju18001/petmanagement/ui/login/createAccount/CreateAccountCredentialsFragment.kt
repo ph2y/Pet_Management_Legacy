@@ -39,7 +39,6 @@ class CreateAccountCredentialsFragment : Fragment() {
         // variable for ViewModel
         val loginViewModel: LoginViewModel by activityViewModels()
 
-        // for state restore(ViewModel)
         restoreState(loginViewModel)
 
         // for username text change listener
@@ -110,7 +109,6 @@ class CreateAccountCredentialsFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for hiding keyboard
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateAccountCredentialsParentLayout)
     }
 

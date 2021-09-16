@@ -42,7 +42,6 @@ class RecoverPasswordFragment : Fragment() {
             else -> setViewForEmailInput()
         }
 
-        // for hiding keyboard
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentRecoverPasswordParentLayout)
 
         return binding.root
@@ -195,7 +194,6 @@ class RecoverPasswordFragment : Fragment() {
                 setEmailInputButtonLoading(false)
 
                 if(response.isSuccessful){
-                    // 코드 입력
                     setViewForCodeInput()
                 }else{
                     // 어떤 이메일이든 코드 전송은 하기 때문에, 보통 실패할 수 없다.
@@ -206,7 +204,6 @@ class RecoverPasswordFragment : Fragment() {
             override fun onFailure(call: Call<SendAuthCodeResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // 버튼 로딩 상태 해제
                 setEmailInputButtonLoading(false)
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
@@ -214,7 +211,6 @@ class RecoverPasswordFragment : Fragment() {
         })
     }
 
-    // 이메일 입력 버튼 프로그래스바
     private fun setEmailInputButtonLoading(isLoading: Boolean){
         if(isLoading){
             binding.emailInputButton.apply {
@@ -232,11 +228,9 @@ class RecoverPasswordFragment : Fragment() {
     }
 
 
-    // 코드를 통한 비밀번호 임시 변경
     private fun recoverPassword(username: String, code: String){
         val recoverPasswordReqDto = RecoverPasswordReqDto(username, code)
 
-        // 버튼 로딩 상태
         setCodeInputButtonLoading(true)
 
         val call = RetrofitBuilder.getServerApi().recoverPasswordReq(recoverPasswordReqDto)
@@ -247,7 +241,6 @@ class RecoverPasswordFragment : Fragment() {
             ) {
                 if(isViewDestroyed) return
 
-                // 버튼 로딩 상태 해제
                 setCodeInputButtonLoading(false)
 
                 if (response.isSuccessful) {
@@ -262,7 +255,6 @@ class RecoverPasswordFragment : Fragment() {
             override fun onFailure(call: Call<RecoverPasswordResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // 버튼 로딩 상태 해제
                 setCodeInputButtonLoading(false)
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
@@ -270,7 +262,6 @@ class RecoverPasswordFragment : Fragment() {
         })
     }
 
-    // 코드 입력 버튼 프로그래스바
     private fun setCodeInputButtonLoading(isLoading: Boolean){
         if(isLoading){
             binding.codeInputButton.apply {

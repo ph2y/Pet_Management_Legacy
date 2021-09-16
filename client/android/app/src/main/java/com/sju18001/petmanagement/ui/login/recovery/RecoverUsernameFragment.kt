@@ -77,7 +77,6 @@ class RecoverUsernameFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for hiding keyboard
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentRecoveryUsernameParentLayout)
     }
 
@@ -130,7 +129,6 @@ class RecoverUsernameFragment : Fragment() {
     }
 
 
-    // 아이디 찾기
     private fun recoverUsername(email: String){
         val recoverUsernameReqDto = RecoverUsernameReqDto(email)
         val call = RetrofitBuilder.getServerApi().recoverUsernameReq(recoverUsernameReqDto)
@@ -184,7 +182,6 @@ class RecoverUsernameFragment : Fragment() {
         }
     }
 
-    // 아이디 찾기 결과
     private fun setViewForResult(username: String?){
         binding.resultUsername.text = username
         binding.recoverUsernameLayout.visibility = View.GONE

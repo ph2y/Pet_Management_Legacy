@@ -26,7 +26,6 @@ class LoginActivity : AppCompatActivity() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // hide action bar
         supportActionBar?.hide()
 
         // show login fragment
