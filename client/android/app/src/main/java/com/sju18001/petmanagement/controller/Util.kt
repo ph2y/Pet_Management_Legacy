@@ -195,5 +195,17 @@ class Util {
         fun getArrayFromMediaAttachments(mediaAttachments: String?): Array<FileMetaData>{
             return if (mediaAttachments != null) Gson().fromJson(mediaAttachments, Array<FileMetaData>::class.java) else arrayOf()
         }
+
+        fun showToastAndLogForFailedResponse(context: Context, errorBody: ResponseBody?){
+            if(errorBody == null) return
+
+            val errorMessage = getMessageFromErrorBody(errorBody)
+            showToastAndLog(context, errorMessage)
+        }
+
+        fun showToastAndLog(context: Context, message: String){
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            Log.d("error", message)
+        }
     }
 }

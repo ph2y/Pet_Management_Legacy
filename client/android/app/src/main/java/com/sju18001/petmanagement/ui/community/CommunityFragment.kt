@@ -136,7 +136,7 @@ class CommunityFragment : Fragment() {
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_SHORT).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -211,8 +211,7 @@ class CommunityFragment : Fragment() {
                         if(response.isSuccessful){
                             holder.likeCountTextView.text = ((holder.likeCountTextView.text).toString().toLong() + 1).toString()
                         }else{
-                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
 
                         adapter.setIsPostLiked(position, true)
@@ -222,7 +221,7 @@ class CommunityFragment : Fragment() {
                     override fun onFailure(call: Call<CreateLikeResDto>, t: Throwable) {
                         if(isViewDestroyed) return
 
-                        Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                        Util.showToastAndLog(requireContext(), t.message.toString())
                     }
                 })
             }
@@ -240,8 +239,7 @@ class CommunityFragment : Fragment() {
                         if(response.isSuccessful){
                             holder.likeCountTextView.text = ((holder.likeCountTextView.text).toString().toLong() - 1).toString()
                         }else{
-                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                            Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
 
                         adapter.setIsPostLiked(position, false)
@@ -251,7 +249,7 @@ class CommunityFragment : Fragment() {
                     override fun onFailure(call: Call<DeleteLikeResDto>, t: Throwable) {
                         if(isViewDestroyed) return
 
-                        Toast.makeText(requireContext(), t.message, Toast.LENGTH_SHORT).show()
+                        Util.showToastAndLog(requireContext(), t.message.toString())
                     }
                 })
             }
@@ -282,18 +280,12 @@ class CommunityFragment : Fragment() {
                             holder.petPhotoImage.setImageBitmap(photoBitmap)
                         }
                         else {
-                            // get error message
-                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                            // Toast + Log
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                            Log.d("error", errorMessage)
+                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                        // log error message
-                        Log.d("error", t.message.toString())
+                        Util.showToastAndLog(requireContext(), t.message.toString())
                     }
                 })
             }
@@ -393,18 +385,14 @@ class CommunityFragment : Fragment() {
                                 postMediaImage.layoutParams.height = (photoBitmap.height.toFloat() * ratio).toInt()
                             }
                         }else{
-                            // get error message
-                            val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                            // Toast + Log
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
                     }
 
                     override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                         if(isViewDestroyed) return
 
-                        Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
+                        Util.showToastAndLog(requireContext(), t.message.toString())
                     }
                 })
             }
@@ -466,7 +454,7 @@ class CommunityFragment : Fragment() {
                         }
                     }
                 }else{
-                    Toast.makeText(context, Util.getMessageFromErrorBody(response.errorBody()!!), Toast.LENGTH_LONG).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
 
                 // 새로고침 아이콘 제거
@@ -476,10 +464,10 @@ class CommunityFragment : Fragment() {
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-
                 // 새로고침 아이콘 제거
                 binding.layoutSwipeRefresh.isRefreshing = false
+
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -571,15 +559,14 @@ class CommunityFragment : Fragment() {
 
                     Toast.makeText(context, getString(R.string.delete_post_successful), Toast.LENGTH_LONG).show()
                 }else{
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<DeletePostResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

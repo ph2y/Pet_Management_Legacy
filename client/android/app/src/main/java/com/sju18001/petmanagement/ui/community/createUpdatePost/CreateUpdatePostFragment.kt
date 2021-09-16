@@ -362,21 +362,14 @@ class CreateUpdatePostFragment : Fragment() {
                     setPetSpinner()
                 }
                 else {
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -412,8 +405,7 @@ class CreateUpdatePostFragment : Fragment() {
                         }
                         // else -> show(Toast)/log error message
                         else{
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                            Log.d("error", errorMessage)
+                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
                     }
                 }
@@ -421,9 +413,7 @@ class CreateUpdatePostFragment : Fragment() {
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                     if(isViewDestroyed) return
 
-                    // show(Toast)/log error message
-                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                    Log.d("error", t.message.toString())
+                    Util.showToastAndLog(requireContext(), t.message.toString())
                 }
             })
     }
@@ -635,12 +625,7 @@ class CreateUpdatePostFragment : Fragment() {
                     createUpdatePostViewModel.apiIsLoading = false
                     setButtonToNormal()
 
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -651,9 +636,7 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -716,12 +699,7 @@ class CreateUpdatePostFragment : Fragment() {
                     createUpdatePostViewModel.apiIsLoading = false
                     setButtonToNormal()
 
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -732,9 +710,7 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -757,12 +733,7 @@ class CreateUpdatePostFragment : Fragment() {
                     createUpdatePostViewModel.apiIsLoading = false
                     setButtonToNormal()
 
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -773,9 +744,7 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -819,12 +788,7 @@ class CreateUpdatePostFragment : Fragment() {
                         createUpdatePostViewModel.apiIsLoading = false
                         setButtonToNormal()
 
-                        // get error message + show(Toast)
-                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                        // log error message
-                        Log.d("error", errorMessage)
+                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                     }
                 }
 
@@ -835,9 +799,7 @@ class CreateUpdatePostFragment : Fragment() {
                     createUpdatePostViewModel.apiIsLoading = false
                     setButtonToNormal()
 
-                    // show(Toast)/log error message
-                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                    Log.d("error", t.message.toString())
+                    Util.showToastAndLog(requireContext(), t.message.toString())
                 }
             })
         }
@@ -869,12 +831,7 @@ class CreateUpdatePostFragment : Fragment() {
                     createUpdatePostViewModel.apiIsLoading = false
                     setButtonToNormal()
 
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
@@ -885,9 +842,7 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -945,12 +900,7 @@ class CreateUpdatePostFragment : Fragment() {
                         }
                     }
                     else {
-                        // get error message
-                        val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                        // Toast + Log
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                        Log.d("error", errorMessage)
+                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                     }
                 }
 
@@ -958,9 +908,7 @@ class CreateUpdatePostFragment : Fragment() {
                     // if the view was destroyed(API call canceled) -> return
                     if(isViewDestroyed) return
 
-                    // show(Toast)/log error message
-                    Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                    Log.d("error", t.message.toString())
+                    Util.showToastAndLog(requireContext(), t.message.toString())
                 }
             })
         }
@@ -1020,27 +968,18 @@ class CreateUpdatePostFragment : Fragment() {
                     }
                 }
                 else {
-                    // close activity
                     requireActivity().finish()
 
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // close activity
                 requireActivity().finish()
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

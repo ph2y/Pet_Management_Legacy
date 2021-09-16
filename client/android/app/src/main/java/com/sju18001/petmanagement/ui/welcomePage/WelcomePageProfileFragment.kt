@@ -115,20 +115,14 @@ class WelcomePageProfileFragment : Fragment() {
                     requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
                 }
                 else {
-                    // get error message + show(Toast)
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                    // log error message
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(context, t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

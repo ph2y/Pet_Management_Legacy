@@ -151,21 +151,14 @@ class FollowerFollowingFragment : Fragment() {
                     followerFollowingViewModel.setFollowerTitle(followerText)
                 }
                 else {
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                    // Toast + Log
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<FetchFollowingResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
@@ -193,21 +186,14 @@ class FollowerFollowingFragment : Fragment() {
                     followerFollowingViewModel.setFollowingTitle(followingText)
                 }
                 else {
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                    // Toast + Log
-                    Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<FetchFollowerResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // show(Toast)/log error message
-                Toast.makeText(requireContext(), t.message.toString(), Toast.LENGTH_LONG).show()
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }

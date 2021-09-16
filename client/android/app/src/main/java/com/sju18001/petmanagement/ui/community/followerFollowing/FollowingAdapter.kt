@@ -129,12 +129,7 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
                     // set button to normal
                     holder.followUnfollowButton.isEnabled = true
 
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                    // Toast + Log
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(context, response.errorBody())
                 }
             }
 
@@ -144,8 +139,7 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
                 // set button to normal
                 holder.followUnfollowButton.isEnabled = true
 
-                // log error message
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(context, t.message.toString())
             }
         })
     }
@@ -175,18 +169,12 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
                     )
                 }
                 else {
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
-                    // Toast + Log
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    Util.showToastAndLogForFailedResponse(context, response.errorBody())
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // log error message
-                Log.d("error", t.message.toString())
+                Util.showToastAndLog(context, t.message.toString())
             }
         })
     }
