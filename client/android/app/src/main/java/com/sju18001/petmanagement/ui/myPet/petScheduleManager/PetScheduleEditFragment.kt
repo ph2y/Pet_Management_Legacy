@@ -53,7 +53,6 @@ class PetScheduleEditFragment : Fragment() {
         // for update_pet_schedule
         setViewForUpdate()
 
-        // 상태 로드
         loadState(myPetViewModel)
 
         // Timepicker
@@ -115,7 +114,6 @@ class PetScheduleEditFragment : Fragment() {
 
         addPetNameList()
 
-        // for hiding keyboard
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentPetScheduleEditParentLayout)
 
         return binding.root

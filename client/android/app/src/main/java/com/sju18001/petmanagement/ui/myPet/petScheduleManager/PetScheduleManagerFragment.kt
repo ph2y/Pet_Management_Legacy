@@ -54,7 +54,6 @@ class PetScheduleManagerFragment : Fragment() {
         _binding = FragmentPetScheduleManagerBinding.inflate(inflater, container, false)
         isViewDestroyed = false
 
-        // 어뎁터 초기화
         initializeAdapter()
 
         // 추가 버튼

@@ -27,7 +27,6 @@ class MyPetActivity : AppCompatActivity() {
         binding = ActivityMyPetBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // hide action bar
         supportActionBar?.hide()
 
         // get fragment type and show it(for first launch)

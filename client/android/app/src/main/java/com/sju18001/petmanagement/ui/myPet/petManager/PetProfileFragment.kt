@@ -63,7 +63,6 @@ class PetProfileFragment : Fragment(){
     override fun onStart() {
         super.onStart()
 
-        // check if API is loading
         checkIsLoading()
 
         // for pet update button
@@ -130,7 +129,6 @@ class PetProfileFragment : Fragment(){
         }
     }
 
-    // delete pet
     private fun deletePet() {
         // set api state/button to loading
         myPetViewModel.petManagerApiIsLoading = true
