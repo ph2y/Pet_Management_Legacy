@@ -91,7 +91,6 @@ class CreateUpdatePetFragment : Fragment() {
             myPetViewModel.petBirthDateValue = dayOfMonth
         }
 
-        // for view restore
         restoreState()
 
         // for pet photo picker
@@ -192,7 +191,6 @@ class CreateUpdatePetFragment : Fragment() {
             }
         }
 
-        // for hiding keyboard
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateUpdatePetParentLayout)
     }
 
@@ -277,7 +275,6 @@ class CreateUpdatePetFragment : Fragment() {
         myPetViewModel.petManagerApiIsLoading = true
         setButtonToLoading()
 
-        // trim text values
         trimTextValues()
 
         // for birth value
@@ -391,10 +388,8 @@ class CreateUpdatePetFragment : Fragment() {
                     if(isViewDestroyed) return
 
                     if(response.isSuccessful) {
-                        // delete copied file
                         File(path).delete()
 
-                        // close after success
                         closeAfterSuccess()
                     }
                     else {
@@ -440,7 +435,6 @@ class CreateUpdatePetFragment : Fragment() {
                         petIdList.add(it.id)
                     }
 
-                    // update pet photo
                     updatePetPhoto(petIdList[petIdList.size - 1], myPetViewModel.petPhotoPathValue)
                 }
                 else {
@@ -464,26 +458,22 @@ class CreateUpdatePetFragment : Fragment() {
         })
     }
 
-    // set button to loading
     private fun setButtonToLoading() {
         binding.confirmButton.visibility = View.GONE
         binding.createPetProgressBar.visibility = View.VISIBLE
     }
 
-    // set button to normal
     private fun setButtonToNormal() {
         binding.confirmButton.visibility = View.VISIBLE
         binding.createPetProgressBar.visibility = View.GONE
     }
 
-    // for valid check
     private fun checkIsValid() {
         // if valid -> enable confirm button
         binding.confirmButton.isEnabled = myPetViewModel.petNameValue != "" && myPetViewModel.petGenderValue != null &&
                 myPetViewModel.petSpeciesValue != "" && myPetViewModel.petBreedValue != ""
     }
 
-    // for loading check
     private fun checkIsLoading() {
         // if loading -> set button to loading
         if(myPetViewModel.petManagerApiIsLoading) {
@@ -494,7 +484,6 @@ class CreateUpdatePetFragment : Fragment() {
         }
     }
 
-    // for restoring views
     private fun restoreState() {
         // set selected photo(if any)
         if(myPetViewModel.petPhotoPathValue != "") {

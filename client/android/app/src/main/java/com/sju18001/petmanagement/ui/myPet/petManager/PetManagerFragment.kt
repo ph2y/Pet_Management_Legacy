@@ -128,7 +128,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
 
                     // if RecyclerView items not yet added
                     if(adapter.itemCount == 0) {
-                        // update list order + reorder
                         updatePetListOrder(petListApi)
                         reorderPetList(petListApi)
 
