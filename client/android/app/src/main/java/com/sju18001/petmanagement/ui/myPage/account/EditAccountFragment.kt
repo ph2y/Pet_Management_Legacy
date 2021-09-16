@@ -86,7 +86,6 @@ class EditAccountFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        // for view restore
         restoreState()
 
         // for button listeners
@@ -191,7 +190,6 @@ class EditAccountFragment : Fragment() {
                 dialog.dismiss()
             }
 
-            // for hiding keyboard
             Util.setupViewsForHideKeyboard(requireActivity(), dialog.findViewById(R.id.password_change_parent_layout))
         }
 
@@ -261,7 +259,6 @@ class EditAccountFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for hiding keyboard
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentEditAccountParentFragment)
     }
 
@@ -395,10 +392,8 @@ class EditAccountFragment : Fragment() {
                         account.photoUrl = response.body()!!.fileUrl
                         SessionManager.saveLoggedInAccount(requireContext(), account)
 
-                        // delete copied file
                         File(path).delete()
 
-                        // close after success
                         closeAfterSuccess()
                     }
                     else {
