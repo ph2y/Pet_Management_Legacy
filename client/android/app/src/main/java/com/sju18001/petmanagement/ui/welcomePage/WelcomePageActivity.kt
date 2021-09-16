@@ -13,7 +13,6 @@ class WelcomePageActivity : AppCompatActivity() {
         binding = ActivityWelcomePageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 액션바 숨김
         supportActionBar?.hide()
 
         if(supportFragmentManager.findFragmentById(R.id.welcome_page_activity_fragment_container) == null){
