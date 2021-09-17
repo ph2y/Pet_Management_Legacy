@@ -46,7 +46,6 @@ class HashtagListAdapter(private val createUpdatePostViewModel: CreateUpdatePost
     override fun getItemCount() = resultList.size
 
     private fun deleteItem(position: Int) {
-        // delete ViewModel RecyclerView list values
         createUpdatePostViewModel.hashtagList.removeAt(position)
 
         // for item remove animation

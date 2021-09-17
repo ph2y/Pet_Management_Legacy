@@ -78,7 +78,6 @@ class FollowerFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        // update RecyclerView
         updateRecyclerView()
     }
 
@@ -104,7 +103,6 @@ class FollowerFragment : Fragment() {
                         followingIdList.add(it.id)
                     }
 
-                    // fetch follower
                     fetchFollower()
                 }
                 else {

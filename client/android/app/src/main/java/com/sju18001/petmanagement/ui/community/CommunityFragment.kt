@@ -149,7 +149,6 @@ class CommunityFragment : Fragment() {
         _binding = FragmentCommunityBinding.inflate(inflater, container, false)
         isViewDestroyed = false
 
-        // 어뎁터 초기화
         initializeAdapter()
         
         // 초기 Post 추가
@@ -311,7 +310,6 @@ class CommunityFragment : Fragment() {
                         if(isViewDestroyed) return
 
                         if(response.isSuccessful){
-                            // 영상
                             if(Util.isUrlVideo(url)){
                                 // Save file
                                 val dir = File(requireContext().getExternalFilesDir(null).toString() +
@@ -457,14 +455,12 @@ class CommunityFragment : Fragment() {
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
 
-                // 새로고침 아이콘 제거
                 binding.layoutSwipeRefresh.isRefreshing = false
             }
 
             override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                // 새로고침 아이콘 제거
                 binding.layoutSwipeRefresh.isRefreshing = false
 
                 Util.showToastAndLog(requireContext(), t.message.toString())

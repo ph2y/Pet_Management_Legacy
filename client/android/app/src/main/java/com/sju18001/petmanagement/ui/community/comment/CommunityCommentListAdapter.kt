@@ -58,13 +58,11 @@ class CommunityCommentListAdapter(
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // 데이터 동기화
         updateDataSetToViewHolder(holder, dataSet[position], position)
         
         // 댓글 내용에 indent 추가
         setSpanToContent(holder.nicknameTextView, holder.contentsTextView)
-        
-        // 리스너 추가
+
         setListenerOnView(holder, position)
     }
 

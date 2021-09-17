@@ -102,7 +102,6 @@ class SearchActivity : AppCompatActivity() {
             updateFollowerIdList()
         }
 
-        // restore views
         restoreState()
     }
 
@@ -153,7 +152,6 @@ class SearchActivity : AppCompatActivity() {
         val nicknameText = searchViewModel.accountNickname + '님'
         binding.accountNickname.text = nicknameText
 
-        // set button status
         setButtonState()
     }
 
@@ -248,7 +246,6 @@ class SearchActivity : AppCompatActivity() {
                 setSearchButtonToNormal()
 
                 if(response.isSuccessful) {
-                    // set account info views
                     setAccountInfoViews(response.body()!!)
                 }
                 else {
@@ -297,13 +294,9 @@ class SearchActivity : AppCompatActivity() {
                     // save photo as byte array
                     searchViewModel.accountPhotoByteArray = response.body()!!.byteStream().readBytes()
 
-                    // set account photo
                     setAccountPhoto()
                 }
                 else {
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-
                     Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
                 }
             }
@@ -331,19 +324,14 @@ class SearchActivity : AppCompatActivity() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful) {
-                    // update follower id list(update button state)
                     updateFollowerIdList()
 
-                    // set api state/button to normal
                     searchViewModel.apiIsLoading = false
                 }
                 else {
                     // set api state/button to normal
                     searchViewModel.apiIsLoading = false
                     setButtonState()
-
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
 
                     Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
                 }
@@ -372,19 +360,14 @@ class SearchActivity : AppCompatActivity() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful) {
-                    // update follower id list(update button state)
                     updateFollowerIdList()
 
-                    // set api state/button to normal
                     searchViewModel.apiIsLoading = false
                 }
                 else {
                     // set api state/button to normal
                     searchViewModel.apiIsLoading = false
                     setButtonState()
-
-                    // get error message
-                    val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
 
                     Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
                 }

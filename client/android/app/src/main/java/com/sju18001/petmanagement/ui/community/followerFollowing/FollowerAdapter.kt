@@ -111,11 +111,9 @@ class FollowerAdapter(val context: Context) :
                     )
                     notifyItemChanged(position)
 
-                    // set button to normal
                     holder.followUnfollowButton.isEnabled = true
                 }
                 else {
-                    // set button to normal
                     holder.followUnfollowButton.isEnabled = true
 
                     Util.showToastAndLogForFailedResponse(context, response.errorBody())
@@ -149,11 +147,9 @@ class FollowerAdapter(val context: Context) :
                     )
                     notifyItemChanged(position)
 
-                    // set button to normal
                     holder.followUnfollowButton.isEnabled = true
                 }
                 else {
-                    // set button to normal
                     holder.followUnfollowButton.isEnabled = true
 
                     Util.showToastAndLogForFailedResponse(context, response.errorBody())
@@ -161,7 +157,6 @@ class FollowerAdapter(val context: Context) :
             }
 
             override fun onFailure(call: Call<DeleteFollowResDto>, t: Throwable) {
-                // set button to normal
                 holder.followUnfollowButton.isEnabled = true
 
                 Util.showToastAndLog(context, t.message.toString())

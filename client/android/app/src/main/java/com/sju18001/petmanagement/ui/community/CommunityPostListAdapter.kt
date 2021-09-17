@@ -61,10 +61,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val safePosition = holder.adapterPosition
 
-        // 데이터 동기화
         updateDataSetToViewHolder(holder, dataSet[safePosition], likedCounts[safePosition], safePosition)
-
-        // 리스너 추가
         setListenerOnView(holder, position)
     }
 
