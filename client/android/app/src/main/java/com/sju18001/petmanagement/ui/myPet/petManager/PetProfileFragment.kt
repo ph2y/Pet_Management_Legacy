@@ -328,6 +328,12 @@ class PetProfileFragment : Fragment(){
     }
 
     private fun getAccountPhotoAndInitializeRecyclerView() {
+        // 사진이 없을 때, 업데이트 없이 리싸이클러뷰를 초기화시킨다.
+        if(accountPhoto == null){
+            initializeAdapterAndSetPost()
+            return
+        }
+
         binding.postDataLoadingLayout.visibility = View.VISIBLE
         isAdapterInitialized = true
 
@@ -348,13 +354,7 @@ class PetProfileFragment : Fragment(){
                     // save account photo
                     accountPhoto = photoBitmap
 
-                    // 어뎁터 초기화
-                    initializeAdapter()
-
-                    // 초기 Post 추가
-                    resetPostData()
-                    updateAdapterDataSet(FetchPostReqDto(null, null,
-                        requireActivity().intent.getLongExtra("petId", -1), null))
+                    initializeAdapterAndSetPost()
                 }
                 else {
                     // get error message
@@ -371,6 +371,15 @@ class PetProfileFragment : Fragment(){
                 Log.d("error", t.message.toString())
             }
         })
+    }
+
+    private fun initializeAdapterAndSetPost(){
+        initializeAdapter()
+
+        // 초기 Post 추가
+        resetPostData()
+        updateAdapterDataSet(FetchPostReqDto(null, null,
+            requireActivity().intent.getLongExtra("petId", -1), null))
     }
 
     private fun initializeAdapter(){
