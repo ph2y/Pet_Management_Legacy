@@ -15,7 +15,8 @@
         android:textAlignment="center"
         android:textColor="@color/gray"
         android:textSize="18sp"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/my_pet_list_recyclerView"
