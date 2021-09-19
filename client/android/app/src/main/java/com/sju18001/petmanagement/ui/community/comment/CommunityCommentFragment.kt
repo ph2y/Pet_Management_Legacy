@@ -315,6 +315,10 @@ class CommunityCommentFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful){
+                    // set notification view
+                    val visibility = if(response.body()?.commentList?.size != 0) View.GONE else View.VISIBLE
+                    binding.emptyCommentListNotification.visibility = visibility
+
                     response.body()!!.commentList?.let {
                         if(it.isNotEmpty()){
                             // Set topCommentId

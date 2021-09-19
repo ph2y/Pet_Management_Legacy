@@ -441,6 +441,10 @@ class CommunityFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful){
+                    // set notification view
+                    val visibility = if(response.body()?.postList?.size != 0) View.GONE else View.VISIBLE
+                    binding.emptyPostListNotification.visibility = visibility
+
                     response.body()!!.postList?.let {
                         if(it.isNotEmpty()){
                             // 추가로, 로딩 중에 뷰가 제거되면 오류(Inconsistency detected)가 나는데, 칼럼이 생긴 이후에도 발생 시 fix할 것
