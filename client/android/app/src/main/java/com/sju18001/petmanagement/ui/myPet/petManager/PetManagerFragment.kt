@@ -126,6 +126,10 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                         myPetViewModel.addPetNameForId(it.id, it.name)
                     }
 
+                    // set notification view
+                    val visibility = if(petListApi.size != 0) View.GONE else View.VISIBLE
+                    binding.emptyPetListNotification.visibility = visibility
+
                     // if RecyclerView items not yet added
                     if(adapter.itemCount == 0) {
                         updatePetListOrder(petListApi)
@@ -240,7 +244,8 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                     break
                 }
             }
-            binding.myPetListRecyclerView.smoothScrollToPosition(petList.size - 1)
+            val position = if(petList.size >= 1) petList.size else 0
+            binding.myPetListRecyclerView.smoothScrollToPosition(position)
             updatePetListOrder(apiResponse)
             return
         }
