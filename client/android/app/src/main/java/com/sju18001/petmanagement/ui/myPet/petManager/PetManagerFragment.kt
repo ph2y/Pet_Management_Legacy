@@ -240,6 +240,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                     break
                 }
             }
+            binding.myPetListRecyclerView.smoothScrollToPosition(petList.size - 1)
             updatePetListOrder(apiResponse)
             return
         }

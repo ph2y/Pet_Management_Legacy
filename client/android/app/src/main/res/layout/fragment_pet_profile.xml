@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/username_and_pets_layout"
+        app:layout_constraintBottom_toTopOf="@id/pet_profile_main_scroll_view"
         android:padding="16dp">
 
         <ImageButton
@@ -34,190 +34,228 @@
 
     </RelativeLayout>
 
-    <!-- TODO: create layout for displaying username and it's pets(community)-->
-    <RelativeLayout
-        android:id="@+id/username_and_pets_layout"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/pet_profile_main_scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/back_button_layout"
-        app:layout_constraintBottom_toTopOf="@id/pet_info_layout">
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TODO: create layout for displaying username and it's pets(community)"/>
+        <LinearLayout
+            android:descendantFocusability="blocksDescendants"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/pet_info_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/username_and_pets_layout"
-        app:layout_constraintBottom_toTopOf="@id/buttons_layout"
-        android:paddingStart="2dp"
-        android:paddingEnd="2dp"
-        android:orientation="vertical">
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            app:cardCornerRadius="8dp">
-
-            <RelativeLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="12dp">
+                android:layout_height="match_parent">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/pet_photo"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    app:civ_border_width="1dp"
-                    app:civ_border_color="@color/carrot"/>
-
-                <LinearLayout
+                <!-- TODO: create layout for displaying username and it's pets(community)-->
+                <RelativeLayout
+                    android:id="@+id/username_and_pets_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@id/pet_photo"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="12dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/pet_info_layout">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TODO: create layout for displaying username and it's pets(community)"/>
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:id="@+id/pet_info_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/username_and_pets_layout"
+                    app:layout_constraintBottom_toTopOf="@id/buttons_layout"
+                    android:paddingStart="2dp"
+                    android:paddingEnd="2dp"
                     android:orientation="vertical">
 
-                    <RelativeLayout
-                        android:id="@+id/pet_name_species_breed_layout"
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="4dp"
+                        app:cardCornerRadius="8dp">
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="12dp">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/pet_photo"
+                                android:layout_width="80dp"
+                                android:layout_height="80dp"
+                                android:layout_alignParentStart="true"
+                                android:layout_centerVertical="true"
+                                app:civ_border_width="1dp"
+                                app:civ_border_color="@color/carrot"/>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_toEndOf="@id/pet_photo"
+                                android:layout_centerVertical="true"
+                                android:layout_marginStart="12dp"
+                                android:orientation="vertical">
+
+                                <RelativeLayout
+                                    android:id="@+id/pet_name_species_breed_layout"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="6dp">
+
+                                    <TextView
+                                        android:id="@+id/pet_name"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentStart="true"
+                                        android:layout_toStartOf="@id/pet_species_and_breed_layout"
+                                        android:layout_centerVertical="true"
+                                        android:maxLines="2"
+                                        android:ellipsize="end"
+                                        android:textSize="24dp"
+                                        android:textStyle="bold"/>
+
+                                    <LinearLayout
+                                        android:id="@+id/pet_species_and_breed_layout"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentEnd="true"
+                                        android:layout_centerVertical="true"
+                                        android:orientation="vertical">
+
+                                        <TextView
+                                            android:id="@+id/pet_species"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="end"
+                                            android:textSize="16dp"/>
+
+                                        <TextView
+                                            android:id="@+id/pet_breed"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_gravity="end"
+                                            android:textSize="16dp"/>
+
+                                    </LinearLayout>
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content">
+
+                                    <TextView
+                                        android:id="@+id/pet_birth"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_alignParentStart="true"
+                                        android:textSize="16dp"/>
+
+                                    <TextView
+                                        android:id="@+id/pet_gender_and_age"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_toEndOf="@id/pet_birth"
+                                        android:layout_alignParentEnd="true"
+                                        android:gravity="end"
+                                        android:textSize="16dp"/>
+
+                                </RelativeLayout>
+
+                            </LinearLayout>
+
+                        </RelativeLayout>
+
+                    </androidx.cardview.widget.CardView>
+
+                    <TextView
+                        android:id="@+id/pet_message"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="6dp">
-
-                        <TextView
-                            android:id="@+id/pet_name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:layout_toStartOf="@id/pet_species_and_breed_layout"
-                            android:layout_centerVertical="true"
-                            android:maxLines="2"
-                            android:ellipsize="end"
-                            android:textSize="24dp"
-                            android:textStyle="bold"/>
-
-                        <LinearLayout
-                            android:id="@+id/pet_species_and_breed_layout"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:layout_centerVertical="true"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/pet_species"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:textSize="16dp"/>
-
-                            <TextView
-                                android:id="@+id/pet_breed"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="end"
-                                android:textSize="16dp"/>
-
-                        </LinearLayout>
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <TextView
-                            android:id="@+id/pet_birth"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentStart="true"
-                            android:textSize="16dp"/>
-
-                        <TextView
-                            android:id="@+id/pet_gender_and_age"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_toEndOf="@id/pet_birth"
-                            android:layout_alignParentEnd="true"
-                            android:gravity="end"
-                            android:textSize="16dp"/>
-
-                    </RelativeLayout>
+                        android:layout_marginStart="14dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginEnd="14dp"
+                        android:paddingStart="16dp"
+                        android:paddingTop="22dp"
+                        android:paddingEnd="16dp"
+                        android:paddingBottom="16dp"
+                        android:textSize="16dp"
+                        android:textStyle="bold"
+                        android:textColor="@color/white"
+                        android:background="@drawable/pet_message_bubble"/>
 
                 </LinearLayout>
 
-            </RelativeLayout>
+                <LinearLayout
+                    android:id="@+id/buttons_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    app:layout_constraintTop_toBottomOf="@id/pet_info_layout"
+                    app:layout_constraintBottom_toTopOf="@id/recycler_view_post">
 
-        </androidx.cardview.widget.CardView>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/update_pet_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:layout_marginEnd="8dp"
+                        android:background="@drawable/button_with_radius"
+                        android:text="@string/update_pet_button"/>
 
-        <TextView
-            android:id="@+id/pet_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="14dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="14dp"
-            android:paddingStart="16dp"
-            android:paddingTop="22dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="16dp"
-            android:textSize="16dp"
-            android:textStyle="bold"
-            android:textColor="@color/white"
-            android:background="@drawable/pet_message_bubble"/>
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/delete_pet_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="8dp"
+                        android:background="@drawable/button_with_radius"
+                        android:text="@string/delete_pet_button"/>
 
-    </LinearLayout>
+                </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/buttons_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        app:layout_constraintTop_toBottomOf="@id/pet_info_layout"
-        app:layout_constraintBottom_toTopOf="@id/posts_layout">
+                <LinearLayout
+                    android:id="@+id/post_data_loading_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/buttons_layout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:orientation="vertical"
+                    android:visibility="gone">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/update_pet_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="3"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/button_with_radius"
-            android:text="@string/update_pet_button"/>
+                    <ProgressBar
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:layout_gravity="center"
+                        android:layout_margin="12dp"/>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/delete_pet_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            android:background="@drawable/button_with_radius"
-            android:text="@string/delete_pet_button"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="16dp"
+                        android:text="@string/post_data_loading_message"/>
 
-    </LinearLayout>
+                </LinearLayout>
 
-    <!-- TODO: create layout for displaying pet posts(community)-->
-    <RelativeLayout
-        android:id="@+id/posts_layout"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/buttons_layout"
-        app:layout_constraintBottom_toBottomOf="parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_view_post"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintTop_toBottomOf="@id/buttons_layout"
+                    android:clipToPadding="false"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="TODO: create layout for displaying pet posts(community)"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </RelativeLayout>
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

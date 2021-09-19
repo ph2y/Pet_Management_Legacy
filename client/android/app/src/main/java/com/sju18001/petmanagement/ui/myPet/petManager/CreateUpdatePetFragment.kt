@@ -115,7 +115,11 @@ class CreateUpdatePetFragment : Fragment() {
 
                 binding.petPhotoInput.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
                 myPetViewModel.petPhotoByteArray = null
-                myPetViewModel.petPhotoPathValue = ""
+                if (myPetViewModel.petPhotoPathValue != "") {
+                    File(myPetViewModel.petPhotoPathValue).delete()
+                    myPetViewModel.petPhotoPathValue = ""
+                }
+                myPetViewModel.isDeletePhoto = true
             }
         }
 
@@ -308,7 +312,7 @@ class CreateUpdatePetFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful) {
-                    // update pet photo(if selected)
+                    // update pet photo
                     updatePetPhoto(myPetViewModel.petIdValue!!, myPetViewModel.petPhotoPathValue)
                 }
                 else {
@@ -335,8 +339,14 @@ class CreateUpdatePetFragment : Fragment() {
     // update pet photo
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updatePetPhoto(id: Long, path: String) {
-        // If basic photo selected
-        if(path == "") {
+        // exception
+        if (!myPetViewModel.isDeletePhoto && path == "") {
+            closeAfterSuccess()
+            return
+        }
+
+        // delete photo
+        if(myPetViewModel.isDeletePhoto!!) {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .deletePetPhotoReq(DeletePetPhotoReqDto(id))
             call.enqueue(object: Callback<DeletePetPhotoResDto> {
@@ -349,12 +359,15 @@ class CreateUpdatePetFragment : Fragment() {
                     if(response.isSuccessful){
                         closeAfterSuccess()
                     }else{
+                        // get error message
                         val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
-                        
-                        // 사진이 애초에 없었을 경우
-                        if(errorMessage == "null"){
+
+                        // ignore null error(delete nothing)
+                        if (errorMessage == "null") {
                             closeAfterSuccess()
-                        }else{
+                        }
+
+                        else {
                             // set api state/button to normal
                             myPetViewModel.petManagerApiIsLoading = false
                             setButtonToNormal()
@@ -373,9 +386,10 @@ class CreateUpdatePetFragment : Fragment() {
 
                     Util.showToastAndLog(requireContext(), t.message.toString())
                 }
-            }
-            )
-        } else {
+            })
+        }
+        // update photo
+        else {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updatePetPhotoReq(id, MultipartBody.Part.createFormData("file", "file.png",
                     RequestBody.create(MediaType.parse("multipart/form-data"), File(path))))
@@ -603,6 +617,7 @@ class CreateUpdatePetFragment : Fragment() {
 
                 // save path to ViewModel
                 myPetViewModel.petPhotoPathValue = petPhotoPathValue
+                myPetViewModel.isDeletePhoto = false
 
                 // set photo to view
                 binding.petPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPetViewModel.petPhotoPathValue))
