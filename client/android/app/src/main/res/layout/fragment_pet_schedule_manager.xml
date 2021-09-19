@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.myPet.petScheduleManager.PetScheduleManagerFragment">
 
+    <TextView
+        android:id="@+id/empty_pet_schedule_list_notification"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/empty_pet_schedule_list_notification"
+        android:textAlignment="center"
+        android:textColor="@color/gray"
+        android:textSize="18sp"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pet_schedule_list_recycler_view"
         android:layout_width="match_parent"

@@ -45,6 +45,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/layout_comment_input">
 
+        <TextView
+            android:id="@+id/empty_comment_list_notification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/empty_comment_list_notification"
+            android:textAlignment="center"
+            android:textColor="@color/gray"
+            android:textSize="18sp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_comment"
             android:layout_width="match_parent"

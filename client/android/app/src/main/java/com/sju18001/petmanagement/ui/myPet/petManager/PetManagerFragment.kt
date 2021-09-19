@@ -107,6 +107,10 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful) {
+                    // set notification view
+                    val visibility = if(response.body()?.petList?.size != 0) View.GONE else View.VISIBLE
+                    binding.emptyPetListNotification.visibility = visibility
+
                     val petListApi: ArrayList<PetListItem> = ArrayList()
                     response.body()?.petList?.map {
                         val item = PetListItem()
@@ -125,10 +129,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
 
                         myPetViewModel.addPetNameForId(it.id, it.name)
                     }
-
-                    // set notification view
-                    val visibility = if(petListApi.size != 0) View.GONE else View.VISIBLE
-                    binding.emptyPetListNotification.visibility = visibility
 
                     // if RecyclerView items not yet added
                     if(adapter.itemCount == 0) {
