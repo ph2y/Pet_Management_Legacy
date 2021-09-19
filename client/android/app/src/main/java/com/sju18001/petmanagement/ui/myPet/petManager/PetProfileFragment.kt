@@ -318,12 +318,6 @@ class PetProfileFragment : Fragment(){
     }
 
     private fun getAccountPhotoAndInitializeRecyclerView() {
-        // 사진이 없을 때, 업데이트 없이 리싸이클러뷰를 초기화시킨다.
-        if(accountPhoto == null){
-            initializeAdapterAndSetPost()
-            return
-        }
-
         binding.postDataLoadingLayout.visibility = View.VISIBLE
         isAdapterInitialized = true
 
@@ -350,9 +344,15 @@ class PetProfileFragment : Fragment(){
                     // get error message
                     val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)
 
-                    // Toast + Log
-                    Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
-                    Log.d("error", errorMessage)
+                    // 사진이 없을 때, 업데이트 없이 리싸이클러뷰를 초기화시킨다.
+                    if (errorMessage == "null") {
+                        initializeAdapterAndSetPost()
+                    }
+                    else {
+                        // Toast + Log
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_LONG).show()
+                        Log.d("error", errorMessage)
+                    }
                 }
             }
 
