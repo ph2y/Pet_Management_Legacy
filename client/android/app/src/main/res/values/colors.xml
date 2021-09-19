@@ -9,6 +9,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray">#F2727272</color>
     <color name="border_line">#DFE3E6</color>
     <color name="emerald">#2ECC71</color>
     <color name="sunflower">#F1C40F</color>
