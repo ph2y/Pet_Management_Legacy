@@ -226,17 +226,21 @@ class CreateAccountFragment : Fragment() {
                     returnToPreviousFragment()
                 }
                 else {
-                    // if email overlap + show message
+                        // enable inputs
+                    (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
+                        .unlockEmailViews()
+                    (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
+                        .enableInputs()
+
                     when (Util.getMessageFromErrorBody(response.errorBody()!!)) {
+                        // if email overlap + show message
                         MESSAGE_EMAIL_OVERLAP -> {
                             loginViewModel.createAccountEmailIsOverlap = true
 
-                            // set email code valid to false + reset chronometer/requested email + unlock email views
+                            // set email code valid to false + reset chronometer/requested email
                             loginViewModel.emailCodeValid = false
                             loginViewModel.emailCodeChronometerBase = 0
                             loginViewModel.currentCodeRequestedEmail = ""
-                            (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
-                                .unlockEmailViews()
 
                             // show message
                             (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
@@ -296,10 +300,12 @@ class CreateAccountFragment : Fragment() {
                     if(isViewDestroyed) return
 
                     if(response.isSuccessful) {
-                        // set email code valid to true + lock email views
+                        // set email code valid to true + lock email views + disable inputs
                         loginViewModel.emailCodeValid = true
                         (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
                             .lockEmailViews()
+                        (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
+                            .disableInputs()
 
                         // call create account API if the code is valid
                         createAccount(loginViewModel)

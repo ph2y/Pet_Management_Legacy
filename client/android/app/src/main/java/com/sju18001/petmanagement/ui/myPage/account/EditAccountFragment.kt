@@ -290,6 +290,9 @@ class EditAccountFragment : Fragment() {
 
     // update account
     private fun updateAccount() {
+        setButtonToLoading()
+        disableInputs()
+
         // create dto
         val updateAccountReqDto = UpdateAccountReqDto(
             myPageViewModel.accountEmailValue,
@@ -323,6 +326,8 @@ class EditAccountFragment : Fragment() {
                 }
                 else {
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
+                    setButtonToNormal()
+                    enableInputs()
                 }
             }
 
@@ -330,6 +335,8 @@ class EditAccountFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
+                setButtonToNormal()
+                enableInputs()
             }
         })
     }
@@ -551,5 +558,37 @@ class EditAccountFragment : Fragment() {
                 binding.accountPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPageViewModel.accountPhotoPathValue))
             }
         }
+    }
+
+    private fun setButtonToLoading(){
+        binding.confirmButton.visibility = View.GONE
+        binding.updateAccountProgressBar.visibility = View.VISIBLE
+    }
+
+    private fun setButtonToNormal(){
+        binding.confirmButton.visibility = View.VISIBLE
+        binding.updateAccountProgressBar.visibility = View.GONE
+    }
+
+    private fun disableInputs() {
+        binding.emailReverifyButton.isEnabled = false
+        binding.emailEdit.isEnabled = false
+        binding.marketingSwitch.isEnabled = false
+        binding.accountPhotoInputButton.isEnabled = false
+        binding.nicknameEdit.isEnabled = false
+        binding.passwordChangeButton.isEnabled = false
+        binding.logoutButton.isEnabled = false
+        binding.deleteAccountButton.isEnabled = false
+    }
+
+    private fun enableInputs() {
+        binding.emailReverifyButton.isEnabled = true
+        binding.emailEdit.isEnabled = true
+        binding.marketingSwitch.isEnabled = true
+        binding.accountPhotoInputButton.isEnabled = true
+        binding.nicknameEdit.isEnabled = true
+        binding.passwordChangeButton.isEnabled = true
+        binding.logoutButton.isEnabled = true
+        binding.deleteAccountButton.isEnabled = true
     }
 }

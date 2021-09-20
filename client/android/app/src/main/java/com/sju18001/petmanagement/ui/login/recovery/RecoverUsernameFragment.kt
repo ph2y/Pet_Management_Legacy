@@ -135,6 +135,7 @@ class RecoverUsernameFragment : Fragment() {
 
         // 버튼 로딩 상태
         setButtonLoading(true)
+        disableInputs()
 
         call.enqueue(object: Callback<RecoverUsernameResDto> {
             override fun onResponse(
@@ -145,6 +146,7 @@ class RecoverUsernameFragment : Fragment() {
 
                 // 버튼 로딩 상태 해제
                 setButtonLoading(false)
+                enableInputs()
 
                 if(response.isSuccessful){
                     response.body()?.let{
@@ -160,6 +162,7 @@ class RecoverUsernameFragment : Fragment() {
 
                 // 버튼 로딩 상태 해제
                 setButtonLoading(false)
+                enableInputs()
 
                 Util.showToastAndLog(requireContext(), getString(R.string.fail_request))
             }
@@ -180,6 +183,14 @@ class RecoverUsernameFragment : Fragment() {
             }
             binding.recoverUsernameProgressBar.visibility = View.GONE
         }
+    }
+
+    private fun disableInputs() {
+        binding.emailEditText.isEnabled = false
+    }
+
+    private fun enableInputs() {
+        binding.emailEditText.isEnabled = true
     }
 
     private fun setViewForResult(username: String?){
