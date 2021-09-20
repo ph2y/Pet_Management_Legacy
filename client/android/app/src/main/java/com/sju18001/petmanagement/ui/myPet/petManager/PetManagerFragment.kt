@@ -116,10 +116,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful) {
-                    // set notification view
-                    val visibility = if(response.body()?.petList?.size != 0) View.GONE else View.VISIBLE
-                    binding.emptyPetListNotification.visibility = visibility
-
                     val petListApi: ArrayList<PetListItem> = ArrayList()
                     response.body()?.petList?.map {
                         val item = PetListItem()

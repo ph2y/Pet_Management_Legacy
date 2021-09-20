@@ -81,6 +81,18 @@ class CommunityFragment : Fragment() {
                         adapter.notifyItemInserted(0)
                         adapter.notifyItemRangeChanged(0, adapter.itemCount)
 
+<<<<<<< HEAD
+=======
+                        // 최하단 post를 삭제해야한다. 이 작업으로, 다음 페이지를 로드할 때
+                        /* 최하단 post를 로드하여 이 post가 총 2번 나타나는 버그를 방지한다.
+                        if(adapter.itemCount >= 1){
+                            adapter.removeItem(adapter.itemCount-1)
+                            adapter.notifyItemRemoved(adapter.itemCount-1)
+                            adapter.notifyItemRangeRemoved(adapter.itemCount-1, 1)
+                        }
+                        */
+
+>>>>>>> 802fa94 (notification logic changed)
                         binding.recyclerViewPost.scrollToPosition(0)
                     }
                 }
@@ -441,10 +453,6 @@ class CommunityFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful){
-                    // set notification view
-                    val visibility = if(response.body()?.postList?.size != 0) View.GONE else View.VISIBLE
-                    binding.emptyPostListNotification.visibility = visibility
-
                     response.body()!!.postList?.let {
                         if(it.isNotEmpty()){
                             // 추가로, 로딩 중에 뷰가 제거되면 오류(Inconsistency detected)가 나는데, 칼럼이 생긴 이후에도 발생 시 fix할 것

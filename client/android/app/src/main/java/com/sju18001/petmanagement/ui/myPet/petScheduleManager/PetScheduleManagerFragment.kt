@@ -211,10 +211,6 @@ class PetScheduleManagerFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful){
-                    // set notification view
-                    val visibility = if(response.body()?.petScheduleList?.size != 0) View.GONE else View.VISIBLE
-                    binding.emptyPetScheduleListNotification.visibility = visibility
-
                     // dataSet에 값 저장
                     response.body()?.petScheduleList?.map{
                         dataSet.add(PetSchedule(
