@@ -578,6 +578,7 @@ class CreateUpdatePostFragment : Fragment() {
         // set api state/button to loading
         createUpdatePostViewModel.apiIsLoading = true
         setButtonToLoading()
+        disableInputs()
 
         // get location data(if enabled)
         val latAndLong = getGeolocation()
@@ -622,6 +623,7 @@ class CreateUpdatePostFragment : Fragment() {
                     // set api state/button to normal
                     createUpdatePostViewModel.apiIsLoading = false
                     setButtonToNormal()
+                    enableInputs()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -633,6 +635,7 @@ class CreateUpdatePostFragment : Fragment() {
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
+                enableInputs()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -644,6 +647,7 @@ class CreateUpdatePostFragment : Fragment() {
         // set api state/button to loading
         createUpdatePostViewModel.apiIsLoading = true
         setButtonToLoading()
+        disableInputs()
 
         // get location data(if enabled)
         val latAndLong = getGeolocation()
@@ -695,6 +699,7 @@ class CreateUpdatePostFragment : Fragment() {
                     // set api state/button to normal
                     createUpdatePostViewModel.apiIsLoading = false
                     setButtonToNormal()
+                    enableInputs()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -706,6 +711,7 @@ class CreateUpdatePostFragment : Fragment() {
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
                 setButtonToNormal()
+                enableInputs()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -1026,6 +1032,26 @@ class CreateUpdatePostFragment : Fragment() {
 
         // restore post EditText
         binding.postEditText.setText(createUpdatePostViewModel.postEditText)
+    }
+
+    private fun disableInputs() {
+        binding.petNameSpinner.isEnabled = false
+        binding.locationSwitch.isEnabled = false
+        binding.uploadPhotosAndVideosButton.isEnabled = false
+        binding.disclosureSpinner.isEnabled = false
+        binding.hashtagInputEditText.isEnabled = false
+        binding.hashtagInputButton.isEnabled = false
+        binding.postEditText.isEnabled = false
+    }
+
+    private fun enableInputs() {
+        binding.petNameSpinner.isEnabled = true
+        binding.locationSwitch.isEnabled = true
+        binding.uploadPhotosAndVideosButton.isEnabled = true
+        binding.disclosureSpinner.isEnabled = true
+        binding.hashtagInputEditText.isEnabled = true
+        binding.hashtagInputButton.isEnabled = true
+        binding.postEditText.isEnabled = true
     }
 
     override fun onDestroyView() {

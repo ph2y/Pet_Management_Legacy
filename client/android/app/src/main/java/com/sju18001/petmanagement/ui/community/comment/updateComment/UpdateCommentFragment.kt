@@ -82,6 +82,7 @@ class UpdateCommentFragment : Fragment() {
 
     private fun updateComment(){
         setButtonToLoading()
+        disableInputs()
 
         val body = UpdateCommentReqDto(
             requireActivity().intent.getLongExtra("id", -1), binding.editTextUpdateComment.text.toString()
@@ -106,6 +107,7 @@ class UpdateCommentFragment : Fragment() {
                     activity?.finish()
                 }else{
                     setButtonToNormal()
+                    enableInputs()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -115,6 +117,7 @@ class UpdateCommentFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 setButtonToNormal()
+                enableInputs()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -130,5 +133,13 @@ class UpdateCommentFragment : Fragment() {
     private fun setButtonToNormal(){
         binding.buttonConfirm.visibility = View.VISIBLE
         binding.updateCommentProgressBar.visibility = View.GONE
+    }
+
+    private fun disableInputs() {
+        binding.editTextUpdateComment.isEnabled = false
+    }
+
+    private fun enableInputs() {
+        binding.editTextUpdateComment.isEnabled = true
     }
 }

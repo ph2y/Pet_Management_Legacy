@@ -196,6 +196,9 @@ class PetScheduleEditFragment : Fragment() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createPetSchedule(){
+        disableButtons()
+        disableInputs()
+
         val createPetScheduleReqDto = CreatePetScheduleReqDto(
             getCheckedPetIdList(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(), binding.memoEditText.text.toString()
         )
@@ -213,6 +216,8 @@ class PetScheduleEditFragment : Fragment() {
                     activity?.finish()
                 }else{
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
+                    enableButtons()
+                    enableInputs()
                 }
             }
 
@@ -220,12 +225,17 @@ class PetScheduleEditFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
+                enableButtons()
+                enableInputs()
             }
         })
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updatePetSchedule(id: Long, enabled: Boolean){
+        disableButtons()
+        disableInputs()
+
         val updatePetScheduleReqDto = UpdatePetScheduleReqDto(
             id, getCheckedPetIdList(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(), binding.memoEditText.text.toString(), enabled
         )
@@ -243,6 +253,8 @@ class PetScheduleEditFragment : Fragment() {
                     activity?.finish()
                 }else{
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
+                    enableButtons()
+                    enableInputs()
                 }
             }
 
@@ -250,6 +262,8 @@ class PetScheduleEditFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
+                enableButtons()
+                enableInputs()
             }
         })
     }
@@ -293,4 +307,33 @@ class PetScheduleEditFragment : Fragment() {
 
         return checkedPetIdList
     }
+
+    private fun disableButtons() {
+        binding.cancelButton.isEnabled = false
+        binding.confirmButton.isEnabled = false
+    }
+
+    private fun enableButtons() {
+        binding.cancelButton.isEnabled = true
+        binding.confirmButton.isEnabled = true
+    }
+
+    private fun disableInputs() {
+        binding.timePicker.isEnabled = false
+        binding.petNameListRecyclerView.isEnabled = false
+        binding.petNameListRecyclerView.let{
+            for(i in 0..adapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<CheckBox>(R.id.pet_name_check_box)?.isEnabled = false
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<CheckBox>(R.id.pet_name_check_box)?.buttonTintList = context?.resources?.getColorStateList(R.color.gray)
+            }
+        }
+        binding.memoEditText.isEnabled = false
+    }
+
+    private fun enableInputs() {
+        binding.timePicker.isEnabled = true
+        binding.petNameListRecyclerView.isEnabled = true
+        binding.memoEditText.isEnabled = true
+    }
+
 }

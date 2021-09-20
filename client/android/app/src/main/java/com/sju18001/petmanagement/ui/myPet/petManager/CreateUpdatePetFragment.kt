@@ -216,6 +216,7 @@ class CreateUpdatePetFragment : Fragment() {
         // set api state/button to loading
         myPetViewModel.petManagerApiIsLoading = true
         setButtonToLoading()
+        disableInputs()
 
         // trim text values
         trimTextValues()
@@ -256,6 +257,7 @@ class CreateUpdatePetFragment : Fragment() {
                     // set api state/button to normal
                     myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
+                    enableInputs()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -267,6 +269,7 @@ class CreateUpdatePetFragment : Fragment() {
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
                 setButtonToNormal()
+                enableInputs()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -319,6 +322,7 @@ class CreateUpdatePetFragment : Fragment() {
                     // set api state/button to normal
                     myPetViewModel.petManagerApiIsLoading = false
                     setButtonToNormal()
+                    enableInputs()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -330,6 +334,7 @@ class CreateUpdatePetFragment : Fragment() {
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
                 setButtonToNormal()
+                enableInputs()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -480,6 +485,30 @@ class CreateUpdatePetFragment : Fragment() {
     private fun setButtonToNormal() {
         binding.confirmButton.visibility = View.VISIBLE
         binding.createPetProgressBar.visibility = View.GONE
+    }
+
+    private fun disableInputs() {
+        binding.petPhotoInputButton.isEnabled = false
+        binding.petMessageInput.isEnabled = false
+        binding.petNameInput.isEnabled = false
+        binding.genderFemale.isEnabled = false
+        binding.genderMale.isEnabled = false
+        binding.petSpeciesInput.isEnabled = false
+        binding.petBreedInput.isEnabled = false
+        binding.petBirthInput.isEnabled = false
+        binding.yearOnlyCheckbox.isEnabled = false
+    }
+
+    private fun enableInputs() {
+        binding.petPhotoInputButton.isEnabled = true
+        binding.petMessageInput.isEnabled = true
+        binding.petNameInput.isEnabled = true
+        binding.genderFemale.isEnabled = true
+        binding.genderMale.isEnabled = true
+        binding.petSpeciesInput.isEnabled = true
+        binding.petBreedInput.isEnabled = true
+        binding.petBirthInput.isEnabled = true
+        binding.yearOnlyCheckbox.isEnabled = true
     }
 
     private fun checkIsValid() {

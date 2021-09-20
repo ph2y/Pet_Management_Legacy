@@ -113,6 +113,7 @@ class LoginFragment : Fragment() {
         // for login button
         binding.loginButton.setOnClickListener {
             disableButtons()
+            disableEditText()
             login(binding.usernameEditText.text.toString(), binding.pwEditText.text.toString())
         }
 
@@ -159,8 +160,9 @@ class LoginFragment : Fragment() {
                     // create custom snack bar to display error message
                     displayErrorMessage(context?.getText(R.string.login_failed)!!.toString())
 
-                    // enable buttons
+                    // enable buttons & editText
                     enableButtons()
+                    enableEditText()
                 }
             }
 
@@ -171,6 +173,7 @@ class LoginFragment : Fragment() {
                 displayErrorMessage(t.message.toString())
 
                 enableButtons()
+                enableEditText()
 
                 Log.d("error", t.message.toString())
             }
@@ -246,6 +249,7 @@ class LoginFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 enableButtons()
+                enableEditText()
 
                 Log.d("error", t.message.toString())
 
@@ -275,6 +279,16 @@ class LoginFragment : Fragment() {
         // enable create account, recovery buttons
         binding.createAccountButton.isEnabled = true
         binding.recoveryButton.isEnabled = true
+    }
+
+    private fun disableEditText() {
+        binding.usernameEditText.isEnabled = false
+        binding.pwEditText.isEnabled = false
+    }
+
+    private fun enableEditText() {
+        binding.usernameEditText.isEnabled = true
+        binding.pwEditText.isEnabled = true
     }
 
     private fun displayErrorMessage(message: String) {

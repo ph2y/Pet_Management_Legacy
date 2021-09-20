@@ -209,6 +209,14 @@ class CreateAccountUserInfoFragment : Fragment() {
         binding.emailCodeChronometerLayout.visibility = View.GONE
     }
 
+    public fun disableInputs() {
+        binding.phoneEditText.isEnabled = false
+    }
+
+    public fun enableInputs() {
+        binding.phoneEditText.isEnabled = true
+    }
+
     private fun requestEmailCode(loginViewModel: LoginViewModel) {
         val sendAuthCodeReqDto = SendAuthCodeReqDto(loginViewModel.createAccountEmailEditText)
 

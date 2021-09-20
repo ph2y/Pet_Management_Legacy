@@ -424,6 +424,7 @@ class CommunityCommentFragment : Fragment() {
 
     private fun createComment(body: CreateCommentReqDto){
         setCommentInputToLoading()
+        disableInputs()
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createCommentReq(body)
@@ -449,6 +450,7 @@ class CommunityCommentFragment : Fragment() {
 
                 setCommentInputToNormal()
                 setViewForReplyCancel()
+                enableInputs()
             }
 
             override fun onFailure(call: Call<CreateCommentResDto>, t: Throwable) {
@@ -456,6 +458,7 @@ class CommunityCommentFragment : Fragment() {
 
                 setCommentInputToNormal()
                 setViewForReplyCancel()
+                enableInputs()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -471,6 +474,14 @@ class CommunityCommentFragment : Fragment() {
     private fun setCommentInputToNormal(){
         binding.buttonCreateComment.visibility = View.VISIBLE
         binding.progressBarComment.visibility = View.GONE
+        binding.editTextComment.isEnabled = true
+    }
+
+    private fun disableInputs() {
+        binding.editTextComment.isEnabled = false
+    }
+
+    private fun enableInputs() {
         binding.editTextComment.isEnabled = true
     }
 

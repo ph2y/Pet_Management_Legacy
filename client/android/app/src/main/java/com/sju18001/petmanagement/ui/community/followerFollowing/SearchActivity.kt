@@ -113,6 +113,7 @@ class SearchActivity : AppCompatActivity() {
             // set api state/button to loading
             searchViewModel.apiIsLoading = true
             setSearchButtonToLoading()
+            disableInputs()
 
             searchAccount(searchViewModel.searchEditText)
         }
@@ -244,6 +245,7 @@ class SearchActivity : AppCompatActivity() {
                 // set api state/button to normal
                 searchViewModel.apiIsLoading = false
                 setSearchButtonToNormal()
+                enableInputs()
 
                 if(response.isSuccessful) {
                     setAccountInfoViews(response.body()!!)
@@ -273,6 +275,7 @@ class SearchActivity : AppCompatActivity() {
                 // set api state/button to normal
                 searchViewModel.apiIsLoading = false
                 setSearchButtonToNormal()
+                enableInputs()
 
                 Util.showToastAndLog(this@SearchActivity, t.message.toString())
             }
@@ -402,6 +405,14 @@ class SearchActivity : AppCompatActivity() {
             // follow unfollow button
             setButtonState()
         }
+    }
+
+    private fun disableInputs() {
+        binding.searchEditText.isEnabled = false
+    }
+
+    private fun enableInputs() {
+        binding.searchEditText.isEnabled = true
     }
 
     override fun onDestroy() {

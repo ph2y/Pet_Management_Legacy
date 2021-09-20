@@ -181,6 +181,7 @@ class RecoverPasswordFragment : Fragment() {
 
         // 버튼 로딩 상태
         setEmailInputButtonLoading(true)
+        disableEmailInput()
 
         val call = RetrofitBuilder.getServerApi().sendAuthCodeReq(sendAuthCodeReqDto)
         call.enqueue(object: Callback<SendAuthCodeResDto> {
@@ -192,6 +193,7 @@ class RecoverPasswordFragment : Fragment() {
 
                 // 버튼 로딩 상태 해제
                 setEmailInputButtonLoading(false)
+                enableEmailInput()
 
                 if(response.isSuccessful){
                     setViewForCodeInput()
@@ -205,6 +207,7 @@ class RecoverPasswordFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 setEmailInputButtonLoading(false)
+                enableEmailInput()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -232,6 +235,7 @@ class RecoverPasswordFragment : Fragment() {
         val recoverPasswordReqDto = RecoverPasswordReqDto(username, code)
 
         setCodeInputButtonLoading(true)
+        disableCodeInput()
 
         val call = RetrofitBuilder.getServerApi().recoverPasswordReq(recoverPasswordReqDto)
         call.enqueue(object: Callback<RecoverPasswordResDto> {
@@ -242,6 +246,7 @@ class RecoverPasswordFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 setCodeInputButtonLoading(false)
+                enableCodeInput()
 
                 if (response.isSuccessful) {
                     setViewForResult()
@@ -256,6 +261,7 @@ class RecoverPasswordFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 setCodeInputButtonLoading(false)
+                enableCodeInput()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -276,5 +282,21 @@ class RecoverPasswordFragment : Fragment() {
             }
             binding.codeInputProgressBar.visibility = View.GONE
         }
+    }
+
+    private fun disableEmailInput() {
+        binding.emailEditText.isEnabled = false
+    }
+
+    private fun enableEmailInput() {
+        binding.emailEditText.isEnabled = true
+    }
+
+    private fun disableCodeInput() {
+        binding.codeEditText.isEnabled = false
+    }
+
+    private fun enableCodeInput() {
+        binding.codeEditText.isEnabled = true
     }
 }
