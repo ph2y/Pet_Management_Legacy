@@ -14,9 +14,8 @@
         android:text="@string/empty_pet_schedule_list_notification"
         android:textAlignment="center"
         android:textColor="@color/gray"
-        android:textSize="18sp"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        android:textSize="16sp"
+        android:visibility="visible" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pet_schedule_list_recycler_view"
