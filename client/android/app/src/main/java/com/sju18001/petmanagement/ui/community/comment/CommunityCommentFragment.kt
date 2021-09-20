@@ -203,6 +203,21 @@ class CommunityCommentFragment : Fragment() {
                 }
             })
         }
+
+        // set adapter item change observer
+        adapter.registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+            override fun onChanged() {
+                super.onChanged()
+
+                setEmptyNotificationView(adapter.itemCount)
+            }
+
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+
+                setEmptyNotificationView(adapter.itemCount)
+            }
+        })
     }
 
     private fun setViewForReply(id: Long, nickname: String) {
@@ -300,10 +315,6 @@ class CommunityCommentFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful){
-                    // set notification view
-                    val visibility = if(response.body()?.commentList?.size != 0) View.GONE else View.VISIBLE
-                    binding.emptyCommentListNotification.visibility = visibility
-
                     response.body()!!.commentList?.let {
                         if(it.isNotEmpty()){
                             // Set topCommentId
@@ -494,5 +505,11 @@ class CommunityCommentFragment : Fragment() {
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
+    }
+
+    private fun setEmptyNotificationView(itemCount: Int?) {
+        // set notification view
+        val visibility = if(itemCount != 0) View.GONE else View.VISIBLE
+        binding.emptyCommentListNotification.visibility = visibility
     }
 }

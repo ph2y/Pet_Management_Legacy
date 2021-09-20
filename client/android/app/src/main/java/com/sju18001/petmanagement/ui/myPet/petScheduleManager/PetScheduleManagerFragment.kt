@@ -15,6 +15,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.work.*
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
@@ -178,6 +179,21 @@ class PetScheduleManagerFragment : Fragment() {
 
         binding.petScheduleListRecyclerView.adapter = adapter
         binding.petScheduleListRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+        // set adapter item change observer
+        adapter.registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+            override fun onChanged() {
+                super.onChanged()
+
+                setEmptyNotificationView(adapter.itemCount)
+            }
+
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+
+                setEmptyNotificationView(adapter.itemCount)
+            }
+        })
     }
 
     private fun updateAdapterDataSetByFetchPetSchedule(){
@@ -195,10 +211,6 @@ class PetScheduleManagerFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful){
-                    // set notification view
-                    val visibility = if(response.body()?.petScheduleList?.size != 0) View.GONE else View.VISIBLE
-                    binding.emptyPetScheduleListNotification.visibility = visibility
-
                     // dataSet에 값 저장
                     response.body()?.petScheduleList?.map{
                         dataSet.add(PetSchedule(
@@ -221,5 +233,11 @@ class PetScheduleManagerFragment : Fragment() {
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
+    }
+
+    private fun setEmptyNotificationView(itemCount: Int) {
+        // set notification view
+        val visibility = if(itemCount != 0) View.GONE else View.VISIBLE
+        binding.emptyPetScheduleListNotification.visibility = visibility
     }
 }

@@ -72,6 +72,15 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         binding.myPetListRecyclerView.adapter = adapter
         binding.myPetListRecyclerView.layoutManager = LinearLayoutManager(activity)
 
+        // set adapter item change observer
+        adapter.registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+            override fun onChanged() {
+                super.onChanged()
+
+                setEmptyNotificationView(adapter.itemCount)
+            }
+        })
+
         touchHelper = ItemTouchHelper(PetListDragAdapter(adapter))
         touchHelper.attachToRecyclerView(binding.myPetListRecyclerView)
 
@@ -107,10 +116,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful) {
-                    // set notification view
-                    val visibility = if(response.body()?.petList?.size != 0) View.GONE else View.VISIBLE
-                    binding.emptyPetListNotification.visibility = visibility
-
                     val petListApi: ArrayList<PetListItem> = ArrayList()
                     response.body()?.petList?.map {
                         val item = PetListItem()
@@ -143,6 +148,8 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                     else {
                         checkListDifference(petListApi)
                     }
+
+                    adapter.notifyDataSetChanged()
                 }
                 else {
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
@@ -155,6 +162,21 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // save RecyclerView scroll position
+        myPetViewModel.lastScrolledIndex = (binding.myPetListRecyclerView.layoutManager as LinearLayoutManager)
+            .findFirstVisibleItemPosition()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+
+        isViewDestroyed = true
     }
 
     // update pet list order
@@ -276,18 +298,9 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         return gson.fromJson(json, type)
     }
 
-    override fun onStop() {
-        super.onStop()
-
-        // save RecyclerView scroll position
-        myPetViewModel.lastScrolledIndex = (binding.myPetListRecyclerView.layoutManager as LinearLayoutManager)
-            .findFirstVisibleItemPosition()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-
-        isViewDestroyed = true
+    private fun setEmptyNotificationView(itemCount: Int) {
+        // set notification view
+        val visibility = if(itemCount != 0) View.GONE else View.VISIBLE
+        binding.emptyPetListNotification.visibility = visibility
     }
 }

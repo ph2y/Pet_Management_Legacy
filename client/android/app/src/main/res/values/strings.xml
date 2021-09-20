@@ -99,7 +99,7 @@
     <string name="delete_pet_button">펫 삭제</string>
     <string name="delete_pet_dialog_message">펫을 삭제할까요?</string>
     <string name="delete_pet_successful">펫이 삭제되었어요!</string>
-    <string name="empty_pet_list_notification">아직 반려동물이 추가되지 않았네요.\n나의 반려동물을 추가해보세요!</string>
+    <string name="empty_pet_list_notification">아직 반려동물이 추가되지 않았어요.\n나의 반려동물을 추가해보세요!</string>
 
     <!-- WelcomePage Fragment -->
     <string name="skip_button">SKIP</string>
@@ -114,7 +114,7 @@
     <string name="pet_schedule_update_title">일정 편집</string>
     <string name="pet_name_list_title">반려동물을 선택하세요.</string>
     <string name="memo_title">메모</string>
-    <string name="empty_pet_schedule_list_notification">아직 일정이 추가되지 않았네요.\n반려동물을 위한 일정을 추가해보세요!</string>
+    <string name="empty_pet_schedule_list_notification">아직 일정이 추가되지 않았어요.\n반려동물을 위한 일정을 추가해보세요!</string>
 
     <!-- Map Fragment -->
     <string name="cafe">카페</string>
