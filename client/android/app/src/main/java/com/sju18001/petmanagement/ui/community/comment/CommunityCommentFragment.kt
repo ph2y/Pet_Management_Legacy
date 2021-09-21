@@ -423,8 +423,7 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun createComment(body: CreateCommentReqDto){
-        setCommentInputToLoading()
-        disableInputs()
+        lockViews()
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createCommentReq(body)
@@ -448,40 +447,34 @@ class CommunityCommentFragment : Fragment() {
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
 
-                setCommentInputToNormal()
+                unlockViews()
                 setViewForReplyCancel()
-                enableInputs()
             }
 
             override fun onFailure(call: Call<CreateCommentResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                setCommentInputToNormal()
+                unlockViews()
                 setViewForReplyCancel()
-                enableInputs()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
 
-    private fun setCommentInputToLoading(){
+    private fun lockViews(){
         binding.buttonCreateComment.visibility = View.GONE
         binding.progressBarComment.visibility = View.VISIBLE
+
+        binding.editTextComment.isEnabled = false
         binding.editTextComment.isEnabled = false
     }
 
-    private fun setCommentInputToNormal(){
+    private fun unlockViews(){
         binding.buttonCreateComment.visibility = View.VISIBLE
         binding.progressBarComment.visibility = View.GONE
+
         binding.editTextComment.isEnabled = true
-    }
-
-    private fun disableInputs() {
-        binding.editTextComment.isEnabled = false
-    }
-
-    private fun enableInputs() {
         binding.editTextComment.isEnabled = true
     }
 

@@ -209,11 +209,13 @@ class CreateAccountUserInfoFragment : Fragment() {
         binding.emailCodeChronometerLayout.visibility = View.GONE
     }
 
-    public fun disableInputs() {
+    public fun lockViews() {
+        lockEmailViews()
         binding.phoneEditText.isEnabled = false
     }
 
-    public fun enableInputs() {
+    public fun unlockViews() {
+        unlockEmailViews()
         binding.phoneEditText.isEnabled = true
     }
 

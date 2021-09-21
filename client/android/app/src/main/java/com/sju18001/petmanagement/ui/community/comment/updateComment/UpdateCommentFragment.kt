@@ -81,8 +81,7 @@ class UpdateCommentFragment : Fragment() {
     }
 
     private fun updateComment(){
-        setButtonToLoading()
-        disableInputs()
+        lockInputs()
 
         val body = UpdateCommentReqDto(
             requireActivity().intent.getLongExtra("id", -1), binding.editTextUpdateComment.text.toString()
@@ -106,8 +105,7 @@ class UpdateCommentFragment : Fragment() {
                     Toast.makeText(context, context?.getText(R.string.update_comment_success), Toast.LENGTH_SHORT).show()
                     activity?.finish()
                 }else{
-                    setButtonToNormal()
-                    enableInputs()
+                    unlockInputs()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -116,8 +114,7 @@ class UpdateCommentFragment : Fragment() {
             override fun onFailure(call: Call<UpdateCommentResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                setButtonToNormal()
-                enableInputs()
+                unlockInputs()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -125,21 +122,15 @@ class UpdateCommentFragment : Fragment() {
     }
 
 
-    private fun setButtonToLoading(){
+    private fun lockInputs(){
         binding.buttonConfirm.visibility = View.GONE
         binding.updateCommentProgressBar.visibility = View.VISIBLE
-    }
-
-    private fun setButtonToNormal(){
-        binding.buttonConfirm.visibility = View.VISIBLE
-        binding.updateCommentProgressBar.visibility = View.GONE
-    }
-
-    private fun disableInputs() {
         binding.editTextUpdateComment.isEnabled = false
     }
 
-    private fun enableInputs() {
+    private fun unlockInputs(){
+        binding.buttonConfirm.visibility = View.VISIBLE
+        binding.updateCommentProgressBar.visibility = View.GONE
         binding.editTextUpdateComment.isEnabled = true
     }
 }

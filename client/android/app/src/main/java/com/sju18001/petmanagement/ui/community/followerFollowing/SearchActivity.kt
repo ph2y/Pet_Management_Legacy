@@ -112,19 +112,10 @@ class SearchActivity : AppCompatActivity() {
         else {
             // set api state/button to loading
             searchViewModel.apiIsLoading = true
-            setSearchButtonToLoading()
-            disableInputs()
+            lockViews()
 
             searchAccount(searchViewModel.searchEditText)
         }
-    }
-
-    private fun setSearchButtonToLoading() {
-        binding.searchButton.isEnabled = false
-    }
-
-    private fun setSearchButtonToNormal() {
-        binding.searchButton.isEnabled = true
     }
 
     private fun setAccountInfoViews(fetchAccountResDto: FetchAccountResDto) {
@@ -244,8 +235,7 @@ class SearchActivity : AppCompatActivity() {
 
                 // set api state/button to normal
                 searchViewModel.apiIsLoading = false
-                setSearchButtonToNormal()
-                enableInputs()
+                unlockViews()
 
                 if(response.isSuccessful) {
                     setAccountInfoViews(response.body()!!)
@@ -274,8 +264,7 @@ class SearchActivity : AppCompatActivity() {
 
                 // set api state/button to normal
                 searchViewModel.apiIsLoading = false
-                setSearchButtonToNormal()
-                enableInputs()
+                unlockViews()
 
                 Util.showToastAndLog(this@SearchActivity, t.message.toString())
             }
@@ -407,12 +396,14 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun disableInputs() {
+    private fun lockViews() {
         binding.searchEditText.isEnabled = false
+        binding.searchButton.isEnabled = false
     }
 
-    private fun enableInputs() {
+    private fun unlockViews() {
         binding.searchEditText.isEnabled = true
+        binding.searchButton.isEnabled = true
     }
 
     override fun onDestroy() {

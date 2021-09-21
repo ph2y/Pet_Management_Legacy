@@ -135,7 +135,7 @@ class RecoverUsernameFragment : Fragment() {
 
         // 버튼 로딩 상태
         setButtonLoading(true)
-        disableInputs()
+        lockViews()
 
         call.enqueue(object: Callback<RecoverUsernameResDto> {
             override fun onResponse(
@@ -146,7 +146,7 @@ class RecoverUsernameFragment : Fragment() {
 
                 // 버튼 로딩 상태 해제
                 setButtonLoading(false)
-                enableInputs()
+                unlockViews()
 
                 if(response.isSuccessful){
                     response.body()?.let{
@@ -162,7 +162,7 @@ class RecoverUsernameFragment : Fragment() {
 
                 // 버튼 로딩 상태 해제
                 setButtonLoading(false)
-                enableInputs()
+                unlockViews()
 
                 Util.showToastAndLog(requireContext(), getString(R.string.fail_request))
             }
@@ -185,11 +185,11 @@ class RecoverUsernameFragment : Fragment() {
         }
     }
 
-    private fun disableInputs() {
+    private fun lockViews() {
         binding.emailEditText.isEnabled = false
     }
 
-    private fun enableInputs() {
+    private fun unlockViews() {
         binding.emailEditText.isEnabled = true
     }
 
