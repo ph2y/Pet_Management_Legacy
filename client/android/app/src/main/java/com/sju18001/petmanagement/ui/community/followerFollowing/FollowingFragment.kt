@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFollowingBinding
@@ -70,6 +71,18 @@ class FollowingFragment : Fragment() {
         binding.followingRecyclerView.setHasFixedSize(true)
         binding.followingRecyclerView.adapter = followingAdapter
         binding.followingRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+        // Set adapter item change observer
+        followingAdapter.registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+            override fun onChanged() {
+                super.onChanged()
+                setEmptyFollowingView(followingAdapter.itemCount)
+            }
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+                setEmptyFollowingView(followingAdapter.itemCount)
+            }
+        })
     }
 
     override fun onResume() {
@@ -77,6 +90,11 @@ class FollowingFragment : Fragment() {
 
         // update RecyclerView
         fetchFollowing()
+    }
+
+    private fun setEmptyFollowingView(itemCount: Int){
+        val visibility = if(itemCount != 0) View.GONE else View.VISIBLE
+        binding.emptyFollowingList.visibility = visibility
     }
 
     private fun fetchFollowing() {
