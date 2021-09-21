@@ -1042,6 +1042,16 @@ class CreateUpdatePostFragment : Fragment() {
         binding.hashtagInputEditText.isEnabled = false
         binding.hashtagInputButton.isEnabled = false
         binding.postEditText.isEnabled = false
+        binding.photosAndVideosRecyclerView.let {
+            for(i in 0..photoVideoAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
+            }
+        }
+        binding.hashtagRecyclerView.let {
+            for(i in 0..hashtagAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
+            }
+        }
     }
 
     private fun enableInputs() {
@@ -1052,6 +1062,16 @@ class CreateUpdatePostFragment : Fragment() {
         binding.hashtagInputEditText.isEnabled = true
         binding.hashtagInputButton.isEnabled = true
         binding.postEditText.isEnabled = true
+        binding.photosAndVideosRecyclerView.let {
+            for(i in 0..photoVideoAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
+            }
+        }
+        binding.hashtagRecyclerView.let {
+            for(i in 0..hashtagAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
+            }
+        }
     }
 
     override fun onDestroyView() {
