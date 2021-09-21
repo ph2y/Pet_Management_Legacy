@@ -81,18 +81,7 @@ class CommunityFragment : Fragment() {
                         adapter.notifyItemInserted(0)
                         adapter.notifyItemRangeChanged(0, adapter.itemCount)
 
-                        // 최하단 post를 삭제해야한다. 이 작업으로, 다음 페이지를 로드할 때
-                        /* 최하단 post를 로드하여 이 post가 총 2번 나타나는 버그를 방지한다.
-                        if(adapter.itemCount >= 1){
-                            adapter.removeItem(adapter.itemCount-1)
-                            adapter.notifyItemRemoved(adapter.itemCount-1)
-                            adapter.notifyItemRangeRemoved(adapter.itemCount-1, 1)
-                        }
-                        */
-
                         binding.recyclerViewPost.scrollToPosition(0)
-
-                        topPostId = postId
                     }
                 }
             }
