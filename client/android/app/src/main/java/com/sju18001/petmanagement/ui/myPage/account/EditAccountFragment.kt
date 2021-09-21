@@ -290,8 +290,7 @@ class EditAccountFragment : Fragment() {
 
     // update account
     private fun updateAccount() {
-        setButtonToLoading()
-        disableInputs()
+        lockViews()
 
         // create dto
         val updateAccountReqDto = UpdateAccountReqDto(
@@ -326,8 +325,7 @@ class EditAccountFragment : Fragment() {
                 }
                 else {
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                    setButtonToNormal()
-                    enableInputs()
+                    unlockViews()
                 }
             }
 
@@ -335,8 +333,7 @@ class EditAccountFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
-                setButtonToNormal()
-                enableInputs()
+                unlockViews()
             }
         })
     }
@@ -560,17 +557,10 @@ class EditAccountFragment : Fragment() {
         }
     }
 
-    private fun setButtonToLoading(){
+    private fun lockViews() {
         binding.confirmButton.visibility = View.GONE
         binding.updateAccountProgressBar.visibility = View.VISIBLE
-    }
 
-    private fun setButtonToNormal(){
-        binding.confirmButton.visibility = View.VISIBLE
-        binding.updateAccountProgressBar.visibility = View.GONE
-    }
-
-    private fun disableInputs() {
         binding.emailReverifyButton.isEnabled = false
         binding.emailEdit.isEnabled = false
         binding.marketingSwitch.isEnabled = false
@@ -579,9 +569,14 @@ class EditAccountFragment : Fragment() {
         binding.passwordChangeButton.isEnabled = false
         binding.logoutButton.isEnabled = false
         binding.deleteAccountButton.isEnabled = false
+        binding.accountPhotoInput.borderColor = resources.getColor(R.color.gray)
+        binding.accountPhotoInputButton.circleBackgroundColor = resources.getColor(R.color.gray)
     }
 
-    private fun enableInputs() {
+    private fun unlockViews() {
+        binding.confirmButton.visibility = View.VISIBLE
+        binding.updateAccountProgressBar.visibility = View.GONE
+
         binding.emailReverifyButton.isEnabled = true
         binding.emailEdit.isEnabled = true
         binding.marketingSwitch.isEnabled = true
@@ -590,5 +585,7 @@ class EditAccountFragment : Fragment() {
         binding.passwordChangeButton.isEnabled = true
         binding.logoutButton.isEnabled = true
         binding.deleteAccountButton.isEnabled = true
+        binding.accountPhotoInput.borderColor = resources.getColor(R.color.carrot)
+        binding.accountPhotoInputButton.circleBackgroundColor = resources.getColor(R.color.carrot)
     }
 }

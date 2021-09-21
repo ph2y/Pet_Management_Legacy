@@ -536,15 +536,51 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     // set button to loading
-    private fun setButtonToLoading() {
+    private fun lockViews() {
         binding.confirmButton.visibility = View.GONE
         binding.createUpdatePostProgressBar.visibility = View.VISIBLE
+
+        binding.petNameSpinner.isEnabled = false
+        binding.locationSwitch.isEnabled = false
+        binding.uploadPhotosAndVideosButton.isEnabled = false
+        binding.disclosureSpinner.isEnabled = false
+        binding.hashtagInputEditText.isEnabled = false
+        binding.hashtagInputButton.isEnabled = false
+        binding.postEditText.isEnabled = false
+        binding.photosAndVideosRecyclerView.let {
+            for(i in 0..photoVideoAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
+            }
+        }
+        binding.hashtagRecyclerView.let {
+            for(i in 0..hashtagAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
+            }
+        }
     }
 
     // set button to normal
-    private fun setButtonToNormal() {
+    private fun unlockViews() {
         binding.confirmButton.visibility = View.VISIBLE
         binding.createUpdatePostProgressBar.visibility = View.GONE
+
+        binding.petNameSpinner.isEnabled = true
+        binding.locationSwitch.isEnabled = true
+        binding.uploadPhotosAndVideosButton.isEnabled = true
+        binding.disclosureSpinner.isEnabled = true
+        binding.hashtagInputEditText.isEnabled = true
+        binding.hashtagInputButton.isEnabled = true
+        binding.postEditText.isEnabled = true
+        binding.photosAndVideosRecyclerView.let {
+            for(i in 0..photoVideoAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
+            }
+        }
+        binding.hashtagRecyclerView.let {
+            for(i in 0..hashtagAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
+            }
+        }
     }
 
     private fun addHashtag(){
@@ -577,8 +613,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun createPost() {
         // set api state/button to loading
         createUpdatePostViewModel.apiIsLoading = true
-        setButtonToLoading()
-        disableInputs()
+        lockViews()
 
         // get location data(if enabled)
         val latAndLong = getGeolocation()
@@ -588,7 +623,7 @@ class CreateUpdatePostFragment : Fragment() {
             Permission.requestNotGrantedPermissions(requireContext(), Permission.requiredPermissionsForLocation)
 
             // 권한 요청이 비동기적이기 때문에, 권한 요청 이후에 CreatePost 버튼을 다시 눌러야한다.
-            setButtonToNormal()
+            unlockViews()
             return
         }
 
@@ -622,8 +657,7 @@ class CreateUpdatePostFragment : Fragment() {
                 else {
                     // set api state/button to normal
                     createUpdatePostViewModel.apiIsLoading = false
-                    setButtonToNormal()
-                    enableInputs()
+                    unlockViews()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -634,8 +668,7 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
-                setButtonToNormal()
-                enableInputs()
+                unlockViews()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -646,8 +679,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun updatePost() {
         // set api state/button to loading
         createUpdatePostViewModel.apiIsLoading = true
-        setButtonToLoading()
-        disableInputs()
+        lockViews()
 
         // get location data(if enabled)
         val latAndLong = getGeolocation()
@@ -657,7 +689,7 @@ class CreateUpdatePostFragment : Fragment() {
             Permission.requestNotGrantedPermissions(requireContext(), Permission.requiredPermissionsForLocation)
 
             // 권한 요청이 비동기적이기 때문에, 권한 요청 이후에 CreatePost 버튼을 다시 눌러야한다.
-            setButtonToNormal()
+            unlockViews()
             return
         }
 
@@ -698,8 +730,7 @@ class CreateUpdatePostFragment : Fragment() {
                 else {
                     // set api state/button to normal
                     createUpdatePostViewModel.apiIsLoading = false
-                    setButtonToNormal()
-                    enableInputs()
+                    unlockViews()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -710,8 +741,7 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
-                setButtonToNormal()
-                enableInputs()
+                unlockViews()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -734,7 +764,7 @@ class CreateUpdatePostFragment : Fragment() {
                 }else{
                     // set api state/button to normal
                     createUpdatePostViewModel.apiIsLoading = false
-                    setButtonToNormal()
+                    unlockViews()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -745,7 +775,7 @@ class CreateUpdatePostFragment : Fragment() {
                 
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
-                setButtonToNormal()
+                unlockViews()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -786,7 +816,7 @@ class CreateUpdatePostFragment : Fragment() {
                     else {
                         // set api state/button to normal
                         createUpdatePostViewModel.apiIsLoading = false
-                        setButtonToNormal()
+                        unlockViews()
 
                         Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                     }
@@ -797,7 +827,7 @@ class CreateUpdatePostFragment : Fragment() {
 
                     // set api state/button to normal
                     createUpdatePostViewModel.apiIsLoading = false
-                    setButtonToNormal()
+                    unlockViews()
 
                     Util.showToastAndLog(requireContext(), t.message.toString())
                 }
@@ -827,7 +857,7 @@ class CreateUpdatePostFragment : Fragment() {
                 else {
                     // set api state/button to normal
                     createUpdatePostViewModel.apiIsLoading = false
-                    setButtonToNormal()
+                    unlockViews()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -838,7 +868,7 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
-                setButtonToNormal()
+                unlockViews()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -993,7 +1023,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun closeAfterSuccess() {
         // set api state/button to normal
         createUpdatePostViewModel.apiIsLoading = false
-        setButtonToNormal()
+        unlockViews()
 
         // delete copied files(if any)
         if(isRemoving || requireActivity().isFinishing) {
@@ -1032,46 +1062,6 @@ class CreateUpdatePostFragment : Fragment() {
 
         // restore post EditText
         binding.postEditText.setText(createUpdatePostViewModel.postEditText)
-    }
-
-    private fun disableInputs() {
-        binding.petNameSpinner.isEnabled = false
-        binding.locationSwitch.isEnabled = false
-        binding.uploadPhotosAndVideosButton.isEnabled = false
-        binding.disclosureSpinner.isEnabled = false
-        binding.hashtagInputEditText.isEnabled = false
-        binding.hashtagInputButton.isEnabled = false
-        binding.postEditText.isEnabled = false
-        binding.photosAndVideosRecyclerView.let {
-            for(i in 0..photoVideoAdapter.itemCount) {
-                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
-            }
-        }
-        binding.hashtagRecyclerView.let {
-            for(i in 0..hashtagAdapter.itemCount) {
-                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
-            }
-        }
-    }
-
-    private fun enableInputs() {
-        binding.petNameSpinner.isEnabled = true
-        binding.locationSwitch.isEnabled = true
-        binding.uploadPhotosAndVideosButton.isEnabled = true
-        binding.disclosureSpinner.isEnabled = true
-        binding.hashtagInputEditText.isEnabled = true
-        binding.hashtagInputButton.isEnabled = true
-        binding.postEditText.isEnabled = true
-        binding.photosAndVideosRecyclerView.let {
-            for(i in 0..photoVideoAdapter.itemCount) {
-                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
-            }
-        }
-        binding.hashtagRecyclerView.let {
-            for(i in 0..hashtagAdapter.itemCount) {
-                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
-            }
-        }
     }
 
     override fun onDestroyView() {

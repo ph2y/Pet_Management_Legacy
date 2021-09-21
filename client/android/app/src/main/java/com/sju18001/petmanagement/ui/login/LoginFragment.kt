@@ -97,7 +97,7 @@ class LoginFragment : Fragment() {
         binding.pwEditText.setOnEditorActionListener { _, _, _ ->
             Util.hideKeyboard(requireActivity())
 
-            disableButtons()
+            lockViews()
             login(binding.usernameEditText.text.toString(), binding.pwEditText.text.toString())
 
             true
@@ -112,8 +112,7 @@ class LoginFragment : Fragment() {
 
         // for login button
         binding.loginButton.setOnClickListener {
-            disableButtons()
-            disableEditText()
+            lockViews()
             login(binding.usernameEditText.text.toString(), binding.pwEditText.text.toString())
         }
 
@@ -161,8 +160,7 @@ class LoginFragment : Fragment() {
                     displayErrorMessage(context?.getText(R.string.login_failed)!!.toString())
 
                     // enable buttons & editText
-                    enableButtons()
-                    enableEditText()
+                    unlockViews()
                 }
             }
 
@@ -172,8 +170,7 @@ class LoginFragment : Fragment() {
                 // create custom snack bar to display error message
                 displayErrorMessage(t.message.toString())
 
-                enableButtons()
-                enableEditText()
+                unlockViews()
 
                 Log.d("error", t.message.toString())
             }
@@ -248,8 +245,7 @@ class LoginFragment : Fragment() {
             override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
                 if(isViewDestroyed) return
 
-                enableButtons()
-                enableEditText()
+                unlockViews()
 
                 Log.d("error", t.message.toString())
 
@@ -259,7 +255,7 @@ class LoginFragment : Fragment() {
         })
     }
 
-    private fun disableButtons() {
+    private fun lockViews() {
         // set login button status to loading
         binding.loginButton.text = ""
         binding.loginProgressBar.visibility = View.VISIBLE
@@ -268,9 +264,13 @@ class LoginFragment : Fragment() {
         // disable create account, recovery buttons
         binding.createAccountButton.isEnabled = false
         binding.recoveryButton.isEnabled = false
+
+        // disable editText
+        binding.usernameEditText.isEnabled = false
+        binding.pwEditText.isEnabled = false
     }
 
-    private fun enableButtons() {
+    private fun unlockViews() {
         // set login button status to active
         binding.loginButton.text = context?.getText(R.string.login_button)
         binding.loginProgressBar.visibility = View.GONE
@@ -279,14 +279,8 @@ class LoginFragment : Fragment() {
         // enable create account, recovery buttons
         binding.createAccountButton.isEnabled = true
         binding.recoveryButton.isEnabled = true
-    }
 
-    private fun disableEditText() {
-        binding.usernameEditText.isEnabled = false
-        binding.pwEditText.isEnabled = false
-    }
-
-    private fun enableEditText() {
+        // enable editText
         binding.usernameEditText.isEnabled = true
         binding.pwEditText.isEnabled = true
     }

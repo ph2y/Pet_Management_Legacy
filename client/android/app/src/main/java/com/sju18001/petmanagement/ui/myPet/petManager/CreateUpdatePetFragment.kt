@@ -215,8 +215,7 @@ class CreateUpdatePetFragment : Fragment() {
     private fun createPet() {
         // set api state/button to loading
         myPetViewModel.petManagerApiIsLoading = true
-        setButtonToLoading()
-        disableInputs()
+        lockViews()
 
         // trim text values
         trimTextValues()
@@ -256,8 +255,7 @@ class CreateUpdatePetFragment : Fragment() {
                 else {
                     // set api state/button to normal
                     myPetViewModel.petManagerApiIsLoading = false
-                    setButtonToNormal()
-                    enableInputs()
+                    unlockViews()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -268,8 +266,7 @@ class CreateUpdatePetFragment : Fragment() {
 
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
-                setButtonToNormal()
-                enableInputs()
+                unlockViews()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -280,7 +277,7 @@ class CreateUpdatePetFragment : Fragment() {
     private fun updatePet() {
         // set api state/button to loading
         myPetViewModel.petManagerApiIsLoading = true
-        setButtonToLoading()
+        lockViews()
 
         trimTextValues()
 
@@ -321,8 +318,7 @@ class CreateUpdatePetFragment : Fragment() {
                 else {
                     // set api state/button to normal
                     myPetViewModel.petManagerApiIsLoading = false
-                    setButtonToNormal()
-                    enableInputs()
+                    unlockViews()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -333,8 +329,7 @@ class CreateUpdatePetFragment : Fragment() {
 
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
-                setButtonToNormal()
-                enableInputs()
+                unlockViews()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
@@ -375,7 +370,7 @@ class CreateUpdatePetFragment : Fragment() {
                         else {
                             // set api state/button to normal
                             myPetViewModel.petManagerApiIsLoading = false
-                            setButtonToNormal()
+                            unlockViews()
 
                             Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
@@ -387,7 +382,7 @@ class CreateUpdatePetFragment : Fragment() {
 
                     // set api state/button to normal
                     myPetViewModel.petManagerApiIsLoading = false
-                    setButtonToNormal()
+                    unlockViews()
 
                     Util.showToastAndLog(requireContext(), t.message.toString())
                 }
@@ -414,7 +409,7 @@ class CreateUpdatePetFragment : Fragment() {
                     else {
                         // set api state/button to normal
                         myPetViewModel.petManagerApiIsLoading = false
-                        setButtonToNormal()
+                        unlockViews()
 
                         Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                     }
@@ -425,7 +420,7 @@ class CreateUpdatePetFragment : Fragment() {
 
                     // set api state/button to normal
                     myPetViewModel.petManagerApiIsLoading = false
-                    setButtonToNormal()
+                    unlockViews()
 
                     Util.showToastAndLog(requireContext(), t.message.toString())
                 }
@@ -459,7 +454,7 @@ class CreateUpdatePetFragment : Fragment() {
                 else {
                     // set api state/button to normal
                     myPetViewModel.petManagerApiIsLoading = false
-                    setButtonToNormal()
+                    unlockViews()
 
                     Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                 }
@@ -470,24 +465,17 @@ class CreateUpdatePetFragment : Fragment() {
 
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
-                setButtonToNormal()
+                unlockViews()
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
     }
 
-    private fun setButtonToLoading() {
+    private fun lockViews() {
         binding.confirmButton.visibility = View.GONE
         binding.createPetProgressBar.visibility = View.VISIBLE
-    }
 
-    private fun setButtonToNormal() {
-        binding.confirmButton.visibility = View.VISIBLE
-        binding.createPetProgressBar.visibility = View.GONE
-    }
-
-    private fun disableInputs() {
         binding.petPhotoInputButton.isEnabled = false
         binding.petMessageInput.isEnabled = false
         binding.petNameInput.isEnabled = false
@@ -497,9 +485,14 @@ class CreateUpdatePetFragment : Fragment() {
         binding.petBreedInput.isEnabled = false
         binding.petBirthInput.isEnabled = false
         binding.yearOnlyCheckbox.isEnabled = false
+        binding.petPhotoInput.borderColor = resources.getColor(R.color.gray)
+        binding.petPhotoInputButton.circleBackgroundColor = resources.getColor(R.color.gray)
     }
 
-    private fun enableInputs() {
+    private fun unlockViews() {
+        binding.confirmButton.visibility = View.VISIBLE
+        binding.createPetProgressBar.visibility = View.GONE
+
         binding.petPhotoInputButton.isEnabled = true
         binding.petMessageInput.isEnabled = true
         binding.petNameInput.isEnabled = true
@@ -509,6 +502,8 @@ class CreateUpdatePetFragment : Fragment() {
         binding.petBreedInput.isEnabled = true
         binding.petBirthInput.isEnabled = true
         binding.yearOnlyCheckbox.isEnabled = true
+        binding.petPhotoInput.borderColor = resources.getColor(R.color.carrot)
+        binding.petPhotoInputButton.circleBackgroundColor = resources.getColor(R.color.carrot)
     }
 
     private fun checkIsValid() {
@@ -520,10 +515,10 @@ class CreateUpdatePetFragment : Fragment() {
     private fun checkIsLoading() {
         // if loading -> set button to loading
         if(myPetViewModel.petManagerApiIsLoading) {
-            setButtonToLoading()
+            lockViews()
         }
         else {
-            setButtonToNormal()
+            unlockViews()
         }
     }
 
@@ -578,7 +573,7 @@ class CreateUpdatePetFragment : Fragment() {
     private fun closeAfterSuccess() {
         // set api state/button to normal
         myPetViewModel.petManagerApiIsLoading = false
-        setButtonToNormal()
+        unlockViews()
 
         // show message + return to previous activity/fragment
         if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
