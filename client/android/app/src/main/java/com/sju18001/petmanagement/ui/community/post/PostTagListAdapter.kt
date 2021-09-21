@@ -1,14 +1,11 @@
-package com.sju18001.petmanagement.ui.community
+package com.sju18001.petmanagement.ui.community.post
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.restapi.dao.Post
 
 class PostTagListAdapter(private var dataSet: ArrayList<String>) : RecyclerView.Adapter<PostTagListAdapter.ViewHolder>() {
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){

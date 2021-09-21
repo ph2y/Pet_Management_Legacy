@@ -1,7 +1,6 @@
-package com.sju18001.petmanagement.ui.community
+package com.sju18001.petmanagement.ui.community.post
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.restapi.dao.Post
@@ -9,30 +8,28 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
-import com.google.gson.Gson
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.global.FileMetaData
-import de.hdodenhof.circleimageview.CircleImageView
+import com.sju18001.petmanagement.ui.community.post.PostTagListAdapter
 
-interface CommunityPostListAdapterInterface{
+interface PostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
-    fun createLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder, position: Int)
-    fun deleteLike(postId: Long, holder: CommunityPostListAdapter.ViewHolder, position: Int)
+    fun createLike(postId: Long, holder: PostListAdapter.ViewHolder, position: Int)
+    fun deleteLike(postId: Long, holder: PostListAdapter.ViewHolder, position: Int)
     fun onClickPostFunctionButton(post: Post, position: Int)
-    fun setAccountPhoto(id: Long, holder: CommunityPostListAdapter.ViewHolder)
-    fun setAccountDefaultPhoto(holder: CommunityPostListAdapter.ViewHolder)
-    fun setPostMedia(holder: CommunityPostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String)
+    fun setAccountPhoto(id: Long, holder: PostListAdapter.ViewHolder)
+    fun setAccountDefaultPhoto(holder: PostListAdapter.ViewHolder)
+    fun setPostMedia(holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String)
     fun getContext(): Context
 }
 
 private const val MAX_LINE = 5
 
-class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var likedCounts: ArrayList<Long>, private var isPostLiked: ArrayList<Boolean>) : RecyclerView.Adapter<CommunityPostListAdapter.ViewHolder>() {
-    lateinit var communityPostListAdapterInterface: CommunityPostListAdapterInterface
+class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCounts: ArrayList<Long>, private var isPostLiked: ArrayList<Boolean>) : RecyclerView.Adapter<PostListAdapter.ViewHolder>() {
+    lateinit var communityPostListAdapterInterface: PostListAdapterInterface
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
         val petPhotoImage: ImageView = view.findViewById(R.id.pet_photo)
@@ -97,10 +94,10 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
         if(!data.mediaAttachments.isNullOrEmpty()){
             val mediaAttachments = Util.getArrayFromMediaAttachments(data.mediaAttachments)
 
-            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, data.id, mediaAttachments, holder.viewPager)
+            holder.viewPager.adapter = PostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, data.id, mediaAttachments, holder.viewPager)
             holder.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }else{
-            holder.viewPager.adapter = CommunityPostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, arrayOf(), holder.viewPager)
+            holder.viewPager.adapter = PostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, arrayOf(), holder.viewPager)
         }
     }
 
@@ -217,7 +214,7 @@ class CommunityPostListAdapter(private var dataSet: ArrayList<Post>, private var
     }
 
     class PostMediaItemCollectionAdapter(
-        private var communityPostListAdapterInterface: CommunityPostListAdapterInterface,
+        private var communityPostListAdapterInterface: PostListAdapterInterface,
         private val id: Long,
         private val mediaAttachments: Array<FileMetaData>,
         private val viewPager: ViewPager2

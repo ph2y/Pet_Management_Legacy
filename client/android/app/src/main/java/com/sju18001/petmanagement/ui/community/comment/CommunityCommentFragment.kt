@@ -2,19 +2,13 @@ package com.sju18001.petmanagement.ui.community.comment
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -27,13 +21,8 @@ import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
-import com.sju18001.petmanagement.restapi.dao.Comment
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateCommentActivity
-import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
-import de.hdodenhof.circleimageview.CircleImageView
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback

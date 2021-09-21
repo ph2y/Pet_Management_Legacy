@@ -26,7 +26,7 @@
         <activity android:name=".ui.community.followerFollowing.FollowerFollowingActivity" />
         <activity android:name=".ui.community.comment.updateComment.UpdateCommentActivity" />
         <activity android:name=".ui.community.comment.CommunityCommentActivity" />
-        <activity android:name=".ui.community.createUpdatePost.CreateUpdatePostActivity" />
+        <activity android:name="com.sju18001.petmanagement.ui.community.post.createUpdatePost.CreateUpdatePostActivity" />
         <activity android:name=".ui.welcomePage.WelcomePageActivity" />
         <activity android:name=".ui.login.LoginActivity" />
         <activity
