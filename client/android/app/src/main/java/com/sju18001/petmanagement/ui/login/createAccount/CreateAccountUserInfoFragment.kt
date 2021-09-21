@@ -5,8 +5,6 @@ import android.os.SystemClock
 import android.telephony.PhoneNumberFormattingTextWatcher
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,23 +12,18 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateAccountUserInfoBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.dto.SendAuthCodeReqDto
 import com.sju18001.petmanagement.restapi.dto.SendAuthCodeResDto
 import com.sju18001.petmanagement.ui.login.LoginViewModel
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.regex.Pattern
 
 class CreateAccountUserInfoFragment : Fragment() {
-
-    // pattern regex for EditTexts
-    private val patternPhone: Pattern = Pattern.compile("(^02|^\\d{3})-(\\d{3}|\\d{4})-\\d{4}")
-    private val patternEmail: Pattern = Patterns.EMAIL_ADDRESS
 
     // variables for view binding
     private var _binding: FragmentCreateAccountUserInfoBinding? = null
@@ -66,7 +59,7 @@ class CreateAccountUserInfoFragment : Fragment() {
         binding.phoneEditText.addTextChangedListener(PhoneNumberFormattingTextWatcher("KR"))
         binding.phoneEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(patternPhone.matcher(s).matches()) {
+                if(PatternRegex.checkPhoneRegex(s)) {
                     loginViewModel.createAccountPhoneValid = true
                     binding.phoneMessage.visibility = View.GONE
                 }
@@ -90,7 +83,7 @@ class CreateAccountUserInfoFragment : Fragment() {
         }
         binding.emailEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(patternEmail.matcher(s).matches()) {
+                if(PatternRegex.checkEmailRegex(s)) {
                     loginViewModel.createAccountEmailValid = true
                     binding.emailMessage.visibility = View.GONE
                     binding.requestEmailCodeButton.isEnabled = true

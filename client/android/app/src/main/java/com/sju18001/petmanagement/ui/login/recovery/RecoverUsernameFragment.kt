@@ -3,13 +3,12 @@ package com.sju18001.petmanagement.ui.login.recovery
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Patterns
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentRecoverUsernameBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -101,7 +100,7 @@ class RecoverUsernameFragment : Fragment() {
 
     // * 유효성 검사
     private fun checkEmailValidation(s: CharSequence?){
-        if(Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
+        if(PatternRegex.checkEmailRegex(s)) {
             isValidInput[EMAIL] = true
             binding.emailMessage.visibility = View.GONE
         }

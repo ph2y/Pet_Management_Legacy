@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.Toast
@@ -14,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.ActivitySearchBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -25,15 +25,11 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.regex.Pattern
 
 class SearchActivity : AppCompatActivity() {
 
     // variable for view binding
     private lateinit var binding: ActivitySearchBinding
-
-    // pattern regex for EditText
-    private val patternUsername: Pattern = Pattern.compile("^[a-zA-Z0-9가-힣_]{2,20}$")
 
     // variable for ViewModel
     private val searchViewModel: SearchViewModel by lazy{
@@ -56,7 +52,7 @@ class SearchActivity : AppCompatActivity() {
 
         // searchEditText listener
         binding.searchEditText.setOnEditorActionListener{ _, _, _ ->
-            checkPatternUsernameAndSearchAccount()
+            checkPatternNicknameAndSearchAccount()
             true
         }
         binding.searchEditText.addTextChangedListener(object: TextWatcher {
@@ -69,7 +65,7 @@ class SearchActivity : AppCompatActivity() {
 
         // for search button
         binding.searchButton.setOnClickListener {
-            checkPatternUsernameAndSearchAccount()
+            checkPatternNicknameAndSearchAccount()
         }
 
         // for follow unfollow button
@@ -105,8 +101,8 @@ class SearchActivity : AppCompatActivity() {
         restoreState()
     }
 
-    private fun checkPatternUsernameAndSearchAccount(){
-        if(!patternUsername.matcher(searchViewModel.searchEditText).matches()) {
+    private fun checkPatternNicknameAndSearchAccount(){
+        if(!PatternRegex.checkNicknameRegex(searchViewModel.searchEditText)) {
             Toast.makeText(this, getString(R.string.nickname_regex_exception_message), Toast.LENGTH_LONG).show()
         }
         else {
