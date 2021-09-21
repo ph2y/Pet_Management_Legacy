@@ -502,6 +502,7 @@ class CommunityFragment : Fragment() {
     }
 
     private fun resetPostData(){
+        topPostId = null
         pageIndex = 1
         adapter.resetItem()
 
