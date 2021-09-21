@@ -245,6 +245,8 @@
     <string name="account_does_not_exist_exception_message">해당 유저가 존재하지 않아요!</string>
     <string name="fetched_self_exception_message">나 자신은 영원한 인생의 친구입니다.</string>
     <string name="unfollow_confirm_dialog_message">님을 언팔로우 할까요?</string>
+    <string name="empty_follower_list">아직 팔로워가 없어요.\n친구들에게 나를 알려 팔로워를 모아보세요!</string>
+    <string name="empty_following_list">아직 팔로잉하는 상대가 없어요.\n팔로잉할 상대를 찾아보세요!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
