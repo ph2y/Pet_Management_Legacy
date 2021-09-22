@@ -15,8 +15,6 @@ class CommunityFragment : Fragment() {
     private var _binding: FragmentCommunityBinding? = null
     private val binding get() = _binding!!
 
-    private var isViewDestroyed = false
-
     private var postFragment: PostFragment? = null
 
     override fun onCreateView(
@@ -25,7 +23,6 @@ class CommunityFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentCommunityBinding.inflate(inflater, container, false)
-        isViewDestroyed = false
 
         // For create post FAB
         binding.createPostFab.setOnClickListener {
@@ -49,8 +46,6 @@ class CommunityFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-
-        isViewDestroyed = true
     }
 
     fun startAllVideos(){
