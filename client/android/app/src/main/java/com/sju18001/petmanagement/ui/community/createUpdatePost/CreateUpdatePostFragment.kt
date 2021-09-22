@@ -557,6 +557,7 @@ class CreateUpdatePostFragment : Fragment() {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
             }
         }
+        binding.backButton.isEnabled = false
     }
 
     // set button to normal
@@ -581,6 +582,7 @@ class CreateUpdatePostFragment : Fragment() {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
             }
         }
+        binding.backButton.isEnabled = true
     }
 
     private fun addHashtag(){

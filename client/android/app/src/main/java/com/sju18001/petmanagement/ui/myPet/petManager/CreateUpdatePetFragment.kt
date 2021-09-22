@@ -485,6 +485,7 @@ class CreateUpdatePetFragment : Fragment() {
         binding.petBreedInput.isEnabled = false
         binding.petBirthInput.isEnabled = false
         binding.yearOnlyCheckbox.isEnabled = false
+        binding.backButton.isEnabled = false
         binding.petPhotoInput.borderColor = resources.getColor(R.color.gray)
         binding.petPhotoInputButton.circleBackgroundColor = resources.getColor(R.color.gray)
     }
@@ -502,6 +503,7 @@ class CreateUpdatePetFragment : Fragment() {
         binding.petBreedInput.isEnabled = true
         binding.petBirthInput.isEnabled = true
         binding.yearOnlyCheckbox.isEnabled = true
+        binding.backButton.isEnabled = true
         binding.petPhotoInput.borderColor = resources.getColor(R.color.carrot)
         binding.petPhotoInputButton.circleBackgroundColor = resources.getColor(R.color.carrot)
     }
