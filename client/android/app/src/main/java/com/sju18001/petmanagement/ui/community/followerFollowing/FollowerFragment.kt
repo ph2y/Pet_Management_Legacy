@@ -12,6 +12,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFollowerBinding
@@ -57,6 +58,18 @@ class FollowerFragment : Fragment() {
         binding.followerRecyclerView.adapter = followerAdapter
         binding.followerRecyclerView.layoutManager = LinearLayoutManager(activity)
 
+        // Set adapter item change observer
+        followerAdapter.registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+            override fun onChanged() {
+                super.onChanged()
+                setEmptyFollowerView(followerAdapter.itemCount)
+            }
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+                setEmptyFollowerView(followerAdapter.itemCount)
+            }
+        })
+
         // for swipe refresh
         binding.followerSwipeRefreshLayout.setOnRefreshListener {
             updateRecyclerView()
@@ -79,6 +92,11 @@ class FollowerFragment : Fragment() {
         super.onResume()
 
         updateRecyclerView()
+    }
+
+    private fun setEmptyFollowerView(itemCount: Int){
+        val visibility = if(itemCount != 0) View.GONE else View.VISIBLE
+        binding.emptyFollowerList.visibility = visibility
     }
 
     private fun updateRecyclerView() {  // update followingIdList -> fetch follower
