@@ -156,6 +156,13 @@ class Util {
             return windowMetrics.bounds.width() - insets.left - insets.right
         }
 
+        @RequiresApi(Build.VERSION_CODES.R)
+        fun getScreenHeightInPixel(activity: Activity) : Int{
+            val windowMetrics = activity.windowManager.currentWindowMetrics
+            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+            return windowMetrics.bounds.height() - insets.top - insets.bottom
+        }
+
         fun deleteCopiedFiles(context: Context, directory: String) {
             val dir = File(context.getExternalFilesDir(null).toString() + File.separator + directory)
             dir.deleteRecursively()

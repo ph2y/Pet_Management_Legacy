@@ -1,6 +1,7 @@
 package com.sju18001.petmanagement.ui.community.post
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.restapi.dao.Post
