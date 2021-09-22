@@ -229,6 +229,7 @@ class CreateAccountFragment : Fragment() {
                         // enable inputs
                     (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
                         .unlockViews()
+                    binding.backButton.isEnabled = true
 
                     when (Util.getMessageFromErrorBody(response.errorBody()!!)) {
                         // if email overlap + show message
@@ -262,6 +263,7 @@ class CreateAccountFragment : Fragment() {
                             setNextButtonToNormal()
                             (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
                                 .unlockViews()
+                            binding.backButton.isEnabled = true
                         }
                     }
                 }
@@ -287,6 +289,8 @@ class CreateAccountFragment : Fragment() {
         // lock views
         (childFragmentManager.findFragmentByTag(FRAGMENT_TAG_USER_INFO) as CreateAccountUserInfoFragment)
             .lockViews()
+        binding.backButton.isEnabled = false
+
         // create verify code request DTO
         val verifyAuthCodeRequestDto = VerifyAuthCodeReqDto(loginViewModel.currentCodeRequestedEmail,
             loginViewModel.createAccountEmailCodeEditText)

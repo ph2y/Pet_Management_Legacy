@@ -314,6 +314,7 @@ class PetScheduleEditFragment : Fragment() {
             }
         }
         binding.memoEditText.isEnabled = false
+        binding.backButton.isEnabled = false
     }
 
     private fun unlockViews() {
@@ -322,6 +323,7 @@ class PetScheduleEditFragment : Fragment() {
         binding.timePicker.isEnabled = true
         binding.petNameListRecyclerView.isEnabled = true
         binding.memoEditText.isEnabled = true
+        binding.backButton.isEnabled = true
     }
 
 }

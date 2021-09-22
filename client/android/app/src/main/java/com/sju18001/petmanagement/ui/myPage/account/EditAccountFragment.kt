@@ -569,6 +569,7 @@ class EditAccountFragment : Fragment() {
         binding.passwordChangeButton.isEnabled = false
         binding.logoutButton.isEnabled = false
         binding.deleteAccountButton.isEnabled = false
+        binding.backButton.isEnabled = false
         binding.accountPhotoInput.borderColor = resources.getColor(R.color.gray)
         binding.accountPhotoInputButton.circleBackgroundColor = resources.getColor(R.color.gray)
     }
@@ -585,6 +586,7 @@ class EditAccountFragment : Fragment() {
         binding.passwordChangeButton.isEnabled = true
         binding.logoutButton.isEnabled = true
         binding.deleteAccountButton.isEnabled = true
+        binding.backButton.isEnabled = true
         binding.accountPhotoInput.borderColor = resources.getColor(R.color.carrot)
         binding.accountPhotoInputButton.circleBackgroundColor = resources.getColor(R.color.carrot)
     }
