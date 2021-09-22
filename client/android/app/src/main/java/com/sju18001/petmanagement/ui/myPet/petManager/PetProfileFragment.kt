@@ -14,6 +14,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetProfileBinding
@@ -33,14 +34,12 @@ class PetProfileFragment : Fragment(){
     private var _binding: FragmentPetProfileBinding? = null
     private val binding get() = _binding!!
 
-    // for account photo
-    private var accountPhoto: Bitmap? = null
-
     // variable for ViewModel
     private val myPetViewModel: MyPetViewModel by activityViewModels()
 
     private var isViewDestroyed = false
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -85,6 +84,7 @@ class PetProfileFragment : Fragment(){
         binding.backButtonLayout.post{
             (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = binding.backButtonLayout.height
         }
+        binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
 
         return view
     }
