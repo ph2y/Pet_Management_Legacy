@@ -48,7 +48,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true">
 
                 <!-- TODO: create layout for displaying username and it's pets(community)-->
                 <RelativeLayout
@@ -73,7 +74,8 @@
                     app:layout_constraintBottom_toTopOf="@id/buttons_layout"
                     android:paddingStart="2dp"
                     android:paddingEnd="2dp"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:animateLayoutChanges="true">
 
                     <androidx.cardview.widget.CardView
                         android:layout_width="wrap_content"
