@@ -1,8 +1,10 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
@@ -13,11 +15,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetProfileBinding
@@ -30,7 +30,7 @@ import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.Math.abs
+
 
 class PetProfileFragment : Fragment(){
 
@@ -42,6 +42,9 @@ class PetProfileFragment : Fragment(){
     private val myPetViewModel: MyPetViewModel by activityViewModels()
 
     private var isViewDestroyed = false
+
+    // true: 기본 상태, false: 특정 뷰들이 GONE인 상태
+    private var isViewDetailed: Boolean = true
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
@@ -75,6 +78,7 @@ class PetProfileFragment : Fragment(){
             binding.buttonsLayout.visibility = View.GONE
         }
 
+
         // Fragment 추가
         if(childFragmentManager.findFragmentById(R.id.post_fragment_container) == null){
             val fragment = PostFragment()
@@ -84,11 +88,9 @@ class PetProfileFragment : Fragment(){
                 .commit()
         }
 
-        // Set view programmatically
-        binding.backButtonLayout.post{
-            (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = binding.backButtonLayout.height
-        }
+        // Set views
         binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
+        setViewsForDetail(true)
 
         binding.postFragmentContainer.post{
             addListenerOnRecyclerView()
@@ -272,20 +274,25 @@ class PetProfileFragment : Fragment(){
     private fun addListenerOnRecyclerView(){
         val recyclerView = binding.postFragmentContainer.findViewById<RecyclerView>(R.id.recycler_view_post)
 
-        // 스크롤 다운 시 GONE
+        // 터치를 시작할 때의 좌표를 기록함
+        var x = 0f
         var y = 0f
+        
         recyclerView.setOnTouchListener { v, event ->
             when (event.action){
                 MotionEvent.ACTION_DOWN -> {
+                    x = event.x
                     y = event.y
                     true
                 }
                 MotionEvent.ACTION_UP -> {
-                    if(y > event.y){
-                        binding.backButtonLayout.visibility = View.GONE
-                        binding.petMessage.visibility = View.GONE
-                        binding.buttonsLayout.visibility = View.GONE
-                        (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = 0
+                    // 클릭 시(== 터치 이동 반경이 짧을 때)
+                    if(kotlin.math.abs(x - event.x) < 10 && kotlin.math.abs(y - event.y) < 10){
+                        setViewsForDetail(!isViewDetailed)
+                    }
+                    // 스크롤 다운
+                    else if(y > event.y){
+                        setViewsForDetail(false)
                     }
                     true
                 }
@@ -298,12 +305,27 @@ class PetProfileFragment : Fragment(){
         // 최상단에 위치할 시 VISIBLE
         recyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
             if(!recyclerView.canScrollVertically(-1)){
-                recyclerView
-                binding.backButtonLayout.visibility = View.VISIBLE
-                binding.petMessage.visibility = View.VISIBLE
-                binding.buttonsLayout.visibility = View.VISIBLE
-                (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = binding.backButtonLayout.height
+                setViewsForDetail(true)
             }
+        }
+    }
+
+    private fun setViewsForDetail(flag: Boolean){
+        isViewDetailed = flag
+
+        if(isViewDetailed){
+            binding.backButtonLayout.visibility = View.VISIBLE
+            binding.petMessage.visibility = View.VISIBLE
+            binding.buttonsLayout.visibility = View.VISIBLE
+
+            (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = binding.backButtonLayout.height
+
+        }else{
+            binding.backButtonLayout.visibility = View.GONE
+            binding.petMessage.visibility = View.GONE
+            binding.buttonsLayout.visibility = View.GONE
+
+            (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = 0
         }
     }
 }
