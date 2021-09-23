@@ -8,8 +8,6 @@ import android.os.Bundle
 import android.telephony.PhoneNumberFormattingTextWatcher
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.util.Patterns
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +18,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentEditAccountBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -55,12 +54,6 @@ class EditAccountFragment : Fragment() {
     private val myPageViewModel: MyPageViewModel by activityViewModels()
 
     private var isViewDestroyed = false
-
-    // pattern regex for EditTexts
-    private val patternPhone: Pattern = Pattern.compile("(^02|^\\d{3})-(\\d{3}|\\d{4})-\\d{4}")
-    private val patternEmail: Pattern = Patterns.EMAIL_ADDRESS
-    private val patternNickname: Pattern = Pattern.compile("(^[가-힣ㄱ-ㅎa-zA-Z0-9]{2,20}$)")
-    private val patternPassword: Pattern = Pattern.compile("^[a-zA-Z0-9!@.#$%^&*?_~]{8,20}$")
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -134,7 +127,7 @@ class EditAccountFragment : Fragment() {
 
             dialog.findViewById<EditText>(R.id.new_password_input).addTextChangedListener(object: TextWatcher {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                    if(patternPassword.matcher(s).matches()) {
+                    if(PatternRegex.checkPasswordRegex(s)) {
                         myPageViewModel.accountPwValid = true
                         dialog.findViewById<TextView>(R.id.pw_message2).visibility = View.GONE
                     }
@@ -283,9 +276,9 @@ class EditAccountFragment : Fragment() {
 
     // check regex validation
     private fun checkIsValid(): Boolean {
-        return patternEmail.matcher(myPageViewModel.accountEmailValue).matches() &&
-                patternNickname.matcher(myPageViewModel.accountNicknameValue).matches() &&
-                patternPhone.matcher(myPageViewModel.accountPhoneValue).matches()
+        return PatternRegex.checkEmailRegex(myPageViewModel.accountEmailValue) &&
+                PatternRegex.checkNicknameRegex(myPageViewModel.accountNicknameValue) &&
+                PatternRegex.checkPhoneRegex(myPageViewModel.accountPhoneValue)
     }
 
     // update account

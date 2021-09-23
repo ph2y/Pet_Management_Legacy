@@ -8,16 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateAccountCredentialsBinding
 import com.sju18001.petmanagement.ui.login.LoginViewModel
-import java.util.regex.Pattern
 
 class CreateAccountCredentialsFragment : Fragment() {
-
-    // pattern regex for EditTexts
-    private val patternUsername: Pattern = Pattern.compile("^[a-z0-9]{5,16}$")
-    private val patternPassword: Pattern = Pattern.compile("^[a-zA-Z0-9!@.#$%^&*?_~]{8,20}$")
 
     // variables for view binding
     private var _binding: FragmentCreateAccountCredentialsBinding? = null
@@ -44,7 +40,7 @@ class CreateAccountCredentialsFragment : Fragment() {
         // for username text change listener
         binding.usernameEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(patternUsername.matcher(s).matches()) {
+                if(PatternRegex.checkUsernameRegex(s)) {
                     loginViewModel.createAccountUsernameValid = true
                     binding.usernameMessage.visibility = View.GONE
                 }
@@ -64,7 +60,7 @@ class CreateAccountCredentialsFragment : Fragment() {
         // for pw text change listener
         binding.pwEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if(patternPassword.matcher(s).matches()) {
+                if(PatternRegex.checkPasswordRegex(s)) {
                     loginViewModel.createAccountPwValid = true
                     binding.pwMessage.visibility = View.GONE
                 }

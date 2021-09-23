@@ -8,8 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentRecoverPasswordBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -17,15 +17,10 @@ import com.sju18001.petmanagement.restapi.dto.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.util.regex.Pattern
 
 class RecoverPasswordFragment : Fragment() {
     private var _binding: FragmentRecoverPasswordBinding? = null
     private val binding get() = _binding!!
-
-    // 정규식
-    private val patternUsername: Pattern = Pattern.compile("^[a-z0-9]{5,16}$")
-
     private var isViewDestroyed = false
 
     override fun onCreateView(
@@ -69,7 +64,7 @@ class RecoverPasswordFragment : Fragment() {
 
     // 유효성 검사
     private fun checkEmailValidation(s: CharSequence?) {
-        if(Patterns.EMAIL_ADDRESS.matcher(s).matches()) {
+        if(PatternRegex.checkEmailRegex(s)) {
             binding.emailMessage.visibility = View.GONE
             binding.emailInputButton.isEnabled = true
         }
@@ -80,7 +75,7 @@ class RecoverPasswordFragment : Fragment() {
     }
 
     private fun checkUsernameValidation(s: CharSequence?) {
-        if(patternUsername.matcher(s).matches()) {
+        if(PatternRegex.checkUsernameRegex(s)) {
             binding.usernameMessage.visibility = View.GONE
             binding.codeInputButton.isEnabled = true
         }
