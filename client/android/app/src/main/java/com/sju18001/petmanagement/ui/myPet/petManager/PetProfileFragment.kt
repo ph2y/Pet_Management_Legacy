@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -7,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -15,6 +17,7 @@ import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetProfileBinding
@@ -27,6 +30,7 @@ import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Math.abs
 
 class PetProfileFragment : Fragment(){
 
@@ -85,6 +89,10 @@ class PetProfileFragment : Fragment(){
             (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = binding.backButtonLayout.height
         }
         binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
+        
+        binding.postFragmentContainer.post{
+            addListenerOnRecyclerView()
+        }
 
         return view
     }
@@ -135,6 +143,14 @@ class PetProfileFragment : Fragment(){
 
         // set views with data from ViewModel
         setViewsWithPetData()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+
+        isViewDestroyed = true
+        myPetViewModel.petManagerApiIsLoading = false
     }
 
     // set button to loading
@@ -251,11 +267,43 @@ class PetProfileFragment : Fragment(){
         })
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+    @RequiresApi(Build.VERSION_CODES.M)
+    @SuppressLint("ClickableViewAccessibility")
+    private fun addListenerOnRecyclerView(){
+        val recyclerView = binding.postFragmentContainer.findViewById<RecyclerView>(R.id.recycler_view_post)
 
-        isViewDestroyed = true
-        myPetViewModel.petManagerApiIsLoading = false
+        // 스크롤 다운 시 GONE
+        var y = 0f
+        recyclerView.setOnTouchListener { v, event ->
+            when (event.action){
+                MotionEvent.ACTION_DOWN -> {
+                    y = event.y
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    if(y > event.y){
+                        binding.backButtonLayout.visibility = View.GONE
+                        binding.petMessage.visibility = View.GONE
+                        binding.buttonsLayout.visibility = View.GONE
+                        (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = 0
+                    }
+                    true
+                }
+            }
+
+            v.performClick()
+            v.onTouchEvent(event) ?: true
+        }
+
+        // 최상단에 위치할 시 VISIBLE
+        recyclerView.setOnScrollChangeListener { _, _, _, _, _ ->
+            if(!recyclerView.canScrollVertically(-1)){
+                recyclerView
+                binding.backButtonLayout.visibility = View.VISIBLE
+                binding.petMessage.visibility = View.VISIBLE
+                binding.buttonsLayout.visibility = View.VISIBLE
+                (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = binding.backButtonLayout.height
+            }
+        }
     }
 }
