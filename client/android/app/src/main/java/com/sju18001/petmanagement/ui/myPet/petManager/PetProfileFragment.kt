@@ -89,7 +89,7 @@ class PetProfileFragment : Fragment(){
             (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = binding.backButtonLayout.height
         }
         binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
-        
+
         binding.postFragmentContainer.post{
             addListenerOnRecyclerView()
         }
