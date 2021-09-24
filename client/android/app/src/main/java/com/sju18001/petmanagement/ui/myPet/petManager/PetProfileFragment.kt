@@ -81,7 +81,7 @@ class PetProfileFragment : Fragment(){
 
         // Fragment 추가
         if(childFragmentManager.findFragmentById(R.id.post_fragment_container) == null){
-            val fragment = PostFragment()
+            val fragment = PostFragment.newInstance(requireActivity().intent.getLongExtra("petId", -1))
             childFragmentManager
                 .beginTransaction()
                 .add(R.id.post_fragment_container, fragment)

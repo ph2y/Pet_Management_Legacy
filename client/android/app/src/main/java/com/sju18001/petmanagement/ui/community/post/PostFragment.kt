@@ -42,6 +42,16 @@ import java.io.File
 import java.io.FileOutputStream
 
 class PostFragment : Fragment() {
+    // 외부에서 petId를 지정해줄 수 있다.
+    companion object{
+        @JvmStatic
+        fun newInstance(petId: Long) = PostFragment().apply{
+            arguments = Bundle().apply{
+                putLong("petId", petId)
+            }
+        }
+    }
+
     val communityViewModel: CommunityViewModel by activityViewModels()
 
     private var _binding: FragmentPostBinding? = null
@@ -118,6 +128,10 @@ class PostFragment : Fragment() {
 
                 if(response.isSuccessful){
                     response.body()?.postList?.get(0)?.let{ item ->
+                        // 펫이 지정되어있지만 pet id가 다를 경우
+                        val petId = arguments?.getLong("petId")
+                        if(petId != null && petId != item.pet.id) return
+
                         callback.invoke(item)
                     }
                 }
@@ -143,12 +157,12 @@ class PostFragment : Fragment() {
 
         // 초기 Post 추가
         resetPostData()
-        updateAdapterDataSet(FetchPostReqDto(null, null, null, null))
+        updateAdapterDataSet(FetchPostReqDto(null, null, arguments?.getLong("petId"), null))
 
         // SwipeRefreshLayout
         binding.layoutSwipeRefresh.setOnRefreshListener {
             resetPostData()
-            updateAdapterDataSet(FetchPostReqDto(null, null, null, null))
+            updateAdapterDataSet(FetchPostReqDto(null, null, arguments?.getLong("petId"), null))
         }
 
         return binding.root
@@ -393,7 +407,7 @@ class PostFragment : Fragment() {
                     if(!recyclerView.canScrollVertically(1) && adapter.itemCount != 0){
                         updateAdapterDataSet(
                             FetchPostReqDto(
-                            pageIndex, topPostId, null, null
+                            pageIndex, topPostId, arguments?.getLong("petId"), null
                         )
                         )
                         pageIndex += 1
