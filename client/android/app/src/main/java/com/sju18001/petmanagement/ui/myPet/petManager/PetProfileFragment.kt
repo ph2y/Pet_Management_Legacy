@@ -317,6 +317,7 @@ class PetProfileFragment : Fragment(){
             binding.backButtonLayout.visibility = View.VISIBLE
             binding.petMessage.visibility = View.VISIBLE
             binding.buttonsLayout.visibility = View.VISIBLE
+            binding.petProfileMainScrollView.scrollTo(0, 0)
 
             (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = binding.backButtonLayout.height
 
