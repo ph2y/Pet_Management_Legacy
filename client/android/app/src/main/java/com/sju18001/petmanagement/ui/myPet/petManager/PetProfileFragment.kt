@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.view.doOnLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -45,6 +46,8 @@ class PetProfileFragment : Fragment(){
 
     // true: 기본 상태, false: 특정 뷰들이 GONE인 상태
     private var isViewDetailed: Boolean = true
+
+    private var backButtonLayoutHeight = 0
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
@@ -90,7 +93,10 @@ class PetProfileFragment : Fragment(){
 
         // Set views
         binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
-        setViewsForDetail(true)
+        binding.backButtonLayout.doOnLayout {
+            backButtonLayoutHeight = it.measuredHeight
+            setViewsForDetail(true)
+        }
 
         binding.postFragmentContainer.post{
             addListenerOnRecyclerView()
@@ -319,7 +325,7 @@ class PetProfileFragment : Fragment(){
             binding.buttonsLayout.visibility = View.VISIBLE
             binding.petProfileMainScrollView.scrollTo(0, 0)
 
-            (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = binding.backButtonLayout.height
+            (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = backButtonLayoutHeight
 
         }else{
             binding.backButtonLayout.visibility = View.GONE
