@@ -441,12 +441,8 @@ class PostFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful){
-                    setEmptyNotificationView(response.body()?.postList?.size)
-
                     response.body()!!.postList?.let {
                         if(it.isNotEmpty()){
-                            // 추가로, 로딩 중에 뷰가 제거되면 오류(Inconsistency detected)가 나는데, 칼럼이 생긴 이후에도 발생 시 fix할 것
-
                             // Set topPostId
                             if(topPostId == null){
                                 topPostId = it.first().id
@@ -458,6 +454,8 @@ class PostFragment : Fragment() {
                                 setLiked(adapter.itemCount-1, item.id)
                             }
                             adapter.notifyDataSetChanged()
+
+                            setEmptyNotificationView(response.body()?.postList?.size)
                         }
                     }
                 }else{
