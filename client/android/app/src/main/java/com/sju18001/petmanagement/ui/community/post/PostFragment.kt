@@ -20,6 +20,7 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -81,17 +82,7 @@ class PostFragment : Fragment() {
                         adapter.notifyItemInserted(0)
                         adapter.notifyItemRangeChanged(0, adapter.itemCount)
 
-                        // 최하단 post를 삭제해야한다. 이 작업으로, 다음 페이지를 로드할 때
-                        // 최하단 post를 로드하여 이 post가 총 2번 나타나는 버그를 방지한다.
-                        if(adapter.itemCount >= 1){
-                            adapter.removeItem(adapter.itemCount-1)
-                            adapter.notifyItemRemoved(adapter.itemCount-1)
-                            adapter.notifyItemRangeRemoved(adapter.itemCount-1, 1)
-                        }
-
                         binding.recyclerViewPost.scrollToPosition(0)
-
-                        topPostId = postId
                     }
                 }
             }
@@ -415,6 +406,27 @@ class PostFragment : Fragment() {
                 }
             })
         }
+
+        // set adapter item change observer
+        adapter.registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
+            override fun onChanged() {
+                super.onChanged()
+
+                setEmptyNotificationView(adapter.itemCount)
+            }
+
+            override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                super.onItemRangeRemoved(positionStart, itemCount)
+
+                setEmptyNotificationView(adapter.itemCount)
+            }
+
+            override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                super.onItemRangeInserted(positionStart, itemCount)
+
+                setEmptyNotificationView(adapter.itemCount)
+            }
+        })
     }
 
     private fun updateAdapterDataSet(body: FetchPostReqDto){
@@ -429,6 +441,8 @@ class PostFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful){
+                    setEmptyNotificationView(response.body()?.postList?.size)
+
                     response.body()!!.postList?.let {
                         if(it.isNotEmpty()){
                             // 추가로, 로딩 중에 뷰가 제거되면 오류(Inconsistency detected)가 나는데, 칼럼이 생긴 이후에도 발생 시 fix할 것
@@ -443,6 +457,7 @@ class PostFragment : Fragment() {
                                 adapter.addItem(item)
                                 setLiked(adapter.itemCount-1, item.id)
                             }
+                            adapter.notifyDataSetChanged()
                         }
                     }
                 }else{
@@ -489,6 +504,7 @@ class PostFragment : Fragment() {
     }
 
     private fun resetPostData(){
+        topPostId = null
         pageIndex = 1
         adapter.resetItem()
 
@@ -604,5 +620,11 @@ class PostFragment : Fragment() {
 
         startForCreateResult.launch(createUpdatePostActivityIntent)
         requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+    }
+
+    private fun setEmptyNotificationView(itemCount: Int?) {
+        // set notification view
+        val visibility = if(itemCount != 0) View.GONE else View.VISIBLE
+        binding.emptyPostListNotification.visibility = visibility
     }
 }
