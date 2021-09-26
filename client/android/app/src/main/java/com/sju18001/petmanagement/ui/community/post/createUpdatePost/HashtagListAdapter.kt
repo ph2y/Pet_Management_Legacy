@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.community.createUpdatePost
+package com.sju18001.petmanagement.ui.community.post.createUpdatePost
 
 import android.view.LayoutInflater
 import android.view.View

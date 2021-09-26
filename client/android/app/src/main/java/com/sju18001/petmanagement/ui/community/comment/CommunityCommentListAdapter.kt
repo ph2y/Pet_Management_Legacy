@@ -19,7 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.dao.Comment
-import com.sju18001.petmanagement.ui.community.CommunityPostListAdapter
+import com.sju18001.petmanagement.ui.community.post.PostListAdapter
 import de.hdodenhof.circleimageview.CircleImageView
 import java.time.LocalDateTime
 

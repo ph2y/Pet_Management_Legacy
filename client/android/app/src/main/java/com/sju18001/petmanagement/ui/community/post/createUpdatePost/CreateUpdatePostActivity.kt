@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.community.createUpdatePost
+package com.sju18001.petmanagement.ui.community.post.createUpdatePost
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,7 +6,6 @@ import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.ActivityCreateUpdatePostBinding
-import com.sju18001.petmanagement.databinding.ActivityMyPetBinding
 
 class CreateUpdatePostActivity : AppCompatActivity() {
 

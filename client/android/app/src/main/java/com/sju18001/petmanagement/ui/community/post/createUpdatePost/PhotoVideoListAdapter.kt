@@ -1,16 +1,11 @@
-package com.sju18001.petmanagement.ui.community.createUpdatePost
+package com.sju18001.petmanagement.ui.community.post.createUpdatePost
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.ThumbnailUtils
-import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.sju18001.petmanagement.R

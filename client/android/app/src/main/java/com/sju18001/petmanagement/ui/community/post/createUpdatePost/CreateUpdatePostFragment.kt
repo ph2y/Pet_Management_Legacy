@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.community.createUpdatePost
+package com.sju18001.petmanagement.ui.community.post.createUpdatePost
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -14,12 +14,10 @@ import android.os.Bundle
 import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.webkit.MimeTypeMap
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity

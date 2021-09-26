@@ -1,50 +1,13 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
-import android.app.Activity
-import android.app.AlertDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.MediaMetadataRetriever
-import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.databinding.FragmentPetProfileBinding
-import com.sju18001.petmanagement.restapi.RetrofitBuilder
-import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dao.Post
-import com.sju18001.petmanagement.restapi.dto.*
+/*
 import com.sju18001.petmanagement.ui.community.CommunityPostListAdapter
 import com.sju18001.petmanagement.ui.community.CommunityPostListAdapterInterface
-import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
-import com.sju18001.petmanagement.ui.community.createUpdatePost.CreateUpdatePostActivity
-import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import java.io.File
-import java.io.FileOutputStream
-import androidx.core.widget.NestedScrollView
+*/
 
 class PetProfileFragment : Fragment(){
-
+/*
     // variables for view binding
     private var _binding: FragmentPetProfileBinding? = null
     private val binding get() = _binding!!
@@ -775,5 +738,5 @@ class PetProfileFragment : Fragment(){
 
         // Delete saved files
         Util.deleteCopiedFiles(requireContext(), PET_PROFILE_DIRECTORY)
-    }
+    }*/
 }

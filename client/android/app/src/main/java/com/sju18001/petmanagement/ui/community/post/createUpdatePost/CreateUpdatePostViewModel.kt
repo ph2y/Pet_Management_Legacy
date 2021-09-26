@@ -1,9 +1,8 @@
-package com.sju18001.petmanagement.ui.community.createUpdatePost
+package com.sju18001.petmanagement.ui.community.post.createUpdatePost
 
 import android.graphics.Bitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import java.math.BigDecimal
 
 class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewModel() {
     // for pet
