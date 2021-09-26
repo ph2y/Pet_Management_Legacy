@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.doOnLayout
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.RecyclerView
@@ -90,7 +91,9 @@ class PetProfileFragment : Fragment(){
         binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
         binding.backButtonLayout.doOnLayout {
             backButtonLayoutHeight = it.measuredHeight
-            setViewsForDetail(true)
+            binding.petMessage.doOnPreDraw { binding.buttonsLayout.doOnPreDraw {
+                setViewsForDetail(true)
+            }}
         }
 
         binding.postFragmentContainer.post{
@@ -320,8 +323,8 @@ class PetProfileFragment : Fragment(){
                 binding.petMessage.visibility = View.VISIBLE
             }
             binding.buttonsLayout.visibility = View.VISIBLE
-            binding.petProfileMainScrollView.scrollTo(0, 0)
 
+            binding.petProfileMainScrollView.scrollTo(0, 0)
             (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = backButtonLayoutHeight
 
         }else{
