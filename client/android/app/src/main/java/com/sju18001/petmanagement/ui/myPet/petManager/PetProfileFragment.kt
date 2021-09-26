@@ -71,11 +71,6 @@ class PetProfileFragment : Fragment(){
             // TODO: implement logic for username_and_pets_layout
         }
 
-        // if pet message is empty -> hide view
-        if(myPetViewModel.petMessageValueProfile == "") {
-            binding.petMessage.visibility = View.GONE
-        }
-
         // if fragment type is pet_profile_community -> hide username_and_pets_layout
         if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_community") {
             binding.buttonsLayout.visibility = View.GONE
@@ -321,7 +316,9 @@ class PetProfileFragment : Fragment(){
 
         if(isViewDetailed){
             binding.backButtonLayout.visibility = View.VISIBLE
-            binding.petMessage.visibility = View.VISIBLE
+            if(myPetViewModel.petMessageValueProfile.isNotEmpty()) {
+                binding.petMessage.visibility = View.VISIBLE
+            }
             binding.buttonsLayout.visibility = View.VISIBLE
             binding.petProfileMainScrollView.scrollTo(0, 0)
 
