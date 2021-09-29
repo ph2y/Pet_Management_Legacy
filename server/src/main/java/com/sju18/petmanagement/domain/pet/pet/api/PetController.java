@@ -65,11 +65,11 @@ public class PetController {
     }
 
     @PostMapping("/api/pet/photo/fetch")
-    public ResponseEntity<?> fetchPetPhoto(Authentication auth, @Valid @RequestBody FetchPetPhotoReqDto reqDto) {
+    public ResponseEntity<?> fetchPetPhoto(@Valid @RequestBody FetchPetPhotoReqDto reqDto) {
         DtoMetadata dtoMetadata;
         byte[] fileBinData;
         try {
-            fileBinData = petServ.fetchPetPhoto(auth, reqDto.getId());
+            fileBinData = petServ.fetchPetPhoto(reqDto.getId());
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
