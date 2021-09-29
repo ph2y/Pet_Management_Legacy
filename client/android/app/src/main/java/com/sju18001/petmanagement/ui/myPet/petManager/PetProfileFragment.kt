@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -66,11 +67,6 @@ class PetProfileFragment : Fragment(){
         }
         else {
             // TODO: implement logic for username_and_pets_layout
-        }
-
-        // if fragment type is pet_profile_community -> hide username_and_pets_layout
-        if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_community") {
-            binding.buttonsLayout.visibility = View.GONE
         }
 
 
@@ -318,7 +314,9 @@ class PetProfileFragment : Fragment(){
             if(myPetViewModel.petMessageValueProfile.isNotEmpty()) {
                 binding.petMessage.visibility = View.VISIBLE
             }
-            binding.buttonsLayout.visibility = View.VISIBLE
+            if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager"){
+                binding.buttonsLayout.visibility = View.VISIBLE
+            }
 
             binding.petProfileMainScrollView.scrollTo(0, 0)
             (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = backButtonLayoutHeight

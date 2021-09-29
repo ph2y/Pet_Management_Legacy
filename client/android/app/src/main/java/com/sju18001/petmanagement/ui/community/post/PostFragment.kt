@@ -644,7 +644,7 @@ class PostFragment : Fragment() {
         petProfileIntent.putExtra("petMessage", item.pet.message)
 
         // open activity
-        petProfileIntent.putExtra("fragmentType", "pet_profile_pet_manager")
+        petProfileIntent.putExtra("fragmentType", "pet_profile_community")
         holder.itemView.context.startActivity(petProfileIntent)
         (requireContext() as Activity).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
     }
