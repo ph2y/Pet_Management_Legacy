@@ -25,7 +25,7 @@ import java.util.*;
 @Service
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
-    private final String storageRootPath = "D:\\TempDev\\Pet-Management\\storage";
+    private final String storageRootPath = "C:\\Users\\fchop\\Development\\tmp\\Pet-Management\\storage";
     private final Integer MEDIA_FILE = 1;
     private final Integer GENERAL_FILE = 2;
 
