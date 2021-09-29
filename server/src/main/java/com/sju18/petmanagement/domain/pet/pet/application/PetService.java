@@ -92,7 +92,7 @@ public class PetService {
 
     public byte[] fetchPetPhoto(Authentication auth, Long petId) throws Exception {
         Account currentAccount = accountServ.fetchCurrentAccount(auth);
-        Pet currentPet = petRepository.findByOwnernameAndId(currentAccount.getUsername(), petId)
+        Pet currentPet = petRepository.findById(petId)
                 .orElseThrow(() -> new IllegalArgumentException(
                         msgSrc.getMessage("error.pet.notExists", null, Locale.ENGLISH)
                 ));
