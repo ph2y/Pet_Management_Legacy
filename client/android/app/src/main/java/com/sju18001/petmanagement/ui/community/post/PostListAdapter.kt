@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -47,6 +48,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         val accountPhotoImage: ImageView = view.findViewById(R.id.account_photo)
         val nicknameTextView: TextView = view.findViewById(R.id.nickname)
         val petNameTextView: TextView = view.findViewById(R.id.pet_name)
+        val layoutUserInfo: ConstraintLayout = view.findViewById(R.id.layout_user_info)
         val dialogButton: ImageButton = view.findViewById(R.id.dialog_button)
 
         val viewPager: ViewPager2 = view.findViewById(R.id.view_pager)
@@ -159,10 +161,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         val item = dataSet[position]
 
         // 프로필 이동
-        holder.nicknameTextView.setOnClickListener {
-            communityPostListAdapterInterface.fetchPetPhotoAndStartPetProfileFragment(holder, item)
-        }
-        holder.petNameTextView.setOnClickListener {
+        holder.layoutUserInfo.setOnClickListener {
             communityPostListAdapterInterface.fetchPetPhotoAndStartPetProfileFragment(holder, item)
         }
 
