@@ -28,6 +28,7 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPostBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.CommunityViewModel
@@ -389,22 +390,22 @@ class PostFragment : Fragment() {
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
-            override fun fetchPetPhotoAndStartPetProfileFragment(holder: PostListAdapter.ViewHolder, item: Post) {
+            override fun fetchPetPhotoAndStartPetProfileFragment(holder: PostListAdapter.ViewHolder, pet: Pet) {
                 // 사진이 없을 때는 fetch 없이 프래그먼트 시작
-                if(item.pet.photoUrl == null){
-                    startPetProfileFragment(holder, item, null)
+                if(pet.photoUrl == null){
+                    startPetProfileFragment(holder, pet, null)
                     return
                 }
 
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                    .fetchPetPhotoReq(FetchPetPhotoReqDto(item.pet.id))
+                    .fetchPetPhotoReq(FetchPetPhotoReqDto(pet.id))
                 call.enqueue(object: Callback<ResponseBody> {
                     override fun onResponse(
                         call: Call<ResponseBody>,
                         response: Response<ResponseBody>
                     ) {
                         if(response.isSuccessful){
-                            startPetProfileFragment(holder, item, response.body()!!.bytes())
+                            startPetProfileFragment(holder, pet, response.body()!!.bytes())
                         }else{
                             Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
                         }
@@ -621,27 +622,27 @@ class PostFragment : Fragment() {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun startPetProfileFragment(holder: PostListAdapter.ViewHolder, item: Post, photoByteArray: ByteArray?){
+    private fun startPetProfileFragment(holder: PostListAdapter.ViewHolder, pet: Pet, photoByteArray: ByteArray?){
         // set pet values to Intent
         val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
         if(photoByteArray != null) {
             petProfileIntent.putExtra("photoByteArray", photoByteArray)
         }
-        petProfileIntent.putExtra("petId", item.pet.id)
-        petProfileIntent.putExtra("petName", item.pet.name)
-        petProfileIntent.putExtra("petBirth", item.pet.birth)
-        petProfileIntent.putExtra("petSpecies", item.pet.species)
-        petProfileIntent.putExtra("petBreed", item.pet.breed)
-        val petGender = if(item.pet.gender) {
+        petProfileIntent.putExtra("petId", pet.id)
+        petProfileIntent.putExtra("petName", pet.name)
+        petProfileIntent.putExtra("petBirth", pet.birth)
+        petProfileIntent.putExtra("petSpecies", pet.species)
+        petProfileIntent.putExtra("petBreed", pet.breed)
+        val petGender = if(pet.gender) {
             holder.itemView.context.getString(R.string.pet_gender_female_symbol)
         }
         else {
             holder.itemView.context.getString(R.string.pet_gender_male_symbol)
         }
-        val petAge = Period.between(LocalDate.parse(item.pet.birth), LocalDate.now()).years.toString()
+        val petAge = Period.between(LocalDate.parse(pet.birth), LocalDate.now()).years.toString()
         petProfileIntent.putExtra("petGender", petGender)
         petProfileIntent.putExtra("petAge", petAge)
-        petProfileIntent.putExtra("petMessage", item.pet.message)
+        petProfileIntent.putExtra("petMessage", pet.message)
 
         // open activity
         petProfileIntent.putExtra("fragmentType", "pet_profile_community")
