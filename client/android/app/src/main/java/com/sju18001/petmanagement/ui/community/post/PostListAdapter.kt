@@ -1,6 +1,11 @@
 package com.sju18001.petmanagement.ui.community.post
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
@@ -8,6 +13,7 @@ import com.sju18001.petmanagement.restapi.dao.Post
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
@@ -15,6 +21,10 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.global.FileMetaData
 import com.sju18001.petmanagement.ui.community.post.PostTagListAdapter
+import com.sju18001.petmanagement.ui.myPet.MyPetActivity
+import java.io.ByteArrayOutputStream
+import java.time.LocalDate
+import java.time.Period
 
 interface PostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
@@ -25,6 +35,7 @@ interface PostListAdapterInterface{
     fun setAccountDefaultPhoto(holder: PostListAdapter.ViewHolder)
     fun setPostMedia(holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String)
     fun getContext(): Context
+    fun fetchPetPhotoAndStartPetProfileFragment(holder: PostListAdapter.ViewHolder, item: Post)
 }
 
 private const val MAX_LINE = 5
@@ -33,7 +44,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
     lateinit var communityPostListAdapterInterface: PostListAdapterInterface
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
-        val petPhotoImage: ImageView = view.findViewById(R.id.pet_photo)
+        val accountPhotoImage: ImageView = view.findViewById(R.id.account_photo)
         val nicknameTextView: TextView = view.findViewById(R.id.nickname)
         val petNameTextView: TextView = view.findViewById(R.id.pet_name)
         val dialogButton: ImageButton = view.findViewById(R.id.dialog_button)
@@ -56,6 +67,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         return ViewHolder(view)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val safePosition = holder.adapterPosition
 
@@ -142,25 +154,36 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setListenerOnView(holder: ViewHolder, position: Int){
+        val item = dataSet[position]
+
+        // 프로필 이동
+        holder.nicknameTextView.setOnClickListener {
+            communityPostListAdapterInterface.fetchPetPhotoAndStartPetProfileFragment(holder, item)
+        }
+        holder.petNameTextView.setOnClickListener {
+            communityPostListAdapterInterface.fetchPetPhotoAndStartPetProfileFragment(holder, item)
+        }
+
         // 댓글 버튼
         holder.commentButton.setOnClickListener {
-            communityPostListAdapterInterface.startCommunityCommentActivity(dataSet[position].id)
+            communityPostListAdapterInterface.startCommunityCommentActivity(item.id)
         }
 
         // 좋아요 버튼
         holder.createLikeButton.setOnClickListener {
-            communityPostListAdapterInterface.createLike(dataSet[position].id, holder, position)
+            communityPostListAdapterInterface.createLike(item.id, holder, position)
         }
 
         // 좋아요 취소 버튼
         holder.deleteLikeButton.setOnClickListener {
-            communityPostListAdapterInterface.deleteLike(dataSet[position].id, holder, position)
+            communityPostListAdapterInterface.deleteLike(item.id, holder, position)
         }
 
         // ... 버튼 -> Dialog 띄우기
         holder.dialogButton.setOnClickListener {
-            communityPostListAdapterInterface.onClickPostFunctionButton(dataSet[position], position)
+            communityPostListAdapterInterface.onClickPostFunctionButton(item, position)
         }
     }
 

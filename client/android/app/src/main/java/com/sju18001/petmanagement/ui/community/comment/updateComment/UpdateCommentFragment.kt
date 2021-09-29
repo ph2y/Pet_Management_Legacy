@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.setFragmentResult
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentUpdateCommentBinding
@@ -16,7 +15,6 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.UpdateCommentReqDto
 import com.sju18001.petmanagement.restapi.dto.UpdateCommentResDto
-import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
