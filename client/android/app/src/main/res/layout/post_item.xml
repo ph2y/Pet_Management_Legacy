@@ -21,34 +21,44 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
-        <TextView
-            android:id="@+id/nickname"
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_user_info"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
-            android:text="rachmaninoff"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/account_photo"
-            />
-        <TextView
-            android:id="@+id/nickname_footer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="님의 "
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/nickname"
-            />
-        <TextView
-            android:id="@+id/pet_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="몽자"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/nickname_footer"
-            />
+            app:layout_constraintStart_toEndOf="@id/account_photo">
+            <TextView
+                android:id="@+id/nickname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="rachmaninoff"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+            <TextView
+                android:id="@+id/nickname_footer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="님의 "
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/nickname"
+                />
+            <TextView
+                android:id="@+id/pet_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="몽자"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/nickname_footer"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <ImageButton
             android:id="@+id/dialog_button"
             android:layout_width="wrap_content"
