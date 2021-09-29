@@ -36,6 +36,7 @@ class MyPetActivity : AppCompatActivity() {
             val fragment = when(fragmentType){
                 "create_pet" -> CreateUpdatePetFragment()
                 "pet_profile_pet_manager" -> PetProfileFragment()
+                "pet_profile_community" -> PetProfileFragment()
                 else -> PetScheduleEditFragment()
             }
             supportFragmentManager
