@@ -4,11 +4,9 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.sju18001.petmanagement.R
@@ -18,7 +16,6 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchAccountResDto
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback

@@ -10,7 +10,6 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +19,6 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
-import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -35,12 +33,15 @@ import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.CommunityViewModel
 import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import com.sju18001.petmanagement.ui.community.post.createUpdatePost.CreateUpdatePostActivity
+import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
+import java.time.LocalDate
+import java.time.Period
 
 class PostFragment : Fragment() {
     // 외부에서 petId를 지정해줄 수 있다.
@@ -262,7 +263,7 @@ class PostFragment : Fragment() {
                             val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
 
                             // set account photo
-                            holder.petPhotoImage.setImageBitmap(photoBitmap)
+                            holder.accountPhotoImage.setImageBitmap(photoBitmap)
                         }
                         else {
                             Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
@@ -276,7 +277,7 @@ class PostFragment : Fragment() {
             }
 
             override fun setAccountDefaultPhoto(holder: PostListAdapter.ViewHolder) {
-                holder.petPhotoImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
+                holder.accountPhotoImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
             }
 
             override fun setPostMedia(
@@ -385,6 +386,35 @@ class PostFragment : Fragment() {
 
             override fun getContext(): Context {
                 return requireContext()
+            }
+
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun fetchPetPhotoAndStartPetProfileFragment(holder: PostListAdapter.ViewHolder, item: Post) {
+                // 사진이 없을 때는 fetch 없이 프래그먼트 시작
+                if(item.pet.photoUrl == null){
+                    startPetProfileFragment(holder, item, null)
+                    return
+                }
+
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                    .fetchPetPhotoReq(FetchPetPhotoReqDto(item.pet.id))
+                call.enqueue(object: Callback<ResponseBody> {
+                    override fun onResponse(
+                        call: Call<ResponseBody>,
+                        response: Response<ResponseBody>
+                    ) {
+                        if(response.isSuccessful){
+                            startPetProfileFragment(holder, item, response.body()!!.bytes())
+                        }else{
+                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
+                        }
+                    }
+
+                    override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                        Util.showToastAndLog(requireContext(), t.message.toString())
+                    }
+
+                })
             }
         }
 
@@ -587,6 +617,36 @@ class PostFragment : Fragment() {
             }
         })
             .create().show()
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun startPetProfileFragment(holder: PostListAdapter.ViewHolder, item: Post, photoByteArray: ByteArray?){
+        // set pet values to Intent
+        val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
+        if(photoByteArray != null) {
+            petProfileIntent.putExtra("photoByteArray", photoByteArray)
+        }
+        petProfileIntent.putExtra("petId", item.pet.id)
+        petProfileIntent.putExtra("petName", item.pet.name)
+        petProfileIntent.putExtra("petBirth", item.pet.birth)
+        petProfileIntent.putExtra("petSpecies", item.pet.species)
+        petProfileIntent.putExtra("petBreed", item.pet.breed)
+        val petGender = if(item.pet.gender) {
+            holder.itemView.context.getString(R.string.pet_gender_female_symbol)
+        }
+        else {
+            holder.itemView.context.getString(R.string.pet_gender_male_symbol)
+        }
+        val petAge = Period.between(LocalDate.parse(item.pet.birth), LocalDate.now()).years.toString()
+        petProfileIntent.putExtra("petGender", petGender)
+        petProfileIntent.putExtra("petAge", petAge)
+        petProfileIntent.putExtra("petMessage", item.pet.message)
+
+        // open activity
+        petProfileIntent.putExtra("fragmentType", "pet_profile_pet_manager")
+        holder.itemView.context.startActivity(petProfileIntent)
+        (requireContext() as Activity).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
     }
 
 

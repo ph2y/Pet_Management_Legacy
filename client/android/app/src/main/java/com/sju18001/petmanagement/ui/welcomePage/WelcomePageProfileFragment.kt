@@ -1,9 +1,7 @@
 package com.sju18001.petmanagement.ui.welcomePage
 
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -17,10 +15,7 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchAccountResDto
 import com.sju18001.petmanagement.ui.myPage.MyPageActivity
-import okhttp3.MediaType
-import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
