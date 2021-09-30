@@ -26,6 +26,7 @@ import com.sju18001.petmanagement.databinding.FragmentMapBinding
 import com.sju18001.petmanagement.restapi.Documents
 import com.sju18001.petmanagement.restapi.KakaoApi
 import com.sju18001.petmanagement.restapi.Place
+import com.sju18001.petmanagement.restapi.ServerUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -159,6 +160,8 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
 
             setOnEditorActionListener{ textView, _, _ ->
                 doSearch(textView.text.toString(), mapView, textView)
+                Util.hideKeyboard(requireActivity())
+                
                 true
             }
 
@@ -265,26 +268,13 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                 currentMapPoint!!.mapPointGeoCoord.latitude.toString(),
                 searchRadiusMeter
             )
-
-            call.enqueue(object: Callback<Documents> {
-                override fun onResponse(
-                    call: Call<Documents>,
-                    response: Response<Documents>
-                ) {
-                    if(isViewDestroyed) return
-
-                    val body = response.body()
-                    if(body != null){
-                        currentDocuments = body.documents
-                        addPOIItemsForDocuments(currentDocuments!!, mapView)
-                    }
+            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                val body = response.body()
+                if(body != null){
+                    currentDocuments = body.documents
+                    addPOIItemsForDocuments(currentDocuments!!, mapView)
                 }
-
-                override fun onFailure(call: Call<Documents>, t: Throwable) {
-                    Util.showToastAndLog(requireContext(), t.message.toString())
-                }
-
-            })
+            }, {}, {})
         }catch(e: Exception){
             // currentMapPoint가 아직 초기화되지 않았을 경우
             Log.e("MapFragment", e.stackTrace.toString())
