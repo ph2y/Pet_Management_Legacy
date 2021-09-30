@@ -21,6 +21,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchPetReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetResDto
@@ -99,66 +100,44 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     override fun onResume() {
         super.onResume()
 
-        // create DTO
-        val fetchPetReqDto = FetchPetReqDto( null )
-
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetReq(fetchPetReqDto)
-        call.enqueue(object: Callback<FetchPetResDto> {
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onResponse(
-                call: Call<FetchPetResDto>,
-                response: Response<FetchPetResDto>
-            ) {
-                if(isViewDestroyed) return
+            .fetchPetReq(FetchPetReqDto( null ))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            val petListApi: ArrayList<PetListItem> = ArrayList()
+            response.body()?.petList?.map {
+                val item = PetListItem()
+                item.setValues(
+                    it.id,
+                    it.name,
+                    LocalDate.parse(it.birth),
+                    it.yearOnly,
+                    it.species,
+                    it.breed,
+                    it.gender,
+                    it.photoUrl,
+                    it.message
+                )
+                petListApi.add(item)
 
-                if(response.isSuccessful) {
-                    val petListApi: ArrayList<PetListItem> = ArrayList()
-                    response.body()?.petList?.map {
-                        val item = PetListItem()
-                        item.setValues(
-                            it.id,
-                            it.name,
-                            LocalDate.parse(it.birth),
-                            it.yearOnly,
-                            it.species,
-                            it.breed,
-                            it.gender,
-                            it.photoUrl,
-                            it.message
-                        )
-                        petListApi.add(item)
-
-                        myPetViewModel.addPetNameForId(it.id, it.name)
-                    }
-
-                    // if RecyclerView items not yet added
-                    if(adapter.itemCount == 0) {
-                        updatePetListOrder(petListApi)
-                        reorderPetList(petListApi)
-
-                        // set result + restore last scrolled index
-                        adapter.setResult(petList)
-                        binding.myPetListRecyclerView.scrollToPosition(myPetViewModel.lastScrolledIndex)
-                    }
-                    // check for difference in lists(current RecyclerView vs API response)
-                    else {
-                        checkListDifference(petListApi)
-                    }
-
-                    adapter.notifyDataSetChanged()
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
+                myPetViewModel.addPetNameForId(it.id, it.name)
             }
 
-            override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
-                if(isViewDestroyed) return
+            // if RecyclerView items not yet added
+            if(adapter.itemCount == 0) {
+                updatePetListOrder(petListApi)
+                reorderPetList(petListApi)
 
-                Util.showToastAndLog(requireContext(), t.message.toString())
+                // set result + restore last scrolled index
+                adapter.setResult(petList)
+                binding.myPetListRecyclerView.scrollToPosition(myPetViewModel.lastScrolledIndex)
             }
-        })
+            // check for difference in lists(current RecyclerView vs API response)
+            else {
+                checkListDifference(petListApi)
+            }
+
+            adapter.notifyDataSetChanged()
+        }, {}, {})
     }
 
     override fun onStop() {

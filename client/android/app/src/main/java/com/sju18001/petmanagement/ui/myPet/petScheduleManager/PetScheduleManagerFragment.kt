@@ -18,6 +18,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetScheduleManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.PetSchedule
 import com.sju18001.petmanagement.restapi.dto.*
@@ -122,18 +123,7 @@ class PetScheduleManagerFragment : Fragment() {
             override fun deletePetSchedule(id: Long) {
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .deletePetScheduleReq(DeletePetScheduleReqDto(id))
-                call.enqueue(object: Callback<DeletePetScheduleResDto> {
-                    override fun onResponse(
-                        call: Call<DeletePetScheduleResDto>,
-                        response: Response<DeletePetScheduleResDto>
-                    ) {
-                        // Do nothing
-                    }
-
-                    override fun onFailure(call: Call<DeletePetScheduleResDto>, t: Throwable) {
-                        Util.showToastAndLog(requireContext(), t.message.toString())
-                    }
-                })
+                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {}, {}, {})
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
@@ -141,29 +131,9 @@ class PetScheduleManagerFragment : Fragment() {
                 val updatePetScheduleReqDto = UpdatePetScheduleReqDto(
                     data.id, data.petIdList, data.time, data.memo, data.enabled
                 )
-
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .updatePetScheduleReq(updatePetScheduleReqDto)
-                call.enqueue(object: Callback<UpdatePetScheduleResDto> {
-                    override fun onResponse(
-                        call: Call<UpdatePetScheduleResDto>,
-                        response: Response<UpdatePetScheduleResDto>
-                    ) {
-                        if(isViewDestroyed) return
-
-                        if(response.isSuccessful){
-                            // Do nothing
-                        }else{
-                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                        }
-                    }
-
-                    override fun onFailure(call: Call<UpdatePetScheduleResDto>, t: Throwable) {
-                        if(isViewDestroyed) return
-
-                        Util.showToastAndLog(requireContext(), t.message.toString())
-                    }
-                })
+                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {}, {}, {})
             }
 
             override fun getContext(): Context {
@@ -192,41 +162,22 @@ class PetScheduleManagerFragment : Fragment() {
 
     private fun updateAdapterDataSetByFetchPetSchedule(){
         val dataSet = arrayListOf<PetSchedule>()
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetScheduleReq(body)
-        call.enqueue(object: Callback<FetchPetScheduleResDto> {
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onResponse(
-                call: Call<FetchPetScheduleResDto>,
-                response: Response<FetchPetScheduleResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful){
-                    // dataSet에 값 저장
-                    response.body()?.petScheduleList?.map{
-                        dataSet.add(PetSchedule(
-                            it.id, it.username, it.petList, it.time, it.memo, it.enabled,
-                            it.petIdList.replace(" ", "")
-                        ))
-                    }
-                    dataSet.sortBy{ it.time }
-
-                    adapter.setDataSet(dataSet)
-                    adapter.notifyDataSetChanged()
-                }else{
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
+            .fetchPetScheduleReq(ServerUtil.getEmptyBody())
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            // dataSet에 값 저장
+            response.body()?.petScheduleList?.map{
+                dataSet.add(PetSchedule(
+                    it.id, it.username, it.petList, it.time, it.memo, it.enabled,
+                    it.petIdList.replace(" ", "")
+                ))
             }
+            dataSet.sortBy{ it.time }
 
-            override fun onFailure(call: Call<FetchPetScheduleResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
+            adapter.setDataSet(dataSet)
+            adapter.notifyDataSetChanged()
+        }, {}, {})
     }
 
     private fun setEmptyNotificationView(itemCount: Int) {

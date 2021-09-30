@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
@@ -143,28 +144,12 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
 
     // fetch pet photo
     private fun fetchPetPhoto(id: Long, view: View) {
-        // create DTO
-        val fetchPetPhotoReqDto = FetchPetPhotoReqDto(id)
-
-        RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
-            .fetchPetPhotoReq(fetchPetPhotoReqDto).enqueue(object: Callback<ResponseBody> {
-            override fun onResponse(
-                call: Call<ResponseBody>,
-                response: Response<ResponseBody>
-            ) {
-                if(response.isSuccessful) {
-                    // set fetched photo to view
-                    (view as ImageView).setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(context, response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Util.showToastAndLog(context, t.message.toString())
-            }
-        })
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
+            .fetchPetPhotoReq(FetchPetPhotoReqDto(id))
+        ServerUtil.enqueueApiCall(call, false, context, { response ->
+            // set fetched photo to view
+            (view as ImageView).setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
+        }, {}, {})
     }
 
     public fun setResult(result: List<PetListItem>){

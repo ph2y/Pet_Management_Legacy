@@ -21,6 +21,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetProfileBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.DeletePetReqDto
 import com.sju18001.petmanagement.restapi.dto.DeletePetResDto
@@ -226,42 +227,21 @@ class PetProfileFragment : Fragment(){
         myPetViewModel.petManagerApiIsLoading = true
         disableButton()
 
-        // create DTO
-        val deletePetReqDto = DeletePetReqDto(
-            requireActivity().intent.getLongExtra("petId", -1)
-        )
-
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .deletePetReq(deletePetReqDto)
-        call.enqueue(object: Callback<DeletePetResDto> {
-            override fun onResponse(
-                call: Call<DeletePetResDto>,
-                response: Response<DeletePetResDto>
-            ) {
-                if(isViewDestroyed) return
+            .deletePetReq(DeletePetReqDto(requireActivity().intent.getLongExtra("petId", -1)))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            // set api state/button to normal
+            myPetViewModel.petManagerApiIsLoading = false
+            enableButton()
 
-                // set api state/button to normal
-                myPetViewModel.petManagerApiIsLoading = false
-                enableButton()
-
-                if(response.isSuccessful) {
-                    Toast.makeText(context, context?.getText(R.string.delete_pet_successful), Toast.LENGTH_LONG).show()
-                    activity?.finish()
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<DeletePetResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // set api state/button to normal
-                myPetViewModel.petManagerApiIsLoading = false
-                enableButton()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+            Toast.makeText(context, context?.getText(R.string.delete_pet_successful), Toast.LENGTH_LONG).show()
+            activity?.finish()
+        }, {
+            myPetViewModel.petManagerApiIsLoading = false
+            enableButton()
+        }, {
+            myPetViewModel.petManagerApiIsLoading = false
+            enableButton()
         })
     }
 
