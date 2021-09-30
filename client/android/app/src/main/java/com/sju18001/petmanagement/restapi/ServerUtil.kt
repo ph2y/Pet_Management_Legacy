@@ -5,11 +5,45 @@ import android.net.Uri
 import android.util.Log
 import android.webkit.MimeTypeMap
 import android.widget.Toast
+import com.sju18001.petmanagement.controller.Util
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
 
 class ServerUtil {
     companion object{
+        fun <T> enqueueApiCall(
+            call: Call<T>,
+            isViewDestroyed: Boolean,
+            context: Context,
+            onSuccessful: (Response<T>)->Unit,
+            onNotSuccessful: (Response<T>)->Unit,
+            onFailure: ()->Unit
+        ){
+            call.enqueue(object: Callback<T> {
+                override fun onResponse(call: Call<T>, response: Response<T>) {
+                    if(isViewDestroyed) return
+
+                    if(response.isSuccessful){
+                        onSuccessful.invoke(response)
+                    }else{
+                        onNotSuccessful.invoke(response)
+                        Util.showToastAndLogForFailedResponse(context, response.errorBody())
+                    }
+                }
+
+                override fun onFailure(call: Call<T>, t: Throwable) {
+                    if(isViewDestroyed) return
+
+                    onFailure.invoke()
+                    Util.showToastAndLog(context, t.message.toString())
+                }
+            })
+        }
+
         fun createCopyAndReturnRealPathLocal(context: Context, uri: Uri, directory: String): String {
             val mimeTypeMap = MimeTypeMap.getSingleton()
             val extension = mimeTypeMap.getExtensionFromMimeType(context.contentResolver.getType(uri))!!

@@ -27,6 +27,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPostBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dao.Post
@@ -112,30 +113,15 @@ class PostFragment : Fragment() {
     private fun fetchOnePostAndInvoke(postId: Long, callback: ((Post)->Unit)){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(FetchPostReqDto(null, null, null, postId))
-        call.enqueue(object: Callback<FetchPostResDto> {
-            override fun onResponse(
-                call: Call<FetchPostResDto>,
-                response: Response<FetchPostResDto>
-            ) {
-                if(isViewDestroyed) return
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            response.body()?.postList?.get(0)?.let{ item ->
+                // 펫이 지정되어있지만 pet id가 다를 경우
+                val petId = arguments?.getLong("petId")
+                if(petId != null && petId != item.pet.id) return@enqueueApiCall
 
-                if(response.isSuccessful){
-                    response.body()?.postList?.get(0)?.let{ item ->
-                        // 펫이 지정되어있지만 pet id가 다를 경우
-                        val petId = arguments?.getLong("petId")
-                        if(petId != null && petId != item.pet.id) return
-
-                        callback.invoke(item)
-                    }
-                }
+                callback.invoke(item)
             }
-
-            override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
+        }, {}, {})
     }
 
     override fun onCreateView(
