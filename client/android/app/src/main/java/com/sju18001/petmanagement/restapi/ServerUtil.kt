@@ -6,6 +6,8 @@ import android.util.Log
 import android.webkit.MimeTypeMap
 import android.widget.Toast
 import com.sju18001.petmanagement.controller.Util
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -42,6 +44,10 @@ class ServerUtil {
                     Util.showToastAndLog(context, t.message.toString())
                 }
             })
+        }
+
+        fun getEmptyBody(): RequestBody{
+            return RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
         }
 
         fun createCopyAndReturnRealPathLocal(context: Context, uri: Uri, directory: String): String {

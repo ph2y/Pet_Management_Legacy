@@ -16,6 +16,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFollowerFollowingBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchFollowerResDto
 import com.sju18001.petmanagement.restapi.dto.FetchFollowingResDto
@@ -127,73 +128,31 @@ class FollowerFollowingFragment : Fragment() {
     }
 
     private fun setFollowerCount() {
-        // create empty body
-        val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchFollowingReq(emptyBody)
-        call.enqueue(object: Callback<FetchFollowingResDto> {
-            override fun onResponse(
-                call: Call<FetchFollowingResDto>,
-                response: Response<FetchFollowingResDto>
-            ) {
-                if(isViewDestroyed) return
+            .fetchFollowingReq(ServerUtil.getEmptyBody())
 
-                if(response.isSuccessful) {
-                    val followerCount = response.body()!!.followingList.size
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            val followerCount = response.body()!!.followingList.size
 
-                    // set follower count
-                    val followerText = requireContext().getText(R.string.follower_fragment_title).toString() +
-                            ' ' + followerCount.toString()
-                    followerFollowingViewModel.setFollowerTitle(followerText)
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<FetchFollowingResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
+            // set follower count
+            val followerText = requireContext().getText(R.string.follower_fragment_title).toString() +
+                    ' ' + followerCount.toString()
+            followerFollowingViewModel.setFollowerTitle(followerText)
+        }, {}, {})
     }
 
     private fun setFollowingCount() {
-        // create empty body
-        val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchFollowerReq(emptyBody)
-        call.enqueue(object: Callback<FetchFollowerResDto> {
-            override fun onResponse(
-                call: Call<FetchFollowerResDto>,
-                response: Response<FetchFollowerResDto>
-            ) {
-                if(isViewDestroyed) return
+            .fetchFollowerReq(ServerUtil.getEmptyBody())
 
-                if(response.isSuccessful) {
-                    val followingCount = response.body()!!.followerList.size
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            val followingCount = response.body()!!.followerList.size
 
-                    // set following count
-                    val followingText = requireContext().getText(R.string.following_fragment_title).toString() +
-                            ' ' + followingCount.toString()
-                    followerFollowingViewModel.setFollowingTitle(followingText)
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<FetchFollowerResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
+            // set following count
+            val followingText = requireContext().getText(R.string.following_fragment_title).toString() +
+                    ' ' + followingCount.toString()
+            followerFollowingViewModel.setFollowingTitle(followingText)
+        }, {}, {})
     }
 
     override fun onDestroyView() {
