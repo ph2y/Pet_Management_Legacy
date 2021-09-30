@@ -13,6 +13,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentMyPageBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
@@ -154,35 +155,14 @@ class MyPageFragment : Fragment() {
             binding.accountPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
             return
         }
-        
-        // create DTO
-        val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(null)
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
-        call.enqueue(object: Callback<ResponseBody> {
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if(isViewDestroyed) return
-
-                    if(response.isSuccessful) {
-                        // save in ViewModel by byte array
-                        myPageViewModel.accountPhotoProfileByteArray = response.body()!!.byteStream().readBytes()
-                        binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(myPageViewModel.accountPhotoProfileByteArray, 0, myPageViewModel.accountPhotoProfileByteArray!!.size))
-                    }
-                    else {
-                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                    }
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    if(isViewDestroyed) return
-
-                    Util.showToastAndLog(requireContext(), t.message.toString())
-                }
-            })
+            .fetchAccountPhotoReq(FetchAccountPhotoReqDto(null))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            // save in ViewModel by byte array
+            myPageViewModel.accountPhotoProfileByteArray = response.body()!!.byteStream().readBytes()
+            binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(myPageViewModel.accountPhotoProfileByteArray, 0, myPageViewModel.accountPhotoProfileByteArray!!.size))
+        }, {}, {})
     }
 
     // set views for account profile

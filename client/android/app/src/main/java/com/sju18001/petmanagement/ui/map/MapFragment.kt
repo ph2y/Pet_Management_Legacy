@@ -161,7 +161,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
             setOnEditorActionListener{ textView, _, _ ->
                 doSearch(textView.text.toString(), mapView, textView)
                 Util.hideKeyboard(requireActivity())
-                
+
                 true
             }
 
