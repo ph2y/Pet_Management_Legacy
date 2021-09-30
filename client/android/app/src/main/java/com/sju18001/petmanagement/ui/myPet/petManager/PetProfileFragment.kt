@@ -226,11 +226,16 @@ class PetProfileFragment : Fragment(){
         val petGenderAndAge = myPetViewModel.petGenderValueProfile + " / " + myPetViewModel.petAgeValueProfile + '세'
         binding.petGenderAndAge.text = petGenderAndAge
         binding.petMessage.text = myPetViewModel.petMessageValueProfile
-        if (myPetViewModel.isRepresentativePetProfile) {
-            binding.representativePetIcon.visibility = View.VISIBLE
+        if (requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+            if (myPetViewModel.isRepresentativePetProfile) {
+                binding.representativePetIcon.visibility = View.VISIBLE
+            }
+            else {
+                binding.representativePetIcon.visibility = View.INVISIBLE
+            }
         }
         else {
-            binding.representativePetIcon.visibility = View.INVISIBLE
+            // TODO: check if current pet is the representative(for community)
         }
     }
 
