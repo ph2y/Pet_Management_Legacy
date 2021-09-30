@@ -12,6 +12,7 @@ import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentRecoverUsernameBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.dto.RecoverUsernameReqDto
 import com.sju18001.petmanagement.restapi.dto.RecoverUsernameResDto
 import retrofit2.Call
@@ -129,42 +130,26 @@ class RecoverUsernameFragment : Fragment() {
 
 
     private fun recoverUsername(email: String){
-        val recoverUsernameReqDto = RecoverUsernameReqDto(email)
-        val call = RetrofitBuilder.getServerApi().recoverUsernameReq(recoverUsernameReqDto)
-
         // 버튼 로딩 상태
         setButtonLoading(true)
         lockViews()
 
-        call.enqueue(object: Callback<RecoverUsernameResDto> {
-            override fun onResponse(
-                call: Call<RecoverUsernameResDto>,
-                response: Response<RecoverUsernameResDto>
-            ) {
-                if(isViewDestroyed) return
+        val call = RetrofitBuilder.getServerApi().recoverUsernameReq(RecoverUsernameReqDto(email))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            // 버튼 로딩 상태 해제
+            setButtonLoading(false)
+            unlockViews()
 
-                // 버튼 로딩 상태 해제
-                setButtonLoading(false)
-                unlockViews()
-
-                if(response.isSuccessful){
-                    response.body()?.let{
-                        setViewForResult(it.username)
-                    }
-                }else{
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
+            response.body()?.let{
+                setViewForResult(it.username)
             }
-
-            override fun onFailure(call: Call<RecoverUsernameResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // 버튼 로딩 상태 해제
-                setButtonLoading(false)
-                unlockViews()
-
-                Util.showToastAndLog(requireContext(), getString(R.string.fail_request))
-            }
+        }, {
+            // 버튼 로딩 상태 해제
+            setButtonLoading(false)
+            unlockViews()
+        }, {
+            setButtonLoading(false)
+            unlockViews()
         })
     }
 

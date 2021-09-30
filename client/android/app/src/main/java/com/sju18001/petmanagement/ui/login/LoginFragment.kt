@@ -19,6 +19,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentLoginBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.*
@@ -137,11 +138,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun login(username: String, password: String) {
-        // create login request Dto
-        val loginReqDto = LoginReqDto(username, password)
-
-        // call API using Retrofit
-        val call = RetrofitBuilder.getServerApi().loginReq(loginReqDto)
+        val call = RetrofitBuilder.getServerApi().loginReq(LoginReqDto(username, password))
         call.enqueue(object: Callback<LoginResDto> {
             override fun onResponse(
                 call: Call<LoginResDto>,
@@ -176,9 +173,7 @@ class LoginFragment : Fragment() {
 
     // 첫 로그인인지 체킹 후 액티비티 전환
     private fun checkIsFirstLoginAndSwitchActivity(token: String){
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-
-        val call = RetrofitBuilder.getServerApiWithToken(token).fetchAccountReq(body)
+        val call = RetrofitBuilder.getServerApiWithToken(token).fetchAccountReq(ServerUtil.getEmptyBody())
         call.enqueue(object: Callback<FetchAccountResDto> {
             override fun onResponse(
                 call: Call<FetchAccountResDto>,
