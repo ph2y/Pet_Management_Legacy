@@ -240,39 +240,23 @@ class CreateUpdatePetFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPetReq(createPetRequestDto)
-        call.enqueue(object: Callback<CreatePetResDto> {
-            override fun onResponse(
-                call: Call<CreatePetResDto>,
-                response: Response<CreatePetResDto>
-            ) {
-                if(isViewDestroyed) return
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            getIdAndUpdatePhoto()
+        }, { response ->
+            // set api state/button to normal
+            myPetViewModel.petManagerApiIsLoading = false
+            unlockViews()
 
-                if(response.isSuccessful) {
-                    // get created pet id + update pet photo
-                    getIdAndUpdatePhoto()
-                }
-                else {
-                    // set api state/button to normal
-                    myPetViewModel.petManagerApiIsLoading = false
-                    unlockViews()
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<CreatePetResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // set api state/button to normal
-                myPetViewModel.petManagerApiIsLoading = false
-                unlockViews()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
+        }, {
+            // set api state/button to normal
+            myPetViewModel.petManagerApiIsLoading = false
+            unlockViews()
         })
     }
 
     // update pet
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun updatePet() {
         // set api state/button to loading
         myPetViewModel.petManagerApiIsLoading = true
@@ -302,36 +286,16 @@ class CreateUpdatePetFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePetReq(updatePetReqDto)
-        call.enqueue(object: Callback<UpdatePetResDto> {
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onResponse(
-                call: Call<UpdatePetResDto>,
-                response: Response<UpdatePetResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful) {
-                    // update pet photo
-                    updatePetPhoto(myPetViewModel.petIdValue!!, myPetViewModel.petPhotoPathValue)
-                }
-                else {
-                    // set api state/button to normal
-                    myPetViewModel.petManagerApiIsLoading = false
-                    unlockViews()
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<UpdatePetResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // set api state/button to normal
-                myPetViewModel.petManagerApiIsLoading = false
-                unlockViews()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            updatePetPhoto(myPetViewModel.petIdValue!!, myPetViewModel.petPhotoPathValue)
+        }, {
+            // set api state/button to normal
+            myPetViewModel.petManagerApiIsLoading = false
+            unlockViews()
+        }, {
+            // set api state/button to normal
+            myPetViewModel.petManagerApiIsLoading = false
+            unlockViews()
         })
     }
 
@@ -389,85 +353,42 @@ class CreateUpdatePetFragment : Fragment() {
         }
         // update photo
         else {
+            val file = MultipartBody.Part.createFormData("file", "file.png", RequestBody.create(MediaType.parse("multipart/form-data"), File(path)))
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                .updatePetPhotoReq(id, MultipartBody.Part.createFormData("file", "file.png",
-                    RequestBody.create(MediaType.parse("multipart/form-data"), File(path))))
-            call.enqueue(object: Callback<UpdatePetPhotoResDto> {
-                @RequiresApi(Build.VERSION_CODES.O)
-                override fun onResponse(
-                    call: Call<UpdatePetPhotoResDto>,
-                    response: Response<UpdatePetPhotoResDto>
-                ) {
-                    if(isViewDestroyed) return
+                .updatePetPhotoReq(id, file)
+            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+                File(path).delete()
 
-                    if(response.isSuccessful) {
-                        File(path).delete()
-
-                        closeAfterSuccess()
-                    }
-                    else {
-                        // set api state/button to normal
-                        myPetViewModel.petManagerApiIsLoading = false
-                        unlockViews()
-
-                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                    }
-                }
-
-                override fun onFailure(call: Call<UpdatePetPhotoResDto>, t: Throwable) {
-                    if(isViewDestroyed) return
-
-                    // set api state/button to normal
-                    myPetViewModel.petManagerApiIsLoading = false
-                    unlockViews()
-
-                    Util.showToastAndLog(requireContext(), t.message.toString())
-                }
+                closeAfterSuccess()
+            }, {
+                // set api state/button to normal
+                myPetViewModel.petManagerApiIsLoading = false
+                unlockViews()
+            }, {
+                myPetViewModel.petManagerApiIsLoading = false
+                unlockViews()
             })
         }
     }
 
-    // get created pet id + update pet photo
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun getIdAndUpdatePhoto() {
-        // create DTO
-        val fetchPetReqDto = FetchPetReqDto( null )
-
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetReq(fetchPetReqDto)
-        call.enqueue(object: Callback<FetchPetResDto> {
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onResponse(
-                call: Call<FetchPetResDto>,
-                response: Response<FetchPetResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful) {
-                    val petIdList: ArrayList<Long> = ArrayList()
-                    response.body()?.petList?.map {
-                        petIdList.add(it.id)
-                    }
-
-                    updatePetPhoto(petIdList[petIdList.size - 1], myPetViewModel.petPhotoPathValue)
-                }
-                else {
-                    // set api state/button to normal
-                    myPetViewModel.petManagerApiIsLoading = false
-                    unlockViews()
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
+            .fetchPetReq(FetchPetReqDto( null ))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            val petIdList: ArrayList<Long> = ArrayList()
+            response.body()?.petList?.map {
+                petIdList.add(it.id)
             }
 
-            override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // set api state/button to normal
-                myPetViewModel.petManagerApiIsLoading = false
-                unlockViews()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+            updatePetPhoto(petIdList[petIdList.size - 1], myPetViewModel.petPhotoPathValue)
+        }, {
+            // set api state/button to normal
+            myPetViewModel.petManagerApiIsLoading = false
+            unlockViews()
+        }, {
+            myPetViewModel.petManagerApiIsLoading = false
+            unlockViews()
         })
     }
 
