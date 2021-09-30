@@ -57,6 +57,11 @@ class MyPageViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("accountUserMessageValue", value)
             field = value
         }
+    var representativePetId = handle.get<Long>("representativePetId")?: 0
+        set(value){
+            handle.set("representativePetId", value)
+            field = value
+        }
     var accountPwValid = handle.get<Boolean>("createAccountPwValid")?: false
         set(value){
             handle.set("createAccountPwValid", value)

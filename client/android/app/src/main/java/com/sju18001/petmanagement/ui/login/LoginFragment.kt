@@ -192,7 +192,7 @@ class LoginFragment : Fragment() {
                         // 첫 로그인일 시
                         if(it.nickname == "#"){
                             // nickname => username 변경
-                            val updateAccountReqDto = UpdateAccountReqDto(it.email, it.phone, it.username, it.marketing, it.userMessage)
+                            val updateAccountReqDto = UpdateAccountReqDto(it.email, it.phone, it.username, it.marketing, it.userMessage, it.representativePetId)
 
                             val call = RetrofitBuilder.getServerApiWithToken(token).updateAccountReq(updateAccountReqDto)
                             call.enqueue(object: Callback<UpdateAccountResDto> {
@@ -213,7 +213,7 @@ class LoginFragment : Fragment() {
                             SessionManager.saveUserToken(requireContext(), token)
                             response.body()?.run{
                                 // nickname에 username을 넣은 것에 유의할 것
-                                val account = Account(id, username, email, phone, null, marketing, username, photoUrl, userMessage)
+                                val account = Account(id, username, email, phone, null, marketing, username, photoUrl, userMessage, representativePetId)
                                 SessionManager.saveLoggedInAccount(requireContext(), account)
                             }
 
@@ -226,7 +226,7 @@ class LoginFragment : Fragment() {
                             val intent = Intent(context, MainActivity::class.java)
                             SessionManager.saveUserToken(requireContext(), token)
                             response.body()?.run{
-                                val account = Account(id, username, email, phone, null, marketing, nickname, photoUrl, userMessage)
+                                val account = Account(id, username, email, phone, null, marketing, nickname, photoUrl, userMessage, representativePetId)
                                 SessionManager.saveLoggedInAccount(requireContext(), account)
                             }
 
