@@ -35,6 +35,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
 
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val petPhoto: ImageView = itemView.findViewById(R.id.pet_photo)
+        val representativePetIcon: ImageView = itemView.findViewById(R.id.representative_pet_icon)
         val petName: TextView = itemView.findViewById(R.id.pet_name)
         val petBirth: TextView = itemView.findViewById(R.id.pet_birth)
         val dragHandle: ImageView = itemView.findViewById(R.id.drag_handle)
@@ -74,6 +75,12 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         else {
             holder.petPhoto.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
         }
+        if (currentItem.getIsRepresentativePet()!!) {
+            holder.representativePetIcon.visibility = View.VISIBLE
+        }
+        else {
+            holder.representativePetIcon.visibility = View.INVISIBLE
+        }
         holder.petName.text = petNameInfo
         holder.petBirth.text = petBirth
 
@@ -109,6 +116,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
             petProfileIntent.putExtra("petGender", petGender)
             petProfileIntent.putExtra("petAge", petAge)
             petProfileIntent.putExtra("petMessage", currentItem.getPetMessage())
+            petProfileIntent.putExtra("isRepresentativePet", currentItem.getIsRepresentativePet())
 
             // open activity
             petProfileIntent.putExtra("fragmentType", "pet_profile_pet_manager")

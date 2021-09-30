@@ -6,9 +6,11 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -22,10 +24,14 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Account
+import com.sju18001.petmanagement.restapi.dto.FetchAccountResDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetResDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -99,6 +105,65 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     override fun onResume() {
         super.onResume()
 
+        // fetch representative pet id, then update pet list
+        fetchAccountAndGetRepresentativePetId()
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        // save RecyclerView scroll position
+        myPetViewModel.lastScrolledIndex = (binding.myPetListRecyclerView.layoutManager as LinearLayoutManager)
+            .findFirstVisibleItemPosition()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+
+        isViewDestroyed = true
+    }
+
+    private fun fetchAccountAndGetRepresentativePetId() {
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            .fetchAccountReq(RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}"))
+        call.enqueue(object: Callback<FetchAccountResDto> {
+            override fun onResponse(
+                call: Call<FetchAccountResDto>,
+                response: Response<FetchAccountResDto>
+            ) {
+                if(isViewDestroyed) return
+
+                response.body()?.let {
+                    if(response.isSuccessful) {
+                        // save account data
+                        response.body()?.run {
+                            val account = Account(id, username, email, phone, null, marketing,
+                                nickname, photoUrl, userMessage, representativePetId)
+                            SessionManager.saveLoggedInAccount(requireContext(), account)
+                        }
+
+                        // update representative pet id inside ViewModel
+                        myPetViewModel.representativePetId = response.body()?.representativePetId?: 0
+
+                        // update pet list
+                        fetchPetAndUpdateRecyclerView()
+                    }
+                    else {
+                        Toast.makeText(context, it._metadata.toString(), Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
+                Log.d("error", t.message.toString())
+            }
+        })
+    }
+
+    private fun fetchPetAndUpdateRecyclerView() {
         // create DTO
         val fetchPetReqDto = FetchPetReqDto( null )
 
@@ -125,7 +190,8 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                             it.breed,
                             it.gender,
                             it.photoUrl,
-                            it.message
+                            it.message,
+                            it.id == myPetViewModel.representativePetId
                         )
                         petListApi.add(item)
 
@@ -159,21 +225,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        // save RecyclerView scroll position
-        myPetViewModel.lastScrolledIndex = (binding.myPetListRecyclerView.layoutManager as LinearLayoutManager)
-            .findFirstVisibleItemPosition()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-
-        isViewDestroyed = true
     }
 
     // update pet list order

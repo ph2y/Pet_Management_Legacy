@@ -182,6 +182,7 @@ class PetProfileFragment : Fragment(){
         myPetViewModel.petGenderValueProfile = requireActivity().intent.getStringExtra("petGender").toString()
         myPetViewModel.petAgeValueProfile = requireActivity().intent.getStringExtra("petAge").toString()
         myPetViewModel.petMessageValueProfile = requireActivity().intent.getStringExtra("petMessage").toString()
+        myPetViewModel.isRepresentativePetProfile = requireActivity().intent.getBooleanExtra("isRepresentativePet", false)
     }
 
     private fun setViewsWithPetData() {
@@ -201,6 +202,12 @@ class PetProfileFragment : Fragment(){
         val petGenderAndAge = myPetViewModel.petGenderValueProfile + " / " + myPetViewModel.petAgeValueProfile + '세'
         binding.petGenderAndAge.text = petGenderAndAge
         binding.petMessage.text = myPetViewModel.petMessageValueProfile
+        if (myPetViewModel.isRepresentativePetProfile) {
+            binding.representativePetIcon.visibility = View.VISIBLE
+        }
+        else {
+            binding.representativePetIcon.visibility = View.INVISIBLE
+        }
     }
 
     private fun savePetDataForPetUpdate() {

@@ -10,6 +10,11 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("lastScrolledIndex", value)
             field = value
         }
+    var representativePetId = handle.get<Long>("representativePetId")?: 0
+        set(value){
+            handle.set("representativePetId", value)
+            field = value
+        }
 
     // variables for pet profile
     var loadedFromIntent = handle.get<Boolean>("loadedFromIntent")?: false
@@ -55,6 +60,11 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
     var petMessageValueProfile = handle.get<String>("petMessageValueProfile")?: ""
         set(value){
             handle.set("petMessageValueProfile", value)
+            field = value
+        }
+    var isRepresentativePetProfile = handle.get<Boolean>("isRepresentativePetProfile")?: false
+        set(value){
+            handle.set("isRepresentativePetProfile", value)
             field = value
         }
 
