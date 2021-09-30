@@ -182,12 +182,8 @@ class SearchActivity : AppCompatActivity() {
         // reset list
         searchViewModel.followerIdList = mutableListOf()
 
-        // create empty body
-        val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
-            .fetchFollowerReq(emptyBody)
+            .fetchFollowerReq(ServerUtil.getEmptyBody())
         ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, { response ->
             response.body()!!.followerList.map {
                 searchViewModel.followerIdList!!.add(it.id)
