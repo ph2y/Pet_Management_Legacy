@@ -12,6 +12,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentWelcomePageProfileBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
@@ -82,7 +83,6 @@ class WelcomePageProfileFragment : Fragment() {
         isViewDestroyed = true
     }
 
-    // fetch account photo
     private fun fetchAccountPhotoAndStartAccountLookupActivity(accountLookupIntent: Intent) {
         // 사진이 없을 때 -> 사진 업데이트 없이 바로 시작
         if(accountData!!.photoUrl == null){
@@ -91,33 +91,14 @@ class WelcomePageProfileFragment : Fragment() {
 
             return
         }
-        
-        val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(null)
+
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
-        call.enqueue(object: Callback<ResponseBody> {
-            override fun onResponse(
-                call: Call<ResponseBody>,
-                response: Response<ResponseBody>
-            ) {
-                if(isViewDestroyed) return
+            .fetchAccountPhotoReq(FetchAccountPhotoReqDto(null))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            accountLookupIntent.putExtra("photoByteArray", response.body()!!.byteStream().readBytes())
 
-                if(response.isSuccessful) {
-                    accountLookupIntent.putExtra("photoByteArray", response.body()!!.byteStream().readBytes())
-
-                    startActivity(accountLookupIntent)
-                    requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
+            startActivity(accountLookupIntent)
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+        }, {}, {})
     }
 }
