@@ -61,14 +61,17 @@ class PetProfileFragment : Fragment(){
         // save pet data to ViewModel(for pet profile) if not already loaded
         if(!myPetViewModel.loadedFromIntent) { savePetDataForPetProfile() }
 
-        // if fragment type is pet_profile_pet_manager -> hide username_and_pets_layout
+        // show certain views depending on the fragment type
         if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
-            binding.usernameAndPetsLayout.visibility = View.GONE
+            if (!myPetViewModel.isRepresentativePetProfile) {
+                binding.setRepresentativeButton.visibility = View.VISIBLE
+            }
+            binding.buttonsLayout.visibility = View.VISIBLE
         }
         else {
+            binding.usernameAndPetsLayout.visibility = View.VISIBLE
             // TODO: implement logic for username_and_pets_layout
         }
-
 
         // Fragment 추가
         if(childFragmentManager.findFragmentById(R.id.post_fragment_container) == null){
@@ -99,6 +102,11 @@ class PetProfileFragment : Fragment(){
         super.onStart()
 
         checkIsLoading()
+
+        // for set representative button
+        binding.setRepresentativeButton.setOnClickListener {
+            // TODO: 
+        }
 
         // for pet update button
         binding.updatePetButton.setOnClickListener {
@@ -318,6 +326,9 @@ class PetProfileFragment : Fragment(){
 
         if(isViewDetailed){
             binding.backButtonLayout.visibility = View.VISIBLE
+            if (requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_community") {
+                binding.usernameAndPetsLayout.visibility = View.VISIBLE
+            }
             if(myPetViewModel.petMessageValueProfile.isNotEmpty()) {
                 binding.petMessage.visibility = View.VISIBLE
             }
@@ -330,6 +341,7 @@ class PetProfileFragment : Fragment(){
 
         }else{
             binding.backButtonLayout.visibility = View.GONE
+            binding.usernameAndPetsLayout.visibility = View.GONE
             binding.petMessage.visibility = View.GONE
             binding.buttonsLayout.visibility = View.GONE
 

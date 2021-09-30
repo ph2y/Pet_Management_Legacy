@@ -32,6 +32,17 @@
             android:textStyle="bold"
             android:text="@string/pet_profile_title"/>
 
+        <TextView
+            android:id="@+id/set_representative_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="@string/set_representative_button"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -57,7 +68,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/pet_info_layout">
+                    app:layout_constraintBottom_toTopOf="@id/pet_info_layout"
+                    android:visibility="gone">
 
                     <TextView
                         android:layout_width="wrap_content"
