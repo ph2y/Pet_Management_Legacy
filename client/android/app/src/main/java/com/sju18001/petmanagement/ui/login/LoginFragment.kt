@@ -187,21 +187,9 @@ class LoginFragment : Fragment() {
                         // 첫 로그인일 시
                         if(it.nickname == "#"){
                             // nickname => username 변경
-                            val updateAccountReqDto = UpdateAccountReqDto(it.email, it.phone, it.username, it.marketing, it.userMessage)
-
-                            val call = RetrofitBuilder.getServerApiWithToken(token).updateAccountReq(updateAccountReqDto)
-                            call.enqueue(object: Callback<UpdateAccountResDto> {
-                                override fun onResponse(
-                                    call: Call<UpdateAccountResDto>,
-                                    response: Response<UpdateAccountResDto>
-                                ) {
-                                    // Do nothing
-                                }
-
-                                override fun onFailure(call: Call<UpdateAccountResDto>, t: Throwable) {
-                                    Log.e("ServerUtil", t.message.toString())
-                                }
-                            })
+                            val call = RetrofitBuilder.getServerApiWithToken(token)
+                                .updateAccountReq(UpdateAccountReqDto(it.email, it.phone, it.username, it.marketing, it.userMessage))
+                            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {}, {}, {})
 
                             // 웰컴 페이지 호출
                             val intent = Intent(context, WelcomePageActivity::class.java)
@@ -239,10 +227,9 @@ class LoginFragment : Fragment() {
 
                 unlockViews()
 
-                Log.d("error", t.message.toString())
-
                 // create custom snack bar to display error message
                 displayErrorMessage(t.message.toString())
+                Log.d("error", t.message.toString())
             }
         })
     }

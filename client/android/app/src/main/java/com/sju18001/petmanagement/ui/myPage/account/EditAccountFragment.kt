@@ -314,7 +314,6 @@ class EditAccountFragment : Fragment() {
         })
     }
 
-    // update account photo
     private fun updateAccountPhoto(path: String) {
         // if no photo selected -> don't update photo + close
         if(path == "") {
