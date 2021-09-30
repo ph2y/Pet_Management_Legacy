@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
 import de.hdodenhof.circleimageview.CircleImageView
@@ -87,114 +88,57 @@ class FollowerAdapter(val context: Context) :
     }
 
     private fun createFollow(id: Long, holder: HistoryListViewHolder, position: Int) {
-        // create DTO
-        val createFollowReqDto = CreateFollowReqDto(id)
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
-            .createFollowReq(createFollowReqDto)
-        call.enqueue(object: Callback<CreateFollowResDto> {
-            @RequiresApi(Build.VERSION_CODES.M)
-            override fun onResponse(
-                call: Call<CreateFollowResDto>,
-                response: Response<CreateFollowResDto>
-            ) {
-                if(isViewDestroyed) return
+            .createFollowReq(CreateFollowReqDto(id))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, context, {
+            // update isFollowing and button state
+            val currentItem = resultList[position]
+            currentItem.setValues(
+                currentItem.getHasPhoto(), currentItem.getPhoto(), currentItem.getId(), currentItem.getNickname(), true
+            )
+            notifyItemChanged(position)
 
-                if(response.isSuccessful) {
-                    // update isFollowing and button state
-                    val currentItem = resultList[position]
-                    currentItem.setValues(
-                        currentItem.getHasPhoto(), currentItem.getPhoto(), currentItem.getId(), currentItem.getNickname(), true
-                    )
-                    notifyItemChanged(position)
-
-                    holder.followUnfollowButton.isEnabled = true
-                }
-                else {
-                    holder.followUnfollowButton.isEnabled = true
-
-                    Util.showToastAndLogForFailedResponse(context, response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<CreateFollowResDto>, t: Throwable) {
-                Util.showToastAndLog(context, t.message.toString())
-            }
-        })
+            holder.followUnfollowButton.isEnabled = true
+        }, {
+            holder.followUnfollowButton.isEnabled = true
+        }, {})
     }
 
     private fun deleteFollow(id: Long, holder: HistoryListViewHolder, position: Int) {
-        // create DTO
-        val deleteFollowReqDto = DeleteFollowReqDto(id)
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
-            .deleteFollowReq(deleteFollowReqDto)
-        call.enqueue(object: Callback<DeleteFollowResDto> {
-            @RequiresApi(Build.VERSION_CODES.M)
-            override fun onResponse(
-                call: Call<DeleteFollowResDto>,
-                response: Response<DeleteFollowResDto>
-            ) {
-                if(response.isSuccessful) {
-                    // update isFollowing and button state
-                    val currentItem = resultList[position]
-                    currentItem.setValues(
-                        currentItem.getHasPhoto(), currentItem.getPhoto(), currentItem.getId(), currentItem.getNickname(), false
-                    )
-                    notifyItemChanged(position)
+            .deleteFollowReq(DeleteFollowReqDto(id))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, context, {
+            // update isFollowing and button state
+            val currentItem = resultList[position]
+            currentItem.setValues(
+                currentItem.getHasPhoto(), currentItem.getPhoto(), currentItem.getId(), currentItem.getNickname(), false
+            )
+            notifyItemChanged(position)
 
-                    holder.followUnfollowButton.isEnabled = true
-                }
-                else {
-                    holder.followUnfollowButton.isEnabled = true
-
-                    Util.showToastAndLogForFailedResponse(context, response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<DeleteFollowResDto>, t: Throwable) {
-                holder.followUnfollowButton.isEnabled = true
-
-                Util.showToastAndLog(context, t.message.toString())
-            }
+            holder.followUnfollowButton.isEnabled = true
+        }, {
+            holder.followUnfollowButton.isEnabled = true
+        }, {
+            holder.followUnfollowButton.isEnabled = true
         })
     }
 
     private fun setAccountPhoto(id: Long, holder: HistoryListViewHolder, position: Int) {
-        // create DTO
-        val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(id)
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
-            .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
-        call.enqueue(object: Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if(isViewDestroyed) return
+            .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, context, { response ->
+            // convert photo to byte array + get bitmap
+            val photoByteArray = response.body()!!.byteStream().readBytes()
+            val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
 
-                if(response.isSuccessful) {
-                    // convert photo to byte array + get bitmap
-                    val photoByteArray = response.body()!!.byteStream().readBytes()
-                    val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
+            // set account photo + save photo value
+            holder.accountPhoto.setImageBitmap(photoBitmap)
 
-                    // set account photo + save photo value
-                    holder.accountPhoto.setImageBitmap(photoBitmap)
-
-                    val currentItem = resultList[position]
-                    currentItem.setValues(
-                        currentItem.getHasPhoto(), photoBitmap, currentItem.getId(), currentItem.getNickname(), currentItem.getIsFollowing()
-                    )
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(context, response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Util.showToastAndLog(context, t.message.toString())
-            }
-        })
+            val currentItem = resultList[position]
+            currentItem.setValues(
+                currentItem.getHasPhoto(), photoBitmap, currentItem.getId(), currentItem.getNickname(), currentItem.getIsFollowing()
+            )
+        }, {}, {})
     }
 
     override fun getItemCount() = resultList.size

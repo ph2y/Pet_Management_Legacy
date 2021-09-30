@@ -14,6 +14,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetScheduleEditBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
@@ -151,38 +152,24 @@ class PetScheduleEditFragment : Fragment() {
     }
 
     private fun addPetNameList(){
-        // create DTO
-        val fetchPetReqDto = FetchPetReqDto( null )
-
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetReq(fetchPetReqDto)
-        call.enqueue(object: Callback<FetchPetResDto> {
-            override fun onResponse(
-                call: Call<FetchPetResDto>,
-                response: Response<FetchPetResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                response.body()?.petList?.map {
-                    adapter.addItem(PetNameListItem(it.name, it.id))
-                }
-                adapter.notifyDataSetChanged()
-
-                // isPetChecked 초기화 로직
-                if(!isSameLengthWithAdapter(myPetViewModel.isPetChecked)) {
-
-                    // false 배열로 초기화
-                    myPetViewModel.isPetChecked = Array(adapter.itemCount) { false }
-
-                    // intent - extra
-                    setViewModelForUpdate()
-                }
+            .fetchPetReq(FetchPetReqDto( null ))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            response.body()?.petList?.map {
+                adapter.addItem(PetNameListItem(it.name, it.id))
             }
+            adapter.notifyDataSetChanged()
 
-            override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
-                // Do nothing
+            // isPetChecked 초기화 로직
+            if(!isSameLengthWithAdapter(myPetViewModel.isPetChecked)) {
+
+                // false 배열로 초기화
+                myPetViewModel.isPetChecked = Array(adapter.itemCount) { false }
+
+                // intent - extra
+                setViewModelForUpdate()
             }
-        })
+        }, {}, {})
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -192,30 +179,14 @@ class PetScheduleEditFragment : Fragment() {
         val createPetScheduleReqDto = CreatePetScheduleReqDto(
             getCheckedPetIdList(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(), binding.memoEditText.text.toString()
         )
-
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPetScheduleReq(createPetScheduleReqDto)
-        call.enqueue(object: Callback<CreatePetScheduleResDto> {
-            override fun onResponse(
-                call: Call<CreatePetScheduleResDto>,
-                response: Response<CreatePetScheduleResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful){
-                    activity?.finish()
-                }else{
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                    unlockViews()
-                }
-            }
-
-            override fun onFailure(call: Call<CreatePetScheduleResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-                unlockViews()
-            }
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            activity?.finish()
+        }, {
+            unlockViews()
+        }, {
+            unlockViews()
         })
     }
 
@@ -226,30 +197,14 @@ class PetScheduleEditFragment : Fragment() {
         val updatePetScheduleReqDto = UpdatePetScheduleReqDto(
             id, getCheckedPetIdList(), LocalTime.of(binding.timePicker.hour, binding.timePicker.minute).toString(), binding.memoEditText.text.toString(), enabled
         )
-
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePetScheduleReq(updatePetScheduleReqDto)
-        call.enqueue(object: Callback<UpdatePetScheduleResDto> {
-            override fun onResponse(
-                call: Call<UpdatePetScheduleResDto>,
-                response: Response<UpdatePetScheduleResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful){
-                    activity?.finish()
-                }else{
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                    unlockViews()
-                }
-            }
-
-            override fun onFailure(call: Call<UpdatePetScheduleResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-                unlockViews()
-            }
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            activity?.finish()
+        }, {
+            unlockViews()
+        }, {
+            unlockViews()
         })
     }
 
