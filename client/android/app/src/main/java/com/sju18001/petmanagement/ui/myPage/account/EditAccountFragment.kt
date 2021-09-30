@@ -398,10 +398,8 @@ class EditAccountFragment : Fragment() {
     }
 
     private fun deleteAccount() {
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .deleteAccountReq(body)
+            .deleteAccountReq(ServerUtil.getEmptyBody())
         ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
             if(response.body()?._metadata?.status == true) {
                 Toast.makeText(context, context?.getText(R.string.account_delete_success), Toast.LENGTH_LONG).show()
