@@ -13,6 +13,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFollowingBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchFollowerResDto
 import okhttp3.MediaType
@@ -98,57 +99,34 @@ class FollowingFragment : Fragment() {
         // reset list
         followingList = mutableListOf()
 
-        // create empty body
-        val emptyBody = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchFollowerReq(emptyBody)
-        call.enqueue(object: Callback<FetchFollowerResDto> {
-            override fun onResponse(
-                call: Call<FetchFollowerResDto>,
-                response: Response<FetchFollowerResDto>
-            ) {
-                if(isViewDestroyed) return
+            .fetchFollowerReq(ServerUtil.getEmptyBody())
 
-                if(response.isSuccessful) {
-                    response.body()!!.followerList.map {
-                        val hasPhoto = it.photoUrl != null
-                        val id = it.id
-                        val nickname = it.nickname
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            response.body()!!.followerList.map {
+                val hasPhoto = it.photoUrl != null
+                val id = it.id
+                val nickname = it.nickname
 
-                        val item = FollowerFollowingListItem()
-                        item.setValues(hasPhoto, null, id, nickname!!, true)
-                        followingList.add(item)
-                    }
-
-                    // set following count
-                    val followingText = requireContext().getText(R.string.following_fragment_title).toString() +
-                            ' ' + followingList.size.toString()
-                    followerFollowingViewModel.setFollowingTitle(followingText)
-
-                    // set RecyclerView
-                    followingAdapter.setResult(followingList)
-
-                    // set swipe isRefreshing to false
-                    binding.followingSwipeRefreshLayout.isRefreshing = false
-                }
-                else {
-                    // set swipe isRefreshing to false
-                    binding.followingSwipeRefreshLayout.isRefreshing = false
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
+                val item = FollowerFollowingListItem()
+                item.setValues(hasPhoto, null, id, nickname!!, true)
+                followingList.add(item)
             }
 
-            override fun onFailure(call: Call<FetchFollowerResDto>, t: Throwable) {
-                if(isViewDestroyed) return
+            // set following count
+            val followingText = requireContext().getText(R.string.following_fragment_title).toString() +
+                    ' ' + followingList.size.toString()
+            followerFollowingViewModel.setFollowingTitle(followingText)
 
-                // set swipe isRefreshing to false
-                binding.followingSwipeRefreshLayout.isRefreshing = false
+            // set RecyclerView
+            followingAdapter.setResult(followingList)
 
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+            // set swipe isRefreshing to false
+            binding.followingSwipeRefreshLayout.isRefreshing = false
+        }, {
+            binding.followingSwipeRefreshLayout.isRefreshing = false
+        }, {
+            binding.followingSwipeRefreshLayout.isRefreshing = false
         })
     }
 

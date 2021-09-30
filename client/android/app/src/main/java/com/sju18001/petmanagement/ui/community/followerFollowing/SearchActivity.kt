@@ -17,6 +17,7 @@ import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.ActivitySearchBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.*
 import okhttp3.MediaType
@@ -187,186 +188,91 @@ class SearchActivity : AppCompatActivity() {
         // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .fetchFollowerReq(emptyBody)
-        call.enqueue(object: Callback<FetchFollowerResDto> {
-            override fun onResponse(
-                call: Call<FetchFollowerResDto>,
-                response: Response<FetchFollowerResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful) {
-                    response.body()!!.followerList.map {
-                        searchViewModel.followerIdList!!.add(it.id)
-                    }
-
-                    // update button state
-                    setButtonState()
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
-                }
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, { response ->
+            response.body()!!.followerList.map {
+                searchViewModel.followerIdList!!.add(it.id)
             }
 
-            override fun onFailure(call: Call<FetchFollowerResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(this@SearchActivity, t.message.toString())
-            }
-        })
+            // update button state
+            setButtonState()
+        }, {}, {})
     }
 
     private fun searchAccount(nickname: String) {
-        // create DTO
-        val fetchAccountReqDto = FetchAccountReqDto(null, null, nickname)
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
-            .fetchAccountByNicknameReq(fetchAccountReqDto)
-        call.enqueue(object: Callback<FetchAccountResDto> {
-            override fun onResponse(
-                call: Call<FetchAccountResDto>,
-                response: Response<FetchAccountResDto>
-            ) {
-                if(isViewDestroyed) return
+            .fetchAccountByNicknameReq(FetchAccountReqDto(null, null, nickname))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, { response ->
+            // set api state/button to normal
+            searchViewModel.apiIsLoading = false
+            unlockViews()
 
-                // set api state/button to normal
-                searchViewModel.apiIsLoading = false
-                unlockViews()
+            setAccountInfoViews(response.body()!!)
+        }, { response ->
+            // set api state/button to normal
+            searchViewModel.apiIsLoading = false
+            unlockViews()
 
-                if(response.isSuccessful) {
-                    setAccountInfoViews(response.body()!!)
+            // get error message + handle exceptions
+            when(val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)) {
+                // if no such account exists -> show Toast message
+                "Account not exists" -> {
+                    Util.showToastAndLog(this@SearchActivity, getString(R.string.account_does_not_exist_exception_message))
                 }
-                else {
-                    // get error message + handle exceptions
-                    when(val errorMessage = Util.getMessageFromErrorBody(response.errorBody()!!)) {
-                        // if no such account exists -> show Toast message
-                        "Account not exists" -> {
-                            Util.showToastAndLog(this@SearchActivity, getString(R.string.account_does_not_exist_exception_message))
-                        }
-                        // if fetched self -> show Toast message
-                        "Fetched self" -> {
-                            Util.showToastAndLog(this@SearchActivity, getString(R.string.fetched_self_exception_message))
-                        }
-                        // other exceptions -> show Toast message + log
-                        else -> {
-                            Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
-                        }
-                    }
+                // if fetched self -> show Toast message
+                "Fetched self" -> {
+                    Util.showToastAndLog(this@SearchActivity, getString(R.string.fetched_self_exception_message))
+                }
+                // other exceptions -> show Toast message + log
+                else -> {
+                    Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
                 }
             }
-
-            override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // set api state/button to normal
-                searchViewModel.apiIsLoading = false
-                unlockViews()
-
-                Util.showToastAndLog(this@SearchActivity, t.message.toString())
-            }
+        }, {
+            // set api state/button to normal
+            searchViewModel.apiIsLoading = false
+            unlockViews()
         })
     }
 
     private fun fetchAccountPhoto(id: Long) {
-        // create DTO
-        val fetchAccountPhotoReqDto = FetchAccountPhotoReqDto(id)
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
-            .fetchAccountPhotoReq(fetchAccountPhotoReqDto)
-        call.enqueue(object: Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if(isViewDestroyed) return
+            .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, { response ->
+            // save photo as byte array
+            searchViewModel.accountPhotoByteArray = response.body()!!.byteStream().readBytes()
 
-                if(response.isSuccessful) {
-                    // save photo as byte array
-                    searchViewModel.accountPhotoByteArray = response.body()!!.byteStream().readBytes()
-
-                    setAccountPhoto()
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(this@SearchActivity, t.message.toString())
-            }
-        })
+            setAccountPhoto()
+        }, {}, {})
     }
 
     private fun createFollow() {
-        // create DTO
-        val createFollowReqDto = CreateFollowReqDto(searchViewModel.accountId!!)
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
-            .createFollowReq(createFollowReqDto)
-        call.enqueue(object: Callback<CreateFollowResDto> {
-            override fun onResponse(
-                call: Call<CreateFollowResDto>,
-                response: Response<CreateFollowResDto>
-            ) {
-                if(isViewDestroyed) return
+            .createFollowReq(CreateFollowReqDto(searchViewModel.accountId!!))
 
-                if(response.isSuccessful) {
-                    updateFollowerIdList()
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, {
+            updateFollowerIdList()
 
-                    searchViewModel.apiIsLoading = false
-                }
-                else {
-                    // set api state/button to normal
-                    searchViewModel.apiIsLoading = false
-                    setButtonState()
-
-                    Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<CreateFollowResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(this@SearchActivity, t.message.toString())
-            }
-        })
+            searchViewModel.apiIsLoading = false
+        }, {
+            // set api state/button to normal
+            searchViewModel.apiIsLoading = false
+            setButtonState()
+        }, {})
     }
 
     private fun deleteFollow() {
-        // create DTO
-        val deleteFollowReqDto = DeleteFollowReqDto(searchViewModel.accountId!!)
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
-            .deleteFollowReq(deleteFollowReqDto)
-        call.enqueue(object: Callback<DeleteFollowResDto> {
-            override fun onResponse(
-                call: Call<DeleteFollowResDto>,
-                response: Response<DeleteFollowResDto>
-            ) {
-                if(isViewDestroyed) return
+            .deleteFollowReq(DeleteFollowReqDto(searchViewModel.accountId!!))
 
-                if(response.isSuccessful) {
-                    updateFollowerIdList()
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, {
+            updateFollowerIdList()
 
-                    searchViewModel.apiIsLoading = false
-                }
-                else {
-                    // set api state/button to normal
-                    searchViewModel.apiIsLoading = false
-                    setButtonState()
-
-                    Util.showToastAndLogForFailedResponse(this@SearchActivity, response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<DeleteFollowResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(this@SearchActivity, t.message.toString())
-            }
-        })
+            searchViewModel.apiIsLoading = false
+        }, {
+            // set api state/button to normal
+            searchViewModel.apiIsLoading = false
+            setButtonState()
+        }, {})
     }
 
     private fun restoreState() {

@@ -19,6 +19,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.*
@@ -134,45 +135,28 @@ class CommunityCommentFragment : Fragment() {
             }
 
             override fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long, position: Int){
-                val body = FetchCommentReqDto(pageIndex, topCommentId, null, parentCommentId, null)
-                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchCommentReq(body)
-                call.enqueue(object: Callback<FetchCommentResDto> {
-                    override fun onResponse(
-                        call: Call<FetchCommentResDto>,
-                        response: Response<FetchCommentResDto>
-                    ) {
-                        if(isViewDestroyed) return
-                        
-                        if(response.isSuccessful){
-                            // Add replies to RecyclerView
-                            response.body()!!.commentList?.let{
-                                val replyCount = it.count()
-                                for(i in 0 until replyCount){
-                                    it[i].contents = it[i].contents.replace("\n", "")
-                                    adapter.addItemOnPosition(it[i], position+1)
-                                }
-
-                                // 더이상 불러올 답글이 없을 시 topCommentId 초기화 -> 답글 불러오기 제거
-                                if(replyCount < FETCH_POST_LIMIT){
-                                    adapter.setTopCommentIdList(-1, position)
-                                    adapter.notifyItemChanged(position)
-
-                                    Toast.makeText(requireContext(), getString(R.string.no_more_reply), Toast.LENGTH_SHORT).show()
-                                }
-
-                                adapter.notifyItemRangeInserted(position + 1, replyCount)
-                            }
-                        }else{
-                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                    .fetchCommentReq(FetchCommentReqDto(pageIndex, topCommentId, null, parentCommentId, null))
+                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                    // Add replies to RecyclerView
+                    response.body()!!.commentList?.let{
+                        val replyCount = it.count()
+                        for(i in 0 until replyCount){
+                            it[i].contents = it[i].contents.replace("\n", "")
+                            adapter.addItemOnPosition(it[i], position+1)
                         }
-                    }
 
-                    override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
-                        if(isViewDestroyed) return
+                        // 더이상 불러올 답글이 없을 시 topCommentId 초기화 -> 답글 불러오기 제거
+                        if(replyCount < FETCH_POST_LIMIT){
+                            adapter.setTopCommentIdList(-1, position)
+                            adapter.notifyItemChanged(position)
 
-                        Util.showToastAndLog(requireContext(), t.message.toString())
+                            Toast.makeText(requireContext(), getString(R.string.no_more_reply), Toast.LENGTH_SHORT).show()
+                        }
+
+                        adapter.notifyItemRangeInserted(position + 1, replyCount)
                     }
-                })
+                }, {}, {})
             }
         }
 
@@ -257,35 +241,16 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun deleteComment(id: Long, position: Int){
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).deleteCommentReq(
-            DeleteCommentReqDto(id)
-        )
-        call.enqueue(object: Callback<DeleteCommentResDto> {
-            override fun onResponse(
-                call: Call<DeleteCommentResDto>,
-                response: Response<DeleteCommentResDto>
-            ) {
-                if(isViewDestroyed) return
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            .deleteCommentReq(DeleteCommentReqDto(id))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            Toast.makeText(context, context?.getText(R.string.delete_comment_success), Toast.LENGTH_SHORT).show()
 
-                if(response.isSuccessful){
-                    Toast.makeText(context, context?.getText(R.string.delete_comment_success), Toast.LENGTH_SHORT).show()
-
-                    adapter.removeItem(position)
-                    adapter.notifyItemRemoved(position)
-                    adapter.notifyItemRangeChanged(position, adapter.itemCount)
-                }else{
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<DeleteCommentResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
+            adapter.removeItem(position)
+            adapter.notifyItemRemoved(position)
+            adapter.notifyItemRangeChanged(position, adapter.itemCount)
+        }, {}, {})
     }
-
 
     private fun setViewForReplyCancel(){
         binding.layoutReplyDescription.visibility = View.GONE
@@ -296,80 +261,47 @@ class CommunityCommentFragment : Fragment() {
     private fun updateAdapterDataSetByFetchComment(body: FetchCommentReqDto){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchCommentReq(body)
-        call.enqueue(object: Callback<FetchCommentResDto> {
-            override fun onResponse(
-                call: Call<FetchCommentResDto>,
-                response: Response<FetchCommentResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful){
-                    response.body()!!.commentList?.let {
-                        if(it.isNotEmpty()){
-                            // Set topCommentId
-                            if(topCommentId == null){
-                                topCommentId = it.first().id
-                            }
-
-                            it.map { item ->
-                                item.contents = item.contents.replace("\n", "")
-                                adapter.addItem(item)
-                                setTopCommentId(item.id, adapter.itemCount-1)
-                            }
-
-                            // 데이터셋 변경 알림
-                            binding.recyclerViewComment.post{
-                                adapter.notifyDataSetChanged()
-                            }
-                        }
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            response.body()!!.commentList?.let {
+                if(it.isNotEmpty()){
+                    // Set topCommentId
+                    if(topCommentId == null){
+                        topCommentId = it.first().id
                     }
-                }else{
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
+
+                    it.map { item ->
+                        item.contents = item.contents.replace("\n", "")
+                        adapter.addItem(item)
+                        setTopCommentId(item.id, adapter.itemCount-1)
+                    }
+
+                    // 데이터셋 변경 알림
+                    binding.recyclerViewComment.post{
+                        adapter.notifyDataSetChanged()
+                    }
                 }
-
-                // 새로고침 아이콘 제거
-                binding.layoutSwipeRefresh.isRefreshing = false
             }
 
-            override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // 새로고침 아이콘 제거
-                binding.layoutSwipeRefresh.isRefreshing = false
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+            // 새로고침 아이콘 제거
+            binding.layoutSwipeRefresh.isRefreshing = false
+        }, {
+            binding.layoutSwipeRefresh.isRefreshing = false
+        }, {
+            binding.layoutSwipeRefresh.isRefreshing = false
         })
     }
 
     private fun setTopCommentId(parentCommentId: Long, position: Int){
         // TODO: Comment에 reply_count Column이 생기면 그것에 맞춰 변경
-        val body = FetchCommentReqDto(null, null, null, parentCommentId, null)
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).fetchCommentReq(body)
-        call.enqueue(object: Callback<FetchCommentResDto> {
-            override fun onResponse(
-                call: Call<FetchCommentResDto>,
-                response: Response<FetchCommentResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful){
-                    // 답글 불러오기 버튼
-                    if(response.body()!!.commentList!!.count() > 0){
-                        adapter.setTopCommentIdList(response.body()!!.commentList!!.first().id, position)
-                        adapter.notifyItemChanged(position)
-                    }
-                }else{
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            .fetchCommentReq(FetchCommentReqDto(null, null, null, parentCommentId, null))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            // 답글 불러오기 버튼
+            if(response.body()!!.commentList!!.count() > 0){
+                adapter.setTopCommentIdList(response.body()!!.commentList!!.first().id, position)
+                adapter.notifyItemChanged(position)
             }
-
-            override fun onFailure(call: Call<FetchCommentResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
+        }, {}, {})
     }
 
     private fun resetCommentData(){
@@ -416,38 +348,24 @@ class CommunityCommentFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createCommentReq(body)
-        call.enqueue(object: Callback<CreateCommentResDto> {
-            override fun onResponse(
-                call: Call<CreateCommentResDto>,
-                response: Response<CreateCommentResDto>
-            ) {
-                if(isViewDestroyed) return
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            // 새로고침
+            resetCommentData()
+            updateAdapterDataSetByFetchComment(FetchCommentReqDto(
+                null, null, postId, null, null
+            ))
 
-                if(response.isSuccessful){
-                    // 새로고침
-                    resetCommentData()
-                    updateAdapterDataSetByFetchComment(FetchCommentReqDto(
-                        null, null, postId, null, null
-                    ))
+            binding.editTextComment.text = null
+            Toast.makeText(context, context?.getText(R.string.create_comment_success), Toast.LENGTH_SHORT).show()
 
-                    binding.editTextComment.text = null
-                    Toast.makeText(context, context?.getText(R.string.create_comment_success), Toast.LENGTH_SHORT).show()
-                }else{
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-
-                unlockViews()
-                setViewForReplyCancel()
-            }
-
-            override fun onFailure(call: Call<CreateCommentResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                unlockViews()
-                setViewForReplyCancel()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+            unlockViews()
+            setViewForReplyCancel()
+        }, {
+            unlockViews()
+            setViewForReplyCancel()
+        }, {
+            unlockViews()
+            setViewForReplyCancel()
         })
     }
 
@@ -477,27 +395,14 @@ class CommunityCommentFragment : Fragment() {
     private fun setAccountPhotoToImageView(id: Long, imageView: ImageView) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
-        call.enqueue(object: Callback<ResponseBody> {
-            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
-                if(isViewDestroyed) return
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            // convert photo to byte array + get bitmap
+            val photoByteArray = response.body()!!.byteStream().readBytes()
+            val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
 
-                if(response.isSuccessful) {
-                    // convert photo to byte array + get bitmap
-                    val photoByteArray = response.body()!!.byteStream().readBytes()
-                    val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
-
-                    // set account photo
-                    imageView.setImageBitmap(photoBitmap)
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
+            // set account photo
+            imageView.setImageBitmap(photoBitmap)
+        }, {}, {})
     }
 
     private fun setEmptyNotificationView(itemCount: Int?) {

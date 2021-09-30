@@ -12,6 +12,7 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentUpdateCommentBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.UpdateCommentReqDto
 import com.sju18001.petmanagement.restapi.dto.UpdateCommentResDto
@@ -85,38 +86,17 @@ class UpdateCommentFragment : Fragment() {
             requireActivity().intent.getLongExtra("id", -1), binding.editTextUpdateComment.text.toString()
         )
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).updateCommentReq(body)
-        call.enqueue(object: Callback<UpdateCommentResDto> {
-            override fun onResponse(
-                call: Call<UpdateCommentResDto>,
-                response: Response<UpdateCommentResDto>
-            ) {
-                if(isViewDestroyed) return
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            // Pass datum for comment
+            val intent = Intent()
+            val newContents = binding.editTextUpdateComment.text.toString().replace("\n", "")
+            intent.putExtra("newContents", newContents)
+            intent.putExtra("position", requireActivity().intent.getIntExtra("position", -1))
+            requireActivity().setResult(RESULT_OK, intent)
 
-                if(response.isSuccessful){
-                    // Pass datum for comment
-                    val intent = Intent()
-                    val newContents = binding.editTextUpdateComment.text.toString().replace("\n", "")
-                    intent.putExtra("newContents", newContents)
-                    intent.putExtra("position", requireActivity().intent.getIntExtra("position", -1))
-                    requireActivity().setResult(RESULT_OK, intent)
-
-                    Toast.makeText(context, context?.getText(R.string.update_comment_success), Toast.LENGTH_SHORT).show()
-                    activity?.finish()
-                }else{
-                    unlockInputs()
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<UpdateCommentResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                unlockInputs()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
+            Toast.makeText(context, context?.getText(R.string.update_comment_success), Toast.LENGTH_SHORT).show()
+            activity?.finish()
+        }, { unlockInputs() }, { unlockInputs() })
     }
 
 

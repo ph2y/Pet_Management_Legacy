@@ -340,83 +340,57 @@ class CreateUpdatePostFragment : Fragment() {
 
     // for pet views
     private fun setPetSpinnerAndPhoto() {
-        // create DTO
-        val fetchPetReqDto = FetchPetReqDto( null )
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            .fetchPetReq(FetchPetReqDto( null ))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            // get pet id and name
+            val apiResponse: MutableList<Pet> = mutableListOf()
+            response.body()?.petList?.map {
+                val item = Pet(
+                    it.id, "", it.name, "", "", null, null, false, null, null
+                )
+                apiResponse.add(item)
+            }
+
+            reorderPetList(apiResponse)
+            setPetSpinner()
+        }, {}, {})
+    }
+
+    private fun setPetPhoto() {
+        // exception
+        if(createUpdatePostViewModel.petId == null) return
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetReq(fetchPetReqDto)
-        call.enqueue(object: Callback<FetchPetResDto> {
-            @RequiresApi(Build.VERSION_CODES.O)
+            .fetchPetPhotoReq(FetchPetPhotoReqDto(createUpdatePostViewModel.petId!!))
+        call.enqueue(object: Callback<ResponseBody> {
             override fun onResponse(
-                call: Call<FetchPetResDto>,
-                response: Response<FetchPetResDto>
+                call: Call<ResponseBody>,
+                response: Response<ResponseBody>
             ) {
                 if(isViewDestroyed) return
 
                 if(response.isSuccessful) {
-                    // get pet id and name
-                    val apiResponse: MutableList<Pet> = mutableListOf()
-                    response.body()?.petList?.map {
-                        val item = Pet(
-                            it.id, "", it.name, "", "", null, null, false, null, null
-                        )
-                        apiResponse.add(item)
-                    }
-
-                    reorderPetList(apiResponse)
-                    setPetSpinner()
+                    // set fetched photo to view
+                    binding.petPhotoCircleView.setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
                 }
                 else {
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
+                    if(Util.getMessageFromErrorBody(response.errorBody()!!) == "null") {
+                        // Set default
+                        binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
+                    }
+                    else{
+                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
+                    }
                 }
             }
 
-            override fun onFailure(call: Call<FetchPetResDto>, t: Throwable) {
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
                 if(isViewDestroyed) return
 
                 Util.showToastAndLog(requireContext(), t.message.toString())
             }
         })
-    }
-
-    // set pet photo
-    private fun setPetPhoto() {
-        // exception
-        if(createUpdatePostViewModel.petId == null) { return }
-
-        // create DTO
-        val fetchPetPhotoReqDto = FetchPetPhotoReqDto(createUpdatePostViewModel.petId!!)
-
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetPhotoReq(fetchPetPhotoReqDto)
-        call.enqueue(object: Callback<ResponseBody> {
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if(isViewDestroyed) return
-
-                    if(response.isSuccessful) {
-                        // set fetched photo to view
-                        binding.petPhotoCircleView.setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
-                    }
-                    else {
-                        if(Util.getMessageFromErrorBody(response.errorBody()!!) == "null") {
-                            // Set default
-                            binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
-                        }
-                        else{
-                            Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    if(isViewDestroyed) return
-
-                    Util.showToastAndLog(requireContext(), t.message.toString())
-                }
-            })
     }
 
     // set pet spinner
@@ -609,7 +583,6 @@ class CreateUpdatePostFragment : Fragment() {
         }
     }
 
-    // create post
     private fun createPost() {
         // set api state/button to loading
         createUpdatePostViewModel.apiIsLoading = true
@@ -639,43 +612,24 @@ class CreateUpdatePostFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPostReq(createPostReqDto)
-        call.enqueue(object: Callback<CreatePostResDto> {
-            override fun onResponse(
-                call: Call<CreatePostResDto>,
-                response: Response<CreatePostResDto>
-            ) {
-                if(isViewDestroyed) return
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            // Pass post id to Community
+            val intent = Intent()
+            intent.putExtra("postId", response.body()!!.id)
+            requireActivity().setResult(Activity.RESULT_OK, intent)
 
-                if (response.isSuccessful) {
-                    // Pass post id to Community
-                    val intent = Intent()
-                    intent.putExtra("postId", response.body()!!.id)
-                    requireActivity().setResult(Activity.RESULT_OK, intent)
-
-                    getIdAndUpdateMedia()
-                }
-                else {
-                    // set api state/button to normal
-                    createUpdatePostViewModel.apiIsLoading = false
-                    unlockViews()
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<CreatePostResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // set api state/button to normal
-                createUpdatePostViewModel.apiIsLoading = false
-                unlockViews()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+            getIdAndUpdateMedia()
+        }, {
+            // set api state/button to normal
+            createUpdatePostViewModel.apiIsLoading = false
+            unlockViews()
+        }, {
+            // set api state/button to normal
+            createUpdatePostViewModel.apiIsLoading = false
+            unlockViews()
         })
     }
 
-    // create post
     private fun updatePost() {
         // set api state/button to loading
         createUpdatePostViewModel.apiIsLoading = true
@@ -706,83 +660,45 @@ class CreateUpdatePostFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePostReq(updatePostReqDto)
-        call.enqueue(object: Callback<UpdatePostResDto> {
-            override fun onResponse(
-                call: Call<UpdatePostResDto>,
-                response: Response<UpdatePostResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if (response.isSuccessful) {
-                    // no media files
-                    if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
-                        // 기존에 Media가 0개였다면 DeletePostMedia를 호출하지 않는다.
-                        if(requireActivity().intent.getIntExtra("originalMediaCount", 0) > 0){
-                            deletePostMedia(createUpdatePostViewModel.postId!!)
-                        }else{
-                            passDataToCommunity()
-                            closeAfterSuccess()
-                        }
-                    } else {
-                        updatePostMedia(createUpdatePostViewModel.postId!!)
-                    }
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            // no media files
+            if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
+                // 기존에 Media가 0개였다면 DeletePostMedia를 호출하지 않는다.
+                if(requireActivity().intent.getIntExtra("originalMediaCount", 0) > 0){
+                    deletePostMedia(createUpdatePostViewModel.postId!!)
+                }else{
+                    passDataToCommunity()
+                    closeAfterSuccess()
                 }
-                else {
-                    // set api state/button to normal
-                    createUpdatePostViewModel.apiIsLoading = false
-                    unlockViews()
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
+            } else {
+                updatePostMedia(createUpdatePostViewModel.postId!!)
             }
-
-            override fun onFailure(call: Call<UpdatePostResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // set api state/button to normal
-                createUpdatePostViewModel.apiIsLoading = false
-                unlockViews()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+        }, {
+            // set api state/button to normal
+            createUpdatePostViewModel.apiIsLoading = false
+            unlockViews()
+        }, {
+            createUpdatePostViewModel.apiIsLoading = false
+            unlockViews()
         })
     }
 
     private fun deletePostMedia(id: Long) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deletePostMediaReq(DeletePostMediaReqDto(id))
-        call.enqueue(object: Callback<DeletePostMediaResDto> {
-            override fun onResponse(
-                call: Call<DeletePostMediaResDto>,
-                response: Response<DeletePostMediaResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful){
-                    passDataToCommunity()
-                    closeAfterSuccess()
-                }else{
-                    // set api state/button to normal
-                    createUpdatePostViewModel.apiIsLoading = false
-                    unlockViews()
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<DeletePostMediaResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-                
-                // set api state/button to normal
-                createUpdatePostViewModel.apiIsLoading = false
-                unlockViews()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            passDataToCommunity()
+            closeAfterSuccess()
+        }, {
+            // set api state/button to normal
+            createUpdatePostViewModel.apiIsLoading = false
+            unlockViews()
+        }, {
+            createUpdatePostViewModel.apiIsLoading = false
+            unlockViews()
         })
     }
 
-    // update post media
     private fun updatePostMedia(id: Long) {
         // exception(no media files)
         if(createUpdatePostViewModel.photoVideoPathList.size == 0) { closeAfterSuccess() }
@@ -801,213 +717,126 @@ class CreateUpdatePostFragment : Fragment() {
             // API call
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updatePostMediaReq(id, fileList)
-            call.enqueue(object: Callback<UpdatePostMediaResDto> {
-                @RequiresApi(Build.VERSION_CODES.O)
-                override fun onResponse(
-                    call: Call<UpdatePostMediaResDto>,
-                    response: Response<UpdatePostMediaResDto>
-                ) {
-                    if(isViewDestroyed) return
-
-                    if(response.isSuccessful) {
-                        passDataToCommunity()
-                        closeAfterSuccess()
-                    }
-                    else {
-                        // set api state/button to normal
-                        createUpdatePostViewModel.apiIsLoading = false
-                        unlockViews()
-
-                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                    }
-                }
-
-                override fun onFailure(call: Call<UpdatePostMediaResDto>, t: Throwable) {
-                    if(isViewDestroyed) return
-
-                    // set api state/button to normal
-                    createUpdatePostViewModel.apiIsLoading = false
-                    unlockViews()
-
-                    Util.showToastAndLog(requireContext(), t.message.toString())
-                }
+            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+                passDataToCommunity()
+                closeAfterSuccess()
+            }, {
+                // set api state/button to normal
+                createUpdatePostViewModel.apiIsLoading = false
+                unlockViews()
+            }, {
+                createUpdatePostViewModel.apiIsLoading = false
+                unlockViews()
             })
         }
     }
 
     // get created pet id + update pet photo
     private fun getIdAndUpdateMedia() {
-        // create DTO
-        val fetchPostReqDto = FetchPostReqDto(0, null, createUpdatePostViewModel.petId, null)
-
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPostReq(fetchPostReqDto)
-        call.enqueue(object: Callback<FetchPostResDto> {
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onResponse(
-                call: Call<FetchPostResDto>,
-                response: Response<FetchPostResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful) {
-                    val postId = (response.body()?.postList?.get(0) as Post).id
-                    updatePostMedia(postId)
-                }
-                else {
-                    // set api state/button to normal
-                    createUpdatePostViewModel.apiIsLoading = false
-                    unlockViews()
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // set api state/button to normal
-                createUpdatePostViewModel.apiIsLoading = false
-                unlockViews()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+            .fetchPostReq(FetchPostReqDto(0, null, createUpdatePostViewModel.petId, null))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            val postId = (response.body()?.postList?.get(0) as Post).id
+            updatePostMedia(postId)
+        }, {
+            // set api state/button to normal
+            createUpdatePostViewModel.apiIsLoading = false
+            unlockViews()
+        }, {
+            createUpdatePostViewModel.apiIsLoading = false
+            unlockViews()
         })
     }
 
     private fun fetchPostMediaData(postMedia: Array<FileMetaData>) {
         for(index in postMedia.indices) {
-            // create DTO
-            val fetchPostMediaReqDto = FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index)
-
-            // API call
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                .fetchPostMediaReq(fetchPostMediaReqDto)
-            call.enqueue(object: Callback<ResponseBody> {
-                override fun onResponse(
-                    call: Call<ResponseBody>,
-                    response: Response<ResponseBody>
-                ) {
-                    if(isViewDestroyed) return
+                .fetchPostMediaReq(FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index))
+            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                // get file extension
+                val extension = postMedia[index].name.split('.').last()
 
-                    if(response.isSuccessful) {
-                        // get file extension
-                        val extension = postMedia[index].name.split('.').last()
+                // copy file and get real path
+                val mediaByteArray = response.body()!!.byteStream().readBytes()
+                createUpdatePostViewModel.photoVideoPathList[index] =
+                    ServerUtil.createCopyAndReturnRealPathServer(requireContext(), mediaByteArray, extension, CREATE_UPDATE_POST_DIRECTORY)
 
-                        // copy file and get real path
-                        val mediaByteArray = response.body()!!.byteStream().readBytes()
-                        createUpdatePostViewModel.photoVideoPathList[index] =
-                            ServerUtil.createCopyAndReturnRealPathServer(context!!, mediaByteArray, extension, CREATE_UPDATE_POST_DIRECTORY)
-
-                        // check if image and save thumbnail(video thumbnails are created in the RecyclerView adapter)
-                        if(Util.isUrlPhoto(postMedia[index].name)) {
-                            val thumbnail = BitmapFactory.decodeByteArray(mediaByteArray, 0, mediaByteArray.size)
-                            createUpdatePostViewModel.thumbnailList[index] = thumbnail
-                        }
-                        else {
-                            createUpdatePostViewModel.thumbnailList[index] = null
-                        }
-
-                        // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
-                        if("" !in createUpdatePostViewModel.photoVideoPathList) {
-                            // update RecyclerView and photo/video usage
-                            photoVideoAdapter.setResult(createUpdatePostViewModel.thumbnailList)
-                            updatePhotoVideoUsage()
-
-                            // show loading screen + disable button
-                            binding.createEditPostMainScrollView.visibility = View.VISIBLE
-                            binding.postDataLoadingLayout.visibility = View.GONE
-                            binding.confirmButton.isEnabled = true
-
-                            // set fetched to true
-                            createUpdatePostViewModel.fetchedPostDataForUpdate = true
-
-                            // set views with post data
-                            setPetSpinnerAndPhoto()
-                            restoreState()
-                        }
-                    }
-                    else {
-                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                    }
+                // check if image and save thumbnail(video thumbnails are created in the RecyclerView adapter)
+                if(Util.isUrlPhoto(postMedia[index].name)) {
+                    val thumbnail = BitmapFactory.decodeByteArray(mediaByteArray, 0, mediaByteArray.size)
+                    createUpdatePostViewModel.thumbnailList[index] = thumbnail
+                }
+                else {
+                    createUpdatePostViewModel.thumbnailList[index] = null
                 }
 
-                override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    if(isViewDestroyed) return
+                // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
+                if("" !in createUpdatePostViewModel.photoVideoPathList) {
+                    // update RecyclerView and photo/video usage
+                    photoVideoAdapter.setResult(createUpdatePostViewModel.thumbnailList)
+                    updatePhotoVideoUsage()
 
-                    Util.showToastAndLog(requireContext(), t.message.toString())
+                    // show loading screen + disable button
+                    binding.createEditPostMainScrollView.visibility = View.VISIBLE
+                    binding.postDataLoadingLayout.visibility = View.GONE
+                    binding.confirmButton.isEnabled = true
+
+                    // set fetched to true
+                    createUpdatePostViewModel.fetchedPostDataForUpdate = true
+
+                    // set views with post data
+                    setPetSpinnerAndPhoto()
+                    restoreState()
                 }
-            })
+            }, {}, {})
         }
     }
 
     private fun fetchPostData() {
-        // create DTO
-        val fetchPostReqDto = FetchPostReqDto(null, null, null, createUpdatePostViewModel.postId)
-
-        // API call
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPostReq(fetchPostReqDto)
-        call.enqueue(object: Callback<FetchPostResDto> {
-            override fun onResponse(
-                call: Call<FetchPostResDto>,
-                response: Response<FetchPostResDto>
-            ) {
-                if(isViewDestroyed) return
+            .fetchPostReq(FetchPostReqDto(null, null, null, createUpdatePostViewModel.postId))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            // fetch post data(excluding media) and save to ViewModel
+            val post = response.body()?.postList!![0]
 
-                if(response.isSuccessful) {
-                    // fetch post data(excluding media) and save to ViewModel
-                    val post = response.body()?.postList!![0]
-
-                    createUpdatePostViewModel.petId = post.pet.id
-                    createUpdatePostViewModel.isUsingLocation = post.geoTagLat != 0.0
-                    createUpdatePostViewModel.disclosure = post.disclosure
-                    if(post.serializedHashTags != "") {
-                        createUpdatePostViewModel.hashtagList = post.serializedHashTags.split(',').toMutableList()
-                        hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
-                    }
-                    createUpdatePostViewModel.postEditText = post.contents
-
-                    // fetch post media data
-                    if(post.mediaAttachments != null) {
-                        val postMedia = Gson().fromJson(post.mediaAttachments, Array<FileMetaData>::class.java)
-
-                        // initialize lists
-                        for(i in postMedia.indices) {
-                            createUpdatePostViewModel.photoVideoPathList.add("")
-                            createUpdatePostViewModel.thumbnailList.add(null)
-                        }
-
-                        fetchPostMediaData(postMedia)
-                    }
-                    else {
-                        // show loading screen + disable button
-                        binding.createEditPostMainScrollView.visibility = View.VISIBLE
-                        binding.postDataLoadingLayout.visibility = View.GONE
-                        binding.confirmButton.isEnabled = true
-
-                        // set fetched to true
-                        createUpdatePostViewModel.fetchedPostDataForUpdate = true
-
-                        // set views with post data
-                        setPetSpinnerAndPhoto()
-                        restoreState()
-                    }
-                }
-                else {
-                    requireActivity().finish()
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
+            createUpdatePostViewModel.petId = post.pet.id
+            createUpdatePostViewModel.isUsingLocation = post.geoTagLat != 0.0
+            createUpdatePostViewModel.disclosure = post.disclosure
+            if(post.serializedHashTags != "") {
+                createUpdatePostViewModel.hashtagList = post.serializedHashTags.split(',').toMutableList()
+                hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
             }
+            createUpdatePostViewModel.postEditText = post.contents
 
-            override fun onFailure(call: Call<FetchPostResDto>, t: Throwable) {
-                if(isViewDestroyed) return
+            // fetch post media data
+            if(post.mediaAttachments != null) {
+                val postMedia = Gson().fromJson(post.mediaAttachments, Array<FileMetaData>::class.java)
 
-                requireActivity().finish()
+                // initialize lists
+                for(i in postMedia.indices) {
+                    createUpdatePostViewModel.photoVideoPathList.add("")
+                    createUpdatePostViewModel.thumbnailList.add(null)
+                }
 
-                Util.showToastAndLog(requireContext(), t.message.toString())
+                fetchPostMediaData(postMedia)
             }
+            else {
+                // show loading screen + disable button
+                binding.createEditPostMainScrollView.visibility = View.VISIBLE
+                binding.postDataLoadingLayout.visibility = View.GONE
+                binding.confirmButton.isEnabled = true
+
+                // set fetched to true
+                createUpdatePostViewModel.fetchedPostDataForUpdate = true
+
+                // set views with post data
+                setPetSpinnerAndPhoto()
+                restoreState()
+            }
+        }, {
+            requireActivity().finish()
+        }, {
+            requireActivity().finish()
         })
     }
 
