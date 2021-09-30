@@ -15,6 +15,7 @@ import androidx.fragment.app.FragmentManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.sju18001.petmanagement.databinding.ActivityMainBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchPetScheduleResDto
 import com.sju18001.petmanagement.ui.community.CommunityFragment
@@ -43,8 +44,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var activeFragment: Fragment
     private var activeFragmentIndex: Int = 0
 
+    private var isViewDestroyed = false
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        isViewDestroyed = false
 
         // for fragment reset(after activity destruction)
         fragmentManager.findFragmentByTag("myPet")?.let {
@@ -193,6 +199,12 @@ class MainActivity : AppCompatActivity() {
         synchronizeNotificationWorkManager()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        isViewDestroyed = true
+    }
+
     // for saving currently active fragment index
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -252,32 +264,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun synchronizeNotificationWorkManager(){
         PetScheduleNotification.cancelAllWorkManager(applicationContext)
-        
-        // PetSchedule Fetch한 뒤, 알림 등록
-        val body = RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
-        
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!).fetchPetScheduleReq(body)
-        call.enqueue(object: Callback<FetchPetScheduleResDto> {
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun onResponse(
-                call: Call<FetchPetScheduleResDto>,
-                response: Response<FetchPetScheduleResDto>
-            ) {
-                if(response.isSuccessful){
-                    // ON인 것들에 대해 알림 설정
-                    response.body()?.petScheduleList?.map{
-                        if(it.enabled){
-                            PetScheduleNotification.enqueueNotificationWorkManager(applicationContext, it.time, it.memo)
-                        }
-                    }
+
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
+            .fetchPetScheduleReq(ServerUtil.getEmptyBody())
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, this, { response ->
+            // ON인 것들에 대해 알림 설정
+            response.body()?.petScheduleList?.map{
+                if(it.enabled){
+                    PetScheduleNotification.enqueueNotificationWorkManager(applicationContext, it.time, it.memo)
                 }
             }
-
-            override fun onFailure(call: Call<FetchPetScheduleResDto>, t: Throwable) {
-                // Do nothing
-            }
-        })
+        }, {}, {})
     }
 }
