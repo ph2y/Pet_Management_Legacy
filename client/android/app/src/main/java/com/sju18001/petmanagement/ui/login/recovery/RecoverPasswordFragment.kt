@@ -13,6 +13,7 @@ import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentRecoverPasswordBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
+import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.dto.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -172,40 +173,24 @@ class RecoverPasswordFragment : Fragment() {
 
     // 코드 전송
     private fun sendAuthCode(email: String){
-        val sendAuthCodeReqDto = SendAuthCodeReqDto(email)
-
         // 버튼 로딩 상태
         setEmailInputButtonLoading(true)
         lockViews()
 
-        val call = RetrofitBuilder.getServerApi().sendAuthCodeReq(sendAuthCodeReqDto)
-        call.enqueue(object: Callback<SendAuthCodeResDto> {
-            override fun onResponse(
-                call: Call<SendAuthCodeResDto>,
-                response: Response<SendAuthCodeResDto>
-            ) {
-                if(isViewDestroyed) return
+        val call = RetrofitBuilder.getServerApi().sendAuthCodeReq(SendAuthCodeReqDto(email))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            // 버튼 로딩 상태 해제
+            setEmailInputButtonLoading(false)
+            unlockViews()
 
-                // 버튼 로딩 상태 해제
-                setEmailInputButtonLoading(false)
-                unlockViews()
-
-                if(response.isSuccessful){
-                    setViewForCodeInput()
-                }else{
-                    // 어떤 이메일이든 코드 전송은 하기 때문에, 보통 실패할 수 없다.
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<SendAuthCodeResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                setEmailInputButtonLoading(false)
-                unlockViews()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+            setViewForCodeInput()
+        }, {
+            // 버튼 로딩 상태 해제
+            setEmailInputButtonLoading(false)
+            unlockViews()
+        }, {
+            setEmailInputButtonLoading(false)
+            unlockViews()
         })
     }
 
@@ -227,39 +212,23 @@ class RecoverPasswordFragment : Fragment() {
 
 
     private fun recoverPassword(username: String, code: String){
-        val recoverPasswordReqDto = RecoverPasswordReqDto(username, code)
-
         setCodeInputButtonLoading(true)
         lockViews()
 
-        val call = RetrofitBuilder.getServerApi().recoverPasswordReq(recoverPasswordReqDto)
-        call.enqueue(object: Callback<RecoverPasswordResDto> {
-            override fun onResponse(
-                call: Call<RecoverPasswordResDto>,
-                response: Response<RecoverPasswordResDto>
-            ) {
-                if(isViewDestroyed) return
+        val call = RetrofitBuilder.getServerApi().recoverPasswordReq(RecoverPasswordReqDto(username, code))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            setCodeInputButtonLoading(false)
+            unlockViews()
 
-                setCodeInputButtonLoading(false)
-                unlockViews()
+            setViewForResult()
+        }, {
+            setCodeInputButtonLoading(false)
+            unlockViews()
 
-                if (response.isSuccessful) {
-                    setViewForResult()
-                } else {
-                    binding.codeMessage.visibility = View.VISIBLE
-
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
-            }
-
-            override fun onFailure(call: Call<RecoverPasswordResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                setCodeInputButtonLoading(false)
-                unlockViews()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+            binding.codeMessage.visibility = View.VISIBLE
+        }, {
+            setCodeInputButtonLoading(false)
+            unlockViews()
         })
     }
 
