@@ -215,6 +215,7 @@ class CreateAccountFragment : Fragment() {
 
         // call API using Retrofit
         createAccountApiCall = RetrofitBuilder.getServerApi().createAccountReq(accountCreateAccountRequestDto)
+
         createAccountApiCall!!.enqueue(object: Callback<CreateAccountResDto> {
             override fun onResponse(
                 call: Call<CreateAccountResDto>,

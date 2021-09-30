@@ -115,11 +115,11 @@ class PostFragment : Fragment() {
             .fetchPostReq(FetchPostReqDto(null, null, null, postId))
         ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
             response.body()?.postList?.get(0)?.let{ item ->
-                // 펫이 지정되어있지만 pet id가 다를 경우
+                // 펫이 지정되어있지만 pet id가 다를 경우에는 invoke 하지 않음
                 val petId = arguments?.getLong("petId")
-                if(petId != null && petId != item.pet.id) return@enqueueApiCall
-
-                callback.invoke(item)
+                if(!(petId != null && petId != item.pet.id)) {
+                    callback.invoke(item)
+                }
             }
         }, {}, {})
     }
