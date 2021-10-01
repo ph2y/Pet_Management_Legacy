@@ -105,8 +105,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     override fun onResume() {
         super.onResume()
 
-        // fetch representative pet id, then update pet list
-        fetchAccountAndGetRepresentativePetId()
+        fetchPetAndUpdateRecyclerView()
     }
 
     override fun onStop() {
@@ -122,45 +121,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         _binding = null
 
         isViewDestroyed = true
-    }
-
-    private fun fetchAccountAndGetRepresentativePetId() {
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchAccountReq(RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}"))
-        call.enqueue(object: Callback<FetchAccountResDto> {
-            override fun onResponse(
-                call: Call<FetchAccountResDto>,
-                response: Response<FetchAccountResDto>
-            ) {
-                if(isViewDestroyed) return
-
-                response.body()?.let {
-                    if(response.isSuccessful) {
-                        // save account data
-                        response.body()?.run {
-                            val account = Account(id, username, email, phone, null, marketing,
-                                nickname, photoUrl, userMessage, representativePetId)
-                            SessionManager.saveLoggedInAccount(requireContext(), account)
-                        }
-
-                        // update representative pet id inside ViewModel
-                        myPetViewModel.representativePetId = response.body()?.representativePetId?: 0
-
-                        // update pet list
-                        fetchPetAndUpdateRecyclerView()
-                    }
-                    else {
-                        Toast.makeText(context, it._metadata.toString(), Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Log.d("error", t.message.toString())
-            }
-        })
     }
 
     private fun fetchPetAndUpdateRecyclerView() {
@@ -191,7 +151,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                             it.gender,
                             it.photoUrl,
                             it.message,
-                            it.id == myPetViewModel.representativePetId
+                            it.id == SessionManager.fetchLoggedInAccount(requireContext())?.representativePetId?: 0
                         )
                         petListApi.add(item)
 
