@@ -271,44 +271,32 @@ class PetProfileFragment : Fragment(){
         // update account
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updateAccountReq(updateAccountReqDto)
-        call.enqueue(object: Callback<UpdateAccountResDto> {
-            override fun onResponse(
-                call: Call<UpdateAccountResDto>,
-                response: Response<UpdateAccountResDto>
-            ) {
-                if(isViewDestroyed) return
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            if (response.body()?._metadata?.status == true) {
+                // update session(update representative pet id value)
+                val account = Account(
+                    accountData.id, accountData.username, accountData.email, accountData.phone, accountData.password,
+                    accountData.marketing, accountData.nickname, accountData.photoUrl, accountData.userMessage, myPetViewModel.petIdValue
+                )
+                SessionManager.saveLoggedInAccount(requireContext(), account)
+
+                // update flag and related views
+                myPetViewModel.isRepresentativePetProfile = true
+                binding.setRepresentativeButton.visibility = View.GONE
+                binding.representativePetIcon.visibility = View.VISIBLE
 
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
                 enableButton()
-
-                if(response.isSuccessful && response.body()?._metadata?.status == true) {
-                    // update session(update representative pet id value)
-                    val account = Account(
-                        accountData.id, accountData.username, accountData.email, accountData.phone, accountData.password,
-                        accountData.marketing, accountData.nickname, accountData.photoUrl, accountData.userMessage, myPetViewModel.petIdValue
-                    )
-                    SessionManager.saveLoggedInAccount(requireContext(), account)
-
-                    // update flag and related views
-                    myPetViewModel.isRepresentativePetProfile = true
-                    binding.setRepresentativeButton.visibility = View.GONE
-                    binding.representativePetIcon.visibility = View.VISIBLE
-                }
-                else {
-                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                }
             }
-
-            override fun onFailure(call: Call<UpdateAccountResDto>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                // set api state/button to normal
-                myPetViewModel.petManagerApiIsLoading = false
-                enableButton()
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
+        }, {
+            // set api state/button to normal
+            myPetViewModel.petManagerApiIsLoading = false
+            enableButton()
+        }, {
+            // set api state/button to normal
+            myPetViewModel.petManagerApiIsLoading = false
+            enableButton()
         })
     }
 
