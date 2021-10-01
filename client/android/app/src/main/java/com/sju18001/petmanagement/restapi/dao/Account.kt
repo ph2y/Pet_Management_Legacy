@@ -9,5 +9,6 @@ data class Account(
     val marketing: Boolean?,
     val nickname: String?,
     var photoUrl: String?,
-    val userMessage: String?
+    val userMessage: String?,
+    val representativePetId: Long?
 )

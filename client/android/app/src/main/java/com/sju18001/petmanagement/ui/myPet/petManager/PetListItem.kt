@@ -14,10 +14,11 @@ class PetListItem {
     private var mPetGender: Boolean? = null
     private var mPetPhotoUrl: String? = null
     private var mPetMessage: String? = null
+    private var mIsRepresentativePet: Boolean? = null
 
     // set values for the item
     public fun setValues(petId: Long, petName: String, petBirth: LocalDate?, petYearOnly: Boolean?, petSpecies: String?,
-                         petBreed: String?, petGender: Boolean?, petPhotoUrl: String?, petMessage: String?) {
+                         petBreed: String?, petGender: Boolean?, petPhotoUrl: String?, petMessage: String?, isRepresentativePet: Boolean?) {
         mPetId = petId
         mPetName = petName
         mPetBirth = petBirth
@@ -27,6 +28,7 @@ class PetListItem {
         mPetGender = petGender
         mPetPhotoUrl = petPhotoUrl
         mPetMessage = petMessage
+        mIsRepresentativePet = isRepresentativePet
     }
 
     // get values from the item
@@ -56,5 +58,8 @@ class PetListItem {
     }
     public fun getPetMessage() : String? {
         return mPetMessage
+    }
+    public fun getIsRepresentativePet() : Boolean? {
+        return mIsRepresentativePet
     }
 }

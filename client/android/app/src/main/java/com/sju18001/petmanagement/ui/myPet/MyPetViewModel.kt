@@ -57,6 +57,11 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("petMessageValueProfile", value)
             field = value
         }
+    var isRepresentativePetProfile = handle.get<Boolean>("isRepresentativePetProfile")?: false
+        set(value){
+            handle.set("isRepresentativePetProfile", value)
+            field = value
+        }
 
     // variables for pet id - name
     var petNameForId = handle.get<HashMap<Long, String>>("petNameForId")?: HashMap()

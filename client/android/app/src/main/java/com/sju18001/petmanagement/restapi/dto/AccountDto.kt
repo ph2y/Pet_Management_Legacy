@@ -62,7 +62,8 @@ data class FetchAccountResDto(
     val marketing: Boolean?,
     val nickname: String?,
     val photoUrl: String?,
-    val userMessage: String?
+    val userMessage: String?,
+    val representativePetId: Long?
 )
 
 data class UpdateAccountReqDto(
@@ -70,7 +71,8 @@ data class UpdateAccountReqDto(
     val phone: String,
     val nickname: String?,
     val marketing: Boolean?,
-    val userMessage: String?
+    val userMessage: String?,
+    val representativePetId: Long?
 )
 
 data class UpdateAccountResDto(

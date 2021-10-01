@@ -290,7 +290,8 @@ class EditAccountFragment : Fragment() {
             myPageViewModel.accountPhoneValue,
             myPageViewModel.accountNicknameValue,
             myPageViewModel.accountMarketingValue,
-            myPageViewModel.accountUserMessageValue
+            myPageViewModel.accountUserMessageValue,
+            myPageViewModel.representativePetId
         )
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
@@ -302,8 +303,9 @@ class EditAccountFragment : Fragment() {
                 // 세션 갱신
                 val prevAccount = SessionManager.fetchLoggedInAccount(requireContext())!!
                 val account = Account(
-                    prevAccount.id, prevAccount.username, myPageViewModel.accountEmailValue, myPageViewModel.accountPhoneValue, null,
-                    myPageViewModel.accountMarketingValue, myPageViewModel.accountNicknameValue, prevAccount.photoUrl, myPageViewModel.accountUserMessageValue
+                    prevAccount.id, prevAccount.username, myPageViewModel.accountEmailValue, myPageViewModel.accountPhoneValue,
+                    null, myPageViewModel.accountMarketingValue, myPageViewModel.accountNicknameValue, prevAccount.photoUrl,
+                    myPageViewModel.accountUserMessageValue, myPageViewModel.representativePetId
                 )
                 SessionManager.saveLoggedInAccount(requireContext(), account)
             }
@@ -416,6 +418,7 @@ class EditAccountFragment : Fragment() {
         myPageViewModel.accountNicknameValue = requireActivity().intent.getStringExtra("nickname").toString()
         myPageViewModel.accountUserMessageValue = requireActivity().intent.getStringExtra("userMessage").toString()
         myPageViewModel.accountPhotoByteArray = requireActivity().intent.getByteArrayExtra("photoByteArray")
+        myPageViewModel.representativePetId = requireActivity().intent.getLongExtra("representativePetId", 0)
     }
 
     private fun restoreState() {

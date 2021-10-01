@@ -6,9 +6,11 @@ import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -23,10 +25,14 @@ import com.sju18001.petmanagement.databinding.FragmentPetManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Account
+import com.sju18001.petmanagement.restapi.dto.FetchAccountResDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetResDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
+import okhttp3.MediaType
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -115,7 +121,8 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
                     it.breed,
                     it.gender,
                     it.photoUrl,
-                    it.message
+                    it.message,
+                    it.id == SessionManager.fetchLoggedInAccount(requireContext())?.representativePetId?: 0
                 )
                 petListApi.add(item)
 
@@ -138,21 +145,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
 
             adapter.notifyDataSetChanged()
         }, {}, {})
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-        // save RecyclerView scroll position
-        myPetViewModel.lastScrolledIndex = (binding.myPetListRecyclerView.layoutManager as LinearLayoutManager)
-            .findFirstVisibleItemPosition()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-
-        isViewDestroyed = true
     }
 
     // update pet list order

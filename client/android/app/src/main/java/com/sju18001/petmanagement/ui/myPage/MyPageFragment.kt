@@ -62,6 +62,7 @@ class MyPageFragment : Fragment() {
             accountLookupIntent.putExtra("marketing", accountData.marketing)
             accountLookupIntent.putExtra("nickname", accountData.nickname)
             accountLookupIntent.putExtra("userMessage", accountData.userMessage)
+            accountLookupIntent.putExtra("representativePetId", accountData.representativePetId)
 
             if(accountData.photoUrl != null) {
                 accountLookupIntent.putExtra("photoByteArray", myPageViewModel.accountPhotoProfileByteArray)

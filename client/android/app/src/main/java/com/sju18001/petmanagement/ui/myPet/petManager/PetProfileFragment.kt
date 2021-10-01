@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -23,14 +22,16 @@ import com.sju18001.petmanagement.databinding.FragmentPetProfileBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.DeletePetReqDto
 import com.sju18001.petmanagement.restapi.dto.DeletePetResDto
+import com.sju18001.petmanagement.restapi.dto.UpdateAccountReqDto
+import com.sju18001.petmanagement.restapi.dto.UpdateAccountResDto
 import com.sju18001.petmanagement.ui.community.post.PostFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 
 class PetProfileFragment : Fragment(){
 
@@ -59,17 +60,23 @@ class PetProfileFragment : Fragment(){
 
         val view = binding.root
 
+        // get pet id value
+        myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
+
         // save pet data to ViewModel(for pet profile) if not already loaded
         if(!myPetViewModel.loadedFromIntent) { savePetDataForPetProfile() }
 
-        // if fragment type is pet_profile_pet_manager -> hide username_and_pets_layout
+        // show certain views depending on the fragment type
         if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
-            binding.usernameAndPetsLayout.visibility = View.GONE
+            if (!myPetViewModel.isRepresentativePetProfile) {
+                binding.setRepresentativeButton.visibility = View.VISIBLE
+            }
+            binding.buttonsLayout.visibility = View.VISIBLE
         }
         else {
+            binding.usernameAndPetsLayout.visibility = View.VISIBLE
             // TODO: implement logic for username_and_pets_layout
         }
-
 
         // Fragment 추가
         if(childFragmentManager.findFragmentById(R.id.post_fragment_container) == null){
@@ -100,6 +107,23 @@ class PetProfileFragment : Fragment(){
         super.onStart()
 
         checkIsLoading()
+
+        // for set representative button
+        binding.setRepresentativeButton.setOnClickListener {
+            val builder = AlertDialog.Builder(activity)
+            builder.setMessage(myPetViewModel.petNameValueProfile + context?.getString(R.string.set_representative_message))
+                .setPositiveButton(
+                    R.string.confirm
+                ) { _, _ ->
+                    setRepresentativePet()
+                }
+                .setNegativeButton(
+                    R.string.cancel
+                ) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .create().show()
+        }
 
         // for pet update button
         binding.updatePetButton.setOnClickListener {
@@ -183,6 +207,7 @@ class PetProfileFragment : Fragment(){
         myPetViewModel.petGenderValueProfile = requireActivity().intent.getStringExtra("petGender").toString()
         myPetViewModel.petAgeValueProfile = requireActivity().intent.getStringExtra("petAge").toString()
         myPetViewModel.petMessageValueProfile = requireActivity().intent.getStringExtra("petMessage").toString()
+        myPetViewModel.isRepresentativePetProfile = requireActivity().intent.getBooleanExtra("isRepresentativePet", false)
     }
 
     private fun setViewsWithPetData() {
@@ -202,10 +227,15 @@ class PetProfileFragment : Fragment(){
         val petGenderAndAge = myPetViewModel.petGenderValueProfile + " / " + myPetViewModel.petAgeValueProfile + '세'
         binding.petGenderAndAge.text = petGenderAndAge
         binding.petMessage.text = myPetViewModel.petMessageValueProfile
+        if (requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+            binding.representativePetIcon.visibility = if (myPetViewModel.isRepresentativePetProfile) View.VISIBLE else View.INVISIBLE
+        }
+        else {
+            // TODO: check if current pet is the representative(for community)
+        }
     }
 
     private fun savePetDataForPetUpdate() {
-        myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
         myPetViewModel.petPhotoByteArray = myPetViewModel.petPhotoByteArrayProfile
         myPetViewModel.petPhotoPathValue = ""
         myPetViewModel.isDeletePhoto = false
@@ -220,6 +250,66 @@ class PetProfileFragment : Fragment(){
             myPetViewModel.petBirthMonthValue = myPetViewModel.petBirthValueProfile.substring(6, 8).toInt()
             myPetViewModel.petBirthDateValue = myPetViewModel.petBirthValueProfile.substring(10, 12).toInt()
         }
+    }
+
+    private fun setRepresentativePet() {
+        // set api state/button to loading
+        myPetViewModel.petManagerApiIsLoading = true
+        disableButton()
+
+        // create DTO for API call
+        val accountData = SessionManager.fetchLoggedInAccount(requireContext())!!
+        val updateAccountReqDto = UpdateAccountReqDto(
+            accountData.email,
+            accountData.phone,
+            accountData.nickname,
+            accountData.marketing,
+            accountData.userMessage,
+            myPetViewModel.petIdValue
+        )
+
+        // update account
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            .updateAccountReq(updateAccountReqDto)
+        call.enqueue(object: Callback<UpdateAccountResDto> {
+            override fun onResponse(
+                call: Call<UpdateAccountResDto>,
+                response: Response<UpdateAccountResDto>
+            ) {
+                if(isViewDestroyed) return
+
+                // set api state/button to normal
+                myPetViewModel.petManagerApiIsLoading = false
+                enableButton()
+
+                if(response.isSuccessful && response.body()?._metadata?.status == true) {
+                    // update session(update representative pet id value)
+                    val account = Account(
+                        accountData.id, accountData.username, accountData.email, accountData.phone, accountData.password,
+                        accountData.marketing, accountData.nickname, accountData.photoUrl, accountData.userMessage, myPetViewModel.petIdValue
+                    )
+                    SessionManager.saveLoggedInAccount(requireContext(), account)
+
+                    // update flag and related views
+                    myPetViewModel.isRepresentativePetProfile = true
+                    binding.setRepresentativeButton.visibility = View.GONE
+                    binding.representativePetIcon.visibility = View.VISIBLE
+                }
+                else {
+                    Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
+                }
+            }
+
+            override fun onFailure(call: Call<UpdateAccountResDto>, t: Throwable) {
+                if(isViewDestroyed) return
+
+                // set api state/button to normal
+                myPetViewModel.petManagerApiIsLoading = false
+                enableButton()
+
+                Util.showToastAndLog(requireContext(), t.message.toString())
+            }
+        })
     }
 
     private fun deletePet() {
@@ -291,6 +381,9 @@ class PetProfileFragment : Fragment(){
 
         if(isViewDetailed){
             binding.backButtonLayout.visibility = View.VISIBLE
+            if (requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_community") {
+                binding.usernameAndPetsLayout.visibility = View.VISIBLE
+            }
             if(myPetViewModel.petMessageValueProfile.isNotEmpty()) {
                 binding.petMessage.visibility = View.VISIBLE
             }
@@ -303,6 +396,7 @@ class PetProfileFragment : Fragment(){
 
         }else{
             binding.backButtonLayout.visibility = View.GONE
+            binding.usernameAndPetsLayout.visibility = View.GONE
             binding.petMessage.visibility = View.GONE
             binding.buttonsLayout.visibility = View.GONE
 
