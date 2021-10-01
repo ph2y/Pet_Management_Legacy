@@ -75,12 +75,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         else {
             holder.petPhoto.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
         }
-        if (currentItem.getIsRepresentativePet()!!) {
-            holder.representativePetIcon.visibility = View.VISIBLE
-        }
-        else {
-            holder.representativePetIcon.visibility = View.INVISIBLE
-        }
+        holder.representativePetIcon.visibility = if (currentItem.getIsRepresentativePet()!!) View.VISIBLE else View.INVISIBLE
         holder.petName.text = petNameInfo
         holder.petBirth.text = petBirth
 

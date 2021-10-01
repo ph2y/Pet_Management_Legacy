@@ -227,12 +227,7 @@ class PetProfileFragment : Fragment(){
         binding.petGenderAndAge.text = petGenderAndAge
         binding.petMessage.text = myPetViewModel.petMessageValueProfile
         if (requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
-            if (myPetViewModel.isRepresentativePetProfile) {
-                binding.representativePetIcon.visibility = View.VISIBLE
-            }
-            else {
-                binding.representativePetIcon.visibility = View.INVISIBLE
-            }
+            binding.representativePetIcon.visibility = if (myPetViewModel.isRepresentativePetProfile) View.VISIBLE else View.INVISIBLE
         }
         else {
             // TODO: check if current pet is the representative(for community)
