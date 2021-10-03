@@ -51,10 +51,16 @@ public class CommentService {
                 .postId(commentedPost != null ? commentedPost.getId() : null)
                 .parentComment(repliedComment)
                 .parentCommentId(repliedComment != null ? repliedComment.getId() : null)
+                .childCommentCnt(0)
                 .contents(reqDto.getContents())
                 .timestamp(LocalDateTime.now())
                 .edited(false)
                 .build();
+
+        // 댓답글인 경우 부모 댓글의 댓답글 카운트 +1
+        if (repliedComment != null) {
+            repliedComment.setChildCommentCnt(repliedComment.getChildCommentCnt() + 1);
+        }
 
         // save
         commentRepository.save(comment);
@@ -134,6 +140,14 @@ public class CommentService {
                 .orElseThrow(() -> new Exception(
                         msgSrc.getMessage("error.comment.notExists", null, Locale.ENGLISH)
                 ));
+
+        // 댓답글인 경우 부모 댓글의 댓답글 카운트 -1
+        Comment parentComment = comment.getParentComment();
+        if (parentComment != null) {
+            parentComment.setChildCommentCnt(parentComment.getChildCommentCnt() - 1);
+            commentRepository.save(parentComment);
+        }
+
         commentRepository.delete(comment);
     }
 }
