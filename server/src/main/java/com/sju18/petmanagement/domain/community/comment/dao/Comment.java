@@ -51,6 +51,8 @@ public class Comment {
     @Column(name="parent_comment_id", updatable = false, insertable = false)
     private Long parentCommentId;
 
+    @Column(nullable = false)
+    private Integer childCommentCnt;
     @Lob
     @Column(nullable = false)
     private String contents;
