@@ -8,9 +8,10 @@ package com.sju18.petmanagement;
 // 의존성 패키지 import
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication(scanBasePackages = "com.sju18")
-public class PetManagementApplication {
+public class PetManagementApplication extends SpringBootServletInitializer {
 	public static void main(String[] args) {
 		SpringApplication.run(PetManagementApplication.class, args);
 	}
