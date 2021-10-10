@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  pet_management_backend:
+    build: .
+    container_name: pet_management_backend
+    restart: always
+    ports:
+     - "9000:8080"
+    volumes:
+     - ./server:/app
+    depends_on:
+     - pet_management_database
+  pet_management_database:
+    image: mysql:8.0.26
+    container_name: pet_management_database
+    restart: always
+    ports:
+      - "9001:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_ROOT_PW}
+      - TZ=Asia/Seoul
+    command:
+      - --lower_case_table_names=1
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - /home/admin/databases/pet_management_database:/var/lib/mysql

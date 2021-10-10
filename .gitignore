@@ -9,4 +9,6 @@ server/local.properties
 /storage/
 /storage/*
 
+## server distribution
 .env
+build/
