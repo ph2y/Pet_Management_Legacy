@@ -46,6 +46,11 @@ class MyPetActivity : AppCompatActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.clear()
+    }
+
     override fun finish() {
         super.finish()
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right)
