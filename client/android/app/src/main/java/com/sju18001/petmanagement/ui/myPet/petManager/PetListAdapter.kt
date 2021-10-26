@@ -84,6 +84,11 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
 
         // click -> open pet profile
         holder.itemView.setOnClickListener {
+            // if pet photo not yet fetched
+            if (currentItem.getPetPhotoUrl() != null && holder.petPhoto.drawable == null) {
+                return@setOnClickListener
+            }
+
             // set pet values to Intent
             val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
             if(currentItem.getPetPhotoUrl() != null) {
