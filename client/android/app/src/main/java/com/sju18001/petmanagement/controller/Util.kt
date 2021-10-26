@@ -152,8 +152,7 @@ class Util {
                 val windowMetrics = activity.windowManager.currentWindowMetrics
                 val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
                 return windowMetrics.bounds.width() - insets.left - insets.right
-            }
-            else {
+            } else {
                 val displayMetrics = DisplayMetrics()
                 activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
                 displayMetrics.widthPixels
