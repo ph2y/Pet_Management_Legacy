@@ -24,14 +24,9 @@ import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.DeletePetReqDto
-import com.sju18001.petmanagement.restapi.dto.DeletePetResDto
 import com.sju18001.petmanagement.restapi.dto.UpdateAccountReqDto
-import com.sju18001.petmanagement.restapi.dto.UpdateAccountResDto
 import com.sju18001.petmanagement.ui.community.post.PostFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class PetProfileFragment : Fragment(){
 
@@ -199,7 +194,9 @@ class PetProfileFragment : Fragment(){
 
     private fun savePetDataForPetProfile() {
         myPetViewModel.loadedFromIntent = true
-        myPetViewModel.petPhotoByteArrayProfile = requireActivity().intent.getByteArrayExtra("photoByteArray")
+        myPetViewModel.petPhotoByteArrayProfile = Util.getByteArrayFromSharedPreferences(requireContext(),
+            requireContext().getString(R.string.pref_name_byte_arrays),
+            requireContext().getString(R.string.data_name_my_pet_selected_pet_photo))
         myPetViewModel.petNameValueProfile = requireActivity().intent.getStringExtra("petName").toString()
         myPetViewModel.petBirthValueProfile = requireActivity().intent.getStringExtra("petBirth").toString()
         myPetViewModel.petSpeciesValueProfile = requireActivity().intent.getStringExtra("petSpecies").toString()

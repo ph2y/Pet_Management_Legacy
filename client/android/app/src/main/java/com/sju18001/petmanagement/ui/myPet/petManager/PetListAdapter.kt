@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
@@ -90,7 +91,12 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
                 val stream = ByteArrayOutputStream()
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                 val photoByteArray = stream.toByteArray()
-                petProfileIntent.putExtra("photoByteArray", photoByteArray)
+                Util.saveByteArrayToSharedPreferences(context, context.getString(R.string.pref_name_byte_arrays),
+                    context.getString(R.string.data_name_my_pet_selected_pet_photo), photoByteArray)
+            }
+            else {
+                Util.saveByteArrayToSharedPreferences(context, context.getString(R.string.pref_name_byte_arrays),
+                    context.getString(R.string.data_name_my_pet_selected_pet_photo), null)
             }
             petProfileIntent.putExtra("petId", currentItem.getPetId())
             petProfileIntent.putExtra("petName", currentItem.getPetName())

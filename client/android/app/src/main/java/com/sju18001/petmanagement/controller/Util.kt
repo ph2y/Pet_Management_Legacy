@@ -1,10 +1,7 @@
 package com.sju18001.petmanagement.controller
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
@@ -202,6 +199,29 @@ class Util {
             }
 
             return result
+        }
+
+        fun saveByteArrayToSharedPreferences(context: Context, prefName: String, dataName: String, data: ByteArray?) {
+            val preferences: SharedPreferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
+
+            if (data == null) {
+                preferences.edit().putString(dataName, "").apply()
+            }
+            else {
+                preferences.edit().putString(dataName,
+                    android.util.Base64.encodeToString(data, android.util.Base64.NO_WRAP)).apply()
+            }
+        }
+
+        fun getByteArrayFromSharedPreferences(context: Context, prefName: String, dataName: String): ByteArray? {
+            val preferences: SharedPreferences = context.getSharedPreferences(prefName, Context.MODE_PRIVATE)
+            val data = preferences.getString(dataName, null)
+
+            return if (data.isNullOrEmpty()) {
+                null
+            } else {
+                android.util.Base64.decode(data, android.util.Base64.NO_WRAP)
+            }
         }
 
         fun getArrayFromMediaAttachments(mediaAttachments: String?): Array<FileMetaData>{

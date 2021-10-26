@@ -235,20 +235,20 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     }
 
     // save pet list order
-    public fun savePetListOrder(key: String, list: MutableList<Long>, context: Context) {
+    public fun savePetListOrder(dataName: String, list: MutableList<Long>, context: Context) {
         val preferences: SharedPreferences = context.getSharedPreferences(
             context.getString(R.string.pref_name_pet_list_id_order), Context.MODE_PRIVATE)
         val json: String = Gson().toJson(list)
 
-        preferences.edit().putString(key, json).apply()
+        preferences.edit().putString(dataName, json).apply()
     }
 
     // get pet list order
-    public fun getPetListOrder(key: String?, context: Context): MutableList<Long> {
+    public fun getPetListOrder(dataName: String?, context: Context): MutableList<Long> {
         val preferences: SharedPreferences = context.getSharedPreferences(
             context.getString(R.string.pref_name_pet_list_id_order), Context.MODE_PRIVATE)
         val gson = Gson()
-        val json: String? = preferences.getString(key, null)
+        val json: String? = preferences.getString(dataName, null)
         val type: Type = object : TypeToken<MutableList<Long>>() {}.type
 
         if(json == null) { return mutableListOf() }
