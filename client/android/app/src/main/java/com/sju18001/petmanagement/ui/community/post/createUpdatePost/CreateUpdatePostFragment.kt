@@ -5,13 +5,10 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.LocationManager
-import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -19,13 +16,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Permission
 import com.sju18001.petmanagement.controller.Util
@@ -37,6 +32,7 @@ import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.restapi.global.FileMetaData
+import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -46,7 +42,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.lang.reflect.Type
 import java.math.BigDecimal
 
 class CreateUpdatePostFragment : Fragment() {
@@ -54,7 +49,6 @@ class CreateUpdatePostFragment : Fragment() {
     // constant variables
     private val PICK_PHOTO = 0
     private val PICK_VIDEO = 1
-    private var PET_LIST_ORDER: String = "pet_list_id_order"
     private var DISCLOSURE_PUBLIC: String = "PUBLIC"
     private var DISCLOSURE_PRIVATE: String = "PRIVATE"
     private var DISCLOSURE_FRIEND: String = "FRIEND"
@@ -439,7 +433,8 @@ class CreateUpdatePostFragment : Fragment() {
     // reorder pet list
     private fun reorderPetList(apiResponse: MutableList<Pet>) {
         // get saved pet list order
-        val petListOrder = getPetListOrder(PET_LIST_ORDER)
+        val petListOrder = PetManagerFragment()
+            .getPetListOrder(requireContext().getString(R.string.data_name_pet_list_id_order), requireContext())
 
         // sort by order
         petIdAndNameList = mutableListOf()
@@ -447,17 +442,6 @@ class CreateUpdatePostFragment : Fragment() {
             val pet = apiResponse.find { it.id == id }
             petIdAndNameList.add(pet!!)
         }
-    }
-
-    // get pet list order
-    private fun getPetListOrder(key: String?): MutableList<Long> {
-        val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
-        val gson = Gson()
-        val json: String? = prefs.getString(key, null)
-        val type: Type = object : TypeToken<MutableList<Long>>() {}.type
-
-        if(json == null) { return mutableListOf() }
-        return gson.fromJson(json, type)
     }
 
     // get geolocation

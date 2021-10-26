@@ -13,16 +13,11 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 import java.time.Period
@@ -140,7 +135,8 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         resultList.map {
             petListIdOrder.add(it.getPetId()!!)
         }
-        PetManagerFragment().savePetListOrder(PetManagerFragment().PET_LIST_ORDER, petListIdOrder, context)
+        PetManagerFragment().savePetListOrder(context.getString(R.string.data_name_pet_list_id_order),
+            petListIdOrder, context)
     }
     override fun onRowSelected(itemViewHolder: HistoryListViewHolder) {}
     override fun onRowClear(itemViewHolder: HistoryListViewHolder) {}

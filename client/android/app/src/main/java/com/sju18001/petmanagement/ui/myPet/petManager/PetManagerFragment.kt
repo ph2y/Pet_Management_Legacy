@@ -3,15 +3,10 @@ package com.sju18001.petmanagement.ui.myPet.petManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceManager
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -20,22 +15,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dao.Account
-import com.sju18001.petmanagement.restapi.dto.FetchAccountResDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchPetResDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.lang.reflect.Type
 import java.time.LocalDate
 
@@ -52,7 +38,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     private lateinit var adapter: PetListAdapter
     private var petList: MutableList<PetListItem> = mutableListOf()
     lateinit var touchHelper: ItemTouchHelper
-    public var PET_LIST_ORDER: String = "pet_list_id_order"
 
     private var isViewDestroyed = false
 
@@ -150,7 +135,8 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     // update pet list order
     private fun updatePetListOrder(apiResponse: ArrayList<PetListItem>) {
         // get current saved pet list order
-        val petListOrder = getPetListOrder(PET_LIST_ORDER)
+        val petListOrder = getPetListOrder(requireContext()
+            .getString(R.string.data_name_pet_list_id_order), requireContext())
 
         // check for not deleted
         val notDeleted: MutableList<Long> = mutableListOf()
@@ -181,13 +167,15 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         }
 
         // save to device(SharedPreferences)
-        savePetListOrder(PET_LIST_ORDER, petListOrder, requireActivity())
+        savePetListOrder(requireContext().getString(R.string
+            .data_name_pet_list_id_order), petListOrder, requireContext())
     }
 
     // reorder pet list
     private fun reorderPetList(apiResponse: ArrayList<PetListItem>) {
         // get saved pet list order
-        val petListOrder = getPetListOrder(PET_LIST_ORDER)
+        val petListOrder = getPetListOrder(requireContext()
+            .getString(R.string.data_name_pet_list_id_order), requireContext())
 
         // sort by order
         petList = mutableListOf()
@@ -248,18 +236,19 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
 
     // save pet list order
     public fun savePetListOrder(key: String, list: MutableList<Long>, context: Context) {
-        val preferences: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val editor: SharedPreferences.Editor = preferences.edit()
+        val preferences: SharedPreferences = context.getSharedPreferences(
+            context.getString(R.string.pref_name_pet_list_id_order), Context.MODE_PRIVATE)
         val json: String = Gson().toJson(list)
-        editor.putString(key, json)
-        editor.apply()
+
+        preferences.edit().putString(key, json).apply()
     }
 
     // get pet list order
-    private fun getPetListOrder(key: String?): MutableList<Long> {
-        val prefs: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity)
+    public fun getPetListOrder(key: String?, context: Context): MutableList<Long> {
+        val preferences: SharedPreferences = context.getSharedPreferences(
+            context.getString(R.string.pref_name_pet_list_id_order), Context.MODE_PRIVATE)
         val gson = Gson()
-        val json: String? = prefs.getString(key, null)
+        val json: String? = preferences.getString(key, null)
         val type: Type = object : TypeToken<MutableList<Long>>() {}.type
 
         if(json == null) { return mutableListOf() }
