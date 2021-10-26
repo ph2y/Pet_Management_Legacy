@@ -148,16 +148,29 @@ class Util {
 
         @RequiresApi(Build.VERSION_CODES.R)
         fun getScreenWidthInPixel(activity: Activity) : Int{
-            val windowMetrics = activity.windowManager.currentWindowMetrics
-            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            return windowMetrics.bounds.width() - insets.left - insets.right
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val windowMetrics = activity.windowManager.currentWindowMetrics
+                val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+                return windowMetrics.bounds.width() - insets.left - insets.right
+            }
+            else {
+                val displayMetrics = DisplayMetrics()
+                activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+                displayMetrics.widthPixels
+            }
         }
 
         @RequiresApi(Build.VERSION_CODES.R)
         fun getScreenHeightInPixel(activity: Activity) : Int{
-            val windowMetrics = activity.windowManager.currentWindowMetrics
-            val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
-            return windowMetrics.bounds.height() - insets.top - insets.bottom
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                val windowMetrics = activity.windowManager.currentWindowMetrics
+                val insets = windowMetrics.windowInsets.getInsetsIgnoringVisibility(WindowInsets.Type.systemBars())
+                windowMetrics.bounds.height() - insets.top - insets.bottom
+            } else {
+                val displayMetrics = DisplayMetrics()
+                activity.windowManager.defaultDisplay.getMetrics(displayMetrics)
+                displayMetrics.heightPixels
+            }
         }
 
         fun deleteCopiedFiles(context: Context, directory: String) {
