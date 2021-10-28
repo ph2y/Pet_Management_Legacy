@@ -44,7 +44,6 @@ class PetProfileFragment : Fragment(){
 
     private var backButtonLayoutHeight = 0
 
-    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

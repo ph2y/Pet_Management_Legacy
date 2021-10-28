@@ -146,7 +146,6 @@ class Util {
             return url.endsWith(".mp4") || url.endsWith(".webm")
         }
 
-        @RequiresApi(Build.VERSION_CODES.R)
         fun getScreenWidthInPixel(activity: Activity) : Int{
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 val windowMetrics = activity.windowManager.currentWindowMetrics
@@ -159,7 +158,6 @@ class Util {
             }
         }
 
-        @RequiresApi(Build.VERSION_CODES.R)
         fun getScreenHeightInPixel(activity: Activity) : Int{
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 val windowMetrics = activity.windowManager.currentWindowMetrics
