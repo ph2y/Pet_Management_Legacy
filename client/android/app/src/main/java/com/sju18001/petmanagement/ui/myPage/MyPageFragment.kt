@@ -17,10 +17,6 @@ import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.File
 
 class MyPageFragment : Fragment() {
@@ -65,7 +61,12 @@ class MyPageFragment : Fragment() {
             accountLookupIntent.putExtra("representativePetId", accountData.representativePetId)
 
             if(accountData.photoUrl != null) {
-                accountLookupIntent.putExtra("photoByteArray", myPageViewModel.accountPhotoProfileByteArray)
+                Util.saveByteArrayToSharedPreferences(requireContext(), requireContext().getString(R.string.pref_name_byte_arrays),
+                    requireContext().getString(R.string.data_name_my_page_selected_account_photo), myPageViewModel.accountPhotoProfileByteArray)
+            }
+            else {
+                Util.saveByteArrayToSharedPreferences(requireContext(), requireContext().getString(R.string.pref_name_byte_arrays),
+                    requireContext().getString(R.string.data_name_my_page_selected_account_photo), null)
             }
 
             startActivity(accountLookupIntent)

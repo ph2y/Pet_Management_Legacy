@@ -417,7 +417,9 @@ class EditAccountFragment : Fragment() {
         myPageViewModel.accountMarketingValue = requireActivity().intent.getBooleanExtra("marketing", false)
         myPageViewModel.accountNicknameValue = requireActivity().intent.getStringExtra("nickname").toString()
         myPageViewModel.accountUserMessageValue = requireActivity().intent.getStringExtra("userMessage").toString()
-        myPageViewModel.accountPhotoByteArray = requireActivity().intent.getByteArrayExtra("photoByteArray")
+        myPageViewModel.accountPhotoByteArray = Util.getByteArrayFromSharedPreferences(requireContext(),
+            requireContext().getString(R.string.pref_name_byte_arrays),
+            requireContext().getString(R.string.data_name_my_page_selected_account_photo))
         myPageViewModel.representativePetId = requireActivity().intent.getLongExtra("representativePetId", 0)
     }
 

@@ -209,6 +209,7 @@ class MainActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt("active_fragment_index", activeFragmentIndex)
+        outState.clear()
     }
 
     // for action bar menu
