@@ -66,6 +66,7 @@ class PostFragment : Fragment() {
     private var isViewDestroyed = false
 
     // 글 새로고침
+    private var isLast = false
     private var topPostId: Long? = null
     private var pageIndex: Int = 1
 
@@ -335,7 +336,7 @@ class PostFragment : Fragment() {
             // 스크롤하여, 최하단에 위치할 시 post 추가 로드
             it.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if(!recyclerView.canScrollVertically(1) && adapter.itemCount != 0){
+                    if(!recyclerView.canScrollVertically(1) && adapter.itemCount != 0 && !isLast){
                         updateAdapterDataSet(
                             FetchPostReqDto(
                             pageIndex, topPostId, arguments?.getLong("petId"), null
@@ -373,6 +374,8 @@ class PostFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(body)
         ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            isLast = response.body()!!.isLast == true
+
             response.body()!!.postList?.let {
                 if(it.isNotEmpty()){
                     // Set topPostId
