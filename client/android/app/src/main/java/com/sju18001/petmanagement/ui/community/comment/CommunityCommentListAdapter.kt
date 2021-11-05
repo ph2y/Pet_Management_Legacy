@@ -29,13 +29,13 @@ interface CommunityCommentListAdapterInterface{
     fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String, position: Int)
     fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder)
-    fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long, position: Int)
+    fun fetchReplyComment(pageIndex: Int, topCommentId: Long?, parentCommentId: Long, position: Int)
 }
 
 class CommunityCommentListAdapter(
     private var dataSet: ArrayList<Comment>,
     private var pageIndices: ArrayList<Int>,
-    private var topCommentIdList: ArrayList<Long>
+    private var doReplyExist: ArrayList<Boolean>
     ) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
     lateinit var communityCommentListAdapterInterface: CommunityCommentListAdapterInterface
 
@@ -82,8 +82,7 @@ class CommunityCommentListAdapter(
         }
 
         // 답글 불러오기 버튼 세팅
-        // topCommentIdList가 -1로 초기화되므로, -1이면 해당 댓글의 답글이 없다는 의미임
-        if(topCommentIdList[position] == (-1).toLong()){
+        if(!doReplyExist[position]){
             holder.loadReplyTextView.visibility = View.GONE
         }else{
             holder.loadReplyTextView.visibility = View.VISIBLE
@@ -154,7 +153,7 @@ class CommunityCommentListAdapter(
         }
 
         holder.loadReplyTextView.setOnClickListener {
-            communityCommentListAdapterInterface.fetchReplyComment(pageIndices[position], topCommentIdList[position], dataSet[position].id, position)
+            communityCommentListAdapterInterface.fetchReplyComment(pageIndices[position], null, dataSet[position].id, position)
             pageIndices[position] += 1
             
             // 답글 불러오기 -> 이전 답글 불러오기
@@ -167,13 +166,13 @@ class CommunityCommentListAdapter(
 
         // 기본값으로 추가
         pageIndices.add(0)
-        topCommentIdList.add(-1)
+        doReplyExist.add(false)
     }
 
     fun removeItem(position: Int){
         dataSet.removeAt(position)
         pageIndices.removeAt(position)
-        topCommentIdList.removeAt(position)
+        doReplyExist.removeAt(position)
     }
 
     fun updateCommentContents(newContents: String, position: Int){
@@ -185,16 +184,16 @@ class CommunityCommentListAdapter(
 
         // 기본값으로 추가
         pageIndices.add(position, 0)
-        topCommentIdList.add(position, -1)
+        doReplyExist.add(position, false)
     }
 
-    fun setTopCommentIdList(id: Long, position: Int){
-        topCommentIdList[position] = id
+    fun setDoReplyExist(flag: Boolean, position: Int){
+        doReplyExist[position] = flag
     }
 
     fun resetDataSet(){
         dataSet = arrayListOf()
         pageIndices = arrayListOf()
-        topCommentIdList = arrayListOf()
+        doReplyExist = arrayListOf()
     }
 }

@@ -5,6 +5,7 @@ data class Comment(
     val author: Account,
     val postId: Long?,
     val parentCommentId: Long?,
+    val childCommentCnt: Integer,
     var contents: String,
     val timestamp: String,
     val edited: Boolean
