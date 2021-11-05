@@ -11,7 +11,8 @@ data class CreateCommentReqDto(
 )
 
 data class CreateCommentResDto(
-    val _metadata: DtoMetadata
+    val _metadata: DtoMetadata,
+    val id: Long
 )
 
 data class DeleteCommentReqDto(

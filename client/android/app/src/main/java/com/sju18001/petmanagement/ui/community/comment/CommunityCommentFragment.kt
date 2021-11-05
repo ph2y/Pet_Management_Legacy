@@ -23,6 +23,7 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
+import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateCommentActivity
 import okhttp3.ResponseBody
@@ -351,17 +352,33 @@ class CommunityCommentFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createCommentReq(body)
         ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
-            // 새로고침
-            resetCommentData()
-            updateAdapterDataSetByFetchComment(FetchCommentReqDto(
-                null, null, postId, null, null
-            ))
+            // 생성된 댓글의 id로 FetchComment
+            val callForFetchingComment = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                .fetchCommentReq(FetchCommentReqDto(null, null, null, null, it.body()!!.id))
+            ServerUtil.enqueueApiCall(callForFetchingComment, isViewDestroyed, requireContext(), { it2 ->
+                // RecyclerView에 추가
+                it2.body()!!.commentList?.get(0)?.let { item ->
+                    // 생성된 댓글이 답글일 경우
+                    if(item.parentCommentId != null){
+                        resetCommentData()
+                        updateAdapterDataSetByFetchComment(FetchCommentReqDto(
+                            null, null, postId, null, null
+                        ))
+                    }else{
+                        adapter.addItemOnPosition(item, 0)
+                        adapter.notifyItemInserted(0)
+                        adapter.notifyItemRangeChanged(0, adapter.itemCount)
 
-            binding.editTextComment.text = null
-            Toast.makeText(context, context?.getText(R.string.create_comment_success), Toast.LENGTH_SHORT).show()
+                        binding.recyclerViewComment.scrollToPosition(0)
+                    }
+                }
 
-            unlockViews()
-            setViewForReplyCancel()
+                binding.editTextComment.text = null
+                Toast.makeText(context, context?.getText(R.string.create_comment_success), Toast.LENGTH_SHORT).show()
+
+                unlockViews()
+                setViewForReplyCancel()
+            }, {}, {})
         }, {
             unlockViews()
             setViewForReplyCancel()
