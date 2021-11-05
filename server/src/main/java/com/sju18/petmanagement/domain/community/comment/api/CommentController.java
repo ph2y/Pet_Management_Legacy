@@ -33,16 +33,17 @@ public class CommentController {
     @PostMapping("/api/comment/create")
     public ResponseEntity<?> createComment(Authentication auth, @Valid @RequestBody CreateCommentReqDto reqDto) {
         DtoMetadata dtoMetadata;
+        Long commentId;
 
         try {
-            commentServ.createComment(auth, reqDto);
+            commentId = commentServ.createComment(auth, reqDto);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
             return ResponseEntity.status(400).body(new CreateCommentResDto(dtoMetadata));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.comment.create.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new CreateCommentResDto(dtoMetadata));
+        return ResponseEntity.ok(new CreateCommentResDto(dtoMetadata, commentId));
     }
 
     // READ
