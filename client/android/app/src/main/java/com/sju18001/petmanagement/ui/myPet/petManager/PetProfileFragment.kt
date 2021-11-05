@@ -193,9 +193,16 @@ class PetProfileFragment : Fragment(){
 
     private fun savePetDataForPetProfile() {
         myPetViewModel.loadedFromIntent = true
-        myPetViewModel.petPhotoByteArrayProfile = Util.getByteArrayFromSharedPreferences(requireContext(),
-            requireContext().getString(R.string.pref_name_byte_arrays),
-            requireContext().getString(R.string.data_name_my_pet_selected_pet_photo))
+        if (requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+            myPetViewModel.petPhotoByteArrayProfile = Util.getByteArrayFromSharedPreferences(requireContext(),
+                requireContext().getString(R.string.pref_name_byte_arrays),
+                requireContext().getString(R.string.data_name_my_pet_selected_pet_photo))
+        }
+        else {
+            myPetViewModel.petPhotoByteArrayProfile = Util.getByteArrayFromSharedPreferences(requireContext(),
+                requireContext().getString(R.string.pref_name_byte_arrays),
+                requireContext().getString(R.string.data_name_community_selected_pet_photo))
+        }
         myPetViewModel.petNameValueProfile = requireActivity().intent.getStringExtra("petName").toString()
         myPetViewModel.petBirthValueProfile = requireActivity().intent.getStringExtra("petBirth").toString()
         myPetViewModel.petSpeciesValueProfile = requireActivity().intent.getStringExtra("petSpecies").toString()

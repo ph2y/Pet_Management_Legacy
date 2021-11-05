@@ -36,10 +36,6 @@ import com.sju18001.petmanagement.ui.community.CommunityViewModel
 import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import com.sju18001.petmanagement.ui.community.post.createUpdatePost.CreateUpdatePostActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
 import java.time.LocalDate
@@ -493,7 +489,12 @@ class PostFragment : Fragment() {
         // set pet values to Intent
         val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
         if(photoByteArray != null) {
-            petProfileIntent.putExtra("photoByteArray", photoByteArray)
+            Util.saveByteArrayToSharedPreferences(requireContext(), requireContext().getString(R.string.pref_name_byte_arrays),
+                requireContext().getString(R.string.data_name_community_selected_pet_photo), photoByteArray)
+        }
+        else {
+            Util.saveByteArrayToSharedPreferences(requireContext(), requireContext().getString(R.string.pref_name_byte_arrays),
+                requireContext().getString(R.string.data_name_community_selected_pet_photo), null)
         }
         petProfileIntent.putExtra("petId", pet.id)
         petProfileIntent.putExtra("petName", pet.name)
