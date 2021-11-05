@@ -135,27 +135,34 @@ class CommunityCommentFragment : Fragment() {
                 holder.profileImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
             }
 
-            override fun fetchReplyComment(pageIndex: Int, topCommentId: Long?, parentCommentId: Long, position: Int){
+            override fun fetchReplyComment(pageIndex: Int, topReplyId: Long?, parentCommentId: Long, position: Int){
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                    .fetchCommentReq(FetchCommentReqDto(pageIndex, topCommentId, null, parentCommentId, null))
+                    .fetchCommentReq(FetchCommentReqDto(pageIndex, topReplyId, null, parentCommentId, null))
                 ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
-                    // 더이상 불러올 답글이 없을 시
-                    if(response.body()!!.isLast == true){
-                        adapter.setDoReplyExist(false, position)
-                        adapter.notifyItemChanged(position)
-
-                        Toast.makeText(requireContext(), getString(R.string.no_more_reply), Toast.LENGTH_SHORT).show()
-                    }
-
-                    // Add replies to RecyclerView
-                    response.body()!!.commentList?.let{
-                        val replyCount = it.count()
-                        for(i in 0 until replyCount){
-                            it[i].contents = it[i].contents.replace("\n", "")
-                            adapter.addItemOnPosition(it[i], position+1)
+                    response.body()?.let{
+                        // Set topReplyId
+                        if(topReplyId == null){
+                            adapter.setTopReplyIdList(it.commentList?.first()?.id, position)
                         }
 
-                        adapter.notifyItemRangeInserted(position + 1, replyCount)
+                        // 더이상 불러올 답글이 없을 시
+                        if(it.isLast == true){
+                            adapter.setTopReplyIdList(-1, position)
+                            adapter.notifyItemChanged(position)
+
+                            Toast.makeText(requireContext(), getString(R.string.no_more_reply), Toast.LENGTH_SHORT).show()
+                        }
+
+                        // Add replies to RecyclerView
+                        it.commentList?.let{ item ->
+                            val replyCount = item.count()
+                            for(i in 0 until replyCount){
+                                item[i].contents = item[i].contents.replace("\n", "")
+                                adapter.addItemOnPosition(item[i], position+1)
+                            }
+
+                            adapter.notifyItemRangeInserted(position + 1, replyCount)
+                        }
                     }
                 }, {}, {})
             }
@@ -276,7 +283,7 @@ class CommunityCommentFragment : Fragment() {
                         item.contents = item.contents.replace("\n", "")
                         adapter.addItem(item)
                         if(item.childCommentCnt > 0){
-                            adapter.setDoReplyExist(true, adapter.itemCount-1)
+                            adapter.setTopReplyIdList(null, adapter.itemCount-1)
                             adapter.notifyItemChanged(adapter.itemCount-1)
                         }
                     }
