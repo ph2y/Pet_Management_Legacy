@@ -140,20 +140,20 @@ class CommunityCommentFragment : Fragment() {
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchCommentReq(FetchCommentReqDto(pageIndex, topCommentId, null, parentCommentId, null))
                 ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                    // 더이상 불러올 답글이 없을 시 topCommentId 초기화 -> 답글 불러오기 제거
+                    if(response.body()!!.isLast == true){
+                        adapter.setTopCommentIdList(-1, position)
+                        adapter.notifyItemChanged(position)
+
+                        Toast.makeText(requireContext(), getString(R.string.no_more_reply), Toast.LENGTH_SHORT).show()
+                    }
+
                     // Add replies to RecyclerView
                     response.body()!!.commentList?.let{
                         val replyCount = it.count()
                         for(i in 0 until replyCount){
                             it[i].contents = it[i].contents.replace("\n", "")
                             adapter.addItemOnPosition(it[i], position+1)
-                        }
-
-                        // 더이상 불러올 답글이 없을 시 topCommentId 초기화 -> 답글 불러오기 제거
-                        if(replyCount < FETCH_POST_LIMIT){
-                            adapter.setTopCommentIdList(-1, position)
-                            adapter.notifyItemChanged(position)
-
-                            Toast.makeText(requireContext(), getString(R.string.no_more_reply), Toast.LENGTH_SHORT).show()
                         }
 
                         adapter.notifyItemRangeInserted(position + 1, replyCount)
