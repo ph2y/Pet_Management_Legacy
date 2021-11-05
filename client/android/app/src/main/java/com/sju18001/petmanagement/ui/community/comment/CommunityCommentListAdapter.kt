@@ -29,13 +29,13 @@ interface CommunityCommentListAdapterInterface{
     fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String, position: Int)
     fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder)
-    fun fetchReplyComment(pageIndex: Int, topCommentId: Long?, parentCommentId: Long, position: Int)
+    fun fetchReplyComment(pageIndex: Int, topReplyId: Long?, parentCommentId: Long, position: Int)
 }
 
 class CommunityCommentListAdapter(
     private var dataSet: ArrayList<Comment>,
     private var pageIndices: ArrayList<Int>,
-    private var doReplyExist: ArrayList<Boolean>
+    private var topReplyIdList: ArrayList<Long?> // -1: 답글 없음, NULL: 답글 있으나 불러온 적 없음, N+: 답글 있으며 불러온 적 있음
     ) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
     lateinit var communityCommentListAdapterInterface: CommunityCommentListAdapterInterface
 
@@ -82,7 +82,7 @@ class CommunityCommentListAdapter(
         }
 
         // 답글 불러오기 버튼 세팅
-        if(!doReplyExist[position]){
+        if(topReplyIdList[position] == (-1).toLong()){
             holder.loadReplyTextView.visibility = View.GONE
         }else{
             holder.loadReplyTextView.visibility = View.VISIBLE
@@ -166,13 +166,13 @@ class CommunityCommentListAdapter(
 
         // 기본값으로 추가
         pageIndices.add(0)
-        doReplyExist.add(false)
+        topReplyIdList.add(-1)
     }
 
     fun removeItem(position: Int){
         dataSet.removeAt(position)
         pageIndices.removeAt(position)
-        doReplyExist.removeAt(position)
+        topReplyIdList.removeAt(position)
     }
 
     fun updateCommentContents(newContents: String, position: Int){
@@ -184,16 +184,16 @@ class CommunityCommentListAdapter(
 
         // 기본값으로 추가
         pageIndices.add(position, 0)
-        doReplyExist.add(position, false)
+        topReplyIdList.add(position, -1)
     }
 
-    fun setDoReplyExist(flag: Boolean, position: Int){
-        doReplyExist[position] = flag
+    fun setTopReplyIdList(topCommentId: Long?, position: Int){
+        topReplyIdList[position] = topCommentId
     }
 
     fun resetDataSet(){
         dataSet = arrayListOf()
         pageIndices = arrayListOf()
-        doReplyExist = arrayListOf()
+        topReplyIdList = arrayListOf()
     }
 }
