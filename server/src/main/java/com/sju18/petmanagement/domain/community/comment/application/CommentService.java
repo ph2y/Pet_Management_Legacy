@@ -34,7 +34,7 @@ public class CommentService {
 
     // CREATE
     @Transactional
-    public void createComment(Authentication auth, CreateCommentReqDto reqDto) throws Exception {
+    public Long createComment(Authentication auth, CreateCommentReqDto reqDto) throws Exception {
         Account author = accountServ.fetchCurrentAccount(auth);
         Post commentedPost = null;
         Comment repliedComment = null;
@@ -64,6 +64,9 @@ public class CommentService {
 
         // save
         commentRepository.save(comment);
+        
+        // 댓글 id 반환
+        return comment.getId();
     }
 
     // READ
