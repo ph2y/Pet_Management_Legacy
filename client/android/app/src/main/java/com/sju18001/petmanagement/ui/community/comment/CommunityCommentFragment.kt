@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ImageView
@@ -58,6 +59,7 @@ class CommunityCommentFragment : Fragment() {
     private var isViewDestroyed = false
 
     // 댓글 새로고침
+    private var isLast = false
     private var topCommentId: Long? = null
     private var pageIndex: Int = 1
 
@@ -167,7 +169,7 @@ class CommunityCommentFragment : Fragment() {
             // 스크롤하여, 최하단에 위치할 시 comment 추가 로드
             it.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if(!recyclerView.canScrollVertically(1)){
+                    if(!recyclerView.canScrollVertically(1) && !isLast){
                         updateAdapterDataSetByFetchComment(FetchCommentReqDto(
                             pageIndex, topCommentId, postId, null, null
                         ))
@@ -262,6 +264,8 @@ class CommunityCommentFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchCommentReq(body)
         ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            isLast = response.body()!!.isLast == true
+
             response.body()!!.commentList?.let {
                 if(it.isNotEmpty()){
                     // Set topCommentId
