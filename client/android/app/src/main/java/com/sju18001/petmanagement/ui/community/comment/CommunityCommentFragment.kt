@@ -135,13 +135,13 @@ class CommunityCommentFragment : Fragment() {
                 holder.profileImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
             }
 
-            override fun fetchReplyComment(pageIndex: Int, topCommentId: Long, parentCommentId: Long, position: Int){
+            override fun fetchReplyComment(pageIndex: Int, topCommentId: Long?, parentCommentId: Long, position: Int){
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchCommentReq(FetchCommentReqDto(pageIndex, topCommentId, null, parentCommentId, null))
                 ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
-                    // 더이상 불러올 답글이 없을 시 topCommentId 초기화 -> 답글 불러오기 제거
+                    // 더이상 불러올 답글이 없을 시
                     if(response.body()!!.isLast == true){
-                        adapter.setTopCommentIdList(-1, position)
+                        adapter.setDoReplyExist(false, position)
                         adapter.notifyItemChanged(position)
 
                         Toast.makeText(requireContext(), getString(R.string.no_more_reply), Toast.LENGTH_SHORT).show()
@@ -275,7 +275,10 @@ class CommunityCommentFragment : Fragment() {
                     it.map { item ->
                         item.contents = item.contents.replace("\n", "")
                         adapter.addItem(item)
-                        setTopCommentId(item.id, adapter.itemCount-1)
+                        if(item.childCommentCnt > 0){
+                            adapter.setDoReplyExist(true, adapter.itemCount-1)
+                            adapter.notifyItemChanged(adapter.itemCount-1)
+                        }
                     }
 
                     // 데이터셋 변경 알림
@@ -292,19 +295,6 @@ class CommunityCommentFragment : Fragment() {
         }, {
             binding.layoutSwipeRefresh.isRefreshing = false
         })
-    }
-
-    private fun setTopCommentId(parentCommentId: Long, position: Int){
-        // TODO: Comment에 reply_count Column이 생기면 그것에 맞춰 변경
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchCommentReq(FetchCommentReqDto(null, null, null, parentCommentId, null))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
-            // 답글 불러오기 버튼
-            if(response.body()!!.commentList!!.count() > 0){
-                adapter.setTopCommentIdList(response.body()!!.commentList!!.first().id, position)
-                adapter.notifyItemChanged(position)
-            }
-        }, {}, {})
     }
 
     private fun resetCommentData(){
