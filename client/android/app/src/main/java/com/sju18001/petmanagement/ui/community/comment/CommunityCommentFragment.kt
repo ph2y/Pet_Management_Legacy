@@ -34,8 +34,6 @@ class CommunityCommentFragment : Fragment() {
     private var _binding: FragmentCommunityCommentBinding? = null
     private val binding get() = _binding!!
 
-    private val FETCH_POST_LIMIT = 50
-
     // variable for ViewModel
     val communityCommentViewModel: CommunityCommentViewModel by activityViewModels()
 
