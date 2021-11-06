@@ -316,16 +316,14 @@ class PostFragment : Fragment() {
             override fun fetchPetPhotoAndStartPetProfileFragment(holder: PostListAdapter.ViewHolder, pet: Pet, author: Account) {
                 // 사진이 없을 때는 fetch 없이 프래그먼트 시작
                 if(pet.photoUrl == null){
-                    CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, pet,
-                        author.representativePetId, null)
+                    CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, pet, author, null)
                     return
                 }
 
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchPetPhotoReq(FetchPetPhotoReqDto(pet.id))
                 ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
-                    CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, pet,
-                        author.representativePetId, response.body()!!.bytes())
+                    CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, pet, author, response.body()!!.bytes())
                 }, {}, {})
             }
         }

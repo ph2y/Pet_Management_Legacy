@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
+import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import java.time.LocalDate
@@ -12,7 +13,7 @@ import java.time.Period
 
 class CommunityUtil {
     companion object{
-        fun startPetProfileFragmentFromCommunity(context: Context, pet: Pet, representativePetId: Long?, photoByteArray: ByteArray?) {
+        fun startPetProfileFragmentFromCommunity(context: Context, pet: Pet, author: Account, photoByteArray: ByteArray?) {
             // save pet photo to SharedPreferences
             if (photoByteArray != null) {
                 Util.saveByteArrayToSharedPreferences(context, context.getString(R.string.pref_name_byte_arrays),
@@ -40,7 +41,7 @@ class CommunityUtil {
             petProfileIntent.putExtra("petGender", petGender)
             petProfileIntent.putExtra("petAge", petAge)
             petProfileIntent.putExtra("petMessage", pet.message)
-            petProfileIntent.putExtra("representativePetId", representativePetId)
+            petProfileIntent.putExtra("representativePetId", author.representativePetId)
 
             // start activity
             petProfileIntent.putExtra("fragmentType", "pet_profile_community")
