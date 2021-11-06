@@ -19,11 +19,11 @@ import com.sju18001.petmanagement.databinding.FragmentPetManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dto.FetchPetReqDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import java.lang.reflect.Type
-import java.time.LocalDate
 
 class PetManagerFragment : Fragment(), OnStartDragListener {
 
@@ -36,7 +36,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
 
     // variables for RecyclerView
     private lateinit var adapter: PetListAdapter
-    private var petList: MutableList<PetListItem> = mutableListOf()
+    private var petList: MutableList<Pet> = mutableListOf()
     lateinit var touchHelper: ItemTouchHelper
 
     private var isViewDestroyed = false
@@ -94,23 +94,9 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(FetchPetReqDto( null ))
         ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
-            val petListApi: ArrayList<PetListItem> = ArrayList()
+            val petListApi: ArrayList<Pet> = ArrayList()
             response.body()?.petList?.map {
-                val item = PetListItem()
-                item.setValues(
-                    it.id,
-                    it.name,
-                    LocalDate.parse(it.birth),
-                    it.yearOnly,
-                    it.species,
-                    it.breed,
-                    it.gender,
-                    it.photoUrl,
-                    it.message,
-                    it.id == SessionManager.fetchLoggedInAccount(requireContext())?.representativePetId?: 0
-                )
-                petListApi.add(item)
-
+                petListApi.add(it)
                 myPetViewModel.addPetNameForId(it.id, it.name)
             }
 
@@ -133,7 +119,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     }
 
     // update pet list order
-    private fun updatePetListOrder(apiResponse: ArrayList<PetListItem>) {
+    private fun updatePetListOrder(apiResponse: ArrayList<Pet>) {
         // get current saved pet list order
         val petListOrder = getPetListOrder(requireContext()
             .getString(R.string.data_name_pet_list_id_order), requireContext())
@@ -141,7 +127,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         // check for not deleted
         val notDeleted: MutableList<Long> = mutableListOf()
         for(id in petListOrder) {
-            val deleted = apiResponse.find { it.getPetId() == id }
+            val deleted = apiResponse.find { it.id == id }
             if(deleted == null) {
                 notDeleted.add(id)
             }
@@ -150,9 +136,9 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         // check for not added
         val notAdded: MutableList<Long> = mutableListOf()
         for(pet in apiResponse) {
-            val added = petListOrder.find { it == pet.getPetId() }
+            val added = petListOrder.find { it == pet.id }
             if(added == null) {
-                notAdded.add(pet.getPetId()!!)
+                notAdded.add(pet.id)
             }
         }
 
@@ -172,7 +158,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     }
 
     // reorder pet list
-    private fun reorderPetList(apiResponse: ArrayList<PetListItem>) {
+    private fun reorderPetList(apiResponse: ArrayList<Pet>) {
         // get saved pet list order
         val petListOrder = getPetListOrder(requireContext()
             .getString(R.string.data_name_pet_list_id_order), requireContext())
@@ -180,23 +166,23 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         // sort by order
         petList = mutableListOf()
         for(id in petListOrder) {
-            val pet = apiResponse.find { it.getPetId() == id }
+            val pet = apiResponse.find { it.id == id }
             petList.add(pet!!)
         }
     }
 
     // check for difference in lists
-    private fun checkListDifference(apiResponse: ArrayList<PetListItem>) {
+    private fun checkListDifference(apiResponse: ArrayList<Pet>) {
         // variables for id lists
         val apiResponseIdList: MutableList<Long> = mutableListOf()
         val recyclerViewIdList: MutableList<Long> = mutableListOf()
 
         // get id lists for API/RecyclerView
         apiResponse.map {
-            apiResponseIdList.add(it.getPetId()!!)
+            apiResponseIdList.add(it.id)
         }
         petList.map {
-            recyclerViewIdList.add(it.getPetId()!!)
+            recyclerViewIdList.add(it.id)
         }
 
         // get added/deleted id
@@ -215,7 +201,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             // if deleted
         if(deletedId.size == 1 && addedId.isEmpty()) {
             for(i in 0 until petList.size) {
-                if(petList[i].getPetId() == deletedId[0]) {
+                if(petList[i].id == deletedId[0]) {
                     petList.removeAt(i)
                     adapter.notifyItemRemoved(i)
                     adapter.notifyItemRangeChanged(i, adapter.itemCount)
