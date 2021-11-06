@@ -24,6 +24,7 @@ import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.DeletePetReqDto
+import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
 import com.sju18001.petmanagement.restapi.dto.UpdateAccountReqDto
 import com.sju18001.petmanagement.ui.community.post.PostFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
@@ -200,11 +201,22 @@ class PetProfileFragment : Fragment(){
             myPetViewModel.petPhotoByteArrayProfile = Util.getByteArrayFromSharedPreferences(requireContext(),
                 requireContext().getString(R.string.pref_name_byte_arrays),
                 requireContext().getString(R.string.data_name_my_pet_selected_pet_photo))
+
+            setPhotoViews()
         }
         else {
-            myPetViewModel.petPhotoByteArrayProfile = Util.getByteArrayFromSharedPreferences(requireContext(),
-                requireContext().getString(R.string.pref_name_byte_arrays),
-                requireContext().getString(R.string.data_name_community_selected_pet_photo))
+            myPetViewModel.petPhotoUrlValueProfile = requireActivity().intent.getStringExtra("petPhotoUrl")
+            if (myPetViewModel.petPhotoUrlValueProfile.isNullOrEmpty()) {
+                myPetViewModel.petPhotoByteArrayProfile = null
+            }
+            else {
+                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                    .fetchPetPhotoReq(FetchPetPhotoReqDto(requireActivity().intent.getLongExtra("petId", -1)))
+                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                    myPetViewModel.petPhotoByteArrayProfile = response.body()!!.bytes()
+                    setPhotoViews()
+                }, {}, {})
+            }
         }
         myPetViewModel.petNameValueProfile = requireActivity().intent.getStringExtra("petName").toString()
         myPetViewModel.petBirthValueProfile = requireActivity().intent.getStringExtra("petBirth").toString()
@@ -223,7 +235,7 @@ class PetProfileFragment : Fragment(){
         }
     }
 
-    private fun setViewsWithPetData() {
+    private fun setPhotoViews() {
         if(myPetViewModel.petPhotoByteArrayProfile != null) {
             val bitmap = BitmapFactory.decodeByteArray(myPetViewModel.petPhotoByteArrayProfile, 0,
                 myPetViewModel.petPhotoByteArrayProfile!!.size)
@@ -232,6 +244,10 @@ class PetProfileFragment : Fragment(){
         else {
             binding.petPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
         }
+    }
+
+    private fun setViewsWithPetData() {
+        setPhotoViews()
         binding.petName.text = myPetViewModel.petNameValueProfile
         binding.petBirth.text = myPetViewModel.petBirthValueProfile
         binding.petSpecies.text = myPetViewModel.petSpeciesValueProfile

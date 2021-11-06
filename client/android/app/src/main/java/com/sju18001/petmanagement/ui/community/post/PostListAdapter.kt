@@ -15,9 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.restapi.dao.Account
-import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.global.FileMetaData
+import com.sju18001.petmanagement.ui.community.CommunityUtil
 
 interface PostListAdapterInterface{
     fun startCommunityCommentActivity(postId: Long)
@@ -28,7 +27,6 @@ interface PostListAdapterInterface{
     fun setAccountDefaultPhoto(holder: PostListAdapter.ViewHolder)
     fun setPostMedia(holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String)
     fun getContext(): Context
-    fun fetchPetPhotoAndStartPetProfileFragment(holder: PostListAdapter.ViewHolder, pet: Pet, author: Account)
 }
 
 private const val MAX_LINE = 5
@@ -154,10 +152,10 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
 
         // 프로필 이동
         holder.accountPhotoImage.setOnClickListener {
-            communityPostListAdapterInterface.fetchPetPhotoAndStartPetProfileFragment(holder, item.pet, item.author)
+            CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, item.pet, item.author)
         }
         holder.layoutUserInfo.setOnClickListener {
-            communityPostListAdapterInterface.fetchPetPhotoAndStartPetProfileFragment(holder, item.pet, item.author)
+            CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, item.pet, item.author)
         }
 
         // 댓글 버튼

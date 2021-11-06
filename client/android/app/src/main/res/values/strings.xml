@@ -8,7 +8,6 @@
     <string name="data_name_pet_list_id_order">pet_list_id_order</string>
     <string name="pref_name_byte_arrays">ByteArrays</string>
     <string name="data_name_my_pet_selected_pet_photo">my_pet_selected_pet_photo</string>
-    <string name="data_name_community_selected_pet_photo">community_selected_pet_photo</string>
     <string name="data_name_my_page_selected_account_photo">my_page_selected_account_photo</string>
 
     <string name="fail_request">요청에 실패하였습니다.</string>
