@@ -21,7 +21,8 @@ data class CreatePetResDto (
 
 // Fetch Dto
 data class FetchPetReqDto(
-    val id: Long?
+    val id: Long?,
+    val accountUsername: String?
     )
 
 data class FetchPetResDto (

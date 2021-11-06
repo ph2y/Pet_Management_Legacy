@@ -374,7 +374,7 @@ class CreateUpdatePetFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun getIdAndUpdatePhoto() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetReq(FetchPetReqDto( null ))
+            .fetchPetReq(FetchPetReqDto( null , null))
         ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
             val petIdList: ArrayList<Long> = ArrayList()
             response.body()?.petList?.map {

@@ -16,6 +16,7 @@ class CommunityUtil {
             val petProfileIntent = Intent(context, MyPetActivity::class.java)
 
             petProfileIntent.putExtra("accountId", author.id)
+            petProfileIntent.putExtra("accountUsername", author.username)
             petProfileIntent.putExtra("accountPhotoUrl", author.photoUrl)
             petProfileIntent.putExtra("accountNickname", author.nickname)
             petProfileIntent.putExtra("representativePetId", author.representativePetId)

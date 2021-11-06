@@ -335,7 +335,7 @@ class CreateUpdatePostFragment : Fragment() {
     // for pet views
     private fun setPetSpinnerAndPhoto() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetReq(FetchPetReqDto( null ))
+            .fetchPetReq(FetchPetReqDto( null , null))
         ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
             // get pet id and name
             val apiResponse: MutableList<Pet> = mutableListOf()

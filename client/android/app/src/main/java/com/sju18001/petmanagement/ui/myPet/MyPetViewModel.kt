@@ -27,9 +27,9 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("accountIdValue", value)
             field = value
         }
-    var accountNicknameValue = handle.get<String>("accountNicknameValue")
+    var accountUsernameValue = handle.get<String>("accountUsernameValue")
         set(value) {
-            handle.set("accountNicknameValue", value)
+            handle.set("accountUsernameValue", value)
             field = value
         }
     var accountPhotoUrlValue = handle.get<String>("accountPhotoUrlValue")
@@ -40,6 +40,16 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
     var accountPhotoByteArray = handle.get<ByteArray>("accountPhotoByteArray")
         set(value){
             handle.set("accountPhotoByteArray", value)
+            field = value
+        }
+    var accountNicknameValue = handle.get<String>("accountNicknameValue")
+        set(value) {
+            handle.set("accountNicknameValue", value)
+            field = value
+        }
+    var accountRepresentativePetId = handle.get<Long>("accountRepresentativePetId")
+        set(value){
+            handle.set("accountRepresentativePetId", value)
             field = value
         }
 

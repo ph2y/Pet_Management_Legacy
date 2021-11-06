@@ -70,6 +70,12 @@ public class PetService {
     }
 
     @Transactional(readOnly = true)
+    public List<Pet> fetchPetListByAccount(String username) {
+        // 사용자 정보로 반려동물 리스트 인출
+        return new ArrayList<>(petRepository.findAllByOwnername(username));
+    }
+
+    @Transactional(readOnly = true)
     public Pet fetchPetById(Long petId) {
         // 반려동물 고유번호로 반려동물 인출
         return petRepository.findById(petId)
