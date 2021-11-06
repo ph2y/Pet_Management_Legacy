@@ -17,6 +17,7 @@ import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import java.io.ByteArrayOutputStream
@@ -28,7 +29,7 @@ import java.util.*
 class PetListAdapter(private val startDragListener: OnStartDragListener, private val context: Context) :
     RecyclerView.Adapter<PetListAdapter.HistoryListViewHolder>(), PetListDragAdapter.Listener {
 
-    private var resultList = emptyList<PetListItem>()
+    private var resultList = emptyList<Pet>()
 
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val petPhoto: ImageView = itemView.findViewById(R.id.pet_photo)
@@ -49,30 +50,33 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         val currentItem = resultList[position]
 
         // create strings to display
-        val period = Period.between(currentItem.getPetBirth(), LocalDate.now())
+        val period = Period.between(LocalDate.parse(currentItem.birth), LocalDate.now())
 
-        var petNameInfo = currentItem.getPetName() + " ["
-        petNameInfo += if(currentItem.getPetGender()!!) {
+        var petNameInfo = currentItem.name + " ["
+        petNameInfo += if(currentItem.gender) {
             holder.itemView.context.getString(R.string.pet_gender_female_symbol) + ' ' + period.years.toString() + "세]"
         } else {
             holder.itemView.context.getString(R.string.pet_gender_male_symbol) + ' ' + period.years.toString() + "세]"
         }
 
         var petBirth = ""
-        petBirth += if(currentItem.getPetYearOnly()!!) {
-            currentItem.getPetBirth()?.year.toString() + "년생"
+        petBirth += if(currentItem.yearOnly!!) {
+            LocalDate.parse(currentItem.birth).year.toString() + "년생"
         } else {
-            currentItem.getPetBirth()?.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + "생"
+            LocalDate.parse(currentItem.birth).format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + "생"
         }
 
+        // check if representative pet
+        val isRepresentativePet = currentItem.id == SessionManager.fetchLoggedInAccount(context)?.representativePetId?: 0
+
         // set values to views
-        if(currentItem.getPetPhotoUrl() != null) {
-            fetchPetPhoto(currentItem.getPetId()!!, holder.petPhoto)
+        if(currentItem.photoUrl != null) {
+            fetchPetPhoto(currentItem.id, holder.petPhoto)
         }
         else {
             holder.petPhoto.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
         }
-        holder.representativePetIcon.visibility = if (currentItem.getIsRepresentativePet()!!) View.VISIBLE else View.INVISIBLE
+        holder.representativePetIcon.visibility = if (isRepresentativePet) View.VISIBLE else View.INVISIBLE
         holder.petName.text = petNameInfo
         holder.petBirth.text = petBirth
 
@@ -85,13 +89,13 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         // click -> open pet profile
         holder.itemView.setOnClickListener {
             // if pet photo not yet fetched
-            if (currentItem.getPetPhotoUrl() != null && holder.petPhoto.drawable == null) {
+            if (currentItem.photoUrl != null && holder.petPhoto.drawable == null) {
                 return@setOnClickListener
             }
 
             // set pet values to Intent
             val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
-            if(currentItem.getPetPhotoUrl() != null) {
+            if(currentItem.photoUrl != null) {
                 val bitmap = (holder.petPhoto.drawable as BitmapDrawable).bitmap
                 val stream = ByteArrayOutputStream()
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
@@ -103,22 +107,22 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
                 Util.saveByteArrayToSharedPreferences(context, context.getString(R.string.pref_name_byte_arrays),
                     context.getString(R.string.data_name_my_pet_selected_pet_photo), null)
             }
-            petProfileIntent.putExtra("petId", currentItem.getPetId())
-            petProfileIntent.putExtra("petName", currentItem.getPetName())
+            petProfileIntent.putExtra("petId", currentItem.id)
+            petProfileIntent.putExtra("petName", currentItem.name)
             petProfileIntent.putExtra("petBirth", petBirth)
-            petProfileIntent.putExtra("petSpecies", currentItem.getPetSpecies())
-            petProfileIntent.putExtra("petBreed", currentItem.getPetBreed())
-            val petGender = if(currentItem.getPetGender()!!) {
+            petProfileIntent.putExtra("petSpecies", currentItem.species)
+            petProfileIntent.putExtra("petBreed", currentItem.breed)
+            val petGender = if(currentItem.gender) {
                 holder.itemView.context.getString(R.string.pet_gender_female_symbol)
             }
             else {
                 holder.itemView.context.getString(R.string.pet_gender_male_symbol)
             }
-            val petAge = Period.between(currentItem.getPetBirth(), LocalDate.now()).years.toString()
+            val petAge = Period.between(LocalDate.parse(currentItem.birth), LocalDate.now()).years.toString()
             petProfileIntent.putExtra("petGender", petGender)
             petProfileIntent.putExtra("petAge", petAge)
-            petProfileIntent.putExtra("petMessage", currentItem.getPetMessage())
-            petProfileIntent.putExtra("isRepresentativePet", currentItem.getIsRepresentativePet())
+            petProfileIntent.putExtra("petMessage", currentItem.message)
+            petProfileIntent.putExtra("isRepresentativePet", isRepresentativePet)
 
             // open activity
             petProfileIntent.putExtra("fragmentType", "pet_profile_pet_manager")
@@ -144,7 +148,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         // save order to device
         val petListIdOrder: MutableList<Long> = mutableListOf()
         resultList.map {
-            petListIdOrder.add(it.getPetId()!!)
+            petListIdOrder.add(it.id)
         }
         PetManagerFragment().savePetListOrder(context.getString(R.string.data_name_pet_list_id_order),
             petListIdOrder, context)
@@ -162,7 +166,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         }, {}, {})
     }
 
-    public fun setResult(result: List<PetListItem>){
+    public fun setResult(result: List<Pet>){
         this.resultList = result
         notifyDataSetChanged()
     }
