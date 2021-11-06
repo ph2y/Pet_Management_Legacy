@@ -162,6 +162,9 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         val item = dataSet[position]
 
         // 프로필 이동
+        holder.accountPhotoImage.setOnClickListener {
+            communityPostListAdapterInterface.fetchPetPhotoAndStartPetProfileFragment(holder, item.pet)
+        }
         holder.layoutUserInfo.setOnClickListener {
             communityPostListAdapterInterface.fetchPetPhotoAndStartPetProfileFragment(holder, item.pet)
         }
