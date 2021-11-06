@@ -8,7 +8,6 @@ import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,6 @@ import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -29,11 +27,8 @@ import com.sju18001.petmanagement.databinding.FragmentPostBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dao.Account
-import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
-import com.sju18001.petmanagement.ui.community.CommunityUtil
 import com.sju18001.petmanagement.ui.community.CommunityViewModel
 import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import com.sju18001.petmanagement.ui.community.post.createUpdatePost.CreateUpdatePostActivity
@@ -310,21 +305,6 @@ class PostFragment : Fragment() {
 
             override fun getContext(): Context {
                 return requireContext()
-            }
-
-            @RequiresApi(Build.VERSION_CODES.O)
-            override fun fetchPetPhotoAndStartPetProfileFragment(holder: PostListAdapter.ViewHolder, pet: Pet, author: Account) {
-                // 사진이 없을 때는 fetch 없이 프래그먼트 시작
-                if(pet.photoUrl == null){
-                    CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, pet, author, null)
-                    return
-                }
-
-                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                    .fetchPetPhotoReq(FetchPetPhotoReqDto(pet.id))
-                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
-                    CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, pet, author, response.body()!!.bytes())
-                }, {}, {})
             }
         }
 
