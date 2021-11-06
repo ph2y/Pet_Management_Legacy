@@ -52,6 +52,8 @@ public class PetController {
             if (reqDto.getId() != null) {
                 petList = new ArrayList<>();
                 petList.add(petServ.fetchPetById(reqDto.getId()));
+            } else if (reqDto.getAccountUsername() != null) {
+                petList = petServ.fetchPetListByAccount(reqDto.getAccountUsername());
             } else {
                 petList = petServ.fetchPetList(auth);
             }

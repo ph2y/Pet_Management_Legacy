@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.view.doOnLayout
@@ -23,10 +25,8 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
-import com.sju18001.petmanagement.restapi.dto.DeletePetReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
-import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
-import com.sju18001.petmanagement.restapi.dto.UpdateAccountReqDto
+import com.sju18001.petmanagement.restapi.dao.Pet
+import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.post.PostFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 
@@ -109,50 +109,58 @@ class PetProfileFragment : Fragment(){
         checkIsLoading()
 
         // for set representative button
-        binding.setRepresentativeButton.setOnClickListener {
-            val builder = AlertDialog.Builder(activity)
-            builder.setMessage(myPetViewModel.petNameValueProfile + context?.getString(R.string.set_representative_message))
-                .setPositiveButton(
-                    R.string.confirm
-                ) { _, _ ->
-                    setRepresentativePet()
-                }
-                .setNegativeButton(
-                    R.string.cancel
-                ) { dialog, _ ->
-                    dialog.cancel()
-                }
-                .create().show()
+        if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
+            binding.setRepresentativeButton.setOnClickListener {
+                val builder = AlertDialog.Builder(activity)
+                builder.setMessage(myPetViewModel.petNameValueProfile + context?.getString(R.string.set_representative_message))
+                    .setPositiveButton(
+                        R.string.confirm
+                    ) { _, _ ->
+                        setRepresentativePet()
+                    }
+                    .setNegativeButton(
+                        R.string.cancel
+                    ) { dialog, _ ->
+                        dialog.cancel()
+                    }
+                    .create().show()
+            }
         }
 
-        // for pet update button
-        binding.updatePetButton.setOnClickListener {
-            // save pet data to ViewModel(for pet update)
-            savePetDataForPetUpdate()
-
-            // open update pet fragment
-            activity?.supportFragmentManager?.beginTransaction()!!
-                .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
-                .replace(R.id.my_pet_activity_fragment_container, CreateUpdatePetFragment())
-                .addToBackStack(null)
-                .commit()
+        // for pet spinner
+        if (myPetViewModel.fragmentType == "pet_profile_community") {
+            setPetSpinner()
         }
 
-        // for pet delete button
-        binding.deletePetButton.setOnClickListener {
-            val builder = AlertDialog.Builder(activity)
-            builder.setMessage(context?.getString(R.string.delete_pet_dialog_message))
-                .setPositiveButton(
-                    R.string.confirm
-                ) { _, _ ->
-                    deletePet()
-                }
-                .setNegativeButton(
-                    R.string.cancel
-                ) { dialog, _ ->
-                    dialog.cancel()
-                }
-                .create().show()
+        // for pet update and delete button
+        if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
+            binding.updatePetButton.setOnClickListener {
+                // save pet data to ViewModel(for pet update)
+                savePetDataForPetUpdate()
+
+                // open update pet fragment
+                activity?.supportFragmentManager?.beginTransaction()!!
+                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
+                    .replace(R.id.my_pet_activity_fragment_container, CreateUpdatePetFragment())
+                    .addToBackStack(null)
+                    .commit()
+            }
+
+            binding.deletePetButton.setOnClickListener {
+                val builder = AlertDialog.Builder(activity)
+                builder.setMessage(context?.getString(R.string.delete_pet_dialog_message))
+                    .setPositiveButton(
+                        R.string.confirm
+                    ) { _, _ ->
+                        deletePet()
+                    }
+                    .setNegativeButton(
+                        R.string.cancel
+                    ) { dialog, _ ->
+                        dialog.cancel()
+                    }
+                    .create().show()
+            }
         }
 
         // for back button
@@ -198,9 +206,57 @@ class PetProfileFragment : Fragment(){
         }
     }
 
+    private fun setPetSpinner() {
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            .fetchPetReq(FetchPetReqDto(null, myPetViewModel.accountUsernameValue))
+        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            // get pet id and name
+            val apiResponse: MutableList<Pet> = mutableListOf()
+            response.body()?.petList?.map {
+                val item = Pet(
+                    it.id, "", it.name, "", "", null, null, false, null, null
+                )
+                apiResponse.add(item)
+            }
+
+            // set spinner values
+            val spinnerArray: ArrayList<String> = ArrayList()
+            for (pet in apiResponse) {
+                if (pet.id == myPetViewModel.accountRepresentativePetId) {
+                    spinnerArray.add(pet.name + " *")
+                }
+                else {
+                    spinnerArray.add(pet.name)
+                }
+            }
+
+            // set spinner adapter
+            val spinnerArrayAdapter: ArrayAdapter<String> =
+                ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item, spinnerArray)
+            binding.petNameSpinner.adapter = spinnerArrayAdapter
+
+            // set spinner listener
+            binding.petNameSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    // TODO:
+                }
+                override fun onNothingSelected(parent: AdapterView<*>?) {}
+            }
+
+            // set spinner position
+            for(i in 0 until apiResponse.size) {
+                if (myPetViewModel.petIdValue == apiResponse[i].id) {
+                    binding.petNameSpinner.setSelection(i)
+                    break
+                }
+            }
+        }, {}, {})
+    }
+
     private fun saveAuthorDataForAuthorProfile() {
         myPetViewModel.loadedAuthorFromIntent = true
         myPetViewModel.accountIdValue = requireActivity().intent.getLongExtra("accountId", -1)
+        myPetViewModel.accountUsernameValue = requireActivity().intent.getStringExtra("accountUsername")
         myPetViewModel.accountPhotoUrlValue = requireActivity().intent.getStringExtra("accountPhotoUrl")
         if (myPetViewModel.accountPhotoUrlValue.isNullOrEmpty()) {
             myPetViewModel.accountPhotoByteArray = null
@@ -214,6 +270,7 @@ class PetProfileFragment : Fragment(){
             }, {}, {})
         }
         myPetViewModel.accountNicknameValue = requireActivity().intent.getStringExtra("accountNickname")
+        myPetViewModel.accountRepresentativePetId = requireActivity().intent.getLongExtra("representativePetId", -1)
     }
 
     private fun savePetDataForPetProfile() {

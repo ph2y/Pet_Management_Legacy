@@ -153,7 +153,7 @@ class PetScheduleEditFragment : Fragment() {
 
     private fun addPetNameList(){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetReq(FetchPetReqDto( null ))
+            .fetchPetReq(FetchPetReqDto( null , null))
         ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
             response.body()?.petList?.map {
                 adapter.addItem(PetNameListItem(it.name, it.id))

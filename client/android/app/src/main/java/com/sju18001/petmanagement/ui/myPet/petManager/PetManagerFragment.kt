@@ -92,7 +92,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         super.onResume()
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetReq(FetchPetReqDto( null ))
+            .fetchPetReq(FetchPetReqDto( null , null))
         ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
             val petListApi: ArrayList<Pet> = ArrayList()
             response.body()?.petList?.map {
