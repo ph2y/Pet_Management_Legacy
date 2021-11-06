@@ -10,16 +10,43 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("lastScrolledIndex", value)
             field = value
         }
-
-    // variables for pet profile
-    var loadedFromIntent = handle.get<Boolean>("loadedFromIntent")?: false
-        set(value){
-            handle.set("loadedFromIntent", value)
-            field = value
-        }
     var fragmentType = handle.get<String>("fragmentType")
         set(value){
             handle.set("fragmentType", value)
+            field = value
+        }
+
+    // variables for author profile
+    var loadedAuthorFromIntent = handle.get<Boolean>("loadedAuthorFromIntent")?: false
+        set(value){
+            handle.set("loadedAuthorFromIntent", value)
+            field = value
+        }
+    var accountIdValue = handle.get<Long>("accountIdValue")
+        set(value) {
+            handle.set("accountIdValue", value)
+            field = value
+        }
+    var accountNicknameValue = handle.get<String>("accountNicknameValue")
+        set(value) {
+            handle.set("accountNicknameValue", value)
+            field = value
+        }
+    var accountPhotoUrlValue = handle.get<String>("accountPhotoUrlValue")
+        set(value){
+            handle.set("accountPhotoUrlValue", value)
+            field = value
+        }
+    var accountPhotoByteArray = handle.get<ByteArray>("accountPhotoByteArray")
+        set(value){
+            handle.set("accountPhotoByteArray", value)
+            field = value
+        }
+
+    // variables for pet profile
+    var loadedPetFromIntent = handle.get<Boolean>("loadedPetFromIntent")?: false
+        set(value){
+            handle.set("loadedPetFromIntent", value)
             field = value
         }
     var petPhotoUrlValueProfile = handle.get<String>("petPhotoUrlValueProfile")

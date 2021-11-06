@@ -83,11 +83,11 @@
                         android:layout_alignParentStart="true">
 
                         <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/account_photo_circle_view"
+                            android:id="@+id/account_photo"
                             android:layout_width="34dp"
                             android:layout_height="34dp"
                             android:layout_gravity="center"
-                            android:src="@drawable/ic_baseline_pets_60_with_padding"
+                            android:src="@drawable/ic_baseline_account_circle_24"
                             app:civ_border_color="@color/carrot"
                             app:civ_border_width="1dp" />
 
@@ -95,8 +95,7 @@
                             android:id="@+id/account_nickname"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:text="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA님의 "/>
+                            android:layout_gravity="center"/>
 
                     </LinearLayout>
 
@@ -105,7 +104,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@id/account_info_layout"
-                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"/>
 
                 </RelativeLayout>

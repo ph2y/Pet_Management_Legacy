@@ -13,8 +13,13 @@ import java.time.Period
 class CommunityUtil {
     companion object{
         fun startPetProfileFragmentFromCommunity(context: Context, pet: Pet, author: Account) {
-            // create Intent for MyPetActivity
             val petProfileIntent = Intent(context, MyPetActivity::class.java)
+
+            petProfileIntent.putExtra("accountId", author.id)
+            petProfileIntent.putExtra("accountPhotoUrl", author.photoUrl)
+            petProfileIntent.putExtra("accountNickname", author.nickname)
+            petProfileIntent.putExtra("representativePetId", author.representativePetId)
+
             petProfileIntent.putExtra("petPhotoUrl", pet.photoUrl)
             petProfileIntent.putExtra("petId", pet.id)
             petProfileIntent.putExtra("petName", pet.name)
@@ -31,9 +36,7 @@ class CommunityUtil {
             petProfileIntent.putExtra("petGender", petGender)
             petProfileIntent.putExtra("petAge", petAge)
             petProfileIntent.putExtra("petMessage", pet.message)
-            petProfileIntent.putExtra("representativePetId", author.representativePetId)
 
-            // start activity
             petProfileIntent.putExtra("fragmentType", "pet_profile_community")
             context.startActivity(petProfileIntent)
             (context as Activity).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)

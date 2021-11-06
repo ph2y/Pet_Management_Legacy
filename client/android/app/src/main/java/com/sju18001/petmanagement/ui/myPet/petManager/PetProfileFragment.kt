@@ -24,6 +24,7 @@ import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.DeletePetReqDto
+import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchPetPhotoReqDto
 import com.sju18001.petmanagement.restapi.dto.UpdateAccountReqDto
 import com.sju18001.petmanagement.ui.community.post.PostFragment
@@ -61,8 +62,9 @@ class PetProfileFragment : Fragment(){
         // get pet id value
         myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
 
-        // save pet data to ViewModel(for pet profile) if not already loaded
-        if(!myPetViewModel.loadedFromIntent) { savePetDataForPetProfile() }
+        // save data to ViewModel if not already loaded
+        if(!myPetViewModel.loadedPetFromIntent) { savePetDataForPetProfile() }
+        if(!myPetViewModel.loadedAuthorFromIntent) { saveAuthorDataForAuthorProfile() }
 
         // show certain views depending on the fragment type
         if(myPetViewModel.fragmentType == "pet_profile_pet_manager") {
@@ -164,6 +166,7 @@ class PetProfileFragment : Fragment(){
 
         // set views with data from ViewModel
         setViewsWithPetData()
+        setViewsWithAuthorData()
     }
 
     override fun onDestroyView() {
@@ -195,8 +198,26 @@ class PetProfileFragment : Fragment(){
         }
     }
 
+    private fun saveAuthorDataForAuthorProfile() {
+        myPetViewModel.loadedAuthorFromIntent = true
+        myPetViewModel.accountIdValue = requireActivity().intent.getLongExtra("accountId", -1)
+        myPetViewModel.accountPhotoUrlValue = requireActivity().intent.getStringExtra("accountPhotoUrl")
+        if (myPetViewModel.accountPhotoUrlValue.isNullOrEmpty()) {
+            myPetViewModel.accountPhotoByteArray = null
+        }
+        else {
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                .fetchAccountPhotoReq(FetchAccountPhotoReqDto(myPetViewModel.accountIdValue))
+            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                myPetViewModel.accountPhotoByteArray = response.body()!!.bytes()
+                setPhotoViews()
+            }, {}, {})
+        }
+        myPetViewModel.accountNicknameValue = requireActivity().intent.getStringExtra("accountNickname")
+    }
+
     private fun savePetDataForPetProfile() {
-        myPetViewModel.loadedFromIntent = true
+        myPetViewModel.loadedPetFromIntent = true
         if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
             myPetViewModel.petPhotoByteArrayProfile = Util.getByteArrayFromSharedPreferences(requireContext(),
                 requireContext().getString(R.string.pref_name_byte_arrays),
@@ -244,6 +265,15 @@ class PetProfileFragment : Fragment(){
         else {
             binding.petPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
         }
+
+        if(myPetViewModel.accountPhotoByteArray != null) {
+            val bitmap = BitmapFactory.decodeByteArray(myPetViewModel.accountPhotoByteArray, 0,
+                myPetViewModel.accountPhotoByteArray!!.size)
+            binding.accountPhoto.setImageBitmap(bitmap)
+        }
+        else {
+            binding.accountPhoto.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_24))
+        }
     }
 
     private fun setViewsWithPetData() {
@@ -257,6 +287,12 @@ class PetProfileFragment : Fragment(){
         binding.petGenderAndAge.text = petGenderAndAge
         binding.petMessage.text = myPetViewModel.petMessageValueProfile
         binding.representativePetIcon.visibility = if (myPetViewModel.isRepresentativePetProfile) View.VISIBLE else View.INVISIBLE
+    }
+
+    private fun setViewsWithAuthorData() {
+        setPhotoViews()
+        val authorNickNameLabel = myPetViewModel.accountNicknameValue + "님의"
+        binding.accountNickname.text = authorNickNameLabel
     }
 
     private fun savePetDataForPetUpdate() {
