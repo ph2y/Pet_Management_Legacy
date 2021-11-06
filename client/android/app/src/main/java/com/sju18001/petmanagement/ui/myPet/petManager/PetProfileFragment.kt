@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -214,7 +215,13 @@ class PetProfileFragment : Fragment(){
         myPetViewModel.petGenderValueProfile = requireActivity().intent.getStringExtra("petGender").toString()
         myPetViewModel.petAgeValueProfile = requireActivity().intent.getStringExtra("petAge").toString()
         myPetViewModel.petMessageValueProfile = requireActivity().intent.getStringExtra("petMessage").toString()
-        myPetViewModel.isRepresentativePetProfile = requireActivity().intent.getBooleanExtra("isRepresentativePet", false)
+        if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
+            myPetViewModel.isRepresentativePetProfile = requireActivity().intent.getBooleanExtra("isRepresentativePet", false)
+        }
+        else {
+            // TODO: 
+            Log.d("test", requireActivity().intent.getLongExtra("representativePetId", -1).toString())
+        }
     }
 
     private fun setViewsWithPetData() {

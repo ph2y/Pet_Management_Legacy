@@ -29,6 +29,7 @@ import com.sju18001.petmanagement.databinding.FragmentPostBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
@@ -36,11 +37,8 @@ import com.sju18001.petmanagement.ui.community.CommunityUtil
 import com.sju18001.petmanagement.ui.community.CommunityViewModel
 import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
 import com.sju18001.petmanagement.ui.community.post.createUpdatePost.CreateUpdatePostActivity
-import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import java.io.File
 import java.io.FileOutputStream
-import java.time.LocalDate
-import java.time.Period
 
 class PostFragment : Fragment() {
     // 외부에서 petId를 지정해줄 수 있다.
@@ -315,17 +313,19 @@ class PostFragment : Fragment() {
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
-            override fun fetchPetPhotoAndStartPetProfileFragment(holder: PostListAdapter.ViewHolder, pet: Pet) {
+            override fun fetchPetPhotoAndStartPetProfileFragment(holder: PostListAdapter.ViewHolder, pet: Pet, author: Account) {
                 // 사진이 없을 때는 fetch 없이 프래그먼트 시작
                 if(pet.photoUrl == null){
-                    CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, pet, null)
+                    CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, pet,
+                        author.representativePetId, null)
                     return
                 }
 
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchPetPhotoReq(FetchPetPhotoReqDto(pet.id))
                 ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
-                    CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, pet, response.body()!!.bytes())
+                    CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, pet,
+                        author.representativePetId, response.body()!!.bytes())
                 }, {}, {})
             }
         }

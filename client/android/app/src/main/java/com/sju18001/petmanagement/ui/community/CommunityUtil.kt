@@ -12,7 +12,7 @@ import java.time.Period
 
 class CommunityUtil {
     companion object{
-        fun startPetProfileFragmentFromCommunity(context: Context, pet: Pet, photoByteArray: ByteArray?) {
+        fun startPetProfileFragmentFromCommunity(context: Context, pet: Pet, representativePetId: Long?, photoByteArray: ByteArray?) {
             // save pet photo to SharedPreferences
             if (photoByteArray != null) {
                 Util.saveByteArrayToSharedPreferences(context, context.getString(R.string.pref_name_byte_arrays),
@@ -40,6 +40,7 @@ class CommunityUtil {
             petProfileIntent.putExtra("petGender", petGender)
             petProfileIntent.putExtra("petAge", petAge)
             petProfileIntent.putExtra("petMessage", pet.message)
+            petProfileIntent.putExtra("representativePetId", representativePetId)
 
             // start activity
             petProfileIntent.putExtra("fragmentType", "pet_profile_community")
