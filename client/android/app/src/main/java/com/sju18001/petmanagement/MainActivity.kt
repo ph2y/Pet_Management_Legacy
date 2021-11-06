@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                 addFragmentWhenFragmentIsNull(myPetFragment, "myPet")
                 activeFragment = myPetFragment
 
+                navView.menu.getItem(0).isChecked = true
                 activeFragmentIndex = 0
                 invalidateOptionsMenu()
                 actionBar?.setTitle(R.string.title_my_pet)
@@ -87,6 +88,7 @@ class MainActivity : AppCompatActivity() {
                 addFragmentWhenFragmentIsNull(mapFragment, "map")
                 activeFragment = mapFragment
 
+                navView.menu.getItem(1).isChecked = true
                 activeFragmentIndex = 1
                 invalidateOptionsMenu()
                 actionBar?.hide()
@@ -95,6 +97,7 @@ class MainActivity : AppCompatActivity() {
                 addFragmentWhenFragmentIsNull(communityFragment, "community")
                 activeFragment = communityFragment
 
+                navView.menu.getItem(2).isChecked = true
                 activeFragmentIndex = 2
                 invalidateOptionsMenu()
                 actionBar?.setTitle(R.string.title_community)
@@ -104,6 +107,7 @@ class MainActivity : AppCompatActivity() {
                 addFragmentWhenFragmentIsNull(myPageFragment, "myPage")
                 activeFragment = myPageFragment
 
+                navView.menu.getItem(3).isChecked = true
                 activeFragmentIndex = 3
                 invalidateOptionsMenu()
                 actionBar?.setTitle(R.string.title_my_page)
@@ -113,6 +117,7 @@ class MainActivity : AppCompatActivity() {
                 addFragmentWhenFragmentIsNull(myPetFragment, "myPet")
                 activeFragment = myPetFragment
 
+                navView.menu.getItem(0).isChecked = true
                 activeFragmentIndex = 0
                 invalidateOptionsMenu()
                 actionBar?.setTitle(R.string.title_my_pet)
@@ -208,8 +213,8 @@ class MainActivity : AppCompatActivity() {
     // for saving currently active fragment index
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("active_fragment_index", activeFragmentIndex)
         outState.clear()
+        outState.putInt("active_fragment_index", activeFragmentIndex)
     }
 
     // for action bar menu
