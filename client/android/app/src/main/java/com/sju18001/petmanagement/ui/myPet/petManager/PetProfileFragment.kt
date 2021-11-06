@@ -41,6 +41,8 @@ class PetProfileFragment : Fragment(){
 
     private var isViewDestroyed = false
 
+    private val POST_FRAGMENT_TAG = "post_fragment"
+
     // true: 기본 상태, false: 특정 뷰들이 GONE인 상태
     private var isViewDetailed: Boolean = true
 
@@ -59,12 +61,9 @@ class PetProfileFragment : Fragment(){
         // get fragment type
         myPetViewModel.fragmentType = requireActivity().intent.getStringExtra("fragmentType")
 
-        // get pet id value
-        myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
-
         // save data to ViewModel if not already loaded
-        if(!myPetViewModel.loadedPetFromIntent) { savePetDataForPetProfile() }
         if(!myPetViewModel.loadedAuthorFromIntent) { saveAuthorDataForAuthorProfile() }
+        if(!myPetViewModel.loadedPetFromIntent) { savePetDataForPetProfile() }
 
         // show certain views depending on the fragment type
         if(myPetViewModel.fragmentType == "pet_profile_pet_manager") {
@@ -78,26 +77,28 @@ class PetProfileFragment : Fragment(){
             // TODO: implement logic for username_and_pets_layout
         }
 
-        // Fragment 추가
-        if(childFragmentManager.findFragmentById(R.id.post_fragment_container) == null){
-            val fragment = PostFragment.newInstance(requireActivity().intent.getLongExtra("petId", -1))
-            childFragmentManager
-                .beginTransaction()
-                .add(R.id.post_fragment_container, fragment)
-                .commit()
-        }
+        if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
+            // Fragment 추가
+            if(childFragmentManager.findFragmentById(R.id.post_fragment_container) == null){
+                val fragment = PostFragment.newInstance(requireActivity().intent.getLongExtra("petId", -1))
+                childFragmentManager
+                    .beginTransaction()
+                    .add(R.id.post_fragment_container, fragment)
+                    .commit()
+            }
 
-        // Set views
-        binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
-        binding.backButtonLayout.doOnLayout {
-            backButtonLayoutHeight = it.measuredHeight
-            binding.petMessage.doOnPreDraw { binding.buttonsLayout.doOnPreDraw {
-                setViewsForDetail(true)
-            }}
-        }
+            // Set views
+            binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
+            binding.backButtonLayout.doOnLayout {
+                backButtonLayoutHeight = it.measuredHeight
+                binding.petMessage.doOnPreDraw { binding.buttonsLayout.doOnPreDraw {
+                    setViewsForDetail(true)
+                }}
+            }
 
-        binding.postFragmentContainer.post{
-            addListenerOnRecyclerView()
+            binding.postFragmentContainer.post{
+                addListenerOnRecyclerView()
+            }
         }
 
         return view
@@ -206,6 +207,33 @@ class PetProfileFragment : Fragment(){
         }
     }
 
+    private fun replacePostFragment() {
+        // remove previous fragment
+        childFragmentManager.findFragmentByTag(POST_FRAGMENT_TAG)?.let {
+            childFragmentManager.beginTransaction().remove(it).commit()
+        }
+
+        // Fragment 추가
+        val fragment = PostFragment.newInstance(myPetViewModel.petIdValue!!)
+        childFragmentManager
+            .beginTransaction()
+            .add(R.id.post_fragment_container, fragment, POST_FRAGMENT_TAG)
+            .commit()
+
+        // Set views
+        binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
+        binding.backButtonLayout.doOnLayout {
+            backButtonLayoutHeight = it.measuredHeight
+            binding.petMessage.doOnPreDraw { binding.buttonsLayout.doOnPreDraw {
+                setViewsForDetail(true)
+            }}
+        }
+
+        binding.postFragmentContainer.post{
+            addListenerOnRecyclerView()
+        }
+    }
+
     private fun setPetSpinner() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(FetchPetReqDto(null, myPetViewModel.accountUsernameValue))
@@ -219,8 +247,9 @@ class PetProfileFragment : Fragment(){
                 apiResponse.add(item)
             }
 
-            // set spinner values
+            // set spinner and pet id values
             val spinnerArray: ArrayList<String> = ArrayList()
+            val petIdArray: ArrayList<Long> = ArrayList()
             for (pet in apiResponse) {
                 if (pet.id == myPetViewModel.accountRepresentativePetId) {
                     spinnerArray.add(pet.name + " *")
@@ -228,6 +257,7 @@ class PetProfileFragment : Fragment(){
                 else {
                     spinnerArray.add(pet.name)
                 }
+                petIdArray.add(pet.id)
             }
 
             // set spinner adapter
@@ -239,6 +269,8 @@ class PetProfileFragment : Fragment(){
             binding.petNameSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                     // TODO:
+                    myPetViewModel.petIdValue = petIdArray[position]
+                    replacePostFragment()
                 }
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
             }
@@ -275,6 +307,7 @@ class PetProfileFragment : Fragment(){
 
     private fun savePetDataForPetProfile() {
         myPetViewModel.loadedPetFromIntent = true
+        myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
         if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
             myPetViewModel.petPhotoByteArrayProfile = Util.getByteArrayFromSharedPreferences(requireContext(),
                 requireContext().getString(R.string.pref_name_byte_arrays),
@@ -307,9 +340,9 @@ class PetProfileFragment : Fragment(){
             myPetViewModel.isRepresentativePetProfile = requireActivity().intent.getBooleanExtra("isRepresentativePet", false)
         }
         else {
-            myPetViewModel.petIdValueProfile = requireActivity().intent.getLongExtra("petId", -1)
+            myPetViewModel.petIdValueProfile = myPetViewModel.petIdValue
             myPetViewModel.isRepresentativePetProfile =
-                myPetViewModel.petIdValueProfile == requireActivity().intent.getLongExtra("representativePetId", -1)
+                myPetViewModel.petIdValueProfile == myPetViewModel.accountRepresentativePetId
         }
     }
 
