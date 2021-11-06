@@ -5,7 +5,6 @@ import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -72,7 +71,6 @@ class PetProfileFragment : Fragment(){
             binding.buttonsLayout.visibility = View.VISIBLE
         }
         else {
-            // TODO: check if representative pet
             binding.usernameAndPetsLayout.visibility = View.VISIBLE
             // TODO: implement logic for username_and_pets_layout
         }
@@ -219,8 +217,9 @@ class PetProfileFragment : Fragment(){
             myPetViewModel.isRepresentativePetProfile = requireActivity().intent.getBooleanExtra("isRepresentativePet", false)
         }
         else {
-            // TODO: 
-            Log.d("test", requireActivity().intent.getLongExtra("representativePetId", -1).toString())
+            myPetViewModel.petIdValueProfile = requireActivity().intent.getLongExtra("petId", -1)
+            myPetViewModel.isRepresentativePetProfile =
+                myPetViewModel.petIdValueProfile == requireActivity().intent.getLongExtra("representativePetId", -1)
         }
     }
 
@@ -241,12 +240,7 @@ class PetProfileFragment : Fragment(){
         val petGenderAndAge = myPetViewModel.petGenderValueProfile + " / " + myPetViewModel.petAgeValueProfile + '세'
         binding.petGenderAndAge.text = petGenderAndAge
         binding.petMessage.text = myPetViewModel.petMessageValueProfile
-        if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
-            binding.representativePetIcon.visibility = if (myPetViewModel.isRepresentativePetProfile) View.VISIBLE else View.INVISIBLE
-        }
-        else {
-            // TODO: check if current pet is the representative(for community)
-        }
+        binding.representativePetIcon.visibility = if (myPetViewModel.isRepresentativePetProfile) View.VISIBLE else View.INVISIBLE
     }
 
     private fun savePetDataForPetUpdate() {
