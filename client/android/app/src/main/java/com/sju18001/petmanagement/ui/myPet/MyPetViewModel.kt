@@ -17,6 +17,11 @@ class MyPetViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("loadedFromIntent", value)
             field = value
         }
+    var fragmentType = handle.get<String>("fragmentType")
+        set(value){
+            handle.set("fragmentType", value)
+            field = value
+        }
     var petPhotoByteArrayProfile = handle.get<ByteArray>("petPhotoByteArrayProfile")
         set(value){
             handle.set("petPhotoByteArrayProfile", value)

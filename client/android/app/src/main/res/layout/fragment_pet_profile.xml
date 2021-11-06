@@ -66,19 +66,47 @@
                 android:layout_height="match_parent"
                 android:animateLayoutChanges="true">
 
-                <!-- TODO: create layout for displaying username and it's pets(community)-->
                 <RelativeLayout
                     android:id="@+id/username_and_pets_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/pet_info_layout"
-                    android:visibility="gone">
+                    app:layout_constraintBottom_toTopOf="@id/pet_info_layout">
+<!--                    TODO: make this gone-->
 
-                    <TextView
+                    <LinearLayout
+                        android:id="@+id/account_info_layout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TODO: create layout for displaying username and it's pets(community)"/>
+                        android:orientation="horizontal"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentStart="true">
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/account_photo_circle_view"
+                            android:layout_width="34dp"
+                            android:layout_height="34dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_baseline_pets_60_with_padding"
+                            app:civ_border_color="@color/carrot"
+                            app:civ_border_width="1dp" />
+
+                        <TextView
+                            android:id="@+id/account_nickname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA님의 "/>
+
+                    </LinearLayout>
+
+                    <Spinner
+                        android:id="@+id/pet_name_spinner"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toEndOf="@id/account_info_layout"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"/>
 
                 </RelativeLayout>
 

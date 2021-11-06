@@ -54,6 +54,9 @@ class PetProfileFragment : Fragment(){
 
         val view = binding.root
 
+        // get fragment type
+        myPetViewModel.fragmentType = requireActivity().intent.getStringExtra("fragmentType")
+
         // get pet id value
         myPetViewModel.petIdValue = requireActivity().intent.getLongExtra("petId", -1)
 
@@ -61,13 +64,14 @@ class PetProfileFragment : Fragment(){
         if(!myPetViewModel.loadedFromIntent) { savePetDataForPetProfile() }
 
         // show certain views depending on the fragment type
-        if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+        if(myPetViewModel.fragmentType == "pet_profile_pet_manager") {
             if (!myPetViewModel.isRepresentativePetProfile) {
                 binding.setRepresentativeButton.visibility = View.VISIBLE
             }
             binding.buttonsLayout.visibility = View.VISIBLE
         }
         else {
+            // TODO: check if representative pet
             binding.usernameAndPetsLayout.visibility = View.VISIBLE
             // TODO: implement logic for username_and_pets_layout
         }
@@ -193,7 +197,7 @@ class PetProfileFragment : Fragment(){
 
     private fun savePetDataForPetProfile() {
         myPetViewModel.loadedFromIntent = true
-        if (requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+        if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
             myPetViewModel.petPhotoByteArrayProfile = Util.getByteArrayFromSharedPreferences(requireContext(),
                 requireContext().getString(R.string.pref_name_byte_arrays),
                 requireContext().getString(R.string.data_name_my_pet_selected_pet_photo))
@@ -230,7 +234,7 @@ class PetProfileFragment : Fragment(){
         val petGenderAndAge = myPetViewModel.petGenderValueProfile + " / " + myPetViewModel.petAgeValueProfile + '세'
         binding.petGenderAndAge.text = petGenderAndAge
         binding.petMessage.text = myPetViewModel.petMessageValueProfile
-        if (requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
+        if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
             binding.representativePetIcon.visibility = if (myPetViewModel.isRepresentativePetProfile) View.VISIBLE else View.INVISIBLE
         }
         else {
@@ -372,13 +376,13 @@ class PetProfileFragment : Fragment(){
 
         if(isViewDetailed){
             binding.backButtonLayout.visibility = View.VISIBLE
-            if (requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_community") {
+            if (myPetViewModel.fragmentType == "pet_profile_community") {
                 binding.usernameAndPetsLayout.visibility = View.VISIBLE
             }
             if(myPetViewModel.petMessageValueProfile.isNotEmpty()) {
                 binding.petMessage.visibility = View.VISIBLE
             }
-            if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager"){
+            if(myPetViewModel.fragmentType == "pet_profile_pet_manager"){
                 binding.buttonsLayout.visibility = View.VISIBLE
             }
 
