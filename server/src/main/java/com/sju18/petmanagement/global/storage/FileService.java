@@ -25,7 +25,13 @@ import java.util.*;
 @Service
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
-    private final String storageRootPath = "D:\\TempDev\\Pet-Management\\storage";
+    /************************ 변경사항 commit 금지 구역 **************************/
+    // IMPORTANT: storageRootPath는 수정사항 Git에 반영하지 마세요.
+    // 로컬에서 서버 테스트시 일시적으로 변경은 가능하되 git commit 및 push 직전 반드시 원상복구 하십시오.
+    // 이 구역 이외의 다른 변경사항에 대한 버전관리가 안되므로 본 파일을 gitignore 에 추가하는 것은 안됩니다.
+    // 장래에 환경변수가 많아지면 env를 지원하는 것으로 변경할 예정입니다. (현재로써는 운영환경에서 영향받는 변수가 여기뿐이라 당분간은 존치)
+    private final String storageRootPath = "/app/data";
+    /**************************************************************************/
     private final Integer MEDIA_FILE = 1;
     private final Integer GENERAL_FILE = 2;
 
