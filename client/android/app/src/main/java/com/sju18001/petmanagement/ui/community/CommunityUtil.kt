@@ -9,6 +9,7 @@ import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import java.time.LocalDate
 import java.time.Period
+import java.time.format.DateTimeFormatter
 
 class CommunityUtil {
     companion object{
@@ -24,7 +25,13 @@ class CommunityUtil {
             petProfileIntent.putExtra("petPhotoUrl", pet.photoUrl)
             petProfileIntent.putExtra("petId", pet.id)
             petProfileIntent.putExtra("petName", pet.name)
-            petProfileIntent.putExtra("petBirth", pet.birth)
+            var petBirth = ""
+            petBirth += if (pet.yearOnly!!) {
+                LocalDate.parse(pet.birth).year.toString() + "년생"
+            } else {
+                LocalDate.parse(pet.birth).format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + "생"
+            }
+            petProfileIntent.putExtra("petBirth", petBirth)
             petProfileIntent.putExtra("petSpecies", pet.species)
             petProfileIntent.putExtra("petBreed", pet.breed)
             val petGender = if(pet.gender) {
