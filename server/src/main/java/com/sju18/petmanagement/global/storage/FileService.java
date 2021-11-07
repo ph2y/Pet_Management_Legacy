@@ -7,10 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtil;
 import org.aspectj.util.FileUtil;
+import org.imgscalr.Scalr;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,13 +28,11 @@ import java.util.*;
 @Service
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
-    /************************ 변경사항 commit 금지 구역 **************************/
-    // IMPORTANT: storageRootPath는 수정사항 Git에 반영하지 마세요.
-    // 로컬에서 서버 테스트시 일시적으로 변경은 가능하되 git commit 및 push 직전 반드시 원상복구 하십시오.
-    // 이 구역 이외의 다른 변경사항에 대한 버전관리가 안되므로 본 파일을 gitignore 에 추가하는 것은 안됩니다.
-    // 장래에 환경변수가 많아지면 env를 지원하는 것으로 변경할 예정입니다. (현재로써는 운영환경에서 영향받는 변수가 여기뿐이라 당분간은 존치)
-    private final String storageRootPath = "/app/data";
-    /**************************************************************************/
+    private final String storageRootPath = "C:\\Users\\Komputer\\Pet-Management-Storage";
+
+    private final Integer THUMBNAIL_SIZE = 500;
+    private final Integer GENERAL_SIZE = 1000;
+
     private final Integer MEDIA_FILE = 1;
     private final Integer GENERAL_FILE = 2;
 
@@ -132,8 +133,15 @@ public class FileService {
 
     // 사용자 프로필 사진 저장
     public String saveAccountPhoto(Long accountId, MultipartFile uploadedFile) throws Exception {
+        // 업로드 된 파일 확장자
+        String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
+
         // 업로드 파일 저장 파일명
-        String fileName = "account_profile_photo." + FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
+        String fileName = "account_profile_photo_";
+        String thumbnailFileName = fileName + "thumbnail." + fileFormat;
+        String generalFileName = fileName + "general." + fileFormat;
+        String originalFileName = fileName + "original." + fileFormat;
+
         // 업로드 파일 저장 경로
         Path savePath = getAccountFileStoragePath(accountId);
         // 업로드 가능한 확장자
@@ -146,10 +154,16 @@ public class FileService {
         // 파일 유효성 검사
         checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
 
-        // 파일 저장
-        uploadedFile.transferTo(savePath.resolve(fileName));
+        // 파일을 미리보기, 일반, 원본 파일 3가지로 resize
+        BufferedImage thumbnailImage = Scalr.resize(ImageIO.read(uploadedFile.getInputStream()),Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, THUMBNAIL_SIZE, Scalr.OP_ANTIALIAS);
+        BufferedImage generalImage = Scalr.resize(ImageIO.read(uploadedFile.getInputStream()),Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, GENERAL_SIZE, Scalr.OP_ANTIALIAS);
 
-        return savePath.resolve(fileName).toString();
+        // 파일 저장
+        ImageIO.write(thumbnailImage, fileFormat, savePath.resolve(thumbnailFileName).toFile());
+        ImageIO.write(generalImage, fileFormat, savePath.resolve(generalFileName).toFile());
+        uploadedFile.transferTo(savePath.resolve(originalFileName));
+
+        return savePath.resolve(thumbnailFileName).toString();
     }
     
     // 애완동물 프로필 사진 저장
