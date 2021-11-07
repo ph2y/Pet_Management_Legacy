@@ -71,8 +71,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/pet_info_layout">
-<!--                    TODO: make this gone-->
+                    app:layout_constraintBottom_toTopOf="@id/pet_info_layout"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:visibility="gone">
 
                     <LinearLayout
                         android:id="@+id/account_info_layout"
@@ -95,7 +97,9 @@
                             android:id="@+id/account_nickname"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"/>
+                            android:layout_gravity="center"
+                            android:padding="6dp"
+                            android:textSize="20dp"/>
 
                     </LinearLayout>
 

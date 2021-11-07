@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -29,6 +30,9 @@ import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.post.PostFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
+import java.time.LocalDate
+import java.time.Period
+import java.time.format.DateTimeFormatter
 
 class PetProfileFragment : Fragment(){
 
@@ -74,7 +78,11 @@ class PetProfileFragment : Fragment(){
         }
         else {
             binding.usernameAndPetsLayout.visibility = View.VISIBLE
-            // TODO: implement logic for username_and_pets_layout
+
+            // for pet spinner
+            if (myPetViewModel.fragmentType == "pet_profile_community") {
+                setPetSpinner()
+            }
         }
 
         if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
@@ -126,11 +134,6 @@ class PetProfileFragment : Fragment(){
                     }
                     .create().show()
             }
-        }
-
-        // for pet spinner
-        if (myPetViewModel.fragmentType == "pet_profile_community") {
-            setPetSpinner()
         }
 
         // for pet update and delete button
@@ -207,6 +210,46 @@ class PetProfileFragment : Fragment(){
         }
     }
 
+    private fun replacePetProfile(pet: Pet) {
+        myPetViewModel.petIdValueProfile = myPetViewModel.petIdValue
+        myPetViewModel.petPhotoUrlValueProfile = pet.photoUrl
+        if (myPetViewModel.petPhotoUrlValueProfile.isNullOrEmpty()) {
+            myPetViewModel.petPhotoByteArrayProfile = null
+        }
+        else {
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                .fetchPetPhotoReq(FetchPetPhotoReqDto(myPetViewModel.petIdValueProfile!!))
+            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                myPetViewModel.petPhotoByteArrayProfile = response.body()!!.bytes()
+                setPhotoViews()
+            }, {}, {})
+        }
+        myPetViewModel.petNameValueProfile = pet.name
+        var petBirth = ""
+        petBirth += if (pet.yearOnly!!) {
+            LocalDate.parse(pet.birth).year.toString() + "년생"
+        } else {
+            LocalDate.parse(pet.birth).format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + "생"
+        }
+        myPetViewModel.petBirthValueProfile = petBirth
+        myPetViewModel.petSpeciesValueProfile = pet.species
+        myPetViewModel.petBreedValueProfile = pet.breed
+        val petGender = if(pet.gender) {
+            requireContext().getString(R.string.pet_gender_female_symbol)
+        }
+        else {
+            requireContext().getString(R.string.pet_gender_male_symbol)
+        }
+        myPetViewModel.petGenderValueProfile = petGender
+        val petAge = Period.between(LocalDate.parse(pet.birth), LocalDate.now()).years.toString()
+        myPetViewModel.petAgeValueProfile = petAge
+        myPetViewModel.petMessageValueProfile = pet.message.toString()
+        myPetViewModel.isRepresentativePetProfile =
+            myPetViewModel.petIdValueProfile == myPetViewModel.accountRepresentativePetId
+
+        setViewsWithPetData()
+    }
+
     private fun replacePostFragment() {
         // remove previous fragment
         childFragmentManager.findFragmentByTag(POST_FRAGMENT_TAG)?.let {
@@ -242,14 +285,14 @@ class PetProfileFragment : Fragment(){
             val apiResponse: MutableList<Pet> = mutableListOf()
             response.body()?.petList?.map {
                 val item = Pet(
-                    it.id, "", it.name, "", "", null, null, false, null, null
+                    it.id, "", it.name, it.species, it.breed, it.birth,
+                    it.yearOnly, it.gender, it.message, it.photoUrl
                 )
                 apiResponse.add(item)
             }
 
             // set spinner and pet id values
             val spinnerArray: ArrayList<String> = ArrayList()
-            val petIdArray: ArrayList<Long> = ArrayList()
             for (pet in apiResponse) {
                 if (pet.id == myPetViewModel.accountRepresentativePetId) {
                     spinnerArray.add(pet.name + " *")
@@ -257,7 +300,6 @@ class PetProfileFragment : Fragment(){
                 else {
                     spinnerArray.add(pet.name)
                 }
-                petIdArray.add(pet.id)
             }
 
             // set spinner adapter
@@ -268,8 +310,8 @@ class PetProfileFragment : Fragment(){
             // set spinner listener
             binding.petNameSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    // TODO:
-                    myPetViewModel.petIdValue = petIdArray[position]
+                    myPetViewModel.petIdValue = apiResponse[position].id
+                    replacePetProfile(apiResponse[position])
                     replacePostFragment()
                 }
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -524,6 +566,9 @@ class PetProfileFragment : Fragment(){
             }
             if(myPetViewModel.petMessageValueProfile.isNotEmpty()) {
                 binding.petMessage.visibility = View.VISIBLE
+            }
+            else {
+                binding.petMessage.visibility = View.GONE
             }
             if(myPetViewModel.fragmentType == "pet_profile_pet_manager"){
                 binding.buttonsLayout.visibility = View.VISIBLE
