@@ -18,6 +18,7 @@ import androidx.core.view.marginLeft
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
+import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dao.Comment
 import com.sju18001.petmanagement.ui.community.post.PostListAdapter
 import de.hdodenhof.circleimageview.CircleImageView
@@ -30,6 +31,7 @@ interface CommunityCommentListAdapterInterface{
     fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder)
     fun fetchReplyComment(pageIndex: Int, topReplyId: Long?, parentCommentId: Long, position: Int)
+    fun startPetProfile(author: Account)
 }
 
 class CommunityCommentListAdapter(
@@ -137,8 +139,12 @@ class CommunityCommentListAdapter(
     }
 
     private fun setListenerOnView(holder: ViewHolder, position: Int){
+        // start pet profile
+        holder.profileImage.setOnClickListener {
+            communityCommentListAdapterInterface.startPetProfile(dataSet[position].author)
+        }
         holder.nicknameTextView.setOnClickListener {
-            // TODO: 프로필로 이동
+            communityCommentListAdapterInterface.startPetProfile(dataSet[position].author)
         }
 
         holder.replyTextView.setOnClickListener {
