@@ -25,6 +25,7 @@ import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
+import com.sju18001.petmanagement.ui.community.CommunityUtil
 import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateCommentActivity
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -165,6 +166,10 @@ class CommunityCommentFragment : Fragment() {
                         }
                     }
                 }, {}, {})
+            }
+
+            override fun startPetProfile(author: Account) {
+                CommunityUtil.fetchRepresentativePetAndStartPetProfile(requireContext(), author, isViewDestroyed)
             }
         }
 
