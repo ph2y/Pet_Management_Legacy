@@ -10,17 +10,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentFollowerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.*
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class FollowerFragment : Fragment() {
 
@@ -121,11 +114,13 @@ class FollowerFragment : Fragment() {
             response.body()!!.followingList.map {
                 val hasPhoto = it.photoUrl != null
                 val id = it.id
+                val username = it.username
                 val nickname = it.nickname
                 val isFollowing = it.id in followingIdList
+                val representativePetId = it.representativePetId
 
                 val item = FollowerFollowingListItem()
-                item.setValues(hasPhoto, null, id, nickname!!, isFollowing)
+                item.setValues(hasPhoto, null, id, username, nickname!!, isFollowing, representativePetId)
                 followerList.add(item)
             }
 

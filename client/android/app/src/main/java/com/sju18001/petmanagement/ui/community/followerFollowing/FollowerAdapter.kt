@@ -11,16 +11,13 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.*
+import com.sju18001.petmanagement.ui.community.CommunityUtil
 import de.hdodenhof.circleimageview.CircleImageView
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class FollowerAdapter(val context: Context) :
     RecyclerView.Adapter<FollowerAdapter.HistoryListViewHolder>() {
@@ -30,6 +27,7 @@ class FollowerAdapter(val context: Context) :
     private var isViewDestroyed = false
 
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+        val mainLayout: View = itemView.findViewById(R.id.main_layout)
         val accountPhoto: CircleImageView = itemView.findViewById(R.id.account_photo)
         val accountNickname: TextView = itemView.findViewById(R.id.account_nickname)
         val followUnfollowButton: Button = itemView.findViewById(R.id.follow_unfollow_button)
@@ -43,7 +41,13 @@ class FollowerAdapter(val context: Context) :
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onBindViewHolder(holder: FollowerAdapter.HistoryListViewHolder, position: Int) {
-        // TODO: navigate to the account's pet profile
+        // start pet profile
+        holder.mainLayout.setOnClickListener {
+            CommunityUtil.fetchRepresentativePetAndStartPetProfile(context, Account(
+                resultList[position].getId(), resultList[position].getUsername(), "", "", null,
+                null, resultList[position].getNickname(), if (resultList[position].getHasPhoto()) "true" else null,
+                "", resultList[position].getRepresentativePetId()), isViewDestroyed)
+        }
 
         // set account photo
         if(resultList[position].getHasPhoto()) {
@@ -94,7 +98,8 @@ class FollowerAdapter(val context: Context) :
             // update isFollowing and button state
             val currentItem = resultList[position]
             currentItem.setValues(
-                currentItem.getHasPhoto(), currentItem.getPhoto(), currentItem.getId(), currentItem.getNickname(), true
+                currentItem.getHasPhoto(), currentItem.getPhoto(), currentItem.getId(), currentItem.getUsername(),
+                currentItem.getNickname(), true, currentItem.getRepresentativePetId()
             )
             notifyItemChanged(position)
 
@@ -111,7 +116,8 @@ class FollowerAdapter(val context: Context) :
             // update isFollowing and button state
             val currentItem = resultList[position]
             currentItem.setValues(
-                currentItem.getHasPhoto(), currentItem.getPhoto(), currentItem.getId(), currentItem.getNickname(), false
+                currentItem.getHasPhoto(), currentItem.getPhoto(), currentItem.getId(), currentItem.getUsername(),
+                currentItem.getNickname(), false, currentItem.getRepresentativePetId()
             )
             notifyItemChanged(position)
 
@@ -136,7 +142,8 @@ class FollowerAdapter(val context: Context) :
 
             val currentItem = resultList[position]
             currentItem.setValues(
-                currentItem.getHasPhoto(), photoBitmap, currentItem.getId(), currentItem.getNickname(), currentItem.getIsFollowing()
+                currentItem.getHasPhoto(), photoBitmap, currentItem.getId(), currentItem.getUsername(),
+                currentItem.getNickname(), currentItem.getIsFollowing(), currentItem.getRepresentativePetId()
             )
         }, {}, {})
     }
