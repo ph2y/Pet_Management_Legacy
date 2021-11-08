@@ -163,8 +163,15 @@ public class FileService {
     
     // 애완동물 프로필 사진 저장
     public String savePetPhoto(Long ownerAccountId, Long petId, MultipartFile uploadedFile) throws Exception {
+        // 업로드 된 파일 확장자
+        String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
+
         // 업로드 파일 저장 파일명
-        String fileName = "pet_profile_photo." + FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
+        String fileName = "pet_profile_photo_";
+        String thumbnailFileName = fileName + "thumbnail." + fileFormat;
+        String generalFileName = fileName + "general." + fileFormat;
+        String originalFileName = fileName + "original." + fileFormat;
+
         // 업로드 파일 저장 경로
         Path savePath = getPetFileStoragePath(ownerAccountId, petId);
         // 업로드 가능한 확장자
@@ -176,11 +183,20 @@ public class FileService {
 
         // 파일 유효성 검사
         checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
-        
-        // 파일 저장
-        uploadedFile.transferTo(savePath.resolve(fileName));
 
-        return savePath.resolve(fileName).toString();
+        // 원본 이미지 저장 후 이미지 파일 불러오기
+        uploadedFile.transferTo(savePath.resolve(originalFileName));
+        File originalFile = new File(savePath.resolve(originalFileName).toString());
+
+        // 원본 파일을 미리보기, 일반 버전 파일로 후처리 후 저장
+        BufferedImage thumbnailImage = FileCustomUtil.resizeToThumbnailImage(originalFile);
+        BufferedImage generalImage = FileCustomUtil.resizeToGeneralImage(originalFile);
+
+        ImageIO.write(thumbnailImage, fileFormat, savePath.resolve(thumbnailFileName).toFile());
+        ImageIO.write(generalImage, fileFormat, savePath.resolve(generalFileName).toFile());
+
+        // 대표 이미지 형식은 썸네일 이미지
+        return savePath.resolve(thumbnailFileName).toString();
     }
     
     // 게시물 미디어파일 저장 전처리
@@ -222,6 +238,10 @@ public class FileService {
     private List<FileMetadata> savePostAttachments(
             Path savePath, Long postId, String[] acceptableExtensions, List<MultipartFile> uploadedFiles, Integer fileType
     ) throws Exception {
+        String[] acceptableImageExtensions = new String[]{
+                "jpg","png","jpeg", "gif", "webp"
+        };
+
         // 업로드 개별 파일 용량 제한 (100MB)
         long fileSizeLimit = 100000000;
         // 파일 메타데이터 리스트
@@ -232,21 +252,51 @@ public class FileService {
 
         for (MultipartFile uploadedFile : uploadedFiles) {
             try {
+                // 업로드 된 파일 확장자
+                String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
                 // 업로드 파일 저장 파일명 설정
-                String fileName = "post_" + postId + "_" + uploadedFile.getOriginalFilename();
+                String fileName = ("post_" + postId + "_" + uploadedFile.getOriginalFilename()).split("\\.")[0] + "_";
                 // 파일 유효성 검사
                 checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
-                // 파일 저장
-                uploadedFile.transferTo(savePath.resolve(fileName));
-                // 파일 메타데이터 정보 생성
-                FileMetadata fileMetaData = new FileMetadata(
-                        fileName,
-                        uploadedFile.getSize(),
-                        "post", fileType.equals(MEDIA_FILE) ? "media" : "general",
-                        savePath.resolve(fileName).toString()
-                );
 
-                fileMetaDataList.add(fileMetaData);
+                if(Arrays.stream(acceptableImageExtensions).anyMatch(
+                        extension -> FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename())).equals(extension))) { // 이미지 파일이면
+                    // 업로드 파일 저장 파일명
+                    String generalImageFileName = fileName + "general." + fileFormat;
+                    String originalImageFileName = fileName + "original." + fileFormat;
+
+                    // 원본 이미지 저장 후 이미지 파일 불러오기
+                    uploadedFile.transferTo(savePath.resolve(originalImageFileName));
+                    File originalImageFile = new File(savePath.resolve(originalImageFileName).toString());
+
+                    // 원본 파일을 일반 버전 파일로 후처리 후 저장
+                    BufferedImage generalImage = FileCustomUtil.resizeToGeneralImage(originalImageFile);
+
+                    ImageIO.write(generalImage, fileFormat, savePath.resolve(generalImageFileName).toFile());
+
+                    // 파일 메타데이터 정보 생성
+                    FileMetadata fileMetaData = new FileMetadata(
+                            generalImageFileName,
+                            uploadedFile.getSize(),
+                            "post", fileType.equals(MEDIA_FILE) ? "media" : "general",
+                            savePath.resolve(generalImageFileName).toString()
+                    );
+
+                    fileMetaDataList.add(fileMetaData);
+                }
+                else {
+                    // 파일 저장
+                    uploadedFile.transferTo(savePath.resolve(fileName));
+                    // 파일 메타데이터 정보 생성
+                    FileMetadata fileMetaData = new FileMetadata(
+                            fileName,
+                            uploadedFile.getSize(),
+                            "post", fileType.equals(MEDIA_FILE) ? "media" : "general",
+                            savePath.resolve(fileName).toString()
+                    );
+
+                    fileMetaDataList.add(fileMetaData);
+                }
             } catch (Exception e) {
                 // 업로드 실패시 해당 게시물 데이터 디렉토리 초기화
                 FileUtils.cleanDirectory(savePath.toFile());
