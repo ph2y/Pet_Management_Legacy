@@ -19,7 +19,9 @@ import com.sju18001.petmanagement.databinding.ActivitySearchBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
+import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.*
+import com.sju18001.petmanagement.ui.community.CommunityUtil
 import okhttp3.MediaType
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -119,6 +121,15 @@ class SearchActivity : AppCompatActivity() {
         // set layout's visibility to visible(if not already done)
         if(binding.accountInfoCardView.visibility != View.VISIBLE) {
             binding.accountInfoCardView.visibility = View.VISIBLE
+        }
+
+        // start pet profile
+        binding.accountInfoCardView.setOnClickListener {
+            CommunityUtil.fetchRepresentativePetAndStartPetProfile(this, Account(
+                fetchAccountResDto.id, fetchAccountResDto.username, fetchAccountResDto.email, fetchAccountResDto.phone,
+                "", fetchAccountResDto.marketing, fetchAccountResDto.nickname, fetchAccountResDto.photoUrl,
+                fetchAccountResDto.userMessage, fetchAccountResDto.representativePetId), isViewDestroyed
+            )
         }
         
         // if url is not null -> fetch photo and set it
