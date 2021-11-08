@@ -12,6 +12,7 @@ import com.sju18.petmanagement.domain.pet.pet.dao.Pet;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileMetadata;
 import com.sju18.petmanagement.global.storage.FileService;
+import com.sju18.petmanagement.global.storage.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
@@ -114,7 +115,7 @@ public class PostService {
                 ));
 
         // 미디어 파일 인출
-        return fileServ.readFileFromFileMetadataListJson(currentPost.getMediaAttachments(), fileIndex);
+        return fileServ.readFileFromFileMetadataListJson(currentPost.getMediaAttachments(), fileIndex, ImageUtil.GENERAL_IMAGE);
     }
 
     public byte[] fetchPostFile(Long postId, Integer fileIndex) throws Exception {
@@ -124,7 +125,7 @@ public class PostService {
                 ));
 
         // 미디어 파일 인출
-        return fileServ.readFileFromFileMetadataListJson(currentPost.getFileAttachments(), fileIndex);
+        return fileServ.readFileFromFileMetadataListJson(currentPost.getFileAttachments(), fileIndex, ImageUtil.NOT_IMAGE);
     }
 
     // UPDATE
@@ -233,7 +234,7 @@ public class PostService {
                 ));
 
         // 기존 게시물의 모든 미디어 파일 삭제
-        fileServ.deletePostFiles(currentPost.getMediaAttachments());
+        fileServ.deletePostFiles(currentPost.getMediaAttachments(), ImageUtil.GENERAL_IMAGE);
 
         // 기존 게시물의 mediaAttachments, fileAttachments 컬럼 null 설정 후 업데이트
         currentPost.setMediaAttachments(null);
@@ -250,7 +251,7 @@ public class PostService {
                 ));
 
         // 기존 게시물의 모든 일반 파일 삭제
-        fileServ.deletePostFiles(currentPost.getFileAttachments());
+        fileServ.deletePostFiles(currentPost.getFileAttachments(), ImageUtil.NOT_IMAGE);
 
         // 기존 게시물의 mediaAttachments, fileAttachments 컬럼 null 설정 후 업데이트
         currentPost.setFileAttachments(null);

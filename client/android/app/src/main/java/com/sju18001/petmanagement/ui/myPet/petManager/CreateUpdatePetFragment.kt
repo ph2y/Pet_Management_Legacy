@@ -353,7 +353,7 @@ class CreateUpdatePetFragment : Fragment() {
         }
         // update photo
         else {
-            val file = MultipartBody.Part.createFormData("file", "file.png", RequestBody.create(MediaType.parse("multipart/form-data"), File(path)))
+            val file = MultipartBody.Part.createFormData("file", File(path).name, RequestBody.create(MediaType.parse("multipart/form-data"), File(path)))
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updatePetPhotoReq(id, file)
             ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {

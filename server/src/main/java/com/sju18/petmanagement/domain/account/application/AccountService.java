@@ -10,6 +10,7 @@ import com.sju18.petmanagement.global.exception.DtoValidityException;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileService;
 
+import com.sju18.petmanagement.global.storage.ImageUtil;
 import lombok.AllArgsConstructor;
 import org.apache.commons.io.IOUtil;
 import org.springframework.context.MessageSource;
@@ -135,7 +136,7 @@ public class AccountService {
         else { currentAccount = this.fetchAccountById(id); }
 
         // 사진 파일 인출
-        InputStream imageStream = new FileInputStream(currentAccount.getPhotoUrl());
+        InputStream imageStream = new FileInputStream(ImageUtil.createImageUrl(currentAccount.getPhotoUrl(), ImageUtil.THUMBNAIL_IMAGE));
         byte[] fileBinData = IOUtil.toByteArray(imageStream);
         imageStream.close();
         return fileBinData;
@@ -220,7 +221,7 @@ public class AccountService {
         Account currentAccount = this.fetchCurrentAccount(auth);
 
         // 사용자 프로필에서 photoUrl 컬럼 값 (파일 Path)를 가져와 파일 삭제
-        fileServ.deleteFile(currentAccount.getPhotoUrl());
+        fileServ.deleteImageFile(currentAccount.getPhotoUrl());
 
         // 사용자 프로필에서 photoUrl 컬럼 null 설정 후 업데이트
         currentAccount.setPhotoUrl(null);

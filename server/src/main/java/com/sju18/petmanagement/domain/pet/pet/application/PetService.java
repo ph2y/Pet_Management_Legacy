@@ -8,6 +8,7 @@ import com.sju18.petmanagement.domain.pet.pet.dao.Pet;
 import com.sju18.petmanagement.domain.pet.pet.dao.PetRepository;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileService;
+import com.sju18.petmanagement.global.storage.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.IOUtil;
 import org.springframework.context.MessageSource;
@@ -97,7 +98,7 @@ public class PetService {
                 ));
 
         // 사진 파일 인출
-        InputStream imageStream = new FileInputStream(currentPet.getPhotoUrl());
+        InputStream imageStream = new FileInputStream(ImageUtil.createImageUrl(currentPet.getPhotoUrl(), ImageUtil.THUMBNAIL_IMAGE));
         byte[] fileBinData = IOUtil.toByteArray(imageStream);
         imageStream.close();
         return fileBinData;
@@ -175,7 +176,7 @@ public class PetService {
                 ));
 
         // 반려동물 프로필에서 photoUrl 컬럼 값 (파일 Path)를 가져와 파일 삭제
-        fileServ.deleteFile(currentPet.getPhotoUrl());
+        fileServ.deleteImageFile(currentPet.getPhotoUrl());
 
         // 반려동물 프로필에서 photoUrl 컬럼 null 설정 후 업데이트
         currentPet.setPhotoUrl(null);
