@@ -11,8 +11,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
@@ -24,20 +22,29 @@ import java.util.*;
 @Service
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
-    private final String storageRootPath = "C:\\Users\\Komputer\\Pet-Management-Storage";
+    /************************ 변경사항 commit 금지 구역 **************************/
+    // IMPORTANT: storageRootPath는 수정사항 Git에 반영하지 마세요.
+    // 로컬에서 서버 테스트시 일시적으로 변경은 가능하되 git commit 및 push 직전 반드시 원상복구 하십시오.
+    // 이 구역 이외의 다른 변경사항에 대한 버전관리가 안되므로 본 파일을 gitignore 에 추가하는 것은 안됩니다.
+    // 장래에 환경변수가 많아지면 env를 지원하는 것으로 변경할 예정입니다. (현재로써는 운영환경에서 영향받는 변수가 여기뿐이라 당분간은 존치)
+    private final String storageRootPath = "/app/data";
+    /**************************************************************************/
     private final int MEDIA_FILE = 1;
     private final int GENERAL_FILE = 2;
 
-    private final int ORIGINAL_IMAGE = 1;
-    private final int GENERAL_IMAGE = 2;
-    private final int THUMBNAIL_IMAGE = 3;
-
     // 파일 메타데이터 목록(stringify 된 JSON)을 이용하여 파일 읽기
-    public byte[] readFileFromFileMetadataListJson(String fileMetadataListJson, Integer fileIndex) throws IOException {
+    public byte[] readFileFromFileMetadataListJson(String fileMetadataListJson, Integer fileIndex, int operationCode) throws IOException {
         Type collectionType = new TypeToken<List<FileMetadata>>(){}.getType();
         List<FileMetadata> fileMetadataList = new Gson()
                 .fromJson(fileMetadataListJson, collectionType);
-        String fileUrl = fileMetadataList.get(fileIndex).getUrl();
+        String fileUrl = "";
+        if(operationCode == ImageUtil.NOT_IMAGE) {
+            fileUrl = fileMetadataList.get(fileIndex).getUrl();
+        }
+        else {
+            fileUrl = ImageUtil.createImageUrl(fileMetadataList.get(fileIndex).getUrl(), operationCode);
+        }
+
         InputStream mediaStream = new FileInputStream(fileUrl);
         byte[] fileBinData = IOUtil.toByteArray(mediaStream);
         mediaStream.close();
@@ -116,19 +123,42 @@ public class FileService {
         FileUtils.fileDelete(filePath);
     }
 
+    // 이미지 데이터 파일 삭제
+    public void deleteImageFile(String filePath) {
+        String defaultFilePath = filePath.split("\\.")[0];
+        String fileFormat = filePath.split("\\.")[1];
+
+        String originalFilePath = defaultFilePath + "original." + fileFormat;
+        String generalFilePath = defaultFilePath + "general." + fileFormat;
+        String thumbnailFilePath = defaultFilePath + "thumbnail." + fileFormat;
+
+        deleteFile(originalFilePath);
+        deleteFile(generalFilePath);
+        deleteFile(thumbnailFilePath);
+    }
+
     // 게시물 데이터 리스트 전체 삭제 (임시)
-    public void deletePostFiles(String fileMetadataListJson) {
+    public void deletePostFiles(String fileMetadataListJson, int operationCode) {
         Type collectionType = new TypeToken<List<FileMetadata>>(){}.getType();
         List<FileMetadata> fileMetadataList = new Gson()
                 .fromJson(fileMetadataListJson, collectionType);
 
-        fileMetadataList.forEach(fileMetadata -> {
-            deleteFile(fileMetadata.getUrl());
-        });
+        if(operationCode == ImageUtil.NOT_IMAGE) {
+            fileMetadataList.forEach(fileMetadata -> {
+                deleteFile(fileMetadata.getUrl());
+            });
+        }
+        else {
+            fileMetadataList.forEach(fileMetadata -> {
+                deleteImageFile(fileMetadata.getUrl());
+            });
+        }
     }
 
     // 사용자 프로필 사진 저장
     public String saveAccountPhoto(Long accountId, MultipartFile uploadedFile) throws Exception {
+        // 업로드 된 파일 확장자
+        String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
         // 업로드 파일 저장 파일명
         String fileName = "account_profile_photo_";
         // 업로드 파일 저장 경로
@@ -143,14 +173,16 @@ public class FileService {
         // 파일 유효성 검사
         checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
 
-        // 이미지 파일 최적화 및 여러 버전으로 저장, 대표 이미지 형식은 썸네일 이미지로
-        String saveFileName = optimizeAndSaveImage(fileName, uploadedFile, savePath, THUMBNAIL_IMAGE);
+        // 이미지 파일 최적화 및 여러 버전으로 저장
+        ImageUtil.optimizeAndSaveImage(fileName, uploadedFile, savePath);
 
-        return savePath.resolve(saveFileName).toString();
+        return savePath.resolve(fileName) + "." + fileFormat;
     }
     
     // 애완동물 프로필 사진 저장
     public String savePetPhoto(Long ownerAccountId, Long petId, MultipartFile uploadedFile) throws Exception {
+        // 업로드 된 파일 확장자
+        String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
         // 업로드 파일 저장 파일명
         String fileName = "pet_profile_photo_";
         // 업로드 파일 저장 경로
@@ -165,10 +197,10 @@ public class FileService {
         // 파일 유효성 검사
         checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
 
-        // 이미지 파일 최적화 및 여러 버전으로 저장, 대표 이미지 형식은 썸네일 이미지로
-        String saveFileName = optimizeAndSaveImage(fileName, uploadedFile, savePath, THUMBNAIL_IMAGE);
+        // 이미지 파일 최적화 및 여러 버전으로 저장
+        ImageUtil.optimizeAndSaveImage(fileName, uploadedFile, savePath);
 
-        return savePath.resolve(saveFileName).toString();
+        return savePath.resolve(fileName) + "." + fileFormat;
     }
     
     // 게시물 미디어파일 저장 전처리
@@ -226,29 +258,44 @@ public class FileService {
             try {
                 // 업로드 된 파일 확장자
                 String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
-                // 업로드 파일 저장 파일명 설정
-                String fileName = ("post_" + postId + "_" + uploadedFile.getOriginalFilename()).split("\\.")[0] + "_";
                 // 파일 유효성 검사
                 checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
 
                 // 이미지 파일이면
                 if(Arrays.stream(acceptableImageExtensions).anyMatch(
                         extension -> FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename())).equals(extension))) {
-                    // 이미지 파일 최적화 및 여러 버전으로 저장, 대표 이미지 형식은 일반 이미지로
-                    fileName = optimizeAndSaveImage(fileName, uploadedFile, savePath, GENERAL_IMAGE);
+                    // 업로드 파일 저장 파일명 설정
+                    String fileName = ("post_" + postId + "_" + uploadedFile.getOriginalFilename()).split("\\.")[0] + "_";
+
+                    // 이미지 파일 최적화 및 여러 버전으로 저장
+                    ImageUtil.optimizeAndSaveImage(fileName, uploadedFile, savePath);
+
+                    // 파일 메타데이터 정보 생성
+                    FileMetadata fileMetaData = new FileMetadata(
+                            fileName,
+                            uploadedFile.getSize(),
+                            "post", fileType.equals(MEDIA_FILE) ? "media" : "general",
+                            savePath.resolve(fileName) + "." + fileFormat
+                    );
+
+                    fileMetaDataList.add(fileMetaData);
                 }
+                else {
+                    // 업로드 파일 저장 파일명 설정
+                    String fileName = "post_" + postId + "_" + uploadedFile.getOriginalFilename();
 
-                // 파일 저장
-                uploadedFile.transferTo(savePath.resolve(fileName));
-                // 파일 메타데이터 정보 생성
-                FileMetadata fileMetaData = new FileMetadata(
-                        fileName,
-                        uploadedFile.getSize(),
-                        "post", fileType.equals(MEDIA_FILE) ? "media" : "general",
-                        savePath.resolve(fileName).toString()
-                );
+                    // 파일 저장
+                    uploadedFile.transferTo(savePath.resolve(fileName));
+                    // 파일 메타데이터 정보 생성
+                    FileMetadata fileMetaData = new FileMetadata(
+                            fileName,
+                            uploadedFile.getSize(),
+                            "post", fileType.equals(MEDIA_FILE) ? "media" : "general",
+                            savePath.resolve(fileName).toString()
+                    );
 
-                fileMetaDataList.add(fileMetaData);
+                    fileMetaDataList.add(fileMetaData);
+                }
             } catch (Exception e) {
                 // 업로드 실패시 해당 게시물 데이터 디렉토리 초기화
                 FileUtils.cleanDirectory(savePath.toFile());
@@ -324,40 +371,6 @@ public class FileService {
         // 파일 크기 적합성 검사
         else if (uploadedFile.getSize() > fileSizeLimit) {
             throw new Exception(msgSrc.getMessage("error.file.size", new String[]{originalFileName}, Locale.ENGLISH));
-        }
-    }
-
-    // 이미지 파일 최적화 및 여러 버전으로 저장
-    public String optimizeAndSaveImage(String fileName, MultipartFile uploadedFile, Path savePath, Integer returnCode) throws Exception {
-        // 업로드 된 파일 확장자
-        String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
-
-        String originalFileName = fileName + "original." + fileFormat;
-        String generalFileName = fileName + "general." + fileFormat;
-        String thumbnailFileName = fileName + "thumbnail." + fileFormat;
-
-        // 원본 이미지 저장 후 이미지 파일 불러오기
-        uploadedFile.transferTo(savePath.resolve(originalFileName));
-        File originalFile = new File(savePath.resolve(originalFileName).toString());
-
-        // 원본 파일을 미리보기, 일반 버전 파일로 후처리 후 저장
-        BufferedImage generalImage = FileCustomUtil.resizeToGeneralImage(originalFile);
-        BufferedImage thumbnailImage = FileCustomUtil.resizeToThumbnailImage(originalFile);
-
-        ImageIO.write(generalImage, fileFormat, savePath.resolve(generalFileName).toFile());
-        ImageIO.write(thumbnailImage, fileFormat, savePath.resolve(thumbnailFileName).toFile());
-
-        if(returnCode == ORIGINAL_IMAGE) {
-            return originalFileName;
-        }
-        else if(returnCode == GENERAL_IMAGE) {
-            return generalFileName;
-        }
-        else if(returnCode == THUMBNAIL_IMAGE) {
-            return thumbnailFileName;
-        }
-        else {
-            return fileName;
         }
     }
 }

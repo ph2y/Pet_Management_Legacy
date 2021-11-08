@@ -14,6 +14,7 @@ import com.sju18.petmanagement.domain.map.review.dto.UpdateReviewReqDto;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileMetadata;
 import com.sju18.petmanagement.global.storage.FileService;
+import com.sju18.petmanagement.global.storage.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.Authentication;
@@ -102,7 +103,7 @@ public class ReviewService {
                 ));
 
         // 미디어 파일 인출
-        return fileServ.readFileFromFileMetadataListJson(currentReview.getMediaAttachments(), fileIndex);
+        return fileServ.readFileFromFileMetadataListJson(currentReview.getMediaAttachments(), fileIndex, ImageUtil.GENERAL_IMAGE);
     }
 
     // UPDATE

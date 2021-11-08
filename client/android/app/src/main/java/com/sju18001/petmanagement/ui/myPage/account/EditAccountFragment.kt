@@ -355,7 +355,7 @@ class EditAccountFragment : Fragment() {
             })
         }
         else {
-            val updateAccountPhotoReq = MultipartBody.Part.createFormData("file", "file.png", RequestBody.create(MediaType.parse("multipart/form-data"), File(path)))
+            val updateAccountPhotoReq = MultipartBody.Part.createFormData("file", File(path).name, RequestBody.create(MediaType.parse("multipart/form-data"), File(path)))
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updateAccountPhotoReq(updateAccountPhotoReq)
             ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
