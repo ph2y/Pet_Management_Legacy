@@ -7,17 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtil;
 import org.aspectj.util.FileUtil;
-import org.imgscalr.Scalr;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,10 +25,6 @@ import java.util.*;
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
     private final String storageRootPath = "C:\\Users\\Komputer\\Pet-Management-Storage";
-
-    private final Integer THUMBNAIL_SIZE = 500;
-    private final Integer GENERAL_SIZE = 1000;
-
     private final Integer MEDIA_FILE = 1;
     private final Integer GENERAL_FILE = 2;
 
@@ -154,15 +146,18 @@ public class FileService {
         // 파일 유효성 검사
         checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
 
-        // 파일을 미리보기, 일반, 원본 파일 3가지로 resize
-        BufferedImage thumbnailImage = Scalr.resize(ImageIO.read(uploadedFile.getInputStream()),Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, THUMBNAIL_SIZE, Scalr.OP_ANTIALIAS);
-        BufferedImage generalImage = Scalr.resize(ImageIO.read(uploadedFile.getInputStream()),Scalr.Method.AUTOMATIC, Scalr.Mode.AUTOMATIC, GENERAL_SIZE, Scalr.OP_ANTIALIAS);
+        // 원본 이미지 저장 후 이미지 파일 불러오기
+        uploadedFile.transferTo(savePath.resolve(originalFileName));
+        File originalFile = new File(savePath.resolve(originalFileName).toString());
 
-        // 파일 저장
+        // 원본 파일을 미리보기, 일반 버전 파일로 후처리 후 저장
+        BufferedImage thumbnailImage = FileCustomUtil.resizeToThumbnailImage(originalFile);
+        BufferedImage generalImage = FileCustomUtil.resizeToGeneralImage(originalFile);
+
         ImageIO.write(thumbnailImage, fileFormat, savePath.resolve(thumbnailFileName).toFile());
         ImageIO.write(generalImage, fileFormat, savePath.resolve(generalFileName).toFile());
-        uploadedFile.transferTo(savePath.resolve(originalFileName));
 
+        // 대표 이미지 형식은 썸네일 이미지
         return savePath.resolve(thumbnailFileName).toString();
     }
     
