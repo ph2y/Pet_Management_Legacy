@@ -5,7 +5,6 @@ import com.sju18.petmanagement.domain.account.dao.AccountRepository;
 import com.sju18.petmanagement.domain.account.dto.CreateAccountReqDto;
 import com.sju18.petmanagement.domain.account.dto.UpdateAccountReqDto;
 import com.sju18.petmanagement.domain.pet.pet.application.PetCascadeService;
-import com.sju18.petmanagement.domain.pet.pet.application.PetService;
 import com.sju18.petmanagement.global.exception.DtoValidityException;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileService;
@@ -216,7 +215,7 @@ public class AccountService {
     }
 
     @Transactional
-    public void deleteAccountPhoto(Authentication auth) throws Exception {
+    public void deleteAccountPhoto(Authentication auth) {
         // 기존 사용자 프로필 로드
         Account currentAccount = this.fetchCurrentAccount(auth);
 

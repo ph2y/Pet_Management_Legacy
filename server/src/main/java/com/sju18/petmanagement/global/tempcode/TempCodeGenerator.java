@@ -6,11 +6,11 @@ import java.util.Date;
 public class TempCodeGenerator {
     public static String generate(char[] charSet, int length) {
         // 임시 코드 생성기
-        StringBuffer tempCodeBuffer = new StringBuffer();
+        StringBuilder tempCodeBuffer = new StringBuilder();
         SecureRandom secureRandomNumberGenerator = new SecureRandom();
         secureRandomNumberGenerator.setSeed(new Date().getTime());
 
-        int randomCharIndex = 0;
+        int randomCharIndex;
         for (int i = 0; i < length; i++) {
             randomCharIndex = secureRandomNumberGenerator.nextInt(charSet.length);
             tempCodeBuffer.append(charSet[randomCharIndex]);

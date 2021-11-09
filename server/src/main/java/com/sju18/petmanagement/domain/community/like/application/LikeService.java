@@ -94,9 +94,9 @@ public class LikeService {
     public List<Long> fetchLikeAccountIdList(FetchLikeReqDto reqDto) {
         // 게시물/댓글/댓답글 id로 좋아요를 누른 Account Id 리스트 인출
         if (reqDto.getCommentId() != null) {
-            return likeRepository.findAllByLikedCommentId(reqDto.getCommentId()).stream().map(like -> like.getLikedAccountId()).collect(Collectors.toList());
+            return likeRepository.findAllByLikedCommentId(reqDto.getCommentId()).stream().map(Like::getLikedAccountId).collect(Collectors.toList());
         } else {
-            return likeRepository.findAllByLikedPostId(reqDto.getPostId()).stream().map(like -> like.getLikedAccountId()).collect(Collectors.toList());
+            return likeRepository.findAllByLikedPostId(reqDto.getPostId()).stream().map(Like::getLikedAccountId).collect(Collectors.toList());
         }
     }
 

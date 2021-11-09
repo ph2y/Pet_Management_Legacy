@@ -1,6 +1,5 @@
 package com.sju18.petmanagement.domain.account.api;
 
-import com.sju18.petmanagement.domain.account.dto.FetchAccountPhotoReqDto;
 import com.sju18.petmanagement.domain.account.application.AccountService;
 import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.domain.account.dto.*;
@@ -13,7 +12,6 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;

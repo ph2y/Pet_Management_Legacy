@@ -41,14 +41,14 @@ public class FollowService {
 
     // 현재 사용자가 팔로잉하고 있는, 사용자가 Following 객체이고 찾는 객체가 Follower 객체인 Follow 리스트 Fetch
     @Transactional(readOnly = true)
-    public List<Follow> fetchFollower(Authentication auth) throws Exception {
+    public List<Follow> fetchFollower(Authentication auth) {
         Account following = accountServ.fetchCurrentAccount(auth);
 
         return new ArrayList<>(followRepository.findAllByFollowingId(following.getId()));
     }
 
     @Transactional(readOnly = true)
-    public List<Long> fetchFollower(Account account) throws Exception {
+    public List<Long> fetchFollower(Account account) {
         return new ArrayList<>(followRepository.findAllByFollowingId(account.getId()))
                 .stream().map(follow -> follow.getFollower().getId())
                 .collect(Collectors.toList());
@@ -56,7 +56,7 @@ public class FollowService {
 
     // 현재 사용자를 팔로우하고 있는, 사용자가 Follower 객체이고 찾는 객체가 Following 객체인 Follow 리스트 Fetch
     @Transactional(readOnly = true)
-    public List<Follow> fetchFollowing(Authentication auth) throws Exception {
+    public List<Follow> fetchFollowing(Authentication auth) {
         Account follower = accountServ.fetchCurrentAccount(auth);
 
         return new ArrayList<>(followRepository.findAllByFollowerId(follower.getId()));
