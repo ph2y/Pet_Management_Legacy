@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "storage.rootPath",
+      "type": "java.lang.String",
+      "description": "Static File 최상단 경로 설정."
+  }
+] }
