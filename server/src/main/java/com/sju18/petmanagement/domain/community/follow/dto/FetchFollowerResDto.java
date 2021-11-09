@@ -4,7 +4,6 @@ import com.sju18.petmanagement.domain.account.dao.Account;
 import com.sju18.petmanagement.global.common.DtoMetadata;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -14,7 +13,6 @@ public class FetchFollowerResDto {
 
     // 정상 조회시 사용할 생성자
     public FetchFollowerResDto(DtoMetadata metadata, List<Account> followerList) {
-        List<Long> applyPetIdList = new ArrayList<>();
         this._metadata = metadata;
         this.followerList = followerList;
     }
