@@ -6,6 +6,7 @@ import com.sju18.petmanagement.domain.community.post.dto.*;
 import com.sju18.petmanagement.global.common.DtoMetadata;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileMetadata;
+import com.sju18.petmanagement.global.storage.FileType;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -127,18 +128,19 @@ public class PostController {
     }
 
     @PostMapping("/api/post/media/update")
-    public ResponseEntity<?> updatePostMedia(Authentication auth, @ModelAttribute UpdatePostMediaReqDto reqDto) {
+    @Deprecated
+    public ResponseEntity<?> updatePostMedia(Authentication auth, @ModelAttribute UpdatePostFileReqDto reqDto) {
         DtoMetadata dtoMetadata;
         List<FileMetadata> fileMetadataList;
         try {
-            fileMetadataList = postServ.updatePostMedia(auth, reqDto);
+            fileMetadataList = postServ.updatePostFile(auth, reqDto, FileType.IMAGE_FILE);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new UpdatePostMediaResDto(dtoMetadata, null));
+            return ResponseEntity.status(400).body(new UpdatePostFileResDto(dtoMetadata, null));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.postMedia.update.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new UpdatePostMediaResDto(dtoMetadata, fileMetadataList));
+        return ResponseEntity.ok(new UpdatePostFileResDto(dtoMetadata, fileMetadataList));
     }
 
     @PostMapping("/api/post/file/update")
@@ -146,7 +148,7 @@ public class PostController {
         DtoMetadata dtoMetadata;
         List<FileMetadata> fileMetadataList;
         try {
-            fileMetadataList = postServ.updatePostFile(auth, reqDto);
+            fileMetadataList = postServ.updatePostFile(auth, reqDto, FileType.valueOf(reqDto.getFileType()));
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());

@@ -23,7 +23,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -63,7 +62,7 @@ public class PetService {
 
     // READ
     @Transactional(readOnly = true)
-    public List<Pet> fetchPetList(Authentication auth) {
+    public List<Pet> fetchMyPetList(Authentication auth) {
         String ownername = accountServ.fetchCurrentAccount(auth).getUsername();
 
         // 사용자 정보로 반려동물 리스트 인출
@@ -71,7 +70,7 @@ public class PetService {
     }
 
     @Transactional(readOnly = true)
-    public List<Pet> fetchPetListByAccount(String username) {
+    public List<Pet> fetchPetListByOwnername(String username) {
         // 사용자 정보로 반려동물 리스트 인출
         return new ArrayList<>(petRepository.findAllByOwnername(username));
     }
@@ -173,7 +172,7 @@ public class PetService {
 
     // DELETE
     @Transactional
-    public void deletePetPhoto(Authentication auth, DeletePetPhotoReqDto reqDto) throws Exception {
+    public void deletePetPhoto(Authentication auth, DeletePetPhotoReqDto reqDto) {
         // 기존 반려동물 프로필 로드
         Account currentAccount = accountServ.fetchCurrentAccount(auth);
         Pet currentPet = petRepository.findByOwnernameAndId(currentAccount.getUsername(), reqDto.getId())

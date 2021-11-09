@@ -12,6 +12,7 @@ import com.sju18.petmanagement.domain.pet.pet.dao.Pet;
 import com.sju18.petmanagement.global.message.MessageConfig;
 import com.sju18.petmanagement.global.storage.FileMetadata;
 import com.sju18.petmanagement.global.storage.FileService;
+import com.sju18.petmanagement.global.storage.FileType;
 import com.sju18.petmanagement.global.storage.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -164,7 +165,7 @@ public class PostService {
     }
 
     @Transactional
-    public List<FileMetadata> updatePostMedia(Authentication auth, UpdatePostMediaReqDto reqDto) throws Exception {
+    public List<FileMetadata> updatePostFile(Authentication auth, UpdatePostFileReqDto reqDto, FileType fileType) throws Exception {
         // 기존 게시물 정보 로드
         Account author = accountServ.fetchCurrentAccount(auth);
         Post currentPost = postRepository.findByAuthorAndId(author, reqDto.getId())
@@ -175,40 +176,42 @@ public class PostService {
         // 첨부파일 인출
         List<MultipartFile> uploadedFileList = reqDto.getFileList();
 
-        // 해당 게시물의 미디어 스토리지에 미디어 파일 저장
-        List<FileMetadata> mediaFileMetadataList = null;
-        if (uploadedFileList.size() != 0) {
-            mediaFileMetadataList = fileServ.savePostMediaAttachments(reqDto.getId(), uploadedFileList);
-
-            // 파일정보 DB 데이터 업데이트
-            currentPost.setMediaAttachments(new Gson().toJson(mediaFileMetadataList));
-            postRepository.save(currentPost);
+        List<FileMetadata> fileMetadataList;
+        if (uploadedFileList.size() == 0) {
+            throw new Exception(
+                    msgSrc.getMessage("error.fileList.empty", null, Locale.ENGLISH)
+            );
         }
-        return mediaFileMetadataList;
-    }
 
-    @Transactional
-    public List<FileMetadata> updatePostFile(Authentication auth, UpdatePostFileReqDto reqDto) throws Exception {
-        // 기존 게시물 정보 로드
-        Account author = accountServ.fetchCurrentAccount(auth);
-        Post currentPost = postRepository.findByAuthorAndId(author, reqDto.getId())
-                .orElseThrow(() -> new Exception(
-                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
-                ));
+        switch (fileType) {
+            case GENERAL_FILE:
+                // 해당 게시물의 파일 스토리지에 일반 파일 저장
+                fileMetadataList = fileServ.savePostFileAttachments(reqDto.getId(), uploadedFileList);
 
-        // 첨부파일 인출
-        List<MultipartFile> uploadedFileList = reqDto.getFileList();
+                // 파일정보 DB 데이터 업데이트
+                currentPost.setFileAttachments(new Gson().toJson(fileMetadataList));
+                postRepository.save(currentPost);
+                return fileMetadataList;
+            case IMAGE_FILE:
+                // 해당 게시물의 미디어 스토리지에 미디어 파일 저장
+                fileMetadataList = fileServ.savePostImageAttachments(reqDto.getId(), uploadedFileList);
 
-        // 해당 게시물의 파일 스토리지에 일반 파일 저장
-        List<FileMetadata> generalFileMetadataList = null;
-        if (uploadedFileList.size() != 0) {
-            generalFileMetadataList = fileServ.savePostFileAttachments(reqDto.getId(), uploadedFileList);
+                // 파일정보 DB 데이터 업데이트
+                currentPost.setMediaAttachments(new Gson().toJson(fileMetadataList));
+                postRepository.save(currentPost);
+                return fileMetadataList;
+            case VIDEO_FILE:
+                // TODO: Video 파일 업로드 지원
+                return null;
 
-            // 파일정보 DB 데이터 업데이트
-            currentPost.setFileAttachments(new Gson().toJson(generalFileMetadataList));
-            postRepository.save(currentPost);
+            case AUDIO_FILE:
+                // TODO: Audio 파일 업로드 지원
+                return null;
+            default:
+                throw new Exception(
+                        msgSrc.getMessage("error.post.invalidFileType", null, Locale.ENGLISH)
+                );
         }
-        return generalFileMetadataList;
     }
 
     // DELETE

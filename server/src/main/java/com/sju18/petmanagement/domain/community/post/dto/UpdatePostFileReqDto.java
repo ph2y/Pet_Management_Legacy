@@ -13,4 +13,5 @@ public class UpdatePostFileReqDto {
     Long id;
     @Size(max = 10, message = "valid.post.file.count")
     List<MultipartFile> fileList;
+    String fileType;
 }

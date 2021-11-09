@@ -94,21 +94,21 @@ public class ImageUtil {
             if(directory != null) {
                 orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
             }
-        } catch(Exception e) {
-            orientation = 1;
+        } catch(Exception ignored) {
+            // 회전값 읽기 오류시 자동회전 전처리 진행하지 않고 통과
         }
 
         BufferedImage image = ImageIO.read(originalFile);
 
         switch(orientation) {
             case DEG_180:
-                image = Scalr.rotate(image, Scalr.Rotation.CW_180, null);
+                image = Scalr.rotate(image, Scalr.Rotation.CW_180);
                 break;
             case DEG_270:
-                image = Scalr.rotate(image, Scalr.Rotation.CW_90, null);
+                image = Scalr.rotate(image, Scalr.Rotation.CW_90);
                 break;
             case DEG_90:
-                image = Scalr.rotate(image, Scalr.Rotation.CW_270, null);
+                image = Scalr.rotate(image, Scalr.Rotation.CW_270);
                 break;
             case DEG_0:
             default:

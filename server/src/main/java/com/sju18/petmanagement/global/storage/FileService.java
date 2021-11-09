@@ -23,21 +23,19 @@ import java.util.*;
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
     /************************ 변경사항 commit 금지 구역 **************************/
-    // IMPORTANT: storageRootPath는 수정사항 Git에 반영하지 마세요.
+    // IMPORTANT: storageRootPath 는 수정사항 Git 에 반영하지 마세요.
     // 로컬에서 서버 테스트시 일시적으로 변경은 가능하되 git commit 및 push 직전 반드시 원상복구 하십시오.
     // 이 구역 이외의 다른 변경사항에 대한 버전관리가 안되므로 본 파일을 gitignore 에 추가하는 것은 안됩니다.
-    // 장래에 환경변수가 많아지면 env를 지원하는 것으로 변경할 예정입니다. (현재로써는 운영환경에서 영향받는 변수가 여기뿐이라 당분간은 존치)
+    // 장래에 환경변수가 많아지면 env 를 지원하는 것으로 변경할 예정입니다. (현재로써는 운영환경에서 영향받는 변수가 여기뿐이라 당분간은 존치)
     private final String storageRootPath = "/app/data";
     /**************************************************************************/
-    private final int MEDIA_FILE = 1;
-    private final int GENERAL_FILE = 2;
 
     // 파일 메타데이터 목록(stringify 된 JSON)을 이용하여 파일 읽기
     public byte[] readFileFromFileMetadataListJson(String fileMetadataListJson, Integer fileIndex, int operationCode) throws IOException {
         Type collectionType = new TypeToken<List<FileMetadata>>(){}.getType();
         List<FileMetadata> fileMetadataList = new Gson()
                 .fromJson(fileMetadataListJson, collectionType);
-        String fileUrl = "";
+        String fileUrl;
         if(operationCode == ImageUtil.NOT_IMAGE) {
             fileUrl = fileMetadataList.get(fileIndex).getUrl();
         }
@@ -144,14 +142,10 @@ public class FileService {
                 .fromJson(fileMetadataListJson, collectionType);
 
         if(operationCode == ImageUtil.NOT_IMAGE) {
-            fileMetadataList.forEach(fileMetadata -> {
-                deleteFile(fileMetadata.getUrl());
-            });
+            fileMetadataList.forEach(fileMetadata -> deleteFile(fileMetadata.getUrl()));
         }
         else {
-            fileMetadataList.forEach(fileMetadata -> {
-                deleteImageFile(fileMetadata.getUrl());
-            });
+            fileMetadataList.forEach(fileMetadata -> deleteImageFile(fileMetadata.getUrl()));
         }
     }
 
@@ -203,51 +197,19 @@ public class FileService {
         return savePath.resolve(fileName) + "." + fileFormat;
     }
     
-    // 게시물 미디어파일 저장 전처리
-    public List<FileMetadata> savePostMediaAttachments(Long postId, List<MultipartFile> uploadedFiles) throws Exception {
+    // 게시물 이미지 파일 저장
+    public List<FileMetadata> savePostImageAttachments(Long postId, List<MultipartFile> uploadedFiles) throws Exception {
         // 업로드 다중파일 저장 경로
         Path savePath = getPostFileStoragePath(postId).resolve("media");
         // 업로드 가능한 확장자
         String[] acceptableExtensions = new String[]{
-                "jpg","png","jpeg", "gif", "webp", "mp4", "webm"
-        };
-        // 업로드 파일 갯수 제한 및 확인
-        int fileCountLimit = 10;
-        if (uploadedFiles.size() > fileCountLimit) {
-            throw new Exception(msgSrc.getMessage("error.file.count", null, Locale.ENGLISH));
-        }
-
-        return this.savePostAttachments(savePath, postId, acceptableExtensions, uploadedFiles, MEDIA_FILE);
-    }
-
-    // 게시물 첨부파일 저장 전처리
-    public List<FileMetadata> savePostFileAttachments(Long postId, List<MultipartFile> uploadedFiles) throws Exception {
-        // 업로드 다중파일 저장 경로
-        Path savePath = getPostFileStoragePath(postId).resolve("general");
-        // 업로드 가능한 확장자
-        String[] acceptableExtensions = new String[]{
-                "doc", "docx", "hwp", "pdf", "txt", "ppt", "pptx", "psd", "ai", "xls", "xlsx",
-                "rar", "tar", "zip", "exe", "apk"
-        };
-        // 업로드 파일 갯수 제한 및 확인
-        int fileCountLimit = 10;
-        if (uploadedFiles.size() > fileCountLimit) {
-            throw new Exception(msgSrc.getMessage("error.file.count", null, Locale.ENGLISH));
-        }
-
-        return this.savePostAttachments(savePath, postId, acceptableExtensions, uploadedFiles, GENERAL_FILE);
-    }
-
-    // 게시물 파일 저장
-    private List<FileMetadata> savePostAttachments(
-            Path savePath, Long postId, String[] acceptableExtensions, List<MultipartFile> uploadedFiles, Integer fileType
-    ) throws Exception {
-        String[] acceptableImageExtensions = new String[]{
                 "jpg","png","jpeg", "gif", "webp"
         };
-
         // 업로드 개별 파일 용량 제한 (100MB)
         long fileSizeLimit = 100000000;
+        // 업로드 파일 갯수 확인
+        this.checkFileCount(uploadedFiles, 20);
+
         // 파일 메타데이터 리스트
         List<FileMetadata> fileMetaDataList = new ArrayList<>();
 
@@ -261,41 +223,72 @@ public class FileService {
                 // 파일 유효성 검사
                 checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
 
-                // 이미지 파일이면
-                if(Arrays.stream(acceptableImageExtensions).anyMatch(
-                        extension -> FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename())).equals(extension))) {
-                    // 업로드 파일 저장 파일명 설정
-                    String fileName = ("post_" + postId + "_" + uploadedFile.getOriginalFilename()).split("\\.")[0] + "_";
+                // 업로드 파일 저장 파일명 설정
+                String fileName = ("post_" + postId + "_" + uploadedFile.getOriginalFilename()).split("\\.")[0] + "_";
 
-                    // 이미지 파일 최적화 및 여러 버전으로 저장
-                    ImageUtil.optimizeAndSaveImage(fileName, uploadedFile, savePath);
+                // 이미지 파일 최적화 및 여러 버전으로 저장
+                ImageUtil.optimizeAndSaveImage(fileName, uploadedFile, savePath);
 
-                    // 파일 메타데이터 정보 생성
-                    FileMetadata fileMetaData = new FileMetadata(
-                            fileName,
-                            uploadedFile.getSize(),
-                            "post", fileType.equals(MEDIA_FILE) ? "media" : "general",
-                            savePath.resolve(fileName) + "." + fileFormat
-                    );
+                // 파일 메타데이터 정보 생성
+                FileMetadata fileMetaData = new FileMetadata(
+                        fileName,
+                        uploadedFile.getSize(),
+                        "post", FileType.IMAGE_FILE.getValue(),
+                        savePath.resolve(fileName) + "." + fileFormat
+                );
 
-                    fileMetaDataList.add(fileMetaData);
-                }
-                else {
-                    // 업로드 파일 저장 파일명 설정
-                    String fileName = "post_" + postId + "_" + uploadedFile.getOriginalFilename();
+                fileMetaDataList.add(fileMetaData);
+            } catch (Exception e) {
+                // 업로드 실패시 해당 게시물 데이터 디렉토리 초기화
+                FileUtils.cleanDirectory(savePath.toFile());
+                throw e;
+            }
+        }
 
-                    // 파일 저장
-                    uploadedFile.transferTo(savePath.resolve(fileName));
-                    // 파일 메타데이터 정보 생성
-                    FileMetadata fileMetaData = new FileMetadata(
-                            fileName,
-                            uploadedFile.getSize(),
-                            "post", fileType.equals(MEDIA_FILE) ? "media" : "general",
-                            savePath.resolve(fileName).toString()
-                    );
+        return fileMetaDataList;
+    }
+    
+    //TODO: video, audio 가공 및 업로드 로직 만들기
 
-                    fileMetaDataList.add(fileMetaData);
-                }
+    // 게시물 일반 첨부파일 저장
+    public List<FileMetadata> savePostFileAttachments(Long postId, List<MultipartFile> uploadedFiles) throws Exception {
+        // 업로드 다중파일 저장 경로
+        Path savePath = getPostFileStoragePath(postId).resolve("general");
+        // 업로드 가능한 확장자
+        String[] acceptableExtensions = new String[]{
+                "doc", "docx", "hwp", "pdf", "txt", "ppt", "pptx", "psd", "ai", "xls", "xlsx",
+                "rar", "tar", "zip", "exe", "apk"
+        };
+        // 업로드 개별 파일 용량 제한 (100MB)
+        long fileSizeLimit = 100000000;
+        // 업로드 파일 갯수 확인
+        this.checkFileCount(uploadedFiles, 10);
+
+        // 파일 메타데이터 리스트
+        List<FileMetadata> fileMetaDataList = new ArrayList<>();
+
+        // 해당 게시물 데이터 디렉토리 초기화
+        FileUtils.cleanDirectory(savePath.toFile());
+
+        for (MultipartFile uploadedFile : uploadedFiles) {
+            try {
+                // 파일 유효성 검사
+                checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
+
+                // 업로드 파일 저장 파일명 설정
+                String fileName = "post_" + postId + "_" + uploadedFile.getOriginalFilename();
+
+                // 파일 저장
+                uploadedFile.transferTo(savePath.resolve(fileName));
+                // 파일 메타데이터 정보 생성
+                FileMetadata fileMetaData = new FileMetadata(
+                        fileName,
+                        uploadedFile.getSize(),
+                        "post", FileType.GENERAL_FILE.getValue(),
+                        savePath.resolve(fileName).toString()
+                );
+
+                fileMetaDataList.add(fileMetaData);
             } catch (Exception e) {
                 // 업로드 실패시 해당 게시물 데이터 디렉토리 초기화
                 FileUtils.cleanDirectory(savePath.toFile());
@@ -371,6 +364,13 @@ public class FileService {
         // 파일 크기 적합성 검사
         else if (uploadedFile.getSize() > fileSizeLimit) {
             throw new Exception(msgSrc.getMessage("error.file.size", new String[]{originalFileName}, Locale.ENGLISH));
+        }
+    }
+    
+    // 업로드 파일 갯수 검증 로직
+    private void checkFileCount(List<MultipartFile> uploadedFiles, Integer fileCountLimit) throws Exception {
+        if (uploadedFiles.size() > fileCountLimit) {
+            throw new Exception(msgSrc.getMessage("error.file.count", null, Locale.ENGLISH));
         }
     }
 }
