@@ -3,10 +3,11 @@ package com.sju18.petmanagement.global.storage;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.sju18.petmanagement.global.message.MessageConfig;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtil;
 import org.aspectj.util.FileUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,16 +19,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Service
 public class FileService {
     private final MessageSource msgSrc = MessageConfig.getStorageMessageSource();
-    /************************ 변경사항 commit 금지 구역 **************************/
-    // IMPORTANT: storageRootPath 는 수정사항 Git 에 반영하지 마세요.
-    // 로컬에서 서버 테스트시 일시적으로 변경은 가능하되 git commit 및 push 직전 반드시 원상복구 하십시오.
-    // 이 구역 이외의 다른 변경사항에 대한 버전관리가 안되므로 본 파일을 gitignore 에 추가하는 것은 안됩니다.
-    // 장래에 환경변수가 많아지면 env 를 지원하는 것으로 변경할 예정입니다. (현재로써는 운영환경에서 영향받는 변수가 여기뿐이라 당분간은 존치)
-    private final String storageRootPath = "/app/data";
+    /***************************** 변경 금지 구역 *******************************/
+    // IMPORTANT: storageRootPath 는 환경 변수별로 분리된 application.properties에 기록합니다. (storage.rootPath 값)
+    @Value("${storage.rootPath}")
+    private final String storageRootPath = "";
     /**************************************************************************/
 
     // 파일 메타데이터 목록(stringify 된 JSON)을 이용하여 파일 읽기
