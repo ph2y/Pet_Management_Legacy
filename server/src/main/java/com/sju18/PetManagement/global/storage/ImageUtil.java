@@ -78,7 +78,12 @@ public class ImageUtil {
     }
 
     public static BufferedImage adjustRotatedImage(File originalFile) throws Exception {
-        int orientation = 1; // 1: 0 degree, 3: 180 degree, 6: 270 degree, 8: 90 degree
+        final int DEG_0 = 1;
+        final int DEG_180 = 3;
+        final int DEG_270 = 6;
+        final int DEG_90 = 8;
+
+        int orientation = DEG_0;
 
         Metadata metadata;
         Directory directory;
@@ -96,18 +101,17 @@ public class ImageUtil {
         BufferedImage image = ImageIO.read(originalFile);
 
         switch(orientation) {
-            case 3:
+            case DEG_180:
                 image = Scalr.rotate(image, Scalr.Rotation.CW_180, null);
                 break;
-            case 6:
+            case DEG_270:
                 image = Scalr.rotate(image, Scalr.Rotation.CW_90, null);
                 break;
-            case 8:
+            case DEG_90:
                 image = Scalr.rotate(image, Scalr.Rotation.CW_270, null);
                 break;
-            case 1:
+            case DEG_0:
             default:
-                orientation = 1;
                 break;
         }
 
