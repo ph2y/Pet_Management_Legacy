@@ -63,12 +63,10 @@ public class BookmarkService {
     public List<Bookmark> fetchBookmarkAuthorAndFolder(Authentication auth, String folder) throws Exception {
         Account author = accountServ.fetchCurrentAccount(auth);
 
-        List<Bookmark> bookmarkList = bookmarkRepository.findAllByAuthorAndFolder(author, folder)
+        return bookmarkRepository.findAllByAuthorAndFolder(author, folder)
                 .orElseThrow(() -> new Exception(
                         msgSrc.getMessage("error.bookmark.folder.notExists", null, Locale.ENGLISH)
                 ));
-
-        return bookmarkList;
     }
 
     // UPDATE

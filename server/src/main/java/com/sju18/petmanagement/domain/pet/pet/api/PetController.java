@@ -53,9 +53,9 @@ public class PetController {
                 petList = new ArrayList<>();
                 petList.add(petServ.fetchPetById(reqDto.getId()));
             } else if (reqDto.getAccountUsername() != null) {
-                petList = petServ.fetchPetListByAccount(reqDto.getAccountUsername());
+                petList = petServ.fetchPetListByOwnername(reqDto.getAccountUsername());
             } else {
-                petList = petServ.fetchPetList(auth);
+                petList = petServ.fetchMyPetList(auth);
             }
         } catch (Exception e) {
             logger.warn(e.toString());
