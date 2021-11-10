@@ -139,7 +139,7 @@ class CommunityCommentFragment : Fragment() {
             override fun fetchReplyComment(pageIndex: Int, topReplyId: Long?, parentCommentId: Long, position: Int){
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchCommentReq(FetchCommentReqDto(pageIndex, topReplyId, null, parentCommentId, null))
-                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                     response.body()?.let{
                         // Set topReplyId
                         if(topReplyId == null){
@@ -256,7 +256,7 @@ class CommunityCommentFragment : Fragment() {
     private fun deleteComment(id: Long, position: Int){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deleteCommentReq(DeleteCommentReqDto(id))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             Toast.makeText(context, context?.getText(R.string.delete_comment_success), Toast.LENGTH_SHORT).show()
 
             adapter.removeItem(position)
@@ -274,7 +274,7 @@ class CommunityCommentFragment : Fragment() {
     private fun updateAdapterDataSetByFetchComment(body: FetchCommentReqDto){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchCommentReq(body)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             isLast = response.body()!!.isLast == true
 
             response.body()!!.commentList?.let {
@@ -353,11 +353,11 @@ class CommunityCommentFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createCommentReq(body)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             // 생성된 댓글의 id로 FetchComment
             val callForFetchingComment = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .fetchCommentReq(FetchCommentReqDto(null, null, null, null, it.body()!!.id))
-            ServerUtil.enqueueApiCall(callForFetchingComment, isViewDestroyed, requireContext(), { it2 ->
+            ServerUtil.enqueueApiCall(callForFetchingComment, {isViewDestroyed}, requireContext(), { it2 ->
                 // RecyclerView에 추가
                 it2.body()!!.commentList?.get(0)?.let { item ->
                     // 생성된 댓글이 답글일 경우
@@ -416,7 +416,7 @@ class CommunityCommentFragment : Fragment() {
     private fun setAccountPhotoToImageView(id: Long, imageView: ImageView) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             // convert photo to byte array + get bitmap
             val photoByteArray = response.body()!!.byteStream().readBytes()
             val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)

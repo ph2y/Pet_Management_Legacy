@@ -240,7 +240,7 @@ class CreateUpdatePetFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPetReq(createPetRequestDto)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             getIdAndUpdatePhoto()
         }, { response ->
             // set api state/button to normal
@@ -286,7 +286,7 @@ class CreateUpdatePetFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePetReq(updatePetReqDto)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             updatePetPhoto(myPetViewModel.petIdValue!!, myPetViewModel.petPhotoPathValue)
         }, {
             // set api state/button to normal
@@ -356,7 +356,7 @@ class CreateUpdatePetFragment : Fragment() {
             val file = MultipartBody.Part.createFormData("file", File(path).name, RequestBody.create(MediaType.parse("multipart/form-data"), File(path)))
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updatePetPhotoReq(id, file)
-            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
                 File(path).delete()
 
                 closeAfterSuccess()
@@ -375,7 +375,7 @@ class CreateUpdatePetFragment : Fragment() {
     private fun getIdAndUpdatePhoto() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(FetchPetReqDto( null , null))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             val petIdList: ArrayList<Long> = ArrayList()
             response.body()?.petList?.map {
                 petIdList.add(it.id)

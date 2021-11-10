@@ -336,7 +336,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun setPetSpinnerAndPhoto() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(FetchPetReqDto( null , null))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             // get pet id and name
             val apiResponse: MutableList<Pet> = mutableListOf()
             response.body()?.petList?.map {
@@ -596,7 +596,7 @@ class CreateUpdatePostFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPostReq(createPostReqDto)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             // Pass post id to Community
             val intent = Intent()
             intent.putExtra("postId", response.body()!!.id)
@@ -644,7 +644,7 @@ class CreateUpdatePostFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePostReq(updatePostReqDto)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             // no media files
             if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
                 // 기존에 Media가 0개였다면 DeletePostMedia를 호출하지 않는다.
@@ -670,7 +670,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun deletePostMedia(id: Long) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deletePostMediaReq(DeletePostMediaReqDto(id))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             passDataToCommunity()
             closeAfterSuccess()
         }, {
@@ -701,7 +701,7 @@ class CreateUpdatePostFragment : Fragment() {
             // API call
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updatePostMediaReq(id, fileList)
-            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
                 passDataToCommunity()
                 closeAfterSuccess()
             }, {
@@ -719,7 +719,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun getIdAndUpdateMedia() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(FetchPostReqDto(0, null, createUpdatePostViewModel.petId, null))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             val postId = (response.body()?.postList?.get(0) as Post).id
             updatePostMedia(postId)
         }, {
@@ -736,7 +736,7 @@ class CreateUpdatePostFragment : Fragment() {
         for(index in postMedia.indices) {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .fetchPostMediaReq(FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index))
-            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                 // get file extension
                 val extension = postMedia[index].name.split('.').last()
 
@@ -779,7 +779,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun fetchPostData() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(FetchPostReqDto(null, null, null, createUpdatePostViewModel.postId))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             // fetch post data(excluding media) and save to ViewModel
             val post = response.body()?.postList!![0]
 

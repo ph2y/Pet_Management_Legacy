@@ -94,7 +94,7 @@ class FollowerAdapter(val context: Context) :
     private fun createFollow(id: Long, holder: HistoryListViewHolder, position: Int) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .createFollowReq(CreateFollowReqDto(id))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, context, {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, context, {
             // update isFollowing and button state
             val currentItem = resultList[position]
             currentItem.setValues(
@@ -112,7 +112,7 @@ class FollowerAdapter(val context: Context) :
     private fun deleteFollow(id: Long, holder: HistoryListViewHolder, position: Int) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .deleteFollowReq(DeleteFollowReqDto(id))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, context, {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, context, {
             // update isFollowing and button state
             val currentItem = resultList[position]
             currentItem.setValues(
@@ -132,7 +132,7 @@ class FollowerAdapter(val context: Context) :
     private fun setAccountPhoto(id: Long, holder: HistoryListViewHolder, position: Int) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, context, { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, context, { response ->
             // convert photo to byte array + get bitmap
             val photoByteArray = response.body()!!.byteStream().readBytes()
             val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)

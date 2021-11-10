@@ -296,7 +296,7 @@ class EditAccountFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updateAccountReq(updateAccountReqDto)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             if(response.body()?._metadata?.status == true) {
                 updateAccountPhoto(myPageViewModel.accountPhotoPathValue)
 
@@ -358,7 +358,7 @@ class EditAccountFragment : Fragment() {
             val updateAccountPhotoReq = MultipartBody.Part.createFormData("file", File(path).name, RequestBody.create(MediaType.parse("multipart/form-data"), File(path)))
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .updateAccountPhotoReq(updateAccountPhotoReq)
-            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                 // 세션 갱신
                 val account = SessionManager.fetchLoggedInAccount(requireContext())!!
                 account.photoUrl = response.body()!!.fileUrl
@@ -374,7 +374,7 @@ class EditAccountFragment : Fragment() {
     private fun updateAccountPassword(newPassword: String, password: String) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updateAccountPasswordReq(UpdateAccountPasswordReqDto(password, newPassword))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             if(response.body()?._metadata?.status == true) {
                 Toast.makeText(context, context?.getText(R.string.account_password_changed), Toast.LENGTH_LONG).show()
             }
@@ -402,7 +402,7 @@ class EditAccountFragment : Fragment() {
     private fun deleteAccount() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deleteAccountReq(ServerUtil.getEmptyBody())
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             if(response.body()?._metadata?.status == true) {
                 Toast.makeText(context, context?.getText(R.string.account_delete_success), Toast.LENGTH_LONG).show()
                 logout()

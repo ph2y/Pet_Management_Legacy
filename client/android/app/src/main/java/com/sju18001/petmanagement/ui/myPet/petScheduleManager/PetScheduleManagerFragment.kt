@@ -123,7 +123,7 @@ class PetScheduleManagerFragment : Fragment() {
             override fun deletePetSchedule(id: Long) {
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .deletePetScheduleReq(DeletePetScheduleReqDto(id))
-                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {}, {}, {})
+                ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {}, {}, {})
             }
 
             @RequiresApi(Build.VERSION_CODES.O)
@@ -133,7 +133,7 @@ class PetScheduleManagerFragment : Fragment() {
                 )
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .updatePetScheduleReq(updatePetScheduleReqDto)
-                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {}, {}, {})
+                ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {}, {}, {})
             }
 
             override fun getContext(): Context {
@@ -165,7 +165,7 @@ class PetScheduleManagerFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetScheduleReq(ServerUtil.getEmptyBody())
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             // dataSet에 값 저장
             response.body()?.petScheduleList?.map{
                 dataSet.add(PetSchedule(

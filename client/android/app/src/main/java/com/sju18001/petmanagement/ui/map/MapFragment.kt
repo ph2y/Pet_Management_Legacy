@@ -268,7 +268,7 @@ class MapFragment : Fragment(), MapView.CurrentLocationEventListener, MapView.Ma
                 currentMapPoint!!.mapPointGeoCoord.latitude.toString(),
                 searchRadiusMeter
             )
-            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                 val body = response.body()
                 if(body != null){
                     currentDocuments = body.documents

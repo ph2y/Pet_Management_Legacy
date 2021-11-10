@@ -135,7 +135,7 @@ class RecoverUsernameFragment : Fragment() {
         lockViews()
 
         val call = RetrofitBuilder.getServerApi().recoverUsernameReq(RecoverUsernameReqDto(email))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             // 버튼 로딩 상태 해제
             setButtonLoading(false)
             unlockViews()

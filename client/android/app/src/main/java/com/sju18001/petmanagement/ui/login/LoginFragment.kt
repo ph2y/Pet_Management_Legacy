@@ -189,7 +189,7 @@ class LoginFragment : Fragment() {
                             // nickname => username 변경
                             val call = RetrofitBuilder.getServerApiWithToken(token)
                                 .updateAccountReq(UpdateAccountReqDto(it.email, it.phone, it.username, it.marketing, it.userMessage, it.representativePetId))
-                            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {}, {}, {})
+                            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {}, {}, {})
 
                             // 웰컴 페이지 호출
                             val intent = Intent(context, WelcomePageActivity::class.java)

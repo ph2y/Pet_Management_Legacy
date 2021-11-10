@@ -19,7 +19,7 @@ class ServerUtil {
     companion object{
         fun <T> enqueueApiCall(
             call: Call<T>,
-            isViewDestroyed: Boolean,
+            getIsViewDestroyed: ()-> Boolean,
             context: Context,
             onSuccessful: (Response<T>)->Unit,
             onNotSuccessful: (Response<T>)->Unit,
@@ -27,7 +27,7 @@ class ServerUtil {
         ){
             call.enqueue(object: Callback<T> {
                 override fun onResponse(call: Call<T>, response: Response<T>) {
-                    if(isViewDestroyed) return
+                    if(getIsViewDestroyed()) return
 
                     if(response.isSuccessful){
                         onSuccessful.invoke(response)
@@ -38,7 +38,7 @@ class ServerUtil {
                 }
 
                 override fun onFailure(call: Call<T>, t: Throwable) {
-                    if(isViewDestroyed) return
+                    if(getIsViewDestroyed()) return
 
                     onFailure.invoke()
                     Util.showToastAndLog(context, t.message.toString())

@@ -195,7 +195,7 @@ class SearchActivity : AppCompatActivity() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .fetchFollowerReq(ServerUtil.getEmptyBody())
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, this@SearchActivity, { response ->
             response.body()!!.followerList.map {
                 searchViewModel.followerIdList!!.add(it.id)
             }
@@ -208,7 +208,7 @@ class SearchActivity : AppCompatActivity() {
     private fun searchAccount(nickname: String) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .fetchAccountByNicknameReq(FetchAccountReqDto(null, null, nickname))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, this@SearchActivity, { response ->
             // set api state/button to normal
             searchViewModel.apiIsLoading = false
             unlockViews()
@@ -244,7 +244,7 @@ class SearchActivity : AppCompatActivity() {
     private fun fetchAccountPhoto(id: Long) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, this@SearchActivity, { response ->
             // save photo as byte array
             searchViewModel.accountPhotoByteArray = response.body()!!.byteStream().readBytes()
 
@@ -256,7 +256,7 @@ class SearchActivity : AppCompatActivity() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .createFollowReq(CreateFollowReqDto(searchViewModel.accountId!!))
 
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, this@SearchActivity, {
             updateFollowerIdList()
 
             searchViewModel.apiIsLoading = false
@@ -271,7 +271,7 @@ class SearchActivity : AppCompatActivity() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(baseContext)!!)
             .deleteFollowReq(DeleteFollowReqDto(searchViewModel.accountId!!))
 
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, this@SearchActivity, {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, this@SearchActivity, {
             updateFollowerIdList()
 
             searchViewModel.apiIsLoading = false

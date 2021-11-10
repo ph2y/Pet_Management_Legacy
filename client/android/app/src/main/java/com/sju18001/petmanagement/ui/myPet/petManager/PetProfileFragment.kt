@@ -219,7 +219,7 @@ class PetProfileFragment : Fragment(){
         else {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .fetchPetPhotoReq(FetchPetPhotoReqDto(myPetViewModel.petIdValueProfile!!))
-            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                 myPetViewModel.petPhotoByteArrayProfile = response.body()!!.bytes()
                 setPhotoViews()
             }, {}, {})
@@ -280,7 +280,7 @@ class PetProfileFragment : Fragment(){
     private fun setPetSpinner() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(FetchPetReqDto(null, myPetViewModel.accountUsernameValue))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             // get pet id and name
             val apiResponse: MutableList<Pet> = mutableListOf()
             response.body()?.petList?.map {
@@ -338,7 +338,7 @@ class PetProfileFragment : Fragment(){
         else {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .fetchAccountPhotoReq(FetchAccountPhotoReqDto(myPetViewModel.accountIdValue))
-            ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                 myPetViewModel.accountPhotoByteArray = response.body()!!.bytes()
                 setPhotoViews()
             }, {}, {})
@@ -365,7 +365,7 @@ class PetProfileFragment : Fragment(){
             else {
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchPetPhotoReq(FetchPetPhotoReqDto(requireActivity().intent.getLongExtra("petId", -1)))
-                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                     myPetViewModel.petPhotoByteArrayProfile = response.body()!!.bytes()
                     setPhotoViews()
                 }, {}, {})
@@ -463,7 +463,7 @@ class PetProfileFragment : Fragment(){
         // update account
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updateAccountReq(updateAccountReqDto)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             if (response.body()?._metadata?.status == true) {
                 // update session(update representative pet id value)
                 val account = Account(
@@ -499,7 +499,7 @@ class PetProfileFragment : Fragment(){
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deletePetReq(DeletePetReqDto(requireActivity().intent.getLongExtra("petId", -1)))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             // set api state/button to normal
             myPetViewModel.petManagerApiIsLoading = false
             enableButton()

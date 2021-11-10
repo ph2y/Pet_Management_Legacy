@@ -59,7 +59,7 @@ class CommunityUtil {
             // get the representative pet of account
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
                 .fetchPetReq(FetchPetReqDto(null, account.username))
-            ServerUtil.enqueueApiCall(call, isViewDestroyed, context, { response ->
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, context, { response ->
                 if (response.body()?.petList!!.isEmpty()) {
                     val emptyPetListMessage = account.nickname + context.getText(R.string.empty_pet_list_for_account_message)
                     Toast.makeText(context, emptyPetListMessage, Toast.LENGTH_LONG).show()

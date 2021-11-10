@@ -95,7 +95,7 @@ class FollowingFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchFollowerReq(ServerUtil.getEmptyBody())
 
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             response.body()!!.followerList.map {
                 val hasPhoto = it.photoUrl != null
                 val id = it.id

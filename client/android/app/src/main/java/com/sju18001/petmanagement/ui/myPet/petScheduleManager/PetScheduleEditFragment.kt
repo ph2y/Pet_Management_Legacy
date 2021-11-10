@@ -154,7 +154,7 @@ class PetScheduleEditFragment : Fragment() {
     private fun addPetNameList(){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(FetchPetReqDto( null , null))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             response.body()?.petList?.map {
                 adapter.addItem(PetNameListItem(it.name, it.id))
             }
@@ -181,7 +181,7 @@ class PetScheduleEditFragment : Fragment() {
         )
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPetScheduleReq(createPetScheduleReqDto)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             activity?.finish()
         }, {
             unlockViews()
@@ -199,7 +199,7 @@ class PetScheduleEditFragment : Fragment() {
         )
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePetScheduleReq(updatePetScheduleReqDto)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             activity?.finish()
         }, {
             unlockViews()

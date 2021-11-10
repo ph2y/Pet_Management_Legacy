@@ -100,7 +100,7 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .deleteFollowReq(DeleteFollowReqDto(id))
 
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, context, {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, context, {
             holder.followUnfollowButton.isEnabled = true
 
             // remove from list
@@ -125,7 +125,7 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
 
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, context, { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, context, { response ->
             // convert photo to byte array + get bitmap
             val photoByteArray = response.body()!!.byteStream().readBytes()
             val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
