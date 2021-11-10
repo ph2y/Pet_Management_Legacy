@@ -31,8 +31,8 @@ class RetrofitBuilder {
                 .build()
 
             val retrofit = Retrofit.Builder()
-                //.baseUrl("http://220.85.251.6:9000/")
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl("http://220.85.251.6:9000/")
+                //.baseUrl("http://10.0.2.2:8080/")
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
@@ -51,8 +51,8 @@ class RetrofitBuilder {
                 .build()
 
             val retrofit = Retrofit.Builder()
-                //.baseUrl("http://220.85.251.6:9000/")
-                .baseUrl("http://10.0.2.2:8080/")
+                .baseUrl("http://220.85.251.6:9000/")
+                //.baseUrl("http://10.0.2.2:8080/")
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

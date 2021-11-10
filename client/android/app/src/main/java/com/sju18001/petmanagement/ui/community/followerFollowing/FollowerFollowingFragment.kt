@@ -131,7 +131,7 @@ class FollowerFollowingFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchFollowingReq(ServerUtil.getEmptyBody())
 
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             val followerCount = response.body()!!.followingList.size
 
             // set follower count
@@ -145,7 +145,7 @@ class FollowerFollowingFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchFollowerReq(ServerUtil.getEmptyBody())
 
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             val followingCount = response.body()!!.followerList.size
 
             // set following count

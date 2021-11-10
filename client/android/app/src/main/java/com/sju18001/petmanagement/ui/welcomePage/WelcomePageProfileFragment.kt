@@ -94,7 +94,7 @@ class WelcomePageProfileFragment : Fragment() {
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchAccountPhotoReq(FetchAccountPhotoReqDto(null))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             accountLookupIntent.putExtra("photoByteArray", response.body()!!.byteStream().readBytes())
 
             startActivity(accountLookupIntent)

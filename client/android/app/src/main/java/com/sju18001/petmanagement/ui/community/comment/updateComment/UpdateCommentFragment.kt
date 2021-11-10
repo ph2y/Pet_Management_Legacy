@@ -86,7 +86,7 @@ class UpdateCommentFragment : Fragment() {
             requireActivity().intent.getLongExtra("id", -1), binding.editTextUpdateComment.text.toString()
         )
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!).updateCommentReq(body)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             // Pass datum for comment
             val intent = Intent()
             val newContents = binding.editTextUpdateComment.text.toString().replace("\n", "")

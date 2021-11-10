@@ -178,7 +178,7 @@ class RecoverPasswordFragment : Fragment() {
         lockViews()
 
         val call = RetrofitBuilder.getServerApi().sendAuthCodeReq(SendAuthCodeReqDto(email))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             // 버튼 로딩 상태 해제
             setEmailInputButtonLoading(false)
             unlockViews()
@@ -216,7 +216,7 @@ class RecoverPasswordFragment : Fragment() {
         lockViews()
 
         val call = RetrofitBuilder.getServerApi().recoverPasswordReq(RecoverPasswordReqDto(username, code))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             setCodeInputButtonLoading(false)
             unlockViews()
 

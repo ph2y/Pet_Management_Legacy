@@ -104,7 +104,7 @@ class PostFragment : Fragment() {
     private fun fetchOnePostAndInvoke(postId: Long, callback: ((Post)->Unit)){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(FetchPostReqDto(null, null, null, postId))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             response.body()?.postList?.get(0)?.let{ item ->
                 // 펫이 지정되어있지만 pet id가 다를 경우에는 invoke 하지 않음
                 val petId = arguments?.getLong("petId")
@@ -165,7 +165,7 @@ class PostFragment : Fragment() {
             override fun createLike(postId: Long, holder: PostListAdapter.ViewHolder, position: Int){
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .createLikeReq(CreateLikeReqDto(postId, null))
-                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+                ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
                     holder.likeCountTextView.text = ((holder.likeCountTextView.text).toString().toLong() + 1).toString()
 
                     adapter.setIsPostLiked(position, true)
@@ -179,7 +179,7 @@ class PostFragment : Fragment() {
             override fun deleteLike(postId: Long, holder: PostListAdapter.ViewHolder, position: Int) {
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .deleteLikeReq(DeleteLikeReqDto(postId, null))
-                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+                ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
                     holder.likeCountTextView.text = ((holder.likeCountTextView.text).toString().toLong() - 1).toString()
 
                     adapter.setIsPostLiked(position, false)
@@ -203,7 +203,7 @@ class PostFragment : Fragment() {
             override fun setAccountPhoto(id: Long, holder: PostListAdapter.ViewHolder){
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchAccountPhotoReq(FetchAccountPhotoReqDto(id))
-                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                     // convert photo to byte array + get bitmap
                     val photoByteArray = response.body()!!.byteStream().readBytes()
                     val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
@@ -225,7 +225,7 @@ class PostFragment : Fragment() {
             ) {
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchPostMediaReq(FetchPostMediaReqDto(id, index))
-                ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+                ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                     if(Util.isUrlVideo(url)){
                         // Save file
                         val dir = File(requireContext().getExternalFilesDir(null).toString() +
@@ -352,7 +352,7 @@ class PostFragment : Fragment() {
     private fun updateAdapterDataSet(body: FetchPostReqDto){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(body)
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             isLast = response.body()!!.isLast == true
 
             response.body()!!.postList?.let {
@@ -384,7 +384,7 @@ class PostFragment : Fragment() {
     private fun setLiked(position: Int, postId: Long){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchLikeReq(FetchLikeReqDto(postId, null))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), { response ->
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             adapter.setLikedCount(position, response.body()!!.likedCount!!)
 
             val flag = response.body()!!.likedAccountIdList?.contains(SessionManager.fetchLoggedInAccount(requireContext())!!.id)?: false
@@ -443,7 +443,7 @@ class PostFragment : Fragment() {
     private fun deletePost(id: Long, position: Int){
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deletePostReq(DeletePostReqDto(id))
-        ServerUtil.enqueueApiCall(call, isViewDestroyed, requireContext(), {
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             // 데이터셋에서 삭제
             adapter.removeItem(position)
             adapter.notifyItemRemoved(position)

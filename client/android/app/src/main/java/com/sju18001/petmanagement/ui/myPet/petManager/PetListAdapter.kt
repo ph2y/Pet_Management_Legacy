@@ -160,7 +160,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
     private fun fetchPetPhoto(id: Long, view: View) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .fetchPetPhotoReq(FetchPetPhotoReqDto(id))
-        ServerUtil.enqueueApiCall(call, false, context, { response ->
+        ServerUtil.enqueueApiCall(call, {false}, context, { response ->
             // set fetched photo to view
             (view as ImageView).setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
         }, {}, {})
