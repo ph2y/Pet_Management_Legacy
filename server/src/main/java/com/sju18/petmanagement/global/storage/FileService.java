@@ -356,7 +356,7 @@ public class FileService {
         }
         // 파일 확장자 적합성 검사
         else if (Arrays.stream(acceptableExtensions).noneMatch(
-                extension -> FileUtils.getExtension(Objects.requireNonNull(originalFileName)).equals(extension)
+                extension -> FileUtils.getExtension(Objects.requireNonNull(originalFileName)).toLowerCase().equals(extension)
         )) {
             throw new Exception(msgSrc.getMessage("error.file.extension.valid", new String[]{originalFileName}, Locale.ENGLISH));
         }
