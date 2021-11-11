@@ -174,24 +174,25 @@ public class PostController {
     }
 
     @PostMapping("/api/post/media/delete")
-    public ResponseEntity<?> deletePostMedia(Authentication auth, @Valid @RequestBody DeletePostMediaReqDto reqDto) {
+    @Deprecated
+    public ResponseEntity<?> deletePostMedia(Authentication auth, @Valid @RequestBody DeletePostFileReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
-            postServ.deletePostMedia(auth, reqDto);
+            postServ.deletePostFile(auth, reqDto, FileType.IMAGE_FILE);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new DeletePostMediaResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new DeletePostFileResDto(dtoMetadata));
         }
-        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.postMedia.delete.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new DeletePostMediaResDto(dtoMetadata));
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.postFile.delete.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new DeletePostFileResDto(dtoMetadata));
     }
 
     @PostMapping("/api/post/file/delete")
     public ResponseEntity<?> deletePostFile(Authentication auth, @Valid @RequestBody DeletePostFileReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
-            postServ.deletePostFile(auth, reqDto);
+            postServ.deletePostFile(auth, reqDto, FileType.valueOf(reqDto.getFileType()));
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());

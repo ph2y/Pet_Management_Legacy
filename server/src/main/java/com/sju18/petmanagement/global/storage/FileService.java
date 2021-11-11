@@ -26,7 +26,7 @@ public class FileService {
     /***************************** 변경 금지 구역 *******************************/
     // IMPORTANT: storageRootPath 는 환경 변수별로 분리된 application.properties에 기록합니다. (storage.rootPath 값)
     @Value("${storage.rootPath}")
-    private final String storageRootPath = "";
+    private String storageRootPath;
     /**************************************************************************/
 
     // 파일 메타데이터 목록(stringify 된 JSON)을 이용하여 파일 읽기
