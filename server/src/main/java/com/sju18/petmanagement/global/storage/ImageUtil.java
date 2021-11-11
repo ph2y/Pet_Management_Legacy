@@ -68,8 +68,12 @@ public class ImageUtil {
         BufferedImage adjustedImage = adjustRotatedImage(originalFile);
         BufferedImage resizedImage = Scalr.resize(adjustedImage,Scalr.Method.AUTOMATIC, Scalr.Mode.FIT_TO_WIDTH, THUMBNAIL_SIZE, Scalr.OP_ANTIALIAS);
 
-        int imageHeight= resizedImage.getHeight();
-        return Scalr.crop(resizedImage, 0, (imageHeight - THUMBNAIL_SIZE ) /2, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+        int imageHeight = resizedImage.getHeight();
+        if (imageHeight >= THUMBNAIL_SIZE) {
+            return Scalr.crop(resizedImage, 0, (imageHeight - THUMBNAIL_SIZE ) /2, THUMBNAIL_SIZE, THUMBNAIL_SIZE);
+        } else {
+            return resizedImage;
+        }
     }
 
     public static BufferedImage resizeToGeneralImage(File originalFile) throws Exception {
