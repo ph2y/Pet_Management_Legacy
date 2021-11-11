@@ -228,7 +228,7 @@ public class PostService {
     }
 
     @Transactional
-    public void deletePostMedia(Authentication auth, DeletePostMediaReqDto reqDto) throws Exception {
+    public void deletePostFile(Authentication auth, DeletePostFileReqDto reqDto, FileType fileType) throws Exception {
         // 기존 게시물 정보 로드
         Account author = accountServ.fetchCurrentAccount(auth);
         Post currentPost = postRepository.findByAuthorAndId(author, reqDto.getId())
@@ -236,28 +236,32 @@ public class PostService {
                         msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
                 ));
 
-        // 기존 게시물의 모든 미디어 파일 삭제
-        fileServ.deletePostFiles(currentPost.getMediaAttachments(), ImageUtil.GENERAL_IMAGE);
+        switch (fileType) {
+            case GENERAL_FILE:
+                // 기존 게시물의 모든 일반 파일 삭제
+                fileServ.deletePostFiles(currentPost.getFileAttachments(), ImageUtil.NOT_IMAGE);
 
-        // 기존 게시물의 mediaAttachments, fileAttachments 컬럼 null 설정 후 업데이트
-        currentPost.setMediaAttachments(null);
-        postRepository.save(currentPost);
-    }
+                // 기존 게시물의 fileAttachments 컬럼 null 설정 후 업데이트
+                currentPost.setFileAttachments(null);
+                break;
+            case IMAGE_FILE:
+                // 기존 게시물의 모든 미디어 파일 삭제
+                fileServ.deletePostFiles(currentPost.getMediaAttachments(), ImageUtil.GENERAL_IMAGE);
 
-    @Transactional
-    public void deletePostFile(Authentication auth, DeletePostFileReqDto reqDto) throws Exception {
-        // 기존 게시물 정보 로드
-        Account author = accountServ.fetchCurrentAccount(auth);
-        Post currentPost = postRepository.findByAuthorAndId(author, reqDto.getId())
-                .orElseThrow(() -> new Exception(
-                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
-                ));
-
-        // 기존 게시물의 모든 일반 파일 삭제
-        fileServ.deletePostFiles(currentPost.getFileAttachments(), ImageUtil.NOT_IMAGE);
-
-        // 기존 게시물의 mediaAttachments, fileAttachments 컬럼 null 설정 후 업데이트
-        currentPost.setFileAttachments(null);
+                // 기존 게시물의 mediaAttachments 컬럼 null 설정 후 업데이트
+                currentPost.setMediaAttachments(null);
+                break;
+            case VIDEO_FILE:
+                // TODO: Audio 파일 업로드 지원
+                break;
+            case AUDIO_FILE:
+                // TODO: Video 파일 업로드 지원
+                break;
+            default:
+                throw new Exception(
+                        msgSrc.getMessage("error.post.invalidFileType", null, Locale.ENGLISH)
+                );
+        }
         postRepository.save(currentPost);
     }
 }

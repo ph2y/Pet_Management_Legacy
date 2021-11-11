@@ -7,5 +7,6 @@ import javax.validation.constraints.PositiveOrZero;
 public class DeletePostFileReqDto {
     @PositiveOrZero(message = "valid.post.id.notNegative")
     private Long id;
+    private String fileType;
 }
 
