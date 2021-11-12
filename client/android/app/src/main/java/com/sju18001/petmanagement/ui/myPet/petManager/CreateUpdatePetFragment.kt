@@ -328,9 +328,7 @@ class CreateUpdatePetFragment : Fragment() {
                         // ignore null error(delete nothing)
                         if (errorMessage == "null") {
                             closeAfterSuccess()
-                        }
-
-                        else {
+                        } else {
                             // set api state/button to normal
                             myPetViewModel.petManagerApiIsLoading = false
                             unlockViews()

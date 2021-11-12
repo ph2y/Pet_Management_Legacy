@@ -124,9 +124,16 @@ class Util {
             activity.startActivity(shareIntent)
         }
 
-        fun getMessageFromErrorBody(errorBody: ResponseBody): String{
-            val metadata = JSONObject(errorBody.string().trim()).getString("_metadata")
-            return JSONObject(metadata).getString("message")
+        fun getMessageFromErrorBody(errorBody: ResponseBody): String?{
+            var res:String? = null
+            try {
+                val metadata = JSONObject(errorBody.string().trim()).getString("_metadata")
+                res = JSONObject(metadata).getString("message")
+            }catch(e: Exception) {
+                e.printStackTrace()
+            }
+
+            return res
         }
 
         @RequiresApi(Build.VERSION_CODES.O)
@@ -241,8 +248,9 @@ class Util {
         fun showToastAndLogForFailedResponse(context: Context, errorBody: ResponseBody?){
             if(errorBody == null) return
 
-            val errorMessage = getMessageFromErrorBody(errorBody)
-            showToastAndLog(context, errorMessage)
+            getMessageFromErrorBody(errorBody)?.let{
+                showToastAndLog(context, it)
+            }
         }
 
         fun showToastAndLog(context: Context, message: String){
