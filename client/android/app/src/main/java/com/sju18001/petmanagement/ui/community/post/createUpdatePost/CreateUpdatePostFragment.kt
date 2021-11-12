@@ -738,7 +738,7 @@ class CreateUpdatePostFragment : Fragment() {
                 .fetchPostMediaReq(FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index))
             ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                 // get file extension
-                val extension = postMedia[index].name.split('.').last()
+                val extension = postMedia[index].url.split('.').last()
 
                 // copy file and get real path
                 val mediaByteArray = response.body()!!.byteStream().readBytes()
