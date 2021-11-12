@@ -11,6 +11,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -597,12 +598,8 @@ class CreateUpdatePostFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPostReq(createPostReqDto)
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
-            // Pass post id to Community
-            val intent = Intent()
-            intent.putExtra("postId", response.body()!!.id)
-            requireActivity().setResult(Activity.RESULT_OK, intent)
-
-            getIdAndUpdateMedia()
+            requireActivity().intent.putExtra("postId", response.body()!!.id)
+            updatePostMedia(response.body()!!.id)
         }, {
             // set api state/button to normal
             createUpdatePostViewModel.apiIsLoading = false
@@ -685,9 +682,10 @@ class CreateUpdatePostFragment : Fragment() {
 
     private fun updatePostMedia(id: Long) {
         // exception(no media files)
-        if(createUpdatePostViewModel.photoVideoPathList.size == 0) { closeAfterSuccess() }
-
-        else {
+        if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
+            passDataToCommunity()
+            closeAfterSuccess()
+        } else {
             // create file list
             val fileList: ArrayList<MultipartBody.Part> = ArrayList()
             for(i in 0 until createUpdatePostViewModel.photoVideoPathList.size) {
@@ -713,23 +711,6 @@ class CreateUpdatePostFragment : Fragment() {
                 unlockViews()
             })
         }
-    }
-
-    // get created pet id + update pet photo
-    private fun getIdAndUpdateMedia() {
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPostReq(FetchPostReqDto(0, null, createUpdatePostViewModel.petId, null))
-        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
-            val postId = (response.body()?.postList?.get(0) as Post).id
-            updatePostMedia(postId)
-        }, {
-            // set api state/button to normal
-            createUpdatePostViewModel.apiIsLoading = false
-            unlockViews()
-        }, {
-            createUpdatePostViewModel.apiIsLoading = false
-            unlockViews()
-        })
     }
 
     private fun fetchPostMediaData(postMedia: Array<FileMetaData>) {

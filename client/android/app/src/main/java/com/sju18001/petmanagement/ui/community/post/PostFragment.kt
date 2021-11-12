@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -77,6 +78,8 @@ class PostFragment : Fragment() {
                         adapter.notifyItemRangeChanged(0, adapter.itemCount)
 
                         binding.recyclerViewPost.scrollToPosition(0)
+
+                        setEmptyNotificationView(1)
                     }
                 }
             }
