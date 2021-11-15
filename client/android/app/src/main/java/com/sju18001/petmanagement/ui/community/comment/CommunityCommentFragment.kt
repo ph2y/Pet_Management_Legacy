@@ -17,6 +17,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.CustomProgressBar
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -82,6 +83,9 @@ class CommunityCommentFragment : Fragment() {
         // 초기화
         initializeViewForViewModel()
         initializeAdapter()
+
+        // 첫 Fetch가 끝나기 전까지 ProgressBar 표시
+        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentCommunityCommentParentLayout, 80, R.color.white)
 
         // 초기 Comment 추가
         resetCommentData()
@@ -301,10 +305,13 @@ class CommunityCommentFragment : Fragment() {
             }
 
             // 새로고침 아이콘 제거
+            CustomProgressBar.removeProgressBar(binding.fragmentCommunityCommentParentLayout)
             binding.layoutSwipeRefresh.isRefreshing = false
         }, {
+            CustomProgressBar.removeProgressBar(binding.fragmentCommunityCommentParentLayout)
             binding.layoutSwipeRefresh.isRefreshing = false
         }, {
+            CustomProgressBar.removeProgressBar(binding.fragmentCommunityCommentParentLayout)
             binding.layoutSwipeRefresh.isRefreshing = false
         })
     }
