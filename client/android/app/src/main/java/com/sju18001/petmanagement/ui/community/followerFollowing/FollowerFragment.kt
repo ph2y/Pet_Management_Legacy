@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.CustomProgressBar
 import com.sju18001.petmanagement.databinding.FragmentFollowerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
@@ -81,6 +82,7 @@ class FollowerFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
+        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentFollowerParentLayout, 80)
         updateRecyclerView()
     }
 
@@ -133,10 +135,13 @@ class FollowerFragment : Fragment() {
             followerAdapter.setResult(followerList)
 
             // set swipe isRefreshing to false
+            CustomProgressBar.removeProgressBar(binding.fragmentFollowerParentLayout)
             binding.followerSwipeRefreshLayout.isRefreshing = false
         }, {
+            CustomProgressBar.removeProgressBar(binding.fragmentFollowerParentLayout)
             binding.followerSwipeRefreshLayout.isRefreshing = false
         }, {
+            CustomProgressBar.removeProgressBar(binding.fragmentFollowerParentLayout)
             binding.followerSwipeRefreshLayout.isRefreshing = false
         })
     }
