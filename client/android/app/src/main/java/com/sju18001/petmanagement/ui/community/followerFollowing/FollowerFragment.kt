@@ -83,7 +83,7 @@ class FollowerFragment : Fragment() {
         super.onResume()
 
         // 첫 Fetch가 끝나기 전까지 ProgressBar 표시
-        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentFollowerParentLayout, 80)
+        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentFollowerParentLayout, 80, R.color.white)
 
         updateRecyclerView()
     }
@@ -136,8 +136,8 @@ class FollowerFragment : Fragment() {
             // set RecyclerView
             followerAdapter.setResult(followerList)
 
-            // set swipe isRefreshing to false
             CustomProgressBar.removeProgressBar(binding.fragmentFollowerParentLayout)
+            // set swipe isRefreshing to false
             binding.followerSwipeRefreshLayout.isRefreshing = false
         }, {
             CustomProgressBar.removeProgressBar(binding.fragmentFollowerParentLayout)

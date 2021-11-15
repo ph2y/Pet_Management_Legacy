@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.CustomProgressBar
 import com.sju18001.petmanagement.databinding.FragmentPetManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
@@ -91,6 +92,9 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     override fun onResume() {
         super.onResume()
 
+        // 첫 Fetch가 끝나기 전까지 ProgressBar 표시
+        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentPetPetManagerParentLayout, 80, R.color.white)
+
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(FetchPetReqDto( null , null))
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
@@ -115,7 +119,10 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             }
 
             adapter.notifyDataSetChanged()
-        }, {}, {})
+
+            CustomProgressBar.removeProgressBar(binding.fragmentPetPetManagerParentLayout)
+        }, { CustomProgressBar.removeProgressBar(binding.fragmentPetPetManagerParentLayout) },
+            { CustomProgressBar.removeProgressBar(binding.fragmentPetPetManagerParentLayout) })
     }
 
     // update pet list order

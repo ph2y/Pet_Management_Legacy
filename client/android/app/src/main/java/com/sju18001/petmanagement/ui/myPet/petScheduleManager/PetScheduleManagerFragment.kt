@@ -15,6 +15,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.CustomProgressBar
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetScheduleManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -66,6 +67,8 @@ class PetScheduleManagerFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        // 첫 Fetch가 끝나기 전까지 ProgressBar 표시
+        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentPetScheduleManagerParentLayout, 80, R.color.white)
         updateAdapterDataSetByFetchPetSchedule()
     }
 
@@ -177,7 +180,10 @@ class PetScheduleManagerFragment : Fragment() {
 
             adapter.setDataSet(dataSet)
             adapter.notifyDataSetChanged()
-        }, {}, {})
+
+            CustomProgressBar.removeProgressBar(binding.fragmentPetScheduleManagerParentLayout)
+        },{ CustomProgressBar.removeProgressBar(binding.fragmentPetScheduleManagerParentLayout) },
+            { CustomProgressBar.removeProgressBar(binding.fragmentPetScheduleManagerParentLayout) })
     }
 
     private fun setEmptyNotificationView(itemCount: Int) {

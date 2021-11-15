@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fragment_pet_pet_manager_parent_layout"
     tools:context=".ui.myPet.petManager.PetManagerFragment">
 
     <FrameLayout
