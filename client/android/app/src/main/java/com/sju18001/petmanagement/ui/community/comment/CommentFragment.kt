@@ -6,7 +6,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ImageView
@@ -19,26 +18,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.CustomProgressBar
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.databinding.FragmentCommunityCommentBinding
+import com.sju18001.petmanagement.databinding.FragmentCommentBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
-import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.CommunityUtil
 import com.sju18001.petmanagement.ui.community.comment.updateComment.UpdateCommentActivity
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class CommunityCommentFragment : Fragment() {
-    private var _binding: FragmentCommunityCommentBinding? = null
+class CommentFragment : Fragment() {
+    private var _binding: FragmentCommentBinding? = null
     private val binding get() = _binding!!
 
     // variable for ViewModel
-    val communityCommentViewModel: CommunityCommentViewModel by activityViewModels()
+    val commentViewModel: CommentViewModel by activityViewModels()
 
     // For starting update comment activity
     private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -55,7 +49,7 @@ class CommunityCommentFragment : Fragment() {
     }
 
     // 리싸이클러뷰
-    private lateinit var adapter: CommunityCommentListAdapter
+    private lateinit var adapter: CommentListAdapter
 
     private var isViewDestroyed = false
 
@@ -74,7 +68,7 @@ class CommunityCommentFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentCommunityCommentBinding.inflate(inflater, container, false)
+        _binding = FragmentCommentBinding.inflate(inflater, container, false)
         isViewDestroyed = false
 
         // postId 지정
@@ -85,7 +79,7 @@ class CommunityCommentFragment : Fragment() {
         initializeAdapter()
 
         // 첫 Fetch가 끝나기 전까지 ProgressBar 표시
-        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentCommunityCommentParentLayout, 80, R.color.white)
+        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentCommentParentLayout, 80, R.color.white)
 
         // 초기 Comment 추가
         resetCommentData()
@@ -107,8 +101,8 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun initializeViewForViewModel(){
-        val idForReply = communityCommentViewModel.idForReply
-        val nicknameForReply = communityCommentViewModel.nicknameForReply
+        val idForReply = commentViewModel.idForReply
+        val nicknameForReply = commentViewModel.nicknameForReply
 
         if(idForReply != null && nicknameForReply != null){
             setViewForReply(idForReply, nicknameForReply)
@@ -116,8 +110,8 @@ class CommunityCommentFragment : Fragment() {
     }
 
     private fun initializeAdapter(){
-        adapter = CommunityCommentListAdapter(arrayListOf(), arrayListOf(), arrayListOf())
-        adapter.communityCommentListAdapterInterface = object: CommunityCommentListAdapterInterface{
+        adapter = CommentListAdapter(arrayListOf(), arrayListOf(), arrayListOf())
+        adapter.commentListAdapterInterface = object: CommentListAdapterInterface{
             override fun getActivity(): Activity {
                 return requireActivity()
             }
@@ -132,11 +126,11 @@ class CommunityCommentFragment : Fragment() {
                 }
             }
 
-            override fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder) {
+            override fun setAccountPhoto(id: Long, holder: CommentListAdapter.ViewHolder) {
                 setAccountPhotoToImageView(id, holder.profileImage)
             }
 
-            override fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder) {
+            override fun setAccountDefaultPhoto(holder: CommentListAdapter.ViewHolder) {
                 holder.profileImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
             }
 
@@ -217,9 +211,9 @@ class CommunityCommentFragment : Fragment() {
         binding.layoutReplyDescription.visibility = View.VISIBLE
         nickname?.let{
             binding.textReplyNickname.text = it
-            communityCommentViewModel.nicknameForReply = it
+            commentViewModel.nicknameForReply = it
         }
-        communityCommentViewModel.idForReply = id
+        commentViewModel.idForReply = id
 
         binding.buttonReplyCancel.setOnClickListener {
             setViewForReplyCancel()
@@ -271,8 +265,8 @@ class CommunityCommentFragment : Fragment() {
 
     private fun setViewForReplyCancel(){
         binding.layoutReplyDescription.visibility = View.GONE
-        communityCommentViewModel.idForReply = null
-        communityCommentViewModel.nicknameForReply = ""
+        commentViewModel.idForReply = null
+        commentViewModel.nicknameForReply = ""
     }
 
     private fun updateAdapterDataSetByFetchComment(body: FetchCommentReqDto){
@@ -305,13 +299,13 @@ class CommunityCommentFragment : Fragment() {
             }
 
             // 새로고침 아이콘 제거
-            CustomProgressBar.removeProgressBar(binding.fragmentCommunityCommentParentLayout)
+            CustomProgressBar.removeProgressBar(binding.fragmentCommentParentLayout)
             binding.layoutSwipeRefresh.isRefreshing = false
         }, {
-            CustomProgressBar.removeProgressBar(binding.fragmentCommunityCommentParentLayout)
+            CustomProgressBar.removeProgressBar(binding.fragmentCommentParentLayout)
             binding.layoutSwipeRefresh.isRefreshing = false
         }, {
-            CustomProgressBar.removeProgressBar(binding.fragmentCommunityCommentParentLayout)
+            CustomProgressBar.removeProgressBar(binding.fragmentCommentParentLayout)
             binding.layoutSwipeRefresh.isRefreshing = false
         })
     }
@@ -333,16 +327,16 @@ class CommunityCommentFragment : Fragment() {
         }
 
         // 편의 기능: 키보드 내리기
-        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCommunityCommentParentLayout)
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCommentParentLayout)
         
         // 댓글 / 답글 생성
         binding.buttonCreateComment.setOnClickListener {
-            createComment(CreateCommentReqDto(postId, communityCommentViewModel.idForReply, binding.editTextComment.text.toString()))
+            createComment(CreateCommentReqDto(postId, commentViewModel.idForReply, binding.editTextComment.text.toString()))
         }
 
         // 키보드 동작
         binding.editTextComment.setOnEditorActionListener{ _, _, _ ->
-            createComment(CreateCommentReqDto(postId, communityCommentViewModel.idForReply, binding.editTextComment.text.toString()))
+            createComment(CreateCommentReqDto(postId, commentViewModel.idForReply, binding.editTextComment.text.toString()))
             true
         }
 

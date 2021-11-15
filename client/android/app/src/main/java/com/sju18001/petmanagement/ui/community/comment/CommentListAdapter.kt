@@ -24,25 +24,25 @@ import com.sju18001.petmanagement.ui.community.post.PostListAdapter
 import de.hdodenhof.circleimageview.CircleImageView
 import java.time.LocalDateTime
 
-interface CommunityCommentListAdapterInterface{
+interface CommentListAdapterInterface{
     fun getActivity(): Activity
     fun onClickReply(id: Long, nickname: String)
     fun onLongClickComment(authorId: Long, commentId: Long, commentContents: String, position: Int)
-    fun setAccountPhoto(id: Long, holder: CommunityCommentListAdapter.ViewHolder)
-    fun setAccountDefaultPhoto(holder: CommunityCommentListAdapter.ViewHolder)
+    fun setAccountPhoto(id: Long, holder: CommentListAdapter.ViewHolder)
+    fun setAccountDefaultPhoto(holder: CommentListAdapter.ViewHolder)
     fun fetchReplyComment(pageIndex: Int, topReplyId: Long?, parentCommentId: Long, position: Int)
     fun startPetProfile(author: Account)
 }
 
-class CommunityCommentListAdapter(
+class CommentListAdapter(
     private var dataSet: ArrayList<Comment>,
     private var pageIndices: ArrayList<Int>,
     private var topReplyIdList: ArrayList<Long?> // -1: 답글 없음, NULL: 답글 있으나 불러온 적 없음, N+: 답글 있으며 불러온 적 있음
-    ) : RecyclerView.Adapter<CommunityCommentListAdapter.ViewHolder>()  {
-    lateinit var communityCommentListAdapterInterface: CommunityCommentListAdapterInterface
+    ) : RecyclerView.Adapter<CommentListAdapter.ViewHolder>()  {
+    lateinit var commentListAdapterInterface: CommentListAdapterInterface
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view){
-        val communityCommentLayout: ConstraintLayout = view.findViewById(R.id.layout_community_comment)
+        val commentLayout: ConstraintLayout = view.findViewById(R.id.layout_comment)
         val profileImage: ImageView = view.findViewById(R.id.image_profile)
         val nicknameTextView: TextView = view.findViewById(R.id.text_nickname)
         val contentsTextView: TextView = view.findViewById(R.id.text_contents)
@@ -71,16 +71,16 @@ class CommunityCommentListAdapter(
     override fun getItemCount(): Int = dataSet.size
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun updateDataSetToViewHolder(holder: CommunityCommentListAdapter.ViewHolder, data: Comment, position: Int){
+    private fun updateDataSetToViewHolder(holder: CommentListAdapter.ViewHolder, data: Comment, position: Int){
         holder.nicknameTextView.text = data.author.nickname
         holder.contentsTextView.text = data.contents
         holder.timestampTextView.text = getTimestampForDisplay(data.timestamp)
 
         // Set photo
         if(!data.author.photoUrl.isNullOrEmpty()){
-            communityCommentListAdapterInterface.setAccountPhoto(data.author.id, holder)
+            commentListAdapterInterface.setAccountPhoto(data.author.id, holder)
         }else{
-            communityCommentListAdapterInterface.setAccountDefaultPhoto(holder)
+            commentListAdapterInterface.setAccountDefaultPhoto(holder)
         }
 
         // 답글 불러오기 버튼 세팅
@@ -130,9 +130,9 @@ class CommunityCommentListAdapter(
         val isReply = dataSet[position].parentCommentId != null
         
         // 답글일 시 Margin 추가
-        val layoutParams = holder.communityCommentLayout.layoutParams as ViewGroup.MarginLayoutParams
+        val layoutParams = holder.commentLayout.layoutParams as ViewGroup.MarginLayoutParams
         layoutParams.leftMargin = if(isReply) 96 else 0
-        holder.communityCommentLayout.layoutParams = layoutParams
+        holder.commentLayout.layoutParams = layoutParams
 
         // 답글일 시 답글 달기 제거
         holder.replyTextView.visibility = if(isReply) View.GONE else View.VISIBLE
@@ -141,29 +141,29 @@ class CommunityCommentListAdapter(
     private fun setListenerOnView(holder: ViewHolder, position: Int){
         // start pet profile
         holder.profileImage.setOnClickListener {
-            communityCommentListAdapterInterface.startPetProfile(dataSet[position].author)
+            commentListAdapterInterface.startPetProfile(dataSet[position].author)
         }
         holder.nicknameTextView.setOnClickListener {
-            communityCommentListAdapterInterface.startPetProfile(dataSet[position].author)
+            commentListAdapterInterface.startPetProfile(dataSet[position].author)
         }
 
         holder.replyTextView.setOnClickListener {
             dataSet[position].author.nickname?.let {
-                communityCommentListAdapterInterface.onClickReply(dataSet[position].id, it)
+                commentListAdapterInterface.onClickReply(dataSet[position].id, it)
             }
         }
 
-        holder.communityCommentLayout.setOnLongClickListener { _ ->
-            communityCommentListAdapterInterface.onLongClickComment(dataSet[position].author.id, dataSet[position].id, dataSet[position].contents, position)
+        holder.commentLayout.setOnLongClickListener { _ ->
+            commentListAdapterInterface.onLongClickComment(dataSet[position].author.id, dataSet[position].id, dataSet[position].contents, position)
             true
         }
 
         holder.loadReplyTextView.setOnClickListener {
-            communityCommentListAdapterInterface.fetchReplyComment(pageIndices[position], null, dataSet[position].id, position)
+            commentListAdapterInterface.fetchReplyComment(pageIndices[position], null, dataSet[position].id, position)
             pageIndices[position] += 1
             
             // 답글 불러오기 -> 이전 답글 불러오기
-            holder.loadReplyTextView.text = communityCommentListAdapterInterface.getActivity().getString(R.string.load_prev_reply_title)
+            holder.loadReplyTextView.text = commentListAdapterInterface.getActivity().getString(R.string.load_prev_reply_title)
         }
     }
 

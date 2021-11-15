@@ -19,7 +19,7 @@ import com.sju18001.petmanagement.restapi.global.FileMetaData
 import com.sju18001.petmanagement.ui.community.CommunityUtil
 
 interface PostListAdapterInterface{
-    fun startCommunityCommentActivity(postId: Long)
+    fun startCommentActivity(postId: Long)
     fun createLike(postId: Long, holder: PostListAdapter.ViewHolder, position: Int)
     fun deleteLike(postId: Long, holder: PostListAdapter.ViewHolder, position: Int)
     fun onClickPostFunctionButton(post: Post, position: Int)
@@ -160,7 +160,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
 
         // 댓글 버튼
         holder.commentButton.setOnClickListener {
-            communityPostListAdapterInterface.startCommunityCommentActivity(item.id)
+            communityPostListAdapterInterface.startCommentActivity(item.id)
         }
 
         // 좋아요 버튼
