@@ -12,6 +12,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.result.ActivityResult
@@ -227,11 +229,15 @@ class PostFragment : Fragment() {
                 holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder,
                 id: Long,
                 index: Int,
-                url: String
+                url: String,
+                dummyImageView: LinearLayout
             ) {
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchPostMediaReq(FetchPostMediaReqDto(id, index))
                 ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
+                    // 더미 이미지 제거
+                    dummyImageView.visibility = View.GONE
+
                     if(Util.isUrlVideo(url)){
                         // Save file
                         val dir = File(requireContext().getExternalFilesDir(null).toString() +
@@ -306,7 +312,7 @@ class PostFragment : Fragment() {
                         val ratio: Float = screenWidth.toFloat() / photoBitmap.width.toFloat()
                         postMediaImage.layoutParams.height = (photoBitmap.height.toFloat() * ratio).toInt()
                     }
-                }, {}, {})
+                }, { dummyImageView.visibility = View.GONE }, { dummyImageView.visibility = View.GONE })
             }
 
             override fun getContext(): Context {

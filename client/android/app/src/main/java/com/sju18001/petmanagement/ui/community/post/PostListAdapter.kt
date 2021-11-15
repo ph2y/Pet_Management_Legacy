@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.CustomProgressBar
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.global.FileMetaData
 import com.sju18001.petmanagement.ui.community.CommunityUtil
@@ -25,7 +26,7 @@ interface PostListAdapterInterface{
     fun onClickPostFunctionButton(post: Post, position: Int)
     fun setAccountPhoto(id: Long, holder: PostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: PostListAdapter.ViewHolder)
-    fun setPostMedia(holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String)
+    fun setPostMedia(holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String, dummyImageView: LinearLayout)
     fun getContext(): Context
 }
 
@@ -41,6 +42,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         val layoutUserInfo: ConstraintLayout = view.findViewById(R.id.layout_user_info)
         val dialogButton: ImageButton = view.findViewById(R.id.dialog_button)
 
+        val dummyLayout: LinearLayout = view.findViewById(R.id.layout_dummy)
         val viewPager: ViewPager2 = view.findViewById(R.id.view_pager)
         val contentsTextView: TextView = view.findViewById(R.id.text_contents)
         val viewMoreTextView: TextView = view.findViewById(R.id.view_more)
@@ -99,10 +101,14 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         if(!data.mediaAttachments.isNullOrEmpty()){
             val mediaAttachments = Util.getArrayFromMediaAttachments(data.mediaAttachments)
 
-            holder.viewPager.adapter = PostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, data.id, mediaAttachments, holder.viewPager)
+            // 더미 이미지 생성
+            holder.dummyLayout.visibility = View.VISIBLE
+            CustomProgressBar.addProgressBar(communityPostListAdapterInterface.getContext(), holder.dummyLayout, 80)
+
+            holder.viewPager.adapter = PostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, data.id, mediaAttachments, holder)
             holder.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         }else{
-            holder.viewPager.adapter = PostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, arrayOf(), holder.viewPager)
+            holder.viewPager.adapter = PostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, 0, arrayOf(), holder)
         }
     }
 
@@ -233,8 +239,9 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         private var communityPostListAdapterInterface: PostListAdapterInterface,
         private val id: Long,
         private val mediaAttachments: Array<FileMetaData>,
-        private val viewPager: ViewPager2
+        private val parentHolder: PostListAdapter.ViewHolder
         ): RecyclerView.Adapter<PostMediaItemCollectionAdapter.ViewPagerHolder>() {
+        private val viewPager = parentHolder.viewPager
         override fun getItemCount(): Int = mediaAttachments.size
 
         inner class ViewPagerHolder(parent: ViewGroup): RecyclerView.ViewHolder(
@@ -247,7 +254,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewPagerHolder(parent)
 
         override fun onBindViewHolder(holder: ViewPagerHolder, position: Int) {
-            communityPostListAdapterInterface.setPostMedia(holder, id, position, mediaAttachments[position].url)
+            communityPostListAdapterInterface.setPostMedia(holder, id, position, mediaAttachments[position].url, parentHolder.dummyLayout)
 
             // 페이지 전환 시 자동 재생
             viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
