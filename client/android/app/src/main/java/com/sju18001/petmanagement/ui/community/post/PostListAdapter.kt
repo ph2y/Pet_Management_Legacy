@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.community.post
 
+import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
@@ -26,7 +27,7 @@ interface PostListAdapterInterface{
     fun onClickPostFunctionButton(post: Post, position: Int)
     fun setAccountPhoto(id: Long, holder: PostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: PostListAdapter.ViewHolder)
-    fun setPostMedia(holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String, dummyImageView: LinearLayout)
+    fun setPostMedia(holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String, dummyImageView: ConstraintLayout)
     fun getContext(): Context
 }
 
@@ -42,7 +43,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         val layoutUserInfo: ConstraintLayout = view.findViewById(R.id.layout_user_info)
         val dialogButton: ImageButton = view.findViewById(R.id.dialog_button)
 
-        val dummyLayout: LinearLayout = view.findViewById(R.id.layout_dummy)
+        val dummyLayout: ConstraintLayout = view.findViewById(R.id.layout_dummy)
         val viewPager: ViewPager2 = view.findViewById(R.id.view_pager)
         val contentsTextView: TextView = view.findViewById(R.id.text_contents)
         val viewMoreTextView: TextView = view.findViewById(R.id.view_more)
@@ -103,7 +104,6 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
 
             // 더미 이미지 생성
             holder.dummyLayout.visibility = View.VISIBLE
-            CustomProgressBar.addProgressBar(communityPostListAdapterInterface.getContext(), holder.dummyLayout, 80)
 
             holder.viewPager.adapter = PostListAdapter.PostMediaItemCollectionAdapter(communityPostListAdapterInterface, data.id, mediaAttachments, holder)
             holder.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL

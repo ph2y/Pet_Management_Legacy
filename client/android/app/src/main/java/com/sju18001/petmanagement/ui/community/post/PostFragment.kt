@@ -18,6 +18,7 @@ import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -230,7 +231,7 @@ class PostFragment : Fragment() {
                 id: Long,
                 index: Int,
                 url: String,
-                dummyImageView: LinearLayout
+                dummyImageView: ConstraintLayout
             ) {
                 val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                     .fetchPostMediaReq(FetchPostMediaReqDto(id, index))
