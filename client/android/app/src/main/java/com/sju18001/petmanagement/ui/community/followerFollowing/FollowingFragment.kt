@@ -81,7 +81,7 @@ class FollowingFragment : Fragment() {
         super.onResume()
 
         // 첫 Fetch가 끝나기 전까지 ProgressBar 표시
-        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentFollowingParentLayout, 80)
+        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentFollowingParentLayout, 80, R.color.white)
 
         fetchFollowing()
     }
