@@ -23,6 +23,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.CustomProgressBar
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPostBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
@@ -127,6 +128,9 @@ class PostFragment : Fragment() {
         isViewDestroyed = false
 
         initializeAdapter()
+
+        // 첫 Fetch가 끝나기 전까지 ProgressBar 표시
+        CustomProgressBar.addProgressBar(requireContext(), binding.fragmentPostParentLayout, 80, R.color.white)
 
         // 초기 Post 추가
         resetPostData()
@@ -375,11 +379,14 @@ class PostFragment : Fragment() {
                     setEmptyNotificationView(response.body()?.postList?.size)
                 }
 
+                CustomProgressBar.removeProgressBar(binding.fragmentPostParentLayout)
                 binding.layoutSwipeRefresh.isRefreshing = false
             }
         }, {
+            CustomProgressBar.removeProgressBar(binding.fragmentPostParentLayout)
             binding.layoutSwipeRefresh.isRefreshing = false
         }, {
+            CustomProgressBar.removeProgressBar(binding.fragmentPostParentLayout)
             binding.layoutSwipeRefresh.isRefreshing = false
         })
     }

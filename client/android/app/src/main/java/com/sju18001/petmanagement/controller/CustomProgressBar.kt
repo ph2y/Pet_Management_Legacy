@@ -19,7 +19,8 @@ class CustomProgressBar {
             linearLayout.layoutParams = view.layoutParams
             linearLayout.id = View.generateViewId() // id 지정 -> return
             linearLayout.translationZ = 4f // 맨 앞으로 보내기
-            (view.parent as ViewGroup).addView(linearLayout)
+            linearLayout.tag = "CustomProgressBar"
+            (view as ViewGroup).addView(linearLayout)
 
             val progressBar = ProgressBar(context)
             val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, size) // size 지정
@@ -33,19 +34,19 @@ class CustomProgressBar {
         public fun addProgressBar(context: Context, view: View, size: Int, color: Int): Int{
             val id = addProgressBar(context, view, size)
 
-            val linearLayout = (view.parent as ViewGroup).findViewById<LinearLayout>(id)
+            val linearLayout = (view as ViewGroup).findViewById<LinearLayout>(id)
             linearLayout.setBackgroundColor(context.getColor(color)) // 배경색 지정
 
             return linearLayout.id
         }
 
-        public fun removeProgressBar(context: Context, id:Int, view: View){
-            val parent = view.parent as ViewGroup
+        public fun removeProgressBar(view: View){
+            val viewGroup = (view as ViewGroup)
 
-            for(i in 0 until parent.childCount){
-                val child = parent.getChildAt(i)
-                if(child.id == id){
-                    parent.removeView(child)
+            for(i in 0 until viewGroup.childCount){
+                val child = viewGroup.getChildAt(i)
+                if(child.tag == "CustomProgressBar"){
+                    viewGroup.removeView(child)
                 }
             }
         }
