@@ -9,7 +9,6 @@ import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -32,7 +31,7 @@ import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.CommunityViewModel
-import com.sju18001.petmanagement.ui.community.comment.CommunityCommentActivity
+import com.sju18001.petmanagement.ui.community.comment.CommentActivity
 import com.sju18001.petmanagement.ui.community.post.createUpdatePost.CreateUpdatePostActivity
 import java.io.File
 import java.io.FileOutputStream
@@ -161,11 +160,11 @@ class PostFragment : Fragment() {
 
         // 인터페이스 구현
         adapter.communityPostListAdapterInterface = object: PostListAdapterInterface {
-            override fun startCommunityCommentActivity(postId: Long) {
-                val communityCommentActivityIntent = Intent(context, CommunityCommentActivity::class.java)
-                communityCommentActivityIntent.putExtra("postId", postId)
+            override fun startCommentActivity(postId: Long) {
+                val commentActivityIntent = Intent(context, CommentActivity::class.java)
+                commentActivityIntent.putExtra("postId", postId)
 
-                startActivity(communityCommentActivityIntent)
+                startActivity(commentActivityIntent)
                 requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
             }
 

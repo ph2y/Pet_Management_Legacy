@@ -5,29 +5,29 @@ import android.os.Bundle
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.databinding.ActivityCommunityCommentBinding
+import com.sju18001.petmanagement.databinding.ActivityCommentBinding
 
-class CommunityCommentActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityCommunityCommentBinding
+class CommentActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityCommentBinding
 
     // variable for ViewModel
-    private val communityCommentViewModel: CommunityCommentViewModel by lazy{
-        ViewModelProvider(this, SavedStateViewModelFactory(application, this)).get(CommunityCommentViewModel::class.java)
+    private val commentViewModel: CommentViewModel by lazy{
+        ViewModelProvider(this, SavedStateViewModelFactory(application, this)).get(CommentViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivityCommunityCommentBinding.inflate(layoutInflater)
+        binding = ActivityCommentBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         supportActionBar?.hide()
 
         // 프래그먼트 실행
-        if(supportFragmentManager.findFragmentById(R.id.community_comment_activity_fragment_container) == null){
+        if(supportFragmentManager.findFragmentById(R.id.comment_activity_fragment_container) == null){
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.community_comment_activity_fragment_container, CommunityCommentFragment())
+                .add(R.id.comment_activity_fragment_container, CommentFragment())
                 .commit()
         }
     }
