@@ -19,15 +19,15 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
             field = value
         }
 
-    // for photo/video files
-    var photoVideoPathList = handle.get<MutableList<String>>("photoVideoPathList")?: mutableListOf()
+    // for photo files
+    var photoPathList = handle.get<MutableList<String>>("photoPathList")?: mutableListOf()
         set(value) {
-            handle.set("photoVideoPathList", value)
+            handle.set("photoPathList", value)
             field = value
         }
-    var thumbnailList = handle.get<MutableList<Bitmap?>>("thumbnailList")?: mutableListOf()
+    var photoThumbnailList = handle.get<MutableList<Bitmap?>>("photoThumbnailList")?: mutableListOf()
         set(value) {
-            handle.set("thumbnailList", value)
+            handle.set("photoThumbnailList", value)
             field = value
         }
 

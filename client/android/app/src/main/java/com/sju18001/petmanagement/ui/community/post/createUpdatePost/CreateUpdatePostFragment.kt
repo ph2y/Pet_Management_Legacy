@@ -11,7 +11,6 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,7 +29,6 @@ import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Pet
-import com.sju18001.petmanagement.restapi.dao.Post
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.restapi.global.FileMetaData
 import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
@@ -68,7 +66,7 @@ class CreateUpdatePostFragment : Fragment() {
     private var petIdAndNameList: MutableList<Pet> = mutableListOf()
 
     // variables for RecyclerView
-    private lateinit var photoVideoAdapter: PhotoVideoListAdapter
+    private lateinit var photoAdapter: PhotoListAdapter
     private lateinit var hashtagAdapter: HashtagListAdapter
 
     override fun onCreateView(
@@ -82,12 +80,12 @@ class CreateUpdatePostFragment : Fragment() {
 
         val root: View = binding.root
 
-        // initialize RecyclerView(photos and videos)
-        photoVideoAdapter = PhotoVideoListAdapter(createUpdatePostViewModel, requireContext(), binding)
-        binding.photosAndVideosRecyclerView.adapter = photoVideoAdapter
-        binding.photosAndVideosRecyclerView.layoutManager = LinearLayoutManager(activity)
-        (binding.photosAndVideosRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
-        photoVideoAdapter.setResult(createUpdatePostViewModel.thumbnailList)
+        // initialize RecyclerView (for photos)
+        photoAdapter = PhotoListAdapter(createUpdatePostViewModel, requireContext(), binding)
+        binding.photosRecyclerView.adapter = photoAdapter
+        binding.photosRecyclerView.layoutManager = LinearLayoutManager(activity)
+        (binding.photosRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        photoAdapter.setResult(createUpdatePostViewModel.photoThumbnailList)
 
         // initialize RecyclerView(hashtags)
         hashtagAdapter = HashtagListAdapter(createUpdatePostViewModel, binding)
@@ -132,19 +130,23 @@ class CreateUpdatePostFragment : Fragment() {
             createUpdatePostViewModel.isUsingLocation = isChecked
         }
 
-        // for post photo/video picker
-        binding.uploadPhotosAndVideosButton.setOnClickListener {
-            if(createUpdatePostViewModel.thumbnailList.size == 10) {
-                Toast.makeText(context, context?.getText(R.string.photo_video_usage_full_message), Toast.LENGTH_LONG).show()
-            }
-            else {
-                val dialog = Dialog(requireActivity())
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-                dialog.setContentView(R.layout.select_photo_video_dialog)
-                dialog.show()
+        // for upload file button
+        binding.uploadFileButton.setOnClickListener {
+            val dialog = Dialog(requireActivity())
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
+            dialog.setContentView(R.layout.select_file_type_dialog)
+            dialog.show()
 
-                dialog.findViewById<ImageView>(R.id.close_button).setOnClickListener { dialog.dismiss() }
-                dialog.findViewById<Button>(R.id.upload_photo_button).setOnClickListener {
+            dialog.findViewById<ImageView>(R.id.close_button).setOnClickListener { dialog.dismiss() }
+            dialog.findViewById<Button>(R.id.upload_photo_button).setOnClickListener {
+                if(createUpdatePostViewModel.photoThumbnailList.size == 10) {
+                    Toast.makeText(
+                        context,
+                        context?.getText(R.string.photo_video_usage_full_message),
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+                else {
                     dialog.dismiss()
 
                     val intent = Intent()
@@ -152,14 +154,25 @@ class CreateUpdatePostFragment : Fragment() {
                     intent.action = Intent.ACTION_GET_CONTENT
                     startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
                 }
-                dialog.findViewById<Button>(R.id.upload_video_button).setOnClickListener {
-                    dialog.dismiss()
+            }
+            dialog.findViewById<Button>(R.id.upload_video_button).setOnClickListener {
+                dialog.dismiss()
 
-                    val intent = Intent()
-                    intent.type = "video/*"
-                    intent.action = Intent.ACTION_GET_CONTENT
-                    startActivityForResult(Intent.createChooser(intent, "동영상 선택"), PICK_VIDEO)
-                }
+                // TODO: implement logic for uploading videos
+//                val intent = Intent()
+//                intent.type = "video/*"
+//                intent.action = Intent.ACTION_GET_CONTENT
+//                startActivityForResult(Intent.createChooser(intent, "동영상 선택"), PICK_VIDEO)
+            }
+            dialog.findViewById<Button>(R.id.upload_general_button).setOnClickListener {
+                dialog.dismiss()
+
+                // TODO: implement logic for uploading general files
+            }
+            dialog.findViewById<Button>(R.id.upload_audio_button).setOnClickListener {
+                dialog.dismiss()
+
+                // TODO: implement logic for uploading audio files
             }
         }
 
@@ -228,7 +241,7 @@ class CreateUpdatePostFragment : Fragment() {
             createUpdatePostViewModel.postEditText = createUpdatePostViewModel.postEditText.trim()
             binding.postEditText.setText(createUpdatePostViewModel.postEditText)
 
-            if(createUpdatePostViewModel.thumbnailList.size == 0 &&
+            if(createUpdatePostViewModel.photoThumbnailList.size == 0 &&
                 createUpdatePostViewModel.postEditText == "") {
                 Toast.makeText(context, context?.getText(R.string.post_invalid_message), Toast.LENGTH_LONG).show()
             }
@@ -276,60 +289,61 @@ class CreateUpdatePostFragment : Fragment() {
                     }
 
                     // add path to list
-                    createUpdatePostViewModel.photoVideoPathList.add(postPhotoPathValue)
+                    createUpdatePostViewModel.photoPathList.add(postPhotoPathValue)
 
                     // create bytearray
-                    val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoVideoPathList.last())
+                    val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoPathList.last())
                     val stream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                     val photoByteArray = stream.toByteArray()
 
                     // save thumbnail
                     val thumbnail = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
-                    createUpdatePostViewModel.thumbnailList.add(thumbnail)
+                    createUpdatePostViewModel.photoThumbnailList.add(thumbnail)
 
                     // update RecyclerView
-                    photoVideoAdapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
-                    binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
+                    photoAdapter.notifyItemInserted(createUpdatePostViewModel.photoThumbnailList.size)
+                    binding.photosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.photoThumbnailList.size - 1)
 
-                    updatePhotoVideoUsage()
+                    updatePhotoUsage()
                 }
                 else {
                     Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
                 }
             }
-            PICK_VIDEO -> {
-                if(data != null) {
-                    // copy selected video and get real path
-                    val postVideoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
-                        data.data!!, CREATE_UPDATE_POST_DIRECTORY)
-
-                    // file type exception -> delete copied file + show Toast message
-                    if (!Util.isUrlVideo(postVideoPathValue)) {
-                        Toast.makeText(context, context?.getText(R.string.video_file_type_exception_message), Toast.LENGTH_LONG).show()
-                        File(postVideoPathValue).delete()
-                        return
-                    }
-
-                    // add path to list
-                    createUpdatePostViewModel.photoVideoPathList.add(postVideoPathValue)
-
-                    // save thumbnail
-                    createUpdatePostViewModel.thumbnailList.add(null)
-
-                    // update RecyclerView
-                    photoVideoAdapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
-                    binding.photosAndVideosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
-
-                    updatePhotoVideoUsage()
-                }
-                else {
-                    Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
-                }
-            }
-            else -> {
-                Toast.makeText(context, context?.getText(R.string.file_type_exception_message), Toast.LENGTH_LONG).show()
-            }
+            // TODO: implement logic for uploading videos
+//            PICK_VIDEO -> {
+//                if(data != null) {
+//                    // copy selected video and get real path
+//                    val postVideoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
+//                        data.data!!, CREATE_UPDATE_POST_DIRECTORY)
+//
+//                    // file type exception -> delete copied file + show Toast message
+//                    if (!Util.isUrlVideo(postVideoPathValue)) {
+//                        Toast.makeText(context, context?.getText(R.string.video_file_type_exception_message), Toast.LENGTH_LONG).show()
+//                        File(postVideoPathValue).delete()
+//                        return
+//                    }
+//
+//                    // add path to list
+//                    createUpdatePostViewModel.photoPathList.add(postVideoPathValue)
+//
+//                    // save thumbnail
+//                    createUpdatePostViewModel.thumbnailList.add(null)
+//
+//                    // update RecyclerView
+//                    photoAdapter.notifyItemInserted(createUpdatePostViewModel.thumbnailList.size)
+//                    binding.photosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.thumbnailList.size - 1)
+//
+//                    updatePhotoVideoUsage()
+//                }
+//                else {
+//                    Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
+//                }
+//            }
+//            else -> {
+//                Toast.makeText(context, context?.getText(R.string.file_type_exception_message), Toast.LENGTH_LONG).show()
+//            }
         }
     }
 
@@ -476,12 +490,17 @@ class CreateUpdatePostFragment : Fragment() {
         return latAndLong
     }
 
-    // update photo/video usage
-    private fun updatePhotoVideoUsage() {
-        val uploadedCount = createUpdatePostViewModel.thumbnailList.size
-        if(uploadedCount != 0) { binding.uploadPhotoVideoLabel.visibility = View.GONE }
-        val photoVideoUsageText = "$uploadedCount/10"
-        binding.photoVideoUsage.text = photoVideoUsageText
+    // update photo usage
+    private fun updatePhotoUsage() {
+        val uploadedCount = createUpdatePostViewModel.photoThumbnailList.size
+        if (uploadedCount == 0) {
+            binding.uploadPhotoLayout.visibility = View.GONE
+        }
+        else {
+            binding.uploadPhotoLayout.visibility = View.VISIBLE
+        }
+        val photoUsageText = "$uploadedCount/10"
+        binding.photoUsage.text = photoUsageText
     }
 
     // update hashtag usage
@@ -499,13 +518,13 @@ class CreateUpdatePostFragment : Fragment() {
 
         binding.petNameSpinner.isEnabled = false
         binding.locationSwitch.isEnabled = false
-        binding.uploadPhotosAndVideosButton.isEnabled = false
+        binding.uploadFileButton.isEnabled = false
         binding.disclosureSpinner.isEnabled = false
         binding.hashtagInputEditText.isEnabled = false
         binding.hashtagInputButton.isEnabled = false
         binding.postEditText.isEnabled = false
-        binding.photosAndVideosRecyclerView.let {
-            for(i in 0..photoVideoAdapter.itemCount) {
+        binding.photosRecyclerView.let {
+            for(i in 0..photoAdapter.itemCount) {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
             }
         }
@@ -524,13 +543,13 @@ class CreateUpdatePostFragment : Fragment() {
 
         binding.petNameSpinner.isEnabled = true
         binding.locationSwitch.isEnabled = true
-        binding.uploadPhotosAndVideosButton.isEnabled = true
+        binding.uploadFileButton.isEnabled = true
         binding.disclosureSpinner.isEnabled = true
         binding.hashtagInputEditText.isEnabled = true
         binding.hashtagInputButton.isEnabled = true
         binding.postEditText.isEnabled = true
-        binding.photosAndVideosRecyclerView.let {
-            for(i in 0..photoVideoAdapter.itemCount) {
+        binding.photosRecyclerView.let {
+            for(i in 0..photoAdapter.itemCount) {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
             }
         }
@@ -643,7 +662,7 @@ class CreateUpdatePostFragment : Fragment() {
             .updatePostReq(updatePostReqDto)
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             // no media files
-            if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
+            if(createUpdatePostViewModel.photoPathList.size == 0) {
                 // 기존에 Media가 0개였다면 DeletePostMedia를 호출하지 않는다.
                 if(requireActivity().intent.getIntExtra("originalMediaCount", 0) > 0){
                     deletePostMedia(createUpdatePostViewModel.postId!!)
@@ -682,18 +701,18 @@ class CreateUpdatePostFragment : Fragment() {
 
     private fun updatePostMedia(id: Long) {
         // exception(no media files)
-        if(createUpdatePostViewModel.photoVideoPathList.size == 0) {
+        if(createUpdatePostViewModel.photoPathList.size == 0) {
             passDataToCommunity()
             closeAfterSuccess()
         } else {
             // create file list
             val fileList: ArrayList<MultipartBody.Part> = ArrayList()
-            for(i in 0 until createUpdatePostViewModel.photoVideoPathList.size) {
-                val fileName = "file_$i" + createUpdatePostViewModel.photoVideoPathList[i]
-                    .substring(createUpdatePostViewModel.photoVideoPathList[i].lastIndexOf("."))
+            for(i in 0 until createUpdatePostViewModel.photoPathList.size) {
+                val fileName = "file_$i" + createUpdatePostViewModel.photoPathList[i]
+                    .substring(createUpdatePostViewModel.photoPathList[i].lastIndexOf("."))
 
                 fileList.add(MultipartBody.Part.createFormData("fileList", fileName,
-                    RequestBody.create(MediaType.parse("multipart/form-data"), File(createUpdatePostViewModel.photoVideoPathList[i]))))
+                    RequestBody.create(MediaType.parse("multipart/form-data"), File(createUpdatePostViewModel.photoPathList[i]))))
             }
 
             // API call
@@ -723,23 +742,23 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // copy file and get real path
                 val mediaByteArray = response.body()!!.byteStream().readBytes()
-                createUpdatePostViewModel.photoVideoPathList[index] =
+                createUpdatePostViewModel.photoPathList[index] =
                     ServerUtil.createCopyAndReturnRealPathServer(requireContext(), mediaByteArray, extension, CREATE_UPDATE_POST_DIRECTORY)
 
                 // check if image and save thumbnail(video thumbnails are created in the RecyclerView adapter)
                 if(Util.isUrlPhoto(postMedia[index].name)) {
                     val thumbnail = BitmapFactory.decodeByteArray(mediaByteArray, 0, mediaByteArray.size)
-                    createUpdatePostViewModel.thumbnailList[index] = thumbnail
+                    createUpdatePostViewModel.photoThumbnailList[index] = thumbnail
                 }
                 else {
-                    createUpdatePostViewModel.thumbnailList[index] = null
+                    createUpdatePostViewModel.photoThumbnailList[index] = null
                 }
 
                 // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
-                if("" !in createUpdatePostViewModel.photoVideoPathList) {
+                if("" !in createUpdatePostViewModel.photoPathList) {
                     // update RecyclerView and photo/video usage
-                    photoVideoAdapter.setResult(createUpdatePostViewModel.thumbnailList)
-                    updatePhotoVideoUsage()
+                    photoAdapter.setResult(createUpdatePostViewModel.photoThumbnailList)
+                    updatePhotoUsage()
 
                     // show loading screen + disable button
                     binding.createEditPostMainScrollView.visibility = View.VISIBLE
@@ -779,8 +798,8 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // initialize lists
                 for(i in postMedia.indices) {
-                    createUpdatePostViewModel.photoVideoPathList.add("")
-                    createUpdatePostViewModel.thumbnailList.add(null)
+                    createUpdatePostViewModel.photoPathList.add("")
+                    createUpdatePostViewModel.photoThumbnailList.add(null)
                 }
 
                 fetchPostMediaData(postMedia)
@@ -841,7 +860,7 @@ class CreateUpdatePostFragment : Fragment() {
         binding.locationSwitch.isChecked = createUpdatePostViewModel.isUsingLocation
 
         // restore photo/video upload layout
-        updatePhotoVideoUsage()
+        updatePhotoUsage()
 
         // restore disclosure spinner
         when(createUpdatePostViewModel.disclosure) {

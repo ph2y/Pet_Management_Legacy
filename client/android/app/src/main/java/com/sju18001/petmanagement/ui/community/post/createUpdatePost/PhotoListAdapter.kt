@@ -7,48 +7,54 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
 import java.io.File
 
-class PhotoVideoListAdapter(private val createUpdatePostViewModel: CreateUpdatePostViewModel,
-                            private val context: Context,
-                            private val binding: FragmentCreateUpdatePostBinding) :
-        RecyclerView.Adapter<PhotoVideoListAdapter.HistoryListViewHolder>() {
+class PhotoListAdapter(private val createUpdatePostViewModel: CreateUpdatePostViewModel,
+                       private val context: Context,
+                       private val binding: FragmentCreateUpdatePostBinding) :
+        RecyclerView.Adapter<PhotoListAdapter.HistoryListViewHolder>() {
 
     private var resultList = mutableListOf<Bitmap?>()
 
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val thumbnail: ImageView = itemView.findViewById(R.id.photos_and_videos_thumbnail)
+        val thumbnail: ImageView = itemView.findViewById(R.id.photos_thumbnail)
         val deleteButton: ImageView = itemView.findViewById(R.id.delete_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-                .inflate(R.layout.uploaded_photos_and_videos_list_item, parent, false)
+                .inflate(R.layout.uploaded_photos_list_item, parent, false)
         return HistoryListViewHolder(itemView)
     }
 
     override fun onBindViewHolder(holder: HistoryListViewHolder, position: Int) {
         // set thumbnail
-        if(resultList[position] != null) { holder.thumbnail.setImageBitmap(resultList[position]) }
-        else {
-            Glide.with(context)
-                .load(createUpdatePostViewModel.photoVideoPathList[position])
-                .placeholder(R.drawable.ic_baseline_video_library_36)
-                .into(holder.thumbnail)
-        }
+        holder.thumbnail.setImageBitmap(resultList[position])
+
+        // TODO: delete this (video thumbnails)
+//        else {
+//            Glide.with(context)
+//                .load(createUpdatePostViewModel.photoPathList[position])
+//                .placeholder(R.drawable.ic_baseline_video_library_36)
+//                .into(holder.thumbnail)
+//        }
 
         // for delete button
         holder.deleteButton.setOnClickListener {
             deleteItem(position)
 
-            // update photo/video upload layout
-            val uploadedCount = createUpdatePostViewModel.thumbnailList.size
-            if(uploadedCount == 0) { binding.uploadPhotoVideoLabel.visibility = View.VISIBLE }
-            val photoVideoUsageText = "$uploadedCount/10"
-            binding.photoVideoUsage.text = photoVideoUsageText
+            // update photo upload layout
+            val uploadedCount = createUpdatePostViewModel.photoThumbnailList.size
+            if (uploadedCount == 0) {
+                binding.uploadPhotoLayout.visibility = View.GONE
+            }
+            else {
+                binding.uploadPhotoLayout.visibility = View.VISIBLE
+            }
+            val photoUsageText = "$uploadedCount/10"
+            binding.photoUsage.text = photoUsageText
         }
     }
 
@@ -56,11 +62,11 @@ class PhotoVideoListAdapter(private val createUpdatePostViewModel: CreateUpdateP
 
     private fun deleteItem(position: Int) {
         // delete file
-        File(createUpdatePostViewModel.photoVideoPathList[position]).delete()
+        File(createUpdatePostViewModel.photoPathList[position]).delete()
 
         // delete ViewModel values + RecyclerView list
-        createUpdatePostViewModel.photoVideoPathList.removeAt(position)
-        createUpdatePostViewModel.thumbnailList.removeAt(position)
+        createUpdatePostViewModel.photoPathList.removeAt(position)
+        createUpdatePostViewModel.photoThumbnailList.removeAt(position)
 
         // for item remove animation
         notifyItemRemoved(position)
