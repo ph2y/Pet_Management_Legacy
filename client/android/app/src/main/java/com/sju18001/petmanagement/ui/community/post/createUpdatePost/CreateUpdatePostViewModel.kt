@@ -31,6 +31,18 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
             field = value
         }
 
+    // for general files
+    var generalFilePathList = handle.get<MutableList<String>>("generalFilePathList")?: mutableListOf()
+        set(value) {
+            handle.set("generalFilePathList", value)
+            field = value
+        }
+    var generalFileNameList = handle.get<MutableList<String>>("generalFileNameList")?: mutableListOf()
+        set(value) {
+            handle.set("generalFileNameList", value)
+            field = value
+        }
+
     // for disclosure
     var disclosure = handle.get<String>("disclosure")?: "PUBLIC"
         set(value) {
@@ -67,6 +79,36 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
     var fetchedPostDataForUpdate = handle.get<Boolean>("fetchedPostDataForUpdate")?: false
         set(value) {
             handle.set("fetchedPostDataForUpdate", value)
+            field = value
+        }
+    var fetchedPostPhotoDataForUpdate = handle.get<Boolean>("fetchedPostPhotoDataForUpdate")?: false
+        set(value) {
+            handle.set("fetchedPostPhotoDataForUpdate", value)
+            field = value
+        }
+    var fetchedPostGeneralFileDataForUpdate = handle.get<Boolean>("fetchedPostGeneralFileDataForUpdate")?: false
+        set(value) {
+            handle.set("fetchedPostGeneralFileDataForUpdate", value)
+            field = value
+        }
+    var updatedPostPhotoData = handle.get<Boolean>("updatedPostPhotoData")?: false
+        set(value) {
+            handle.set("updatedPostPhotoData", value)
+            field = value
+        }
+    var updatedPostGeneralFileData = handle.get<Boolean>("updatedPostGeneralFileData")?: false
+        set(value) {
+            handle.set("updatedPostGeneralFileData", value)
+            field = value
+        }
+    var deletedPostPhotoData = handle.get<Boolean>("deletedPostPhotoData")?: false
+        set(value) {
+            handle.set("deletedPostPhotoData", value)
+            field = value
+        }
+    var deletedPostGeneralFileData = handle.get<Boolean>("deletedPostGeneralFileData")?: false
+        set(value) {
+            handle.set("deletedPostGeneralFileData", value)
             field = value
         }
     var postId = handle.get<Long>("postId")

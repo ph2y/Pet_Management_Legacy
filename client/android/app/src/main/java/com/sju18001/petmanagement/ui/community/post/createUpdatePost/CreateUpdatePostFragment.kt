@@ -11,6 +11,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,6 +50,7 @@ class CreateUpdatePostFragment : Fragment() {
     // constant variables
     private val PICK_PHOTO = 0
     private val PICK_VIDEO = 1
+    private val PICK_GENERAL_FILE = 2
     private var DISCLOSURE_PUBLIC: String = "PUBLIC"
     private var DISCLOSURE_PRIVATE: String = "PRIVATE"
     private var DISCLOSURE_FRIEND: String = "FRIEND"
@@ -68,6 +70,7 @@ class CreateUpdatePostFragment : Fragment() {
 
     // variables for RecyclerView
     private lateinit var photoAdapter: PhotoListAdapter
+    private lateinit var generalFilesAdapter: GeneralFileListAdapter
     private lateinit var hashtagAdapter: HashtagListAdapter
 
     override fun onCreateView(
@@ -157,7 +160,10 @@ class CreateUpdatePostFragment : Fragment() {
             dialog.findViewById<Button>(R.id.upload_general_button).setOnClickListener {
                 dialog.dismiss()
 
-                // TODO:
+                val intent = Intent()
+                intent.type = "*/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "파일 선택"), PICK_GENERAL_FILE)
             }
             dialog.findViewById<Button>(R.id.upload_audio_button).setOnClickListener {
                 dialog.dismiss()
@@ -256,14 +262,13 @@ class CreateUpdatePostFragment : Fragment() {
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateUpdatePostParentLayout)
     }
 
-    // for photo/video select
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
         // exception
         if(resultCode != AppCompatActivity.RESULT_OK) { return }
 
-        // get photo/video value
+        // get selected file value
         when(requestCode) {
             PICK_PHOTO -> {
                 if(data != null) {
@@ -281,7 +286,7 @@ class CreateUpdatePostFragment : Fragment() {
                     // add path to list
                     createUpdatePostViewModel.photoPathList.add(postPhotoPathValue)
 
-                    // create bytearray
+                    // create bytearray for thumbnail
                     val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoPathList.last())
                     val stream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
@@ -334,6 +339,36 @@ class CreateUpdatePostFragment : Fragment() {
 //            else -> {
 //                Toast.makeText(context, context?.getText(R.string.file_type_exception_message), Toast.LENGTH_LONG).show()
 //            }
+            PICK_GENERAL_FILE -> {
+                if(data != null) {
+                    // copy selected photo and get real path
+                    val postGeneralFilePathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
+                        data.data!!, CREATE_UPDATE_POST_DIRECTORY)
+
+                    // file type exception -> delete copied file + show Toast message
+                    if (!Util.isUrlGeneralFile(postGeneralFilePathValue)) {
+                        Toast.makeText(context, context?.getText(R.string.general_file_type_exception_message), Toast.LENGTH_LONG).show()
+                        File(postGeneralFilePathValue).delete()
+                        return
+                    }
+
+                    // add path to list
+                    createUpdatePostViewModel.generalFilePathList.add(postGeneralFilePathValue)
+
+                    // save file name
+                    val generalFileName = createUpdatePostViewModel.generalFilePathList.last() // TODO: test and fix this
+                    createUpdatePostViewModel.generalFileNameList.add(generalFileName)
+
+                    // update RecyclerView
+                    generalFilesAdapter.notifyItemInserted(createUpdatePostViewModel.generalFileNameList.size)
+                    binding.generalRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.generalFileNameList.size - 1)
+
+                    updateGeneralUsage()
+                }
+                else {
+                    Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
@@ -347,11 +382,15 @@ class CreateUpdatePostFragment : Fragment() {
 
         // TODO: initialize RecyclerView (for videos)
 
-        // initialize RecyclerView (for general)
+        // initialize RecyclerView (for general files)
+        generalFilesAdapter = GeneralFileListAdapter(createUpdatePostViewModel, requireContext(), binding)
+        binding.generalRecyclerView.adapter = generalFilesAdapter
+        binding.generalRecyclerView.layoutManager = LinearLayoutManager(activity)
+        (binding.generalRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        generalFilesAdapter.setResult(createUpdatePostViewModel.generalFileNameList)
 
 
-
-        // TODO: initialize RecyclerView (for audio)
+        // TODO: initialize RecyclerView (for audio files)
 
         // initialize RecyclerView (for hashtags)
         hashtagAdapter = HashtagListAdapter(createUpdatePostViewModel, binding)
@@ -517,6 +556,20 @@ class CreateUpdatePostFragment : Fragment() {
         binding.photoUsage.text = photoUsageText
     }
 
+    // update general usage
+    private fun updateGeneralUsage() {
+        val uploadedCount = createUpdatePostViewModel.generalFileNameList.size
+
+        if (uploadedCount == 0) {
+            binding.uploadGeneralLayout.visibility = View.GONE
+        }
+        else {
+            binding.uploadGeneralLayout.visibility = View.VISIBLE
+        }
+        val generalUsageText = "$uploadedCount/10"
+        binding.generalUsage.text = generalUsageText
+    }
+
     // update hashtag usage
     private fun updateHashtagUsage() {
         val hashtagCount = createUpdatePostViewModel.hashtagList.size
@@ -601,6 +654,11 @@ class CreateUpdatePostFragment : Fragment() {
         }
     }
 
+    private fun isApiLoadComplete(): Boolean {
+        return createUpdatePostViewModel.updatedPostPhotoData && createUpdatePostViewModel.updatedPostGeneralFileData &&
+                createUpdatePostViewModel.deletedPostPhotoData && createUpdatePostViewModel.deletedPostGeneralFileData
+    }
+
     private fun createPost() {
         // set api state/button to loading
         createUpdatePostViewModel.apiIsLoading = true
@@ -628,13 +686,17 @@ class CreateUpdatePostFragment : Fragment() {
             latAndLong[1]
         )
 
+        // set deleted to true (because there is nothing to delete)
+        createUpdatePostViewModel.deletedPostPhotoData = true
+        createUpdatePostViewModel.deletedPostGeneralFileData = true
+
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .createPostReq(createPostReqDto)
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             requireActivity().intent.putExtra("postId", response.body()!!.id)
             updatePostMedia(response.body()!!.id)
             // TODO: create logic for updating video files
-            // TODO:
+            updatePostGeneralFiles(response.body()!!.id)
             // TODO: create logic for updating audio files
         }, {
             // set api state/button to normal
@@ -682,17 +744,41 @@ class CreateUpdatePostFragment : Fragment() {
             if(createUpdatePostViewModel.photoPathList.size == 0) {
                 // 기존에 Media가 0개였다면 FileType.IMAGE_FILE에 대해 DeletePostFile를 호출하지 않는다
                 if(requireActivity().intent.getIntExtra("originalMediaCount", 0) > 0){
+                    createUpdatePostViewModel.updatedPostPhotoData = true
                     deletePostFile(createUpdatePostViewModel.postId!!, FileType.IMAGE_FILE)
                 }else{
-                    passDataToCommunity()
-                    closeAfterSuccess()
+                    createUpdatePostViewModel.updatedPostPhotoData = true
+                    createUpdatePostViewModel.deletedPostPhotoData = true
+
+                    if (isApiLoadComplete()) {
+                        passDataToCommunity()
+                        closeAfterSuccess()
+                    }
                 }
             } else {
+                createUpdatePostViewModel.deletedPostPhotoData = true
                 updatePostMedia(createUpdatePostViewModel.postId!!)
             }
 
             // update general files
-            // TODO:
+            if(createUpdatePostViewModel.generalFilePathList.size == 0) {
+                // 기존에 General Files가 0개였다면 FileType.GENERAL_FILE에 대해 DeletePostFile를 호출하지 않는다
+                if(requireActivity().intent.getIntExtra("originalGeneralFilesCount", 0) > 0){
+                    createUpdatePostViewModel.updatedPostGeneralFileData = true
+                    deletePostFile(createUpdatePostViewModel.postId!!, FileType.GENERAL_FILE)
+                }else{
+                    createUpdatePostViewModel.updatedPostGeneralFileData = true
+                    createUpdatePostViewModel.deletedPostGeneralFileData = true
+
+                    if (isApiLoadComplete()) {
+                        passDataToCommunity()
+                        closeAfterSuccess()
+                    }
+                }
+            } else {
+                createUpdatePostViewModel.deletedPostGeneralFileData = true
+                updatePostGeneralFiles(createUpdatePostViewModel.postId!!)
+            }
 
             // TODO: create logic for updating audio files
         }, {
@@ -709,8 +795,17 @@ class CreateUpdatePostFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .deletePostFileReq(DeletePostFileReqDto(id, fileType))
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
-            passDataToCommunity()
-            closeAfterSuccess()
+            if (fileType == FileType.IMAGE_FILE) {
+                createUpdatePostViewModel.deletedPostPhotoData = true
+            }
+            if (fileType == FileType.GENERAL_FILE) {
+                createUpdatePostViewModel.deletedPostGeneralFileData = true
+            }
+
+            if (isApiLoadComplete()) {
+                passDataToCommunity()
+                closeAfterSuccess()
+            }
         }, {
             // set api state/button to normal
             createUpdatePostViewModel.apiIsLoading = false
@@ -724,8 +819,12 @@ class CreateUpdatePostFragment : Fragment() {
     private fun updatePostMedia(id: Long) {
         // exception (no photo files)
         if(createUpdatePostViewModel.photoPathList.size == 0) {
-            passDataToCommunity()
-            closeAfterSuccess()
+            createUpdatePostViewModel.updatedPostPhotoData = true
+
+            if (isApiLoadComplete()) {
+                passDataToCommunity()
+                closeAfterSuccess()
+            }
         } else {
             // create file list
             val fileList: ArrayList<MultipartBody.Part> = ArrayList()
@@ -739,10 +838,55 @@ class CreateUpdatePostFragment : Fragment() {
 
             // API call
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                .updatePostFileReqDto(id, fileList, FileType.IMAGE_FILE)
+                .updatePostFileReq(id, fileList, FileType.IMAGE_FILE)
             ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
+                createUpdatePostViewModel.updatedPostPhotoData = true
+
+                if (isApiLoadComplete()) {
+                    passDataToCommunity()
+                    closeAfterSuccess()
+                }
+            }, {
+                // set api state/button to normal
+                createUpdatePostViewModel.apiIsLoading = false
+                unlockViews()
+            }, {
+                createUpdatePostViewModel.apiIsLoading = false
+                unlockViews()
+            })
+        }
+    }
+
+    private fun updatePostGeneralFiles(id: Long) {
+        // exception (no general files)
+        if (createUpdatePostViewModel.generalFilePathList.size == 0) {
+            createUpdatePostViewModel.updatedPostGeneralFileData = true
+
+            if (isApiLoadComplete()) {
                 passDataToCommunity()
                 closeAfterSuccess()
+            }
+        } else {
+            // create file list
+            val fileList: ArrayList<MultipartBody.Part> = ArrayList()
+            for(i in 0 until createUpdatePostViewModel.generalFilePathList.size) {
+                val fileName = "file_$i" + createUpdatePostViewModel.generalFilePathList[i]
+                    .substring(createUpdatePostViewModel.generalFilePathList[i].lastIndexOf("."))
+
+                fileList.add(MultipartBody.Part.createFormData("fileList", fileName,
+                    RequestBody.create(MediaType.parse("multipart/form-data"), File(createUpdatePostViewModel.generalFilePathList[i]))))
+            }
+
+            // API call
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                .updatePostFileReq(id, fileList, FileType.GENERAL_FILE)
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
+                createUpdatePostViewModel.updatedPostGeneralFileData = true
+
+                if (isApiLoadComplete()) {
+                    passDataToCommunity()
+                    closeAfterSuccess()
+                }
             }, {
                 // set api state/button to normal
                 createUpdatePostViewModel.apiIsLoading = false
@@ -773,21 +917,76 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
                 if("" !in createUpdatePostViewModel.photoPathList) {
-                    // update RecyclerView and photo/video usage
+                    // update RecyclerView and photo usage
                     photoAdapter.setResult(createUpdatePostViewModel.photoThumbnailList)
                     updatePhotoUsage()
 
-                    // show loading screen + disable button
-                    binding.createEditPostMainScrollView.visibility = View.VISIBLE
-                    binding.postDataLoadingLayout.visibility = View.GONE
-                    binding.confirmButton.isEnabled = true
-
+                    // TODO: this logic might change after video and audio fetch logic is implemented
                     // set fetched to true
-                    createUpdatePostViewModel.fetchedPostDataForUpdate = true
+                    createUpdatePostViewModel.fetchedPostPhotoDataForUpdate = true
+                    if (createUpdatePostViewModel.fetchedPostPhotoDataForUpdate &&
+                        createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate) {
+                        createUpdatePostViewModel.fetchedPostDataForUpdate = true
+                    }
 
+                    // TODO: this logic might change after video and audio fetch logic is implemented
                     // set views with post data
-                    setPetSpinnerAndPhoto()
-                    restoreState()
+                    if (createUpdatePostViewModel.fetchedPostDataForUpdate) {
+                        // hide loading screen + enable button
+                        binding.createEditPostMainScrollView.visibility = View.VISIBLE
+                        binding.postDataLoadingLayout.visibility = View.GONE
+                        binding.confirmButton.isEnabled = true
+
+                        setPetSpinnerAndPhoto()
+                        restoreState()
+                    }
+                }
+            }, {}, {})
+        }
+    }
+
+    private fun fetchPostGeneralData(postGeneral: Array<FileMetaData>) {
+        for(index in postGeneral.indices) {
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                .fetchPostFileReq(FetchPostFileReqDto(createUpdatePostViewModel.postId!!, index))
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
+                // get file extension
+                val extension = postGeneral[index].url.split('.').last()
+
+                // copy file and get real path
+                val generalFileByteArray = response.body()!!.byteStream().readBytes()
+                createUpdatePostViewModel.generalFilePathList[index] =
+                    ServerUtil.createCopyAndReturnRealPathServer(requireContext(), generalFileByteArray, extension, CREATE_UPDATE_POST_DIRECTORY)
+
+                // save general file name
+                val generalFileName = createUpdatePostViewModel.generalFilePathList[index] // TODO: test and fix this
+                createUpdatePostViewModel.generalFileNameList[index] = generalFileName
+
+                // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
+                if("" !in createUpdatePostViewModel.generalFilePathList) {
+                    // update RecyclerView and general usage
+                    generalFilesAdapter.setResult(createUpdatePostViewModel.generalFileNameList)
+                    updateGeneralUsage()
+
+                    // TODO: this logic might change after video and audio fetch logic is implemented
+                    // set fetched to true
+                    createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate = true
+                    if (createUpdatePostViewModel.fetchedPostPhotoDataForUpdate &&
+                        createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate) {
+                        createUpdatePostViewModel.fetchedPostDataForUpdate = true
+                    }
+
+                    // TODO: this logic might change after video and audio fetch logic is implemented
+                    // set views with post data
+                    if (createUpdatePostViewModel.fetchedPostDataForUpdate) {
+                        // hide loading screen + enable button
+                        binding.createEditPostMainScrollView.visibility = View.VISIBLE
+                        binding.postDataLoadingLayout.visibility = View.GONE
+                        binding.confirmButton.isEnabled = true
+
+                        setPetSpinnerAndPhoto()
+                        restoreState()
+                    }
                 }
             }, {}, {})
         }
@@ -811,10 +1010,11 @@ class CreateUpdatePostFragment : Fragment() {
 
             // fetch post media (photos) data
             if(post.mediaAttachments != null) {
-                val postMedia = Gson().fromJson(post.mediaAttachments, Array<FileMetaData>::class.java)
+                val postMedia =
+                    Gson().fromJson(post.mediaAttachments, Array<FileMetaData>::class.java)
 
                 // initialize lists
-                for(i in postMedia.indices) {
+                for (i in postMedia.indices) {
                     createUpdatePostViewModel.photoPathList.add("")
                     createUpdatePostViewModel.photoThumbnailList.add(null)
                 }
@@ -822,6 +1022,31 @@ class CreateUpdatePostFragment : Fragment() {
                 fetchPostMediaData(postMedia)
             }
             else {
+                createUpdatePostViewModel.fetchedPostPhotoDataForUpdate = true
+            }
+
+            // TODO: fetch post media (videos) data
+
+            // fetch post general data
+            if (post.fileAttachments != null) {
+                val postGeneral = Gson().fromJson(post.fileAttachments, Array<FileMetaData>::class.java)
+
+                // initialize lists
+                for(i in postGeneral.indices) {
+                    createUpdatePostViewModel.generalFilePathList.add("")
+                    createUpdatePostViewModel.generalFileNameList.add("")
+                }
+
+                fetchPostGeneralData(postGeneral)
+            }
+            else {
+                createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate = true
+            }
+
+            // TODO: fetch post audio data
+
+            // if no attachments TODO: this logic might change after video and audio fetch logic is implemented
+            if (post.mediaAttachments == null && post.fileAttachments == null) {
                 // show loading screen + disable button
                 binding.createEditPostMainScrollView.visibility = View.VISIBLE
                 binding.postDataLoadingLayout.visibility = View.GONE
@@ -834,12 +1059,6 @@ class CreateUpdatePostFragment : Fragment() {
                 setPetSpinnerAndPhoto()
                 restoreState()
             }
-
-            // TODO: fetch post media (videos) data
-
-            // fetch post general data
-
-            // TODO: fetch post audio data
         }, {
             requireActivity().finish()
         }, {
@@ -882,8 +1101,9 @@ class CreateUpdatePostFragment : Fragment() {
         // restore location switch
         binding.locationSwitch.isChecked = createUpdatePostViewModel.isUsingLocation
 
-        // restore photo/video upload layout
+        // restore usages
         updatePhotoUsage()
+        updateGeneralUsage()
 
         // restore disclosure spinner
         when(createUpdatePostViewModel.disclosure) {

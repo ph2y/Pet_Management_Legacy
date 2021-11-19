@@ -153,6 +153,13 @@ class Util {
             return url.endsWith(".mp4") || url.endsWith(".webm")
         }
 
+        fun isUrlGeneralFile(url: String): Boolean{
+            return url.endsWith(".doc") || url.endsWith(".docx") || url.endsWith(".hwp") || url.endsWith(".pdf") ||
+                    url.endsWith(".txt") || url.endsWith(".ppt") || url.endsWith(".pptx") || url.endsWith(".psd") ||
+                    url.endsWith(".ai") || url.endsWith(".xls") || url.endsWith(".xlsx") || url.endsWith(".rar") ||
+                    url.endsWith(".tar") || url.endsWith(".zip") || url.endsWith(".exe") || url.endsWith(".apk")
+        }
+
         fun getScreenWidthInPixel(activity: Activity) : Int{
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
                 val windowMetrics = activity.windowManager.currentWindowMetrics

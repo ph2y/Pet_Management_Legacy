@@ -433,6 +433,7 @@ class PostFragment : Fragment() {
                     createUpdatePostActivityIntent.putExtra("postId", post.id)
                     createUpdatePostActivityIntent.putExtra("position", position)
                     createUpdatePostActivityIntent.putExtra("originalMediaCount", Util.getArrayFromMediaAttachments(post.mediaAttachments).size)
+                    createUpdatePostActivityIntent.putExtra("originalGeneralFilesCount", Util.getArrayFromMediaAttachments(post.fileAttachments).size)
 
                     startForUpdateResult.launch(createUpdatePostActivityIntent)
                     requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)

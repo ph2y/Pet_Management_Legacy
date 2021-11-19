@@ -124,11 +124,14 @@ interface ServerApi {
 
     @Multipart
     @POST("api/post/file/update")
-    fun updatePostFileReqDto(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>,
-                             @Part("fileType") fileType: String): Call<UpdatePostFileResDto>
+    fun updatePostFileReq(@Part("id") id: Long, @Part fileList: List<MultipartBody.Part>,
+                          @Part("fileType") fileType: String): Call<UpdatePostFileResDto>
 
     @POST("api/post/file/delete")
     fun deletePostFileReq(@Body deletePostFileReqDto: DeletePostFileReqDto): Call<DeletePostFileResDto>
+
+    @POST("api/post/file/fetch")
+    fun fetchPostFileReq(@Body fetchPostFileReqDto: FetchPostFileReqDto): Call<ResponseBody>
 
     // Follow API
     @POST("api/community/follower/fetch")

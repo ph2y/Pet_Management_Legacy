@@ -87,3 +87,8 @@ data class DeletePostFileReqDto (
 data class DeletePostFileResDto (
     val _metadata: DtoMetadata
 )
+
+data class FetchPostFileReqDto (
+    val id: Long,
+    val index: Int
+)
