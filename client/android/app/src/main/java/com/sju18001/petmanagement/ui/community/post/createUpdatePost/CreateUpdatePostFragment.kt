@@ -31,6 +31,7 @@ import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.restapi.global.FileMetaData
+import com.sju18001.petmanagement.restapi.global.FileType
 import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -78,23 +79,12 @@ class CreateUpdatePostFragment : Fragment() {
         _binding = FragmentCreateUpdatePostBinding.inflate(inflater, container, false)
         isViewDestroyed = false
 
-        val root: View = binding.root
+        return binding.root
+    }
 
-        // initialize RecyclerView (for photos)
-        photoAdapter = PhotoListAdapter(createUpdatePostViewModel, requireContext(), binding)
-        binding.photosRecyclerView.adapter = photoAdapter
-        binding.photosRecyclerView.layoutManager = LinearLayoutManager(activity)
-        (binding.photosRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
-        photoAdapter.setResult(createUpdatePostViewModel.photoThumbnailList)
-
-        // initialize RecyclerView(hashtags)
-        hashtagAdapter = HashtagListAdapter(createUpdatePostViewModel, binding)
-        binding.hashtagRecyclerView.adapter = hashtagAdapter
-        binding.hashtagRecyclerView.layoutManager = LinearLayoutManager(activity)
-        (binding.hashtagRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
-        hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
-
-        return root
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initializeRecyclerViews()
     }
 
     override fun onStart() {
@@ -167,7 +157,7 @@ class CreateUpdatePostFragment : Fragment() {
             dialog.findViewById<Button>(R.id.upload_general_button).setOnClickListener {
                 dialog.dismiss()
 
-                // TODO: implement logic for uploading general files
+                // TODO:
             }
             dialog.findViewById<Button>(R.id.upload_audio_button).setOnClickListener {
                 dialog.dismiss()
@@ -345,6 +335,30 @@ class CreateUpdatePostFragment : Fragment() {
 //                Toast.makeText(context, context?.getText(R.string.file_type_exception_message), Toast.LENGTH_LONG).show()
 //            }
         }
+    }
+
+    private fun initializeRecyclerViews() {
+        // initialize RecyclerView (for photos)
+        photoAdapter = PhotoListAdapter(createUpdatePostViewModel, requireContext(), binding)
+        binding.photosRecyclerView.adapter = photoAdapter
+        binding.photosRecyclerView.layoutManager = LinearLayoutManager(activity)
+        (binding.photosRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        photoAdapter.setResult(createUpdatePostViewModel.photoThumbnailList)
+
+        // TODO: initialize RecyclerView (for videos)
+
+        // initialize RecyclerView (for general)
+
+
+
+        // TODO: initialize RecyclerView (for audio)
+
+        // initialize RecyclerView (for hashtags)
+        hashtagAdapter = HashtagListAdapter(createUpdatePostViewModel, binding)
+        binding.hashtagRecyclerView.adapter = hashtagAdapter
+        binding.hashtagRecyclerView.layoutManager = LinearLayoutManager(activity)
+        (binding.hashtagRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
     }
 
     // for pet views
@@ -619,6 +633,9 @@ class CreateUpdatePostFragment : Fragment() {
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             requireActivity().intent.putExtra("postId", response.body()!!.id)
             updatePostMedia(response.body()!!.id)
+            // TODO: create logic for updating video files
+            // TODO:
+            // TODO: create logic for updating audio files
         }, {
             // set api state/button to normal
             createUpdatePostViewModel.apiIsLoading = false
@@ -661,11 +678,11 @@ class CreateUpdatePostFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updatePostReq(updatePostReqDto)
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
-            // no media files
+            // update media (photos and videos) TODO: create logic for updating videos
             if(createUpdatePostViewModel.photoPathList.size == 0) {
-                // 기존에 Media가 0개였다면 DeletePostMedia를 호출하지 않는다.
+                // 기존에 Media가 0개였다면 FileType.IMAGE_FILE에 대해 DeletePostFile를 호출하지 않는다
                 if(requireActivity().intent.getIntExtra("originalMediaCount", 0) > 0){
-                    deletePostMedia(createUpdatePostViewModel.postId!!)
+                    deletePostFile(createUpdatePostViewModel.postId!!, FileType.IMAGE_FILE)
                 }else{
                     passDataToCommunity()
                     closeAfterSuccess()
@@ -673,6 +690,11 @@ class CreateUpdatePostFragment : Fragment() {
             } else {
                 updatePostMedia(createUpdatePostViewModel.postId!!)
             }
+
+            // update general files
+            // TODO:
+
+            // TODO: create logic for updating audio files
         }, {
             // set api state/button to normal
             createUpdatePostViewModel.apiIsLoading = false
@@ -683,9 +705,9 @@ class CreateUpdatePostFragment : Fragment() {
         })
     }
 
-    private fun deletePostMedia(id: Long) {
+    private fun deletePostFile(id: Long, fileType: String) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .deletePostMediaReq(DeletePostMediaReqDto(id))
+            .deletePostFileReq(DeletePostFileReqDto(id, fileType))
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             passDataToCommunity()
             closeAfterSuccess()
@@ -700,7 +722,7 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     private fun updatePostMedia(id: Long) {
-        // exception(no media files)
+        // exception (no photo files)
         if(createUpdatePostViewModel.photoPathList.size == 0) {
             passDataToCommunity()
             closeAfterSuccess()
@@ -717,7 +739,7 @@ class CreateUpdatePostFragment : Fragment() {
 
             // API call
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                .updatePostMediaReq(id, fileList)
+                .updatePostFileReqDto(id, fileList, FileType.IMAGE_FILE)
             ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
                 passDataToCommunity()
                 closeAfterSuccess()
@@ -745,14 +767,9 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.photoPathList[index] =
                     ServerUtil.createCopyAndReturnRealPathServer(requireContext(), mediaByteArray, extension, CREATE_UPDATE_POST_DIRECTORY)
 
-                // check if image and save thumbnail(video thumbnails are created in the RecyclerView adapter)
-                if(Util.isUrlPhoto(postMedia[index].name)) {
-                    val thumbnail = BitmapFactory.decodeByteArray(mediaByteArray, 0, mediaByteArray.size)
-                    createUpdatePostViewModel.photoThumbnailList[index] = thumbnail
-                }
-                else {
-                    createUpdatePostViewModel.photoThumbnailList[index] = null
-                }
+                // save photo thumbnail
+                val thumbnail = BitmapFactory.decodeByteArray(mediaByteArray, 0, mediaByteArray.size)
+                createUpdatePostViewModel.photoThumbnailList[index] = thumbnail
 
                 // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
                 if("" !in createUpdatePostViewModel.photoPathList) {
@@ -780,7 +797,7 @@ class CreateUpdatePostFragment : Fragment() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPostReq(FetchPostReqDto(null, null, null, createUpdatePostViewModel.postId))
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
-            // fetch post data(excluding media) and save to ViewModel
+            // fetch post data (excluding files) and save to ViewModel
             val post = response.body()?.postList!![0]
 
             createUpdatePostViewModel.petId = post.pet.id
@@ -792,7 +809,7 @@ class CreateUpdatePostFragment : Fragment() {
             }
             createUpdatePostViewModel.postEditText = post.contents
 
-            // fetch post media data
+            // fetch post media (photos) data
             if(post.mediaAttachments != null) {
                 val postMedia = Gson().fromJson(post.mediaAttachments, Array<FileMetaData>::class.java)
 
@@ -817,6 +834,12 @@ class CreateUpdatePostFragment : Fragment() {
                 setPetSpinnerAndPhoto()
                 restoreState()
             }
+
+            // TODO: fetch post media (videos) data
+
+            // fetch post general data
+
+            // TODO: fetch post audio data
         }, {
             requireActivity().finish()
         }, {

@@ -148,7 +148,7 @@ public class PostController {
         DtoMetadata dtoMetadata;
         List<FileMetadata> fileMetadataList;
         try {
-            fileMetadataList = postServ.updatePostFile(auth, reqDto, FileType.valueOf(reqDto.getFileType()));
+            fileMetadataList = postServ.updatePostFile(auth, reqDto, FileType.valueOf(reqDto.getFileType().replace("\"", "")));
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
@@ -192,7 +192,7 @@ public class PostController {
     public ResponseEntity<?> deletePostFile(Authentication auth, @Valid @RequestBody DeletePostFileReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
-            postServ.deletePostFile(auth, reqDto, FileType.valueOf(reqDto.getFileType()));
+            postServ.deletePostFile(auth, reqDto, FileType.valueOf(reqDto.getFileType().replace("\"", "")));
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());

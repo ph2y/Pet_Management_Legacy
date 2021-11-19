@@ -33,7 +33,7 @@ class PhotoListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
         // set thumbnail
         holder.thumbnail.setImageBitmap(resultList[position])
 
-        // TODO: delete this (video thumbnails)
+        // TODO: delete this (the below code was used for creating video thumbnails)
 //        else {
 //            Glide.with(context)
 //                .load(createUpdatePostViewModel.photoPathList[position])
