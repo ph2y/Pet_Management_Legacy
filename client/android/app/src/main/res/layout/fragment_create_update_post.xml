@@ -73,13 +73,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:padding="4dp"
+                android:background="?attr/selectableItemBackground"
                 android:clickable="true"
                 android:focusable="true"
-                android:textSize="20dp"
-                android:textStyle="bold"
+                android:padding="4dp"
                 android:text="@string/confirm_create_pet"
-                android:background="?attr/selectableItemBackground"/>
+                android:textSize="20dp"
+                android:textStyle="bold" />
 
             <ProgressBar
                 android:id="@+id/create_update_post_progress_bar"

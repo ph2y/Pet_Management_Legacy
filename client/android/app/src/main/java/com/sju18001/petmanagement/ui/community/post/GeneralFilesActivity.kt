@@ -72,7 +72,9 @@ class GeneralFilesActivity : AppCompatActivity() {
                 generalFilesViewModel.userSelectedUri = uri
                 ServerUtil.writeFileFileToUri(this,
                     generalFilesViewModel.downloadedFilePath!!, generalFilesViewModel.userSelectedUri!!)
-                // TODO:
+
+                // reset download button
+                generalFilesAdapter.setResult(generalFilesList)
             }
         }
     }

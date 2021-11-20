@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
@@ -24,6 +25,7 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val generalFileName: TextView = itemView.findViewById(R.id.general_file_name)
         val downloadButton: ImageButton = itemView.findViewById(R.id.download_button)
+        val downloadProgressBar: ProgressBar = itemView.findViewById(R.id.download_progress_bar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GeneralFilesAdapter.HistoryListViewHolder {
@@ -34,12 +36,14 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
 
     override fun onBindViewHolder(holder: HistoryListViewHolder, position: Int) {
         holder.generalFileName.text = resultList[position].name
-        // TODO: check if downloaded and set image to downloaded icon + clickable
 
         holder.downloadButton.setOnClickListener {
+            // set button to downloading
+            holder.downloadButton.visibility = View.INVISIBLE
+            holder.downloadProgressBar.visibility = View.VISIBLE
+
             // fetch file + write
             fetchGeneralFile(resultList[position].postId, resultList[position].fileId, resultList[position].name)
-            // TODO: implement file download logic
         }
     }
 
