@@ -9,11 +9,15 @@ import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.ActivityGeneralFilesBinding
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.global.FileMetaData
 
 class GeneralFilesActivity : AppCompatActivity() {
+
+    // const
+    private var GENERAL_FILES_ACTIVITY_DIRECTORY: String = "general_files_activity"
 
     // variable for view binding
     private lateinit var binding: ActivityGeneralFilesBinding
@@ -46,7 +50,7 @@ class GeneralFilesActivity : AppCompatActivity() {
         super.onStart()
 
         // initialize RecyclerView
-        generalFilesAdapter = GeneralFilesAdapter(this, generalFilesViewModel)
+        generalFilesAdapter = GeneralFilesAdapter(this, generalFilesViewModel, GENERAL_FILES_ACTIVITY_DIRECTORY)
         binding.generalFilesRecyclerView.adapter = generalFilesAdapter
         binding.generalFilesRecyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -78,5 +82,9 @@ class GeneralFilesActivity : AppCompatActivity() {
 
         generalFilesAdapter.onDestroy()
         isViewDestroyed = true
+
+        if(isFinishing) {
+            Util.deleteCopiedFiles(this, GENERAL_FILES_ACTIVITY_DIRECTORY)
+        }
     }
 }

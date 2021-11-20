@@ -13,10 +13,9 @@ import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchPostFileReqDto
 
-class GeneralFilesAdapter(private val activity: Activity, private val generalFilesViewModel: GeneralFilesViewModel):
+class GeneralFilesAdapter(private val activity: Activity, private val generalFilesViewModel: GeneralFilesViewModel,
+                          private val GENERAL_FILES_ACTIVITY_DIRECTORY: String):
     RecyclerView.Adapter<GeneralFilesAdapter.HistoryListViewHolder>() {
-
-    private var GENERAL_FILES_ADAPTER_DIRECTORY: String = "general_files_adapter"
 
     private var resultList = mutableListOf<GeneralFilesListItem>()
 
@@ -51,7 +50,8 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
             // download file + save downloaded path -> write file
             val extension = fileName.split('.').last()
             generalFilesViewModel.downloadedFilePath = ServerUtil
-                .createCopyAndReturnRealPathServer(activity, response.body()!!.byteStream().readBytes(), extension, GENERAL_FILES_ADAPTER_DIRECTORY)
+                .createCopyAndReturnRealPathServer(activity, response.body()!!.byteStream().readBytes(),
+                    extension, GENERAL_FILES_ACTIVITY_DIRECTORY)
 
             // get Uri from user + write file
             ServerUtil.getUriFromUser(activity, fileName)
