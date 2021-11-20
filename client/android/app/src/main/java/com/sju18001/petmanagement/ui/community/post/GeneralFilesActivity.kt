@@ -5,10 +5,12 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Window
+import android.widget.Toast
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.gson.Gson
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.ActivityGeneralFilesBinding
 import com.sju18001.petmanagement.restapi.ServerUtil
@@ -62,6 +64,9 @@ class GeneralFilesActivity : AppCompatActivity() {
             generalFilesList.add(GeneralFilesListItem(postId, postGeneralFiles[i].name.split("post_${postId}_").last(), i))
         }
         generalFilesAdapter.setResult(generalFilesList)
+
+        // for close button
+        binding.closeButton.setOnClickListener { finish() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -69,12 +74,15 @@ class GeneralFilesActivity : AppCompatActivity() {
 
         if (requestCode == ServerUtil.WRITE_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             data?.data?.also { uri ->
+                // save Uri + write
                 generalFilesViewModel.userSelectedUri = uri
                 ServerUtil.writeFileFileToUri(this,
                     generalFilesViewModel.downloadedFilePath!!, generalFilesViewModel.userSelectedUri!!)
 
                 // reset download button
                 generalFilesAdapter.setResult(generalFilesList)
+
+                Toast.makeText(this, this.getText(R.string.download_complete_message), Toast.LENGTH_SHORT).show()
             }
         }
     }

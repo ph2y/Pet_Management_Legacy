@@ -6,6 +6,7 @@ import android.content.res.Resources
 import android.net.Uri
 import android.os.Build
 import android.provider.ContactsContract
+import android.provider.OpenableColumns
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
@@ -187,6 +188,25 @@ class Util {
         fun deleteCopiedFiles(context: Context, directory: String) {
             val dir = File(context.getExternalFilesDir(null).toString() + File.separator + directory)
             dir.deleteRecursively()
+        }
+
+        fun getSelectedFileName(context: Context, uri: Uri): String {
+            var fileName = ""
+            context.contentResolver.query(uri, null, null, null, null).use {
+                if (it != null && it.moveToFirst()) {
+                    var result = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                    if (result == null) {
+                        result = uri.path
+                        val cut = result.lastIndexOf('/')
+                        if (cut != -1) {
+                            result = result.substring(cut + 1)
+                        }
+                    }
+                    fileName = result
+                }
+            }
+
+            return fileName
         }
 
         fun getTemporaryFilesSize(context: Context): Long {

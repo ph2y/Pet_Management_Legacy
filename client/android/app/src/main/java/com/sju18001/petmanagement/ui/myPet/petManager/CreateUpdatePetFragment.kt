@@ -543,9 +543,12 @@ class CreateUpdatePetFragment : Fragment() {
         // get + save pet photo value
         if (resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_PHOTO){
             if (data != null) {
+                // get file name
+                val fileName = Util.getSelectedFileName(requireContext(), data.data!!)
+
                 // copy selected photo and get real path
                 val petPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
-                    data.data!!, CREATE_UPDATE_PET_DIRECTORY)
+                    data.data!!, CREATE_UPDATE_PET_DIRECTORY, fileName)
 
                 // file type exception -> delete copied file + show Toast message
                 if (!Util.isUrlPhoto(petPhotoPathValue)) {

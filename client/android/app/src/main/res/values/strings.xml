@@ -229,6 +229,7 @@
     <string name="delete_post_successful">글 삭제에 성공했어요!</string>
     <string name="post_data_loading_message">글 정보 불러오는 중…</string>
     <string name="empty_post_list_notification">불러올 포스트가 없어요.\n새 포스트를 추가해보세요!</string>
+    <string name="duplicate_file_exception_message">이미 추가된 파일이에요!</string>
 
     <!-- Community Fragment -->
     <string name="comment">댓글</string>
@@ -245,6 +246,7 @@
     <string name="empty_comment_list_notification">아직 댓글이 없어요.\n새 댓글을 추가해보세요!</string>
     <string name="empty_pet_list_for_account_message"> 님의 등록된 펫이 없어요!</string>
     <string name="general_files_dialog_title">일반 첨부파일</string>
+    <string name="download_complete_message">다운로드를 완료했어요!</string>
 
     <!-- Follower/Following Fragment -->
     <string name="follower_following_menu_title">팔로워/팔로잉</string>

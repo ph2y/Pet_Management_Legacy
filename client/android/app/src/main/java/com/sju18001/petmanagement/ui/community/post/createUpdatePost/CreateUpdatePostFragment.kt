@@ -270,9 +270,12 @@ class CreateUpdatePostFragment : Fragment() {
         when(requestCode) {
             PICK_PHOTO -> {
                 if(data != null) {
+                    // get file name
+                    val fileName = Util.getSelectedFileName(requireContext(), data.data!!)
+
                     // copy selected photo and get real path
                     val postPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
-                        data.data!!, CREATE_UPDATE_POST_DIRECTORY)
+                        data.data!!, CREATE_UPDATE_POST_DIRECTORY, fileName)
 
                     // no extension exception
                     if (postPhotoPathValue.isEmpty()) {
@@ -345,9 +348,19 @@ class CreateUpdatePostFragment : Fragment() {
 //            }
             PICK_GENERAL_FILE -> {
                 if(data != null) {
-                    // copy selected photo and get real path
+                    // get file name
+                    val fileName = Util.getSelectedFileName(requireContext(), data.data!!)
+
+                    // duplicate file exception
+                    if (fileName in createUpdatePostViewModel.generalFileNameList) {
+                        Toast.makeText(requireContext(), requireContext()
+                            .getText(R.string.duplicate_file_exception_message), Toast.LENGTH_SHORT).show()
+                        return
+                    }
+
+                    // copy selected general file and get real path
                     val postGeneralFilePathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
-                        data.data!!, CREATE_UPDATE_POST_DIRECTORY)
+                        data.data!!, CREATE_UPDATE_POST_DIRECTORY,fileName)
 
                     // file type exception -> delete copied file + show Toast message
                     if (!Util.isUrlGeneralFile(postGeneralFilePathValue)) {

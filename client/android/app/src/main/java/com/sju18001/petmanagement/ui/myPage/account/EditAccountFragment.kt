@@ -448,9 +448,12 @@ class EditAccountFragment : Fragment() {
         // get + save account photo value
         if(resultCode == AppCompatActivity.RESULT_OK && requestCode == PICK_PHOTO) {
             if (data != null) {
+                // get file name
+                val fileName = Util.getSelectedFileName(requireContext(), data.data!!)
+
                 // copy selected photo and get real path
                 val accountPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
-                    data.data!!, EDIT_ACCOUNT_DIRECTORY)
+                    data.data!!, EDIT_ACCOUNT_DIRECTORY, fileName)
 
                 // file type exception -> delete copied file + show Toast message
                 if (!Util.isUrlPhoto(accountPhotoPathValue)) {

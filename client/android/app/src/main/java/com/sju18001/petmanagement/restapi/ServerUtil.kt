@@ -52,25 +52,10 @@ class ServerUtil {
             return RequestBody.create(MediaType.parse("application/json; charset=UTF-8"), "{}")
         }
 
-        fun createCopyAndReturnRealPathLocal(context: Context, uri: Uri, directory: String): String {
+        fun createCopyAndReturnRealPathLocal(context: Context, uri: Uri, directory: String, fileName: String): String {
             val mimeTypeMap = MimeTypeMap.getSingleton()
             if (mimeTypeMap.getExtensionFromMimeType(context.contentResolver.getType(uri)) == null) {
                 return ""
-            }
-
-            var fileName = ""
-            context.contentResolver.query(uri, null, null, null, null).use {
-                if (it != null && it.moveToFirst()) {
-                    var result = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
-                    if (result == null) {
-                        result = uri.path
-                        val cut = result.lastIndexOf('/')
-                        if (cut != -1) {
-                            result = result.substring(cut + 1)
-                        }
-                    }
-                    fileName = result
-                }
             }
 
             val baseDirectory = context.getExternalFilesDir(null).toString() + File.separator + directory

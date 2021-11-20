@@ -217,13 +217,15 @@
                     android:id="@+id/photos_recycler_view"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_toEndOf="@id/photo_usage_layout"
                     android:layout_alignParentEnd="true"
-                    android:orientation="horizontal"/>
+                    android:layout_toEndOf="@id/photo_usage_layout"
+                    android:orientation="horizontal" />
 
             </RelativeLayout>
 
+            <!-- TODO: make this visible -->
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/upload_video_layout"
                 android:layout_width="match_parent"
                 android:layout_height="90dp"
@@ -307,7 +309,9 @@
 
             </RelativeLayout>
 
+            <!-- TODO: make this visible -->
             <RelativeLayout
+                android:visibility="gone"
                 android:id="@+id/upload_audio_layout"
                 android:layout_width="match_parent"
                 android:layout_height="90dp"
