@@ -941,7 +941,6 @@ class CreateUpdatePostFragment : Fragment() {
                     photoAdapter.setResult(createUpdatePostViewModel.photoThumbnailList)
                     updatePhotoUsage()
 
-                    // TODO: this logic might change after video and audio fetch logic is implemented
                     // set fetched to true
                     createUpdatePostViewModel.fetchedPostPhotoDataForUpdate = true
                     if (createUpdatePostViewModel.fetchedPostPhotoDataForUpdate &&
@@ -949,7 +948,6 @@ class CreateUpdatePostFragment : Fragment() {
                         createUpdatePostViewModel.fetchedPostDataForUpdate = true
                     }
 
-                    // TODO: this logic might change after video and audio fetch logic is implemented
                     // set views with post data
                     if (createUpdatePostViewModel.fetchedPostDataForUpdate) {
                         // hide loading screen + enable button
@@ -988,7 +986,6 @@ class CreateUpdatePostFragment : Fragment() {
                     generalFilesAdapter.setResult(createUpdatePostViewModel.generalFileNameList)
                     updateGeneralUsage()
 
-                    // TODO: this logic might change after video and audio fetch logic is implemented
                     // set fetched to true
                     createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate = true
                     if (createUpdatePostViewModel.fetchedPostPhotoDataForUpdate &&
@@ -996,7 +993,6 @@ class CreateUpdatePostFragment : Fragment() {
                         createUpdatePostViewModel.fetchedPostDataForUpdate = true
                     }
 
-                    // TODO: this logic might change after video and audio fetch logic is implemented
                     // set views with post data
                     if (createUpdatePostViewModel.fetchedPostDataForUpdate) {
                         // hide loading screen + enable button
@@ -1065,7 +1061,7 @@ class CreateUpdatePostFragment : Fragment() {
 
             // TODO: fetch post audio data
 
-            // if no attachments TODO: this logic might change after video and audio fetch logic is implemented
+            // if no attachments
             if (post.mediaAttachments == null && post.fileAttachments == null) {
                 // show loading screen + disable button
                 binding.createEditPostMainScrollView.visibility = View.VISIBLE
