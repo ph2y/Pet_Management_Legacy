@@ -2,13 +2,11 @@ package com.sju18001.petmanagement.restapi
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
+import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
-import android.widget.Toast
 import com.sju18001.petmanagement.controller.Util
 import okhttp3.MediaType
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -52,12 +50,29 @@ class ServerUtil {
 
         fun createCopyAndReturnRealPathLocal(context: Context, uri: Uri, directory: String): String {
             val mimeTypeMap = MimeTypeMap.getSingleton()
-            val extension = mimeTypeMap.getExtensionFromMimeType(context.contentResolver.getType(uri))!!
+            if (mimeTypeMap.getExtensionFromMimeType(context.contentResolver.getType(uri)) == null) {
+                return ""
+            }
+
+            var fileName = ""
+            context.contentResolver.query(uri, null, null, null, null).use {
+                if (it != null && it.moveToFirst()) {
+                    var result = it.getString(it.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                    if (result == null) {
+                        result = uri.path
+                        val cut = result.lastIndexOf('/')
+                        if (cut != -1) {
+                            result = result.substring(cut + 1)
+                        }
+                    }
+                    fileName = result
+                }
+            }
 
             val baseDirectory = context.getExternalFilesDir(null).toString() + File.separator + directory
             if(!File(baseDirectory).exists()) { File(baseDirectory).mkdir() }
 
-            val newFilePath = baseDirectory + File.separator + System.currentTimeMillis() + '.' + extension
+            val newFilePath = baseDirectory + File.separator + fileName
             val newFile = File(newFilePath)
 
             val inputStream = context.contentResolver.openInputStream(uri)

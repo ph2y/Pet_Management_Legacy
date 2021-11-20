@@ -11,7 +11,6 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -237,8 +236,7 @@ class CreateUpdatePostFragment : Fragment() {
             createUpdatePostViewModel.postEditText = createUpdatePostViewModel.postEditText.trim()
             binding.postEditText.setText(createUpdatePostViewModel.postEditText)
 
-            if(createUpdatePostViewModel.photoThumbnailList.size == 0 &&
-                createUpdatePostViewModel.postEditText == "") {
+            if(isPostEmpty()) {
                 Toast.makeText(context, context?.getText(R.string.post_invalid_message), Toast.LENGTH_LONG).show()
             }
             else if(createUpdatePostViewModel.petId == null) {
@@ -275,6 +273,12 @@ class CreateUpdatePostFragment : Fragment() {
                     // copy selected photo and get real path
                     val postPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
                         data.data!!, CREATE_UPDATE_POST_DIRECTORY)
+
+                    // no extension exception
+                    if (postPhotoPathValue.isEmpty()) {
+                        Toast.makeText(context, context?.getText(R.string.photo_file_type_exception_message), Toast.LENGTH_LONG).show()
+                        return
+                    }
 
                     // file type exception -> delete copied file + show Toast message
                     if (!Util.isUrlPhoto(postPhotoPathValue)) {
@@ -356,7 +360,8 @@ class CreateUpdatePostFragment : Fragment() {
                     createUpdatePostViewModel.generalFilePathList.add(postGeneralFilePathValue)
 
                     // save file name
-                    val generalFileName = createUpdatePostViewModel.generalFilePathList.last() // TODO: test and fix this
+                    val generalFileName = createUpdatePostViewModel.generalFilePathList.last()
+                        .substring(createUpdatePostViewModel.generalFilePathList.last().lastIndexOf("/") + 1)
                     createUpdatePostViewModel.generalFileNameList.add(generalFileName)
 
                     // update RecyclerView
@@ -578,6 +583,32 @@ class CreateUpdatePostFragment : Fragment() {
         binding.hashtagUsage.text = hashtagUsageText
     }
 
+    private fun addHashtag(){
+        createUpdatePostViewModel.hashtagEditText = createUpdatePostViewModel.hashtagEditText.trim()
+        binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
+
+        if(binding.hashtagInputEditText.text.toString() == "") {
+            Toast.makeText(context, context?.getText(R.string.hashtag_empty_message), Toast.LENGTH_LONG).show()
+        }
+        else if(createUpdatePostViewModel.hashtagList.size == 5) {
+            Toast.makeText(context, context?.getText(R.string.hashtag_usage_full_message), Toast.LENGTH_LONG).show()
+        }
+        else {
+            // save hashtag
+            val hashtag = binding.hashtagInputEditText.text.toString()
+            createUpdatePostViewModel.hashtagList.add(hashtag)
+
+            // update RecyclerView
+            hashtagAdapter.notifyItemInserted(createUpdatePostViewModel.hashtagList.size)
+            binding.hashtagRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.hashtagList.size - 1)
+
+            // reset hashtag EditText
+            binding.hashtagInputEditText.setText("")
+
+            updateHashtagUsage()
+        }
+    }
+
     // set button to loading
     private fun lockViews() {
         binding.confirmButton.visibility = View.GONE
@@ -592,6 +623,11 @@ class CreateUpdatePostFragment : Fragment() {
         binding.postEditText.isEnabled = false
         binding.photosRecyclerView.let {
             for(i in 0..photoAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
+            }
+        }
+        binding.generalRecyclerView.let {
+            for(i in 0..generalFilesAdapter.itemCount) {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
             }
         }
@@ -625,33 +661,18 @@ class CreateUpdatePostFragment : Fragment() {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
             }
         }
+        binding.hashtagRecyclerView.let {
+            for(i in 0..hashtagAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
+            }
+        }
         binding.backButton.isEnabled = true
     }
 
-    private fun addHashtag(){
-        createUpdatePostViewModel.hashtagEditText = createUpdatePostViewModel.hashtagEditText.trim()
-        binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
-
-        if(binding.hashtagInputEditText.text.toString() == "") {
-            Toast.makeText(context, context?.getText(R.string.hashtag_empty_message), Toast.LENGTH_LONG).show()
-        }
-        else if(createUpdatePostViewModel.hashtagList.size == 5) {
-            Toast.makeText(context, context?.getText(R.string.hashtag_usage_full_message), Toast.LENGTH_LONG).show()
-        }
-        else {
-            // save hashtag
-            val hashtag = binding.hashtagInputEditText.text.toString()
-            createUpdatePostViewModel.hashtagList.add(hashtag)
-
-            // update RecyclerView
-            hashtagAdapter.notifyItemInserted(createUpdatePostViewModel.hashtagList.size)
-            binding.hashtagRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.hashtagList.size - 1)
-
-            // reset hashtag EditText
-            binding.hashtagInputEditText.setText("")
-
-            updateHashtagUsage()
-        }
+    private fun isPostEmpty(): Boolean {
+        return createUpdatePostViewModel.photoThumbnailList.size == 0 &&
+                createUpdatePostViewModel.generalFileNameList.size == 0 &&
+                createUpdatePostViewModel.postEditText.trim().isEmpty()
     }
 
     private fun isApiLoadComplete(): Boolean {
@@ -870,8 +891,7 @@ class CreateUpdatePostFragment : Fragment() {
             // create file list
             val fileList: ArrayList<MultipartBody.Part> = ArrayList()
             for(i in 0 until createUpdatePostViewModel.generalFilePathList.size) {
-                val fileName = "file_$i" + createUpdatePostViewModel.generalFilePathList[i]
-                    .substring(createUpdatePostViewModel.generalFilePathList[i].lastIndexOf("."))
+                val fileName = createUpdatePostViewModel.generalFileNameList[i]
 
                 fileList.add(MultipartBody.Part.createFormData("fileList", fileName,
                     RequestBody.create(MediaType.parse("multipart/form-data"), File(createUpdatePostViewModel.generalFilePathList[i]))))
@@ -945,12 +965,12 @@ class CreateUpdatePostFragment : Fragment() {
         }
     }
 
-    private fun fetchPostGeneralData(postGeneral: Array<FileMetaData>) {
+    private fun fetchPostGeneralData(postId: Long, postGeneral: Array<FileMetaData>) {
         for(index in postGeneral.indices) {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .fetchPostFileReq(FetchPostFileReqDto(createUpdatePostViewModel.postId!!, index))
             ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
-                // get file extension
+                // get file extension and name
                 val extension = postGeneral[index].url.split('.').last()
 
                 // copy file and get real path
@@ -959,7 +979,7 @@ class CreateUpdatePostFragment : Fragment() {
                     ServerUtil.createCopyAndReturnRealPathServer(requireContext(), generalFileByteArray, extension, CREATE_UPDATE_POST_DIRECTORY)
 
                 // save general file name
-                val generalFileName = createUpdatePostViewModel.generalFilePathList[index] // TODO: test and fix this
+                val generalFileName = postGeneral[index].url.split("post_${postId}_").last()
                 createUpdatePostViewModel.generalFileNameList[index] = generalFileName
 
                 // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
@@ -1037,7 +1057,7 @@ class CreateUpdatePostFragment : Fragment() {
                     createUpdatePostViewModel.generalFileNameList.add("")
                 }
 
-                fetchPostGeneralData(postGeneral)
+                fetchPostGeneralData(post.id, postGeneral)
             }
             else {
                 createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate = true
