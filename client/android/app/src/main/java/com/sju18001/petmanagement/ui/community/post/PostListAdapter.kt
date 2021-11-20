@@ -28,6 +28,7 @@ interface PostListAdapterInterface{
     fun setAccountPhoto(id: Long, holder: PostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: PostListAdapter.ViewHolder)
     fun setPostMedia(holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String, dummyImageView: ConstraintLayout)
+    fun startGeneralFilesActivity(postId: Long)
     fun getContext(): Context
 }
 
@@ -52,6 +53,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         val createLikeButton: ImageButton = view.findViewById(R.id.create_like_button)
         val deleteLikeButton: ImageButton = view.findViewById(R.id.delete_like_button)
         val commentButton: ImageButton = view.findViewById(R.id.comment_button)
+        val generalFilesButton: ImageButton = view.findViewById(R.id.general_files_button)
         val likeCountTextView: TextView = view.findViewById(R.id.like_count)
     }
 
@@ -90,6 +92,11 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
             showDeleteLikeButton(holder)
         }else{
             showCreateLikeButton(holder)
+        }
+
+        // set general files button
+        if (!data.fileAttachments.isNullOrEmpty()) {
+            holder.generalFilesButton.visibility = View.VISIBLE
         }
 
         // 저장된 데이터에 따라, ViewPager, Tag, ViewMore 셋팅
@@ -177,6 +184,11 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         // 좋아요 취소 버튼
         holder.deleteLikeButton.setOnClickListener {
             communityPostListAdapterInterface.deleteLike(item.id, holder, position)
+        }
+
+        // general files button
+        holder.generalFilesButton.setOnClickListener {
+            communityPostListAdapterInterface.startGeneralFilesActivity(item.id)
         }
 
         // ... 버튼 -> Dialog 띄우기

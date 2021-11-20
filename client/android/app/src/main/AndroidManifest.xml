@@ -21,7 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetManagement">
 
-        <activity android:name=".ui.community.post.PostGeneralFilesActivity"
+        <activity android:name=".ui.community.post.GeneralFilesActivity"
             android:theme="@style/Theme.AppCompat.DayNight.Dialog" />
         <activity android:name=".ui.community.followerFollowing.SearchActivity"
             android:theme="@style/Theme.AppCompat.DayNight.Dialog" />
