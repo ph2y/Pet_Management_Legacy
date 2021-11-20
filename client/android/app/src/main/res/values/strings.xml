@@ -244,6 +244,7 @@
     <string name="no_more_reply">모든 답글을 불러왔습니다.</string>
     <string name="empty_comment_list_notification">아직 댓글이 없어요.\n새 댓글을 추가해보세요!</string>
     <string name="empty_pet_list_for_account_message"> 님의 등록된 펫이 없어요!</string>
+    <string name="general_files_dialog_title">일반 첨부파일</string>
 
     <!-- Follower/Following Fragment -->
     <string name="follower_following_menu_title">팔로워/팔로잉</string>

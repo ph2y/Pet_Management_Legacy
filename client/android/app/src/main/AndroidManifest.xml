@@ -21,17 +21,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PetManagement">
 
+        <activity android:name=".ui.community.post.PostGeneralFilesActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog" />
         <activity android:name=".ui.community.followerFollowing.SearchActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.Dialog"/>
+            android:theme="@style/Theme.AppCompat.DayNight.Dialog" />
         <activity android:name=".ui.community.followerFollowing.FollowerFollowingActivity" />
         <activity android:name=".ui.community.comment.updateComment.UpdateCommentActivity" />
         <activity android:name=".ui.community.comment.CommentActivity" />
-        <activity android:name="com.sju18001.petmanagement.ui.community.post.createUpdatePost.CreateUpdatePostActivity" />
+        <activity android:name=".ui.community.post.createUpdatePost.CreateUpdatePostActivity" />
         <activity android:name=".ui.welcomePage.WelcomePageActivity" />
         <activity android:name=".ui.login.LoginActivity" />
         <activity
             android:name=".SplashActivity"
-            android:theme="@style/SplashTheme" >
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
