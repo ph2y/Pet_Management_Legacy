@@ -28,7 +28,7 @@ interface PostListAdapterInterface{
     fun setAccountPhoto(id: Long, holder: PostListAdapter.ViewHolder)
     fun setAccountDefaultPhoto(holder: PostListAdapter.ViewHolder)
     fun setPostMedia(holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder, id: Long, index: Int, url: String, dummyImageView: ConstraintLayout)
-    fun startGeneralFilesActivity(postId: Long)
+    fun startGeneralFilesActivity(postId: Long, fileAttachments: String)
     fun getContext(): Context
 }
 
@@ -188,7 +188,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
 
         // general files button
         holder.generalFilesButton.setOnClickListener {
-            communityPostListAdapterInterface.startGeneralFilesActivity(item.id)
+            communityPostListAdapterInterface.startGeneralFilesActivity(item.id, item.fileAttachments!!)
         }
 
         // ... 버튼 -> Dialog 띄우기

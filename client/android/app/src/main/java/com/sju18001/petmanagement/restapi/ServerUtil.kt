@@ -1,6 +1,8 @@
 package com.sju18001.petmanagement.restapi
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
@@ -15,6 +17,8 @@ import java.io.FileOutputStream
 
 class ServerUtil {
     companion object{
+        const val WRITE_REQUEST_CODE = 0
+
         fun <T> enqueueApiCall(
             call: Call<T>,
             getIsViewDestroyed: ()-> Boolean,
@@ -99,6 +103,33 @@ class ServerUtil {
             outputStream.close()
 
             return newFile.absolutePath
+        }
+
+        fun getUriFromUser(activity: Activity, fileName: String) {
+            // get MIME type
+            val mimeTypeMap = MimeTypeMap.getSingleton()
+            val mimeType = mimeTypeMap.getMimeTypeFromExtension(fileName.split('.').last())
+
+            // get Uri from user
+            val intent = Intent(Intent.ACTION_CREATE_DOCUMENT).apply {
+                type = mimeType
+                addCategory(Intent.CATEGORY_OPENABLE)
+                putExtra(Intent.EXTRA_TITLE, fileName)
+            }
+            activity.startActivityForResult(intent, WRITE_REQUEST_CODE)
+        }
+
+        fun writeFileFileToUri(context: Context, downloadedFilePath: String, uri: Uri) {
+            context.contentResolver.openFileDescriptor(uri, "w").use { pfd->
+                FileOutputStream(pfd!!.fileDescriptor).use { fos ->
+                    val inputStream = context.contentResolver.openInputStream(Uri.fromFile(File(downloadedFilePath)))
+                    val buffer = ByteArray(1024)
+                    var len: Int
+                    while (inputStream!!.read(buffer).also { len = it } > 0) fos.write(buffer, 0, len)
+                    fos.close()
+                    inputStream.close()
+                }
+            }
         }
     }
 }

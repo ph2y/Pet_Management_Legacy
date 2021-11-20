@@ -316,9 +316,10 @@ class PostFragment : Fragment() {
                 }, { dummyImageView.visibility = View.GONE }, { dummyImageView.visibility = View.GONE })
             }
 
-            override fun startGeneralFilesActivity(postId: Long) {
+            override fun startGeneralFilesActivity(postId: Long, fileAttachments: String) {
                 val generalFilesActivityIntent = Intent(context, GeneralFilesActivity::class.java)
                 generalFilesActivityIntent.putExtra("postId", postId)
+                generalFilesActivityIntent.putExtra("fileAttachments", fileAttachments)
                 startActivity(generalFilesActivityIntent)
             }
 
