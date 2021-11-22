@@ -76,7 +76,7 @@ class GeneralFilesActivity : AppCompatActivity() {
             data?.data?.also { uri ->
                 // save Uri + write
                 generalFilesViewModel.userSelectedUri = uri
-                ServerUtil.writeFileFileToUri(this,
+                ServerUtil.writeFileToUri(this,
                     generalFilesViewModel.downloadedFilePath!!, generalFilesViewModel.userSelectedUri!!)
 
                 // reset download button

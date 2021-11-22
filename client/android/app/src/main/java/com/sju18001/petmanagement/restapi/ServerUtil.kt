@@ -104,7 +104,7 @@ class ServerUtil {
             activity.startActivityForResult(intent, WRITE_REQUEST_CODE)
         }
 
-        fun writeFileFileToUri(context: Context, downloadedFilePath: String, uri: Uri) {
+        fun writeFileToUri(context: Context, downloadedFilePath: String, uri: Uri) {
             context.contentResolver.openFileDescriptor(uri, "w").use { pfd->
                 FileOutputStream(pfd!!.fileDescriptor).use { fos ->
                     val inputStream = context.contentResolver.openInputStream(Uri.fromFile(File(downloadedFilePath)))
