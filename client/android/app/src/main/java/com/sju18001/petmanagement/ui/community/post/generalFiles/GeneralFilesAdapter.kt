@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.community.post
+package com.sju18001.petmanagement.ui.community.post.generalFiles
 
 import android.app.Activity
 import android.view.LayoutInflater
@@ -28,7 +28,7 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
         val downloadProgressBar: ProgressBar = itemView.findViewById(R.id.download_progress_bar)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GeneralFilesAdapter.HistoryListViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.post_general_file_item, parent, false)
         return HistoryListViewHolder(itemView)

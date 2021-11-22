@@ -12,8 +12,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.Toast
 import android.widget.VideoView
 import androidx.activity.result.ActivityResult
@@ -36,6 +34,7 @@ import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.community.CommunityViewModel
 import com.sju18001.petmanagement.ui.community.comment.CommentActivity
 import com.sju18001.petmanagement.ui.community.post.createUpdatePost.CreateUpdatePostActivity
+import com.sju18001.petmanagement.ui.community.post.generalFiles.GeneralFilesActivity
 import java.io.File
 import java.io.FileOutputStream
 

@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.community.post
+package com.sju18001.petmanagement.ui.community.post.generalFiles
 
 import android.app.Activity
 import android.content.Intent

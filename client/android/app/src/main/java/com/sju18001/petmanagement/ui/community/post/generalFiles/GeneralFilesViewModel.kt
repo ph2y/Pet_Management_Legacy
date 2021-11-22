@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.community.post
+package com.sju18001.petmanagement.ui.community.post.generalFiles
 
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
