@@ -669,8 +669,8 @@ class CreateUpdatePostFragment : Fragment() {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
             }
         }
-        binding.hashtagRecyclerView.let {
-            for(i in 0..hashtagAdapter.itemCount) {
+        binding.generalRecyclerView.let {
+            for(i in 0..generalFilesAdapter.itemCount) {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
             }
         }
