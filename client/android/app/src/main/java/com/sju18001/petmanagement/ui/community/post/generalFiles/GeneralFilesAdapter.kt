@@ -52,7 +52,12 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
             holder.downloadButton.visibility = View.INVISIBLE
             holder.downloadProgressBar.visibility = View.VISIBLE
 
-            fetchGeneralFile(resultList[position].postId, resultList[position].fileId, resultList[position].name, true)
+            fetchGeneralFile(resultList[position].postId, resultList[position].fileId, resultList[position].name, true) {
+                Log.e("ASD", "ASD")
+                holder.generalFileName.isClickable = true
+                holder.downloadButton.visibility = View.VISIBLE
+                holder.downloadProgressBar.visibility = View.INVISIBLE
+            }
         }
 
         holder.downloadButton.setOnClickListener {
@@ -61,11 +66,14 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
             holder.downloadProgressBar.visibility = View.VISIBLE
 
             // fetch file + write
-            fetchGeneralFile(resultList[position].postId, resultList[position].fileId, resultList[position].name, false)
+            fetchGeneralFile(resultList[position].postId, resultList[position].fileId, resultList[position].name, false) {
+                holder.downloadButton.visibility = View.VISIBLE
+                holder.downloadProgressBar.visibility = View.INVISIBLE
+            }
         }
     }
 
-    private fun fetchGeneralFile(postId: Long, fileId: Int, fileName: String, isExecutionOnly: Boolean) {
+    private fun fetchGeneralFile(postId: Long, fileId: Int, fileName: String, isExecutionOnly: Boolean, callback:()->Unit) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(activity)!!)
             .fetchPostFileReq(FetchPostFileReqDto(postId, fileId))
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, activity, { response ->
@@ -82,7 +90,9 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
                 // get Uri from user + write file
                 ServerUtil.getUriFromUser(activity, fileName)
             }
-        }, {}, {})
+
+            callback.invoke()
+        }, {callback.invoke()}, {callback.invoke()})
     }
 
     private fun executeByteArrayAsFile(extension: String, byteArray: ByteArray) {
