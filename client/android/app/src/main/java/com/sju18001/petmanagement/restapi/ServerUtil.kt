@@ -84,7 +84,7 @@ class ServerUtil {
             val newFilePath = baseDirectory + File.separator + System.currentTimeMillis() + '.' + extension
             val newFile = writeAndGetFile(byteArray, newFilePath)
 
-            return FileProvider.getUriForFile(context, "com.sju18001.petmanagement.fileprovider", newFile)
+            return FileProvider.getUriForFile(context, "${context.applicationInfo.packageName}.fileprovider", newFile)
         }
 
         fun createCopyAndReturnRealPathServer(context: Context, byteArray: ByteArray, extension: String, directory: String): String {
