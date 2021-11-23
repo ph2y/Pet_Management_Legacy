@@ -50,7 +50,7 @@ class PetProfileFragment : Fragment(){
     // true: 기본 상태, false: 특정 뷰들이 GONE인 상태
     private var isViewDetailed: Boolean = true
 
-    private var backButtonLayoutHeight = 0
+    private var topFixedLayoutHeight = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -97,8 +97,8 @@ class PetProfileFragment : Fragment(){
 
             // Set views
             binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
-            binding.backButtonLayout.doOnLayout {
-                backButtonLayoutHeight = it.measuredHeight
+            binding.topFixedLayout.doOnLayout {
+                topFixedLayoutHeight = it.measuredHeight
                 binding.petMessage.doOnPreDraw { binding.buttonsLayout.doOnPreDraw {
                     setViewsForDetail(true)
                 }}
@@ -259,8 +259,8 @@ class PetProfileFragment : Fragment(){
 
         // Set views
         binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
-        binding.backButtonLayout.doOnLayout {
-            backButtonLayoutHeight = it.measuredHeight
+        binding.topFixedLayout.doOnLayout {
+            topFixedLayoutHeight = it.measuredHeight
             binding.petMessage.doOnPreDraw { binding.buttonsLayout.doOnPreDraw {
                 setViewsForDetail(true)
             }}
@@ -406,12 +406,10 @@ class PetProfileFragment : Fragment(){
         setPhotoViews()
         binding.petName.text = myPetViewModel.petNameValueProfile
         binding.petBirth.text = myPetViewModel.petBirthValueProfile
-        binding.petSpecies.text = myPetViewModel.petSpeciesValueProfile
-        val petBreed = '(' + myPetViewModel.petBreedValueProfile + ')'
-        binding.petBreed.text = petBreed
-        val petGenderAndAge = myPetViewModel.petGenderValueProfile + " / " + myPetViewModel.petAgeValueProfile + '세'
-        binding.petGenderAndAge.text = petGenderAndAge
-        binding.petMessage.text = myPetViewModel.petMessageValueProfile
+        binding.petBreed.text = myPetViewModel.petBreedValueProfile
+        binding.petGender.text = myPetViewModel.petGenderValueProfile
+        binding.petAge.text = myPetViewModel.petAgeValueProfile + "살"
+        binding.petMessage.text = "\" " + myPetViewModel.petMessageValueProfile + " \""
         binding.representativePetIcon.visibility = if (myPetViewModel.isRepresentativePetProfile) View.VISIBLE else View.INVISIBLE
     }
 
@@ -554,7 +552,7 @@ class PetProfileFragment : Fragment(){
         isViewDetailed = flag
 
         if(isViewDetailed){
-            binding.backButtonLayout.visibility = View.VISIBLE
+            binding.topFixedLayout.visibility = View.VISIBLE
             if (myPetViewModel.fragmentType == "pet_profile_community") {
                 binding.usernameAndPetsLayout.visibility = View.VISIBLE
             }
@@ -569,10 +567,10 @@ class PetProfileFragment : Fragment(){
             }
 
             binding.petProfileMainScrollView.scrollTo(0, 0)
-            (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = backButtonLayoutHeight
+            (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = topFixedLayoutHeight
 
         }else{
-            binding.backButtonLayout.visibility = View.GONE
+            binding.topFixedLayout.visibility = View.GONE
             binding.usernameAndPetsLayout.visibility = View.GONE
             binding.petMessage.visibility = View.GONE
             binding.buttonsLayout.visibility = View.GONE
