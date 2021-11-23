@@ -81,16 +81,17 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
     }
 
     private fun executeByteArrayAsFile(extension: String, byteArray: ByteArray) {
-        val intent = Intent()
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.action = Intent.ACTION_VIEW
-
         val mimeTypeMap = MimeTypeMap.getSingleton()
         val mimeType = mimeTypeMap.getMimeTypeFromExtension(extension)
         val contentUri = ServerUtil.createCopyAndReturnContentUri(activity, byteArray, extension, GENERAL_FILES_ACTIVITY_DIRECTORY)
 
+        val intent = Intent()
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.action = Intent.ACTION_VIEW
+        intent.setDataAndType(contentUri, mimeType)
+
         try{
-            intent.setDataAndType(contentUri, mimeType)
             activity.startActivity(intent)
         } catch (e:Exception){
             // 파일 타입을 지원하지 않는 경우(ex. hwp)
