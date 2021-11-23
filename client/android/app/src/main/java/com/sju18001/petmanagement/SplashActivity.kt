@@ -18,8 +18,12 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SplashActivity: AppCompatActivity() {
+    private var isViewDestroyed = false
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        isViewDestroyed = false
 
         // load preference values
         val sharedPref = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
@@ -32,34 +36,26 @@ class SplashActivity: AppCompatActivity() {
         validateTokenAndLogin()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        isViewDestroyed = true
+    }
+
     private fun validateTokenAndLogin() {
         if (SessionManager.fetchUserToken(applicationContext) != null) {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(applicationContext)!!).fetchAccountReq(ServerUtil.getEmptyBody())
-            call.enqueue(object: Callback<FetchAccountResDto> {
-                override fun onResponse(
-                    call: Call<FetchAccountResDto>,
-                    response: Response<FetchAccountResDto>
-                ) {
-                    if(response.isSuccessful) { // token is valid -> MainActivity
-                        val intent = Intent(this@SplashActivity, MainActivity::class.java)
-                        response.body()?.run{
-                            val account = Account(id, username, email, phone, null, marketing, nickname, photoUrl, userMessage, representativePetId)
-                            SessionManager.saveLoggedInAccount(this@SplashActivity, account)
+            ServerUtil.enqueueApiCall(call, { isViewDestroyed }, baseContext, { response ->
+                val intent = Intent(this@SplashActivity, MainActivity::class.java)
+                response.body()?.run{
+                    val account = Account(id, username, email, phone, null, marketing, nickname, photoUrl, userMessage, representativePetId)
+                    SessionManager.saveLoggedInAccount(this@SplashActivity, account)
 
-                            startActivity(intent)
-                            finish()
-                        }
-                    }
-                    else { // token not valid -> LoginActivity
-                        startLoginActivityAndFinish()
-                    }
+                    startActivity(intent)
+                    finish()
                 }
-
-                override fun onFailure(call: Call<FetchAccountResDto>, t: Throwable) {
-                    Toast.makeText(this@SplashActivity, t.message.toString(), Toast.LENGTH_LONG).show()
-                    Log.d("error", t.message.toString())
-                }
-            })
+            }, {
+                startLoginActivityAndFinish()
+            }, {})
         }
         else { // token is empty -> LoginActivity
             startLoginActivityAndFinish()
