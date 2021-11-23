@@ -78,6 +78,7 @@ class PetProfileFragment : Fragment(){
         }
         else {
             binding.usernameAndPetsLayout.visibility = View.VISIBLE
+            binding.petInfoLayout.background = null
 
             // for pet spinner
             if (myPetViewModel.fragmentType == "pet_profile_community") {
@@ -405,7 +406,7 @@ class PetProfileFragment : Fragment(){
     private fun setViewsWithPetData() {
         setPhotoViews()
         binding.petName.text = myPetViewModel.petNameValueProfile
-        binding.petBirth.text = myPetViewModel.petBirthValueProfile
+        binding.petBirth.text = if(myPetViewModel.petBirthValueProfile.length == 4) myPetViewModel.petBirthValueProfile + "년생" else myPetViewModel.petBirthValueProfile.substring(2).replace('-', '.')
         binding.petBreed.text = myPetViewModel.petBreedValueProfile
         binding.petGender.text = myPetViewModel.petGenderValueProfile
         binding.petAge.text = myPetViewModel.petAgeValueProfile + "살"
@@ -555,6 +556,7 @@ class PetProfileFragment : Fragment(){
             binding.topFixedLayout.visibility = View.VISIBLE
             if (myPetViewModel.fragmentType == "pet_profile_community") {
                 binding.usernameAndPetsLayout.visibility = View.VISIBLE
+                binding.petInfoLayout.background = null
             }
             if(myPetViewModel.petMessageValueProfile.isNotEmpty()) {
                 binding.petMessage.visibility = View.VISIBLE
