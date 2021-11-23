@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
-    app:cardCornerRadius="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
@@ -19,13 +18,13 @@
             android:layout_alignParentStart="true">
 
             <RelativeLayout
-                android:layout_width="58dp"
-                android:layout_height="58dp">
+                android:layout_width="75dp"
+                android:layout_height="75dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/pet_photo"
-                    android:layout_width="58dp"
-                    android:layout_height="58dp"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
                     app:civ_border_width="1dp"
                     app:civ_border_color="@color/carrot"/>
 
@@ -51,16 +50,26 @@
                 <TextView
                     android:id="@+id/pet_name"
                     android:layout_width="match_parent"
+                    android:paddingLeft="4dp"
                     android:paddingBottom="4dp"
-                    android:textSize="18dp"
+                    android:textSize="20dp"
                     android:singleLine="true"
                     android:layout_height="wrap_content" />
 
                 <TextView
-                    android:id="@+id/pet_birth"
+                    android:id="@+id/pet_message"
                     android:layout_width="wrap_content"
-                    android:textSize="12dp"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="10dp"
+                    android:paddingBottom="8dp"
+                    android:text="♥"
+                    android:textSize="16dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/white"
+                    android:background="@drawable/pet_message_bubble"/>
 
             </LinearLayout>
 
@@ -68,8 +77,8 @@
 
         <ImageView
             android:id="@+id/drag_handle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_baseline_drag_handle_30"/>

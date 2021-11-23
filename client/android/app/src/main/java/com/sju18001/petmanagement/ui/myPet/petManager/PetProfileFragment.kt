@@ -225,13 +225,7 @@ class PetProfileFragment : Fragment(){
             }, {}, {})
         }
         myPetViewModel.petNameValueProfile = pet.name
-        var petBirth = ""
-        petBirth += if (pet.yearOnly!!) {
-            LocalDate.parse(pet.birth).year.toString() + "년생"
-        } else {
-            LocalDate.parse(pet.birth).format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + "생"
-        }
-        myPetViewModel.petBirthValueProfile = petBirth
+        myPetViewModel.petBirthValueProfile = if(pet.yearOnly!!) pet.birth!!.substring(0,4) else pet.birth!!
         myPetViewModel.petSpeciesValueProfile = pet.species
         myPetViewModel.petBreedValueProfile = pet.breed
         val petGender = if(pet.gender) {
@@ -436,11 +430,11 @@ class PetProfileFragment : Fragment(){
         myPetViewModel.petGenderValue = myPetViewModel.petGenderValueProfile == "♀"
         myPetViewModel.petSpeciesValue = myPetViewModel.petSpeciesValueProfile
         myPetViewModel.petBreedValue = myPetViewModel.petBreedValueProfile
-        myPetViewModel.petBirthIsYearOnlyValue = myPetViewModel.petBirthValueProfile.length == 6
+        myPetViewModel.petBirthIsYearOnlyValue = myPetViewModel.petBirthValueProfile.length == 4
         myPetViewModel.petBirthYearValue = myPetViewModel.petBirthValueProfile.substring(0, 4).toInt()
         if(!myPetViewModel.petBirthIsYearOnlyValue) {
-            myPetViewModel.petBirthMonthValue = myPetViewModel.petBirthValueProfile.substring(6, 8).toInt()
-            myPetViewModel.petBirthDateValue = myPetViewModel.petBirthValueProfile.substring(10, 12).toInt()
+            myPetViewModel.petBirthMonthValue = myPetViewModel.petBirthValueProfile.substring(5, 7).toInt()
+            myPetViewModel.petBirthDateValue = myPetViewModel.petBirthValueProfile.substring(8, 10).toInt()
         }
     }
 
