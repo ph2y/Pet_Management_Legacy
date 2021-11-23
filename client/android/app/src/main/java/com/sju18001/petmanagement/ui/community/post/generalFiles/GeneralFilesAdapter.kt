@@ -47,6 +47,11 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
         holder.generalFileName.text = resultList[position].name
 
         holder.generalFileName.setOnClickListener {
+            // set button to downloading
+            holder.generalFileName.isClickable = false
+            holder.downloadButton.visibility = View.INVISIBLE
+            holder.downloadProgressBar.visibility = View.VISIBLE
+
             fetchGeneralFile(resultList[position].postId, resultList[position].fileId, resultList[position].name, true)
         }
 
