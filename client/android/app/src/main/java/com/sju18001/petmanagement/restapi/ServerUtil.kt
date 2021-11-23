@@ -6,6 +6,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
+import androidx.core.content.FileProvider
 import com.sju18001.petmanagement.controller.Util
 import okhttp3.MediaType
 import okhttp3.RequestBody
@@ -76,18 +77,34 @@ class ServerUtil {
             return newFile.absolutePath
         }
 
+        fun createCopyAndReturnContentUri(context: Context, byteArray: ByteArray, extension: String, directory: String): Uri {
+            val baseDirectory = context.getExternalFilesDir(null).toString() + File.separator + directory
+            if(!File(baseDirectory).exists()) { File(baseDirectory).mkdir() }
+
+            val newFilePath = baseDirectory + File.separator + System.currentTimeMillis() + '.' + extension
+            val newFile = writeAndGetFile(byteArray, newFilePath)
+
+            return FileProvider.getUriForFile(context, "com.sju18001.petmanagement.fileprovider", newFile)
+        }
+
         fun createCopyAndReturnRealPathServer(context: Context, byteArray: ByteArray, extension: String, directory: String): String {
             val baseDirectory = context.getExternalFilesDir(null).toString() + File.separator + directory
             if(!File(baseDirectory).exists()) { File(baseDirectory).mkdir() }
 
             val newFilePath = baseDirectory + File.separator + System.currentTimeMillis() + '.' + extension
-            val newFile = File(newFilePath)
+            val newFile = writeAndGetFile(byteArray, newFilePath)
+
+            return newFile.absolutePath
+        }
+
+        fun writeAndGetFile(byteArray: ByteArray, filePath: String): File{
+            val newFile = File(filePath)
 
             val outputStream = FileOutputStream(newFile)
             outputStream.write(byteArray)
             outputStream.close()
 
-            return newFile.absolutePath
+            return newFile
         }
 
         fun getUriFromUser(activity: Activity, fileName: String) {

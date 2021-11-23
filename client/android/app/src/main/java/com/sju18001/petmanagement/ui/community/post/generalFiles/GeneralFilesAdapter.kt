@@ -1,18 +1,27 @@
 package com.sju18001.petmanagement.ui.community.post.generalFiles
 
 import android.app.Activity
+import android.content.Intent
+import android.net.Uri
+import android.provider.DocumentsContract
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import android.widget.ImageButton
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dto.FetchPostFileReqDto
+import java.io.File
+import java.io.FileOutputStream
 
 class GeneralFilesAdapter(private val activity: Activity, private val generalFilesViewModel: GeneralFilesViewModel,
                           private val GENERAL_FILES_ACTIVITY_DIRECTORY: String):
@@ -37,29 +46,56 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
     override fun onBindViewHolder(holder: HistoryListViewHolder, position: Int) {
         holder.generalFileName.text = resultList[position].name
 
+        holder.generalFileName.setOnClickListener {
+            fetchGeneralFile(resultList[position].postId, resultList[position].fileId, resultList[position].name, true)
+        }
+
         holder.downloadButton.setOnClickListener {
             // set button to downloading
             holder.downloadButton.visibility = View.INVISIBLE
             holder.downloadProgressBar.visibility = View.VISIBLE
 
             // fetch file + write
-            fetchGeneralFile(resultList[position].postId, resultList[position].fileId, resultList[position].name)
+            fetchGeneralFile(resultList[position].postId, resultList[position].fileId, resultList[position].name, false)
         }
     }
 
-    private fun fetchGeneralFile(postId: Long, fileId: Int, fileName: String) {
+    private fun fetchGeneralFile(postId: Long, fileId: Int, fileName: String, isExecutionOnly: Boolean) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(activity)!!)
             .fetchPostFileReq(FetchPostFileReqDto(postId, fileId))
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, activity, { response ->
-            // download file + save downloaded path -> write file
             val extension = fileName.split('.').last()
-            generalFilesViewModel.downloadedFilePath = ServerUtil
-                .createCopyAndReturnRealPathServer(activity, response.body()!!.byteStream().readBytes(),
-                    extension, GENERAL_FILES_ACTIVITY_DIRECTORY)
 
-            // get Uri from user + write file
-            ServerUtil.getUriFromUser(activity, fileName)
+            if(isExecutionOnly){
+                executeByteArrayAsFile(extension, response.body()!!.byteStream().readBytes())
+            }else{
+                // download file + save downloaded path -> write file
+                generalFilesViewModel.downloadedFilePath = ServerUtil
+                    .createCopyAndReturnRealPathServer(activity, response.body()!!.byteStream().readBytes(),
+                        extension, GENERAL_FILES_ACTIVITY_DIRECTORY)
+
+                // get Uri from user + write file
+                ServerUtil.getUriFromUser(activity, fileName)
+            }
         }, {}, {})
+    }
+
+    private fun executeByteArrayAsFile(extension: String, byteArray: ByteArray) {
+        val intent = Intent()
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.action = Intent.ACTION_VIEW
+
+        val mimeTypeMap = MimeTypeMap.getSingleton()
+        val mimeType = mimeTypeMap.getMimeTypeFromExtension(extension)
+        val contentUri = ServerUtil.createCopyAndReturnContentUri(activity, byteArray, extension, GENERAL_FILES_ACTIVITY_DIRECTORY)
+
+        try{
+            intent.setDataAndType(contentUri, mimeType)
+            activity.startActivity(intent)
+        } catch (e:Exception){
+            // 파일 타입을 지원하지 않는 경우(ex. hwp)
+            Toast.makeText(activity, activity.getText(R.string.general_file_type_exception_for_start_message), Toast.LENGTH_SHORT).show()
+        }
     }
 
     override fun getItemCount() = resultList.size
