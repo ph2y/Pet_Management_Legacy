@@ -19,8 +19,8 @@ public class JwtTokenUtil {
     // 토큰 생성용 난수 시드값
     private final SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
 
-    // 인증 토큰 유효기간 (6시간)
-    public static final long JWT_TOKEN_VALIDITY = 6 * 60 * 60;
+    // 인증 토큰 유효기간 (한 달)
+    public static final long JWT_TOKEN_VALIDITY = 30 * 24 * 60 * 60;
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getId);
