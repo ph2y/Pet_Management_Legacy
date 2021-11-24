@@ -38,7 +38,7 @@
         android:layout_gravity="end|bottom"
         android:src="@drawable/ic_baseline_add_24"
         android:layout_margin="16dp"
-        app:backgroundTint="@color/carrot"
+        app:backgroundTint="@color/pumpkin"
         app:tint="@color/white"
         />
 
