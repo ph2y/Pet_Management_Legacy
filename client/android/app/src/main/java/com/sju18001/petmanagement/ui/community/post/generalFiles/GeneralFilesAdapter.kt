@@ -53,7 +53,6 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
             holder.downloadProgressBar.visibility = View.VISIBLE
 
             fetchGeneralFile(resultList[position].postId, resultList[position].fileId, resultList[position].name, true) {
-                Log.e("ASD", "ASD")
                 holder.generalFileName.isClickable = true
                 holder.downloadButton.visibility = View.VISIBLE
                 holder.downloadProgressBar.visibility = View.INVISIBLE
