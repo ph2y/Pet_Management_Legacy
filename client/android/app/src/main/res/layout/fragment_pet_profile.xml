@@ -244,7 +244,6 @@
                             android:text="21-09-13"
                             android:textSize="16dp"/>
                     </LinearLayout>
-
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
@@ -252,10 +251,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingTop="4dp"
-                    android:paddingLeft="16dp"
                     android:paddingBottom="12dp"
-                    android:paddingRight="16dp"
-                    android:visibility="gone"
                     app:layout_constraintTop_toBottomOf="@id/pet_info_layout">
 
                     <androidx.appcompat.widget.AppCompatButton
@@ -263,9 +259,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
+                        android:layout_marginStart="12dp"
+                        android:layout_marginEnd="6dp"
                         android:background="@drawable/button_with_radius"
-                        android:textSize="20dp"
+                        android:textSize="18dp"
                         android:text="@string/update_pet_button"/>
 
                     <androidx.appcompat.widget.AppCompatButton
@@ -273,10 +270,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginStart="8dp"
+                        android:layout_marginStart="6dp"
+                        android:layout_marginEnd="12dp"
                         android:textColor="@color/white"
                         android:background="@drawable/button_with_radius_red"
-                        android:textSize="20dp"
+                        android:textSize="18dp"
                         android:text="@string/delete_pet_button"/>
 
                 </LinearLayout>
