@@ -5,15 +5,20 @@ import android.app.AlertDialog
 import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.Bundle
+import android.transition.AutoTransition
+import android.transition.ChangeBounds
+import android.transition.TransitionManager
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.view.doOnLayout
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
@@ -32,10 +37,8 @@ import com.sju18001.petmanagement.ui.community.post.PostFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import java.time.LocalDate
 import java.time.Period
-import java.time.format.DateTimeFormatter
 
 class PetProfileFragment : Fragment(){
-
     // variables for view binding
     private var _binding: FragmentPetProfileBinding? = null
     private val binding get() = _binding!!
@@ -46,6 +49,7 @@ class PetProfileFragment : Fragment(){
     private var isViewDestroyed = false
 
     private val POST_FRAGMENT_TAG = "post_fragment"
+    private val TRANSITION_DURATION = 300L
 
     // true: 기본 상태, false: 특정 뷰들이 GONE인 상태
     private var isViewDetailed: Boolean = true
@@ -553,25 +557,38 @@ class PetProfileFragment : Fragment(){
         isViewDetailed = flag
 
         if(isViewDetailed){
+            // pet_info_layout 애니메이션
+            TransitionManager.beginDelayedTransition(
+                binding.petInfoLayout,
+                AutoTransition().setDuration(TRANSITION_DURATION).setInterpolator(AccelerateDecelerateInterpolator())
+            )
+            ConstraintSet().apply{
+                clone(context, R.layout.pet_info_layout_origin)
+            }.applyTo(binding.petInfoLayout)
+
+
             binding.topFixedLayout.visibility = View.VISIBLE
             if (myPetViewModel.fragmentType == "pet_profile_community") {
                 binding.usernameAndPetsLayout.visibility = View.VISIBLE
-                binding.petInfoLayout.background = null
             }
-            if(myPetViewModel.petMessageValueProfile.isNotEmpty()) {
-                binding.petMessage.visibility = View.VISIBLE
-            }
-            else {
-                binding.petMessage.visibility = View.GONE
-            }
+            binding.petMessage.visibility =
+                if(myPetViewModel.petMessageValueProfile.isNotEmpty()) View.VISIBLE else View.GONE
             if(myPetViewModel.fragmentType == "pet_profile_pet_manager"){
                 binding.buttonsLayout.visibility = View.VISIBLE
             }
 
             binding.petProfileMainScrollView.scrollTo(0, 0)
             (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = topFixedLayoutHeight
-
         }else{
+            // pet_info_layout 애니메이션
+            TransitionManager.beginDelayedTransition(
+                binding.petInfoLayout,
+                ChangeBounds().setDuration(TRANSITION_DURATION).setInterpolator(AccelerateDecelerateInterpolator())
+            )
+            ConstraintSet().apply{
+                clone(context, R.layout.pet_info_layout_alter)
+            }.applyTo(binding.petInfoLayout)
+
             binding.topFixedLayout.visibility = View.GONE
             binding.usernameAndPetsLayout.visibility = View.GONE
             binding.petMessage.visibility = View.GONE
