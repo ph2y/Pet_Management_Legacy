@@ -63,7 +63,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
 
         // Set name, message
         holder.petName.text = currentItem.name
-        if(!currentItem.message.isNullOrEmpty()) holder.petMessage.text
+        holder.petMessage.text = if(currentItem.message.isNullOrEmpty()) context.getString(R.string.filled_heart) else currentItem.message
 
         // handle button for dragging
         holder.dragHandle.setOnLongClickListener(View.OnLongClickListener {

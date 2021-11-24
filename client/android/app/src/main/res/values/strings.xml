@@ -111,6 +111,7 @@
     <string name="set_representative_button">대표로 설정</string>
     <string name="set_representative_message">을(를) 대표펫으로 설정할까요?</string>
     <string name="empty_pet_list_notification">아직 반려동물이 추가되지 않았어요.\n나의 반려동물을 추가해보세요!</string>
+    <string name="filled_heart">♥</string>
 
     <!-- WelcomePage Fragment -->
     <string name="skip_button">SKIP</string>

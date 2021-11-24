@@ -27,9 +27,8 @@ import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import java.lang.reflect.Type
 
 class PetManagerFragment : Fragment(), OnStartDragListener {
-
     // variable for ViewModel
-    val myPetViewModel: MyPetViewModel by activityViewModels()
+    private val myPetViewModel: MyPetViewModel by activityViewModels()
 
     // variables for view binding
     private var _binding: FragmentPetManagerBinding? = null
