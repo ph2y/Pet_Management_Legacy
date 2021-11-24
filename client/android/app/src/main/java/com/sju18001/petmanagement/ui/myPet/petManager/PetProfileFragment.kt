@@ -149,7 +149,6 @@ class PetProfileFragment : Fragment(){
 
                 // open update pet fragment
                 activity?.supportFragmentManager?.beginTransaction()!!
-                    .setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right)
                     .replace(R.id.my_pet_activity_fragment_container, CreateUpdatePetFragment())
                     .addToBackStack(null)
                     .commit()

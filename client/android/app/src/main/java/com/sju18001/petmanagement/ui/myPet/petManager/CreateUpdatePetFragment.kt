@@ -424,7 +424,7 @@ class CreateUpdatePetFragment : Fragment() {
         binding.yearOnlyCheckbox.isEnabled = true
         binding.backButton.isEnabled = true
         binding.petPhotoInput.borderColor = resources.getColor(R.color.carrot)
-        binding.petPhotoInputButton.circleBackgroundColor = resources.getColor(R.color.carrot)
+        binding.petPhotoInputButton.circleBackgroundColor = resources.getColor(R.color.pumpkin)
     }
 
     private fun checkIsValid() {

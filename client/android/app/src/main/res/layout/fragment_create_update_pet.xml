@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:background="@color/pumpkin"
         android:padding="16dp">
 
         <ImageButton
@@ -20,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_baseline_arrow_back_36"
+            android:src="@drawable/ic_baseline_arrow_back_36_white"
             android:background="?selectableItemBackgroundBorderless"/>
 
         <TextView
@@ -31,7 +32,7 @@
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
             android:textSize="20dp"
-            android:textStyle="bold"
+            android:textColor="@color/white"
             android:text="@string/create_pet_title"/>
 
         <RelativeLayout
@@ -51,6 +52,7 @@
                 android:focusable="true"
                 android:padding="4dp"
                 android:text="@string/confirm_create_pet"
+                android:textColor="@color/white"
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
@@ -71,17 +73,18 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/back_button_layout"
         android:layout_alignParentBottom="true"
+        android:background="@drawable/pet_info_layout_background"
         android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp">
 
             <RelativeLayout
                 android:id="@+id/pet_photo_input_layout"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
-                android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toTopOf="@id/pet_info_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -108,8 +111,10 @@
 
             <LinearLayout
                 android:id="@+id/pet_info_layout"
-                android:layout_width="280dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
@@ -122,7 +127,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:paddingBottom="32dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/border_bottom">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -133,7 +140,13 @@
                         android:id="@+id/pet_message_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textPersonName"
+                        android:inputType="textMultiLine"
+                        android:gravity="top"
+                        android:lines="2"
+                        android:textSize="16dp"
+                        android:padding="12dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@drawable/border"
                         android:maxLength="60"
                         android:theme="@style/onSelectedThemeCarrot" />
 
@@ -162,6 +175,10 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_name_hint"
                             android:inputType="textPersonName"
+                            android:textSize="18dp"
+                            android:padding="8dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/border"
                             android:maxLength="20"
                             android:theme="@style/onSelectedThemeCarrot" />
 
@@ -232,6 +249,10 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_species_hint"
                             android:inputType="textPersonName"
+                            android:textSize="18dp"
+                            android:padding="8dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/border"
                             android:nextFocusDown="@id/pet_breed_input"
                             android:maxLength="8"
                             android:theme="@style/onSelectedThemeCarrot" />
@@ -257,6 +278,10 @@
                             android:layout_height="wrap_content"
                             android:hint="@string/pet_breed_hint"
                             android:inputType="textPersonName"
+                            android:textSize="18dp"
+                            android:padding="8dp"
+                            android:layout_marginTop="8dp"
+                            android:background="@drawable/border"
                             android:imeOptions="actionDone"
                             android:maxLength="8"
                             android:theme="@style/onSelectedThemeCarrot" />
@@ -279,7 +304,7 @@
                     <DatePicker
                         android:id="@+id/pet_birth_input"
                         android:layout_width="match_parent"
-                        android:layout_height="175dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="-10dp"
                         android:layout_marginBottom="-10dp"
                         android:calendarViewShown="false"
