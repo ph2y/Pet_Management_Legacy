@@ -65,7 +65,6 @@
                     android:paddingTop="8dp"
                     android:paddingEnd="10dp"
                     android:paddingBottom="8dp"
-                    android:text="♥"
                     android:textSize="16dp"
                     android:textStyle="bold"
                     android:textColor="@color/white"

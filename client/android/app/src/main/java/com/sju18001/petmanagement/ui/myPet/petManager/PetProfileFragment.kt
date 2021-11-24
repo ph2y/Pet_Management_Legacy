@@ -414,7 +414,7 @@ class PetProfileFragment : Fragment(){
         binding.petBreed.text = myPetViewModel.petBreedValueProfile
         binding.petGender.text = myPetViewModel.petGenderValueProfile
         binding.petAge.text = myPetViewModel.petAgeValueProfile + "살"
-        val message = if(myPetViewModel.petMessageValueProfile.isNullOrEmpty()) "♥" else myPetViewModel.petMessageValueProfile
+        val message = if(myPetViewModel.petMessageValueProfile.isNullOrEmpty()) getString(R.string.filled_heart) else myPetViewModel.petMessageValueProfile
         binding.petMessage.text = "\" $message \""
         binding.representativePetIcon.visibility = if (myPetViewModel.isRepresentativePetProfile) View.VISIBLE else View.INVISIBLE
     }
