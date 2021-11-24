@@ -176,6 +176,16 @@ class PetProfileFragment : Fragment(){
         binding.backButton.setOnClickListener {
             activity?.finish()
         }
+
+        // for history text
+        binding.textHistory.setOnClickListener {
+            setViewsForDetail(!isViewDetailed)
+        }
+
+        // for pet information layout
+        binding.petInfoLayout.setOnClickListener {
+            setViewsForDetail(true)
+        }
     }
 
     override fun onResume() {
