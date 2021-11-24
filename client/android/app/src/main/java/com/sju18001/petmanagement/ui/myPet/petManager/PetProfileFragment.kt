@@ -104,9 +104,9 @@ class PetProfileFragment : Fragment(){
             binding.postFragmentContainer.layoutParams.height = Util.getScreenHeightInPixel(requireActivity())
             binding.topFixedLayout.doOnLayout {
                 topFixedLayoutHeight = it.measuredHeight
-                binding.petMessage.doOnPreDraw { binding.buttonsLayout.doOnPreDraw {
+                binding.buttonsLayout.doOnPreDraw {
                     setViewsForDetail(true)
-                }}
+                }
             }
 
             binding.postFragmentContainer.post{
@@ -414,7 +414,8 @@ class PetProfileFragment : Fragment(){
         binding.petBreed.text = myPetViewModel.petBreedValueProfile
         binding.petGender.text = myPetViewModel.petGenderValueProfile
         binding.petAge.text = myPetViewModel.petAgeValueProfile + "살"
-        binding.petMessage.text = "\" " + myPetViewModel.petMessageValueProfile + " \""
+        val message = if(myPetViewModel.petMessageValueProfile.isNullOrEmpty()) "♥" else myPetViewModel.petMessageValueProfile
+        binding.petMessage.text = "\" $message \""
         binding.representativePetIcon.visibility = if (myPetViewModel.isRepresentativePetProfile) View.VISIBLE else View.INVISIBLE
     }
 
@@ -571,8 +572,6 @@ class PetProfileFragment : Fragment(){
             if (myPetViewModel.fragmentType == "pet_profile_community") {
                 binding.usernameAndPetsLayout.visibility = View.VISIBLE
             }
-            binding.petMessage.visibility =
-                if(myPetViewModel.petMessageValueProfile.isNotEmpty()) View.VISIBLE else View.GONE
             if(myPetViewModel.fragmentType == "pet_profile_pet_manager"){
                 binding.buttonsLayout.visibility = View.VISIBLE
             }
@@ -591,7 +590,6 @@ class PetProfileFragment : Fragment(){
 
             binding.topFixedLayout.visibility = View.GONE
             binding.usernameAndPetsLayout.visibility = View.GONE
-            binding.petMessage.visibility = View.GONE
             binding.buttonsLayout.visibility = View.GONE
 
             (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = 0
