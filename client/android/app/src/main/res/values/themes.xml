@@ -2,11 +2,11 @@
     <!-- Base application theme. -->
     <style name="Theme.PetManagement" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/carrot</item>
+        <item name="colorPrimary">@color/pumpkin</item>
         <item name="colorPrimaryVariant">@color/pumpkin</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/carrot</item>
+        <item name="colorSecondary">@color/pumpkin</item>
         <item name="colorSecondaryVariant">@color/pumpkin</item>
         <item name="colorOnSecondary">@color/white</item>
         <!-- Status bar color. -->

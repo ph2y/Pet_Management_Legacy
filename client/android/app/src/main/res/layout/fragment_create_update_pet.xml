@@ -102,7 +102,7 @@
                     android:layout_alignParentRight="true"
                     android:layout_alignParentBottom="true"
                     android:src="@drawable/ic_baseline_add_photo_alternate_48"
-                    app:civ_circle_background_color="@color/carrot" />
+                    app:civ_circle_background_color="@color/pumpkin" />
 
             </RelativeLayout>
 

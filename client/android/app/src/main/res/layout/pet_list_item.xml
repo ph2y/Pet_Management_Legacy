@@ -67,7 +67,7 @@
                     android:paddingBottom="8dp"
                     android:textSize="16dp"
                     android:textStyle="bold"
-                    android:textColor="@color/white"
+                    android:textColor="@color/dark_brown"
                     android:background="@drawable/pet_message_bubble"/>
 
             </LinearLayout>
