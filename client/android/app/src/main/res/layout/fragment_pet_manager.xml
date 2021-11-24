@@ -27,6 +27,7 @@
         android:id="@+id/my_pet_list_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/ghost_white"
         android:clipToPadding="false"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
