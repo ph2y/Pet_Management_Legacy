@@ -22,7 +22,8 @@
         android:id="@+id/pet_schedule_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false"
+        android:background="@color/ghost_white"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_pet_schedule_fab"
