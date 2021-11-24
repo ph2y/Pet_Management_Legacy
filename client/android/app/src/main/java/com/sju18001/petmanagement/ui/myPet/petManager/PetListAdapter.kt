@@ -51,7 +51,14 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
 
         // check if representative pet
         val isRepresentativePet = currentItem.id == SessionManager.fetchLoggedInAccount(context)?.representativePetId?: 0
-        holder.representativePetIcon.visibility = if (isRepresentativePet) View.VISIBLE else View.INVISIBLE
+        if (isRepresentativePet) {
+            holder.representativePetIcon.setImageResource(R.drawable.crown)
+            holder.representativePetIcon.scaleType = ImageView.ScaleType.FIT_XY
+
+            holder.representativePetIcon.visibility = View.VISIBLE
+        } else{
+            holder.representativePetIcon.visibility = View.INVISIBLE
+        }
 
         // set values to views
         if(currentItem.photoUrl != null) {

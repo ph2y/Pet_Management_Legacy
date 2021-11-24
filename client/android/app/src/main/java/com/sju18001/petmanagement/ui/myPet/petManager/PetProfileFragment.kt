@@ -16,6 +16,7 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintSet
@@ -425,7 +426,6 @@ class PetProfileFragment : Fragment(){
         binding.petAge.text = myPetViewModel.petAgeValueProfile + "살"
         val message = if(myPetViewModel.petMessageValueProfile.isNullOrEmpty()) getString(R.string.filled_heart) else myPetViewModel.petMessageValueProfile
         binding.petMessage.text = "\" $message \""
-        binding.representativePetIcon.visibility = if (myPetViewModel.isRepresentativePetProfile) View.VISIBLE else View.INVISIBLE
     }
 
     private fun setViewsWithAuthorData() {
@@ -482,7 +482,10 @@ class PetProfileFragment : Fragment(){
                 // update flag and related views
                 myPetViewModel.isRepresentativePetProfile = true
                 binding.setRepresentativeButton.visibility = View.GONE
+
                 binding.representativePetIcon.visibility = View.VISIBLE
+                binding.representativePetIcon.setImageResource(R.drawable.crown)
+                binding.representativePetIcon.scaleType = ImageView.ScaleType.FIT_XY
 
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
@@ -585,6 +588,15 @@ class PetProfileFragment : Fragment(){
                 binding.buttonsLayout.visibility = View.VISIBLE
             }
 
+            if (myPetViewModel.isRepresentativePetProfile){
+                binding.representativePetIcon.setImageResource(R.drawable.crown)
+                binding.representativePetIcon.scaleType = ImageView.ScaleType.FIT_XY
+
+                binding.representativePetIcon.visibility = View.VISIBLE
+            }else{
+                binding.representativePetIcon.visibility = View.INVISIBLE
+            }
+
             binding.petProfileMainScrollView.scrollTo(0, 0)
             (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = topFixedLayoutHeight
         }else{
@@ -600,6 +612,15 @@ class PetProfileFragment : Fragment(){
             binding.topFixedLayout.visibility = View.GONE
             binding.usernameAndPetsLayout.visibility = View.GONE
             binding.buttonsLayout.visibility = View.GONE
+
+            if (myPetViewModel.isRepresentativePetProfile){
+                binding.representativePetIcon.setImageResource(R.drawable.crown)
+                binding.representativePetIcon.scaleType = ImageView.ScaleType.FIT_XY
+
+                binding.representativePetIcon.visibility = View.VISIBLE
+            }else{
+                binding.representativePetIcon.visibility = View.INVISIBLE
+            }
 
             (binding.petProfileMainScrollView.layoutParams as ViewGroup.MarginLayoutParams).topMargin = 0
         }
