@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -522,13 +523,12 @@ class CreateUpdatePetFragment : Fragment() {
         }
 
         myPetViewModel.petNameValueProfile = binding.petNameInput.text.toString()
-        val petBirthStringValue: String = if (!binding.yearOnlyCheckbox.isChecked){
-            "${binding.petBirthInput.year}년 ${(binding.petBirthInput.month + 1).toString().padStart(2, '0')}" +
-                    "월 ${binding.petBirthInput.dayOfMonth.toString().padStart(2, '0')}일생"
+        myPetViewModel.petBirthValueProfile = if (!binding.yearOnlyCheckbox.isChecked){
+            "${binding.petBirthInput.year}-${(binding.petBirthInput.month + 1).toString().padStart(2, '0')}" +
+                    "-${binding.petBirthInput.dayOfMonth.toString().padStart(2, '0')}"
         } else {
-            "${binding.petBirthInput.year}년생"
+            "${binding.petBirthInput.year}"
         }
-        myPetViewModel.petBirthValueProfile = petBirthStringValue
         myPetViewModel.petSpeciesValueProfile = binding.petSpeciesInput.text.toString()
         myPetViewModel.petBreedValueProfile = binding.petBreedInput.text.toString()
         myPetViewModel.petGenderValueProfile = if(binding.genderFemale.isChecked) { "♀" } else { "♂" }

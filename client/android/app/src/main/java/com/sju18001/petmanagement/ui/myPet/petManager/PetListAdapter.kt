@@ -35,7 +35,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         val petPhoto: ImageView = itemView.findViewById(R.id.pet_photo)
         val representativePetIcon: ImageView = itemView.findViewById(R.id.representative_pet_icon)
         val petName: TextView = itemView.findViewById(R.id.pet_name)
-        val petBirth: TextView = itemView.findViewById(R.id.pet_birth)
+        val petMessage: TextView = itemView.findViewById(R.id.pet_message)
         val dragHandle: ImageView = itemView.findViewById(R.id.drag_handle)
     }
 
@@ -49,25 +49,9 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
     override fun onBindViewHolder(holder: HistoryListViewHolder, position: Int) {
         val currentItem = resultList[position]
 
-        // create strings to display
-        val period = Period.between(LocalDate.parse(currentItem.birth), LocalDate.now())
-
-        var petNameInfo = currentItem.name + " ["
-        petNameInfo += if(currentItem.gender) {
-            holder.itemView.context.getString(R.string.pet_gender_female_symbol) + ' ' + period.years.toString() + "세]"
-        } else {
-            holder.itemView.context.getString(R.string.pet_gender_male_symbol) + ' ' + period.years.toString() + "세]"
-        }
-
-        var petBirth = ""
-        petBirth += if(currentItem.yearOnly!!) {
-            LocalDate.parse(currentItem.birth).year.toString() + "년생"
-        } else {
-            LocalDate.parse(currentItem.birth).format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")) + "생"
-        }
-
         // check if representative pet
         val isRepresentativePet = currentItem.id == SessionManager.fetchLoggedInAccount(context)?.representativePetId?: 0
+        holder.representativePetIcon.visibility = if (isRepresentativePet) View.VISIBLE else View.INVISIBLE
 
         // set values to views
         if(currentItem.photoUrl != null) {
@@ -76,9 +60,10 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         else {
             holder.petPhoto.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
         }
-        holder.representativePetIcon.visibility = if (isRepresentativePet) View.VISIBLE else View.INVISIBLE
-        holder.petName.text = petNameInfo
-        holder.petBirth.text = petBirth
+
+        // Set name, message
+        holder.petName.text = currentItem.name
+        if(!currentItem.message.isNullOrEmpty()) holder.petMessage.text
 
         // handle button for dragging
         holder.dragHandle.setOnLongClickListener(View.OnLongClickListener {
@@ -109,7 +94,10 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
             }
             petProfileIntent.putExtra("petId", currentItem.id)
             petProfileIntent.putExtra("petName", currentItem.name)
-            petProfileIntent.putExtra("petBirth", petBirth)
+            petProfileIntent.putExtra("petBirth",
+                if(currentItem.yearOnly!!) currentItem.birth!!.substring(0, 4)
+                else currentItem.birth
+            )
             petProfileIntent.putExtra("petSpecies", currentItem.species)
             petProfileIntent.putExtra("petBreed", currentItem.breed)
             val petGender = if(currentItem.gender) {
