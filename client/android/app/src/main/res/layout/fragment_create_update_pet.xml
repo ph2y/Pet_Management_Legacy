@@ -146,7 +146,7 @@
                         android:textSize="16dp"
                         android:padding="12dp"
                         android:layout_marginTop="8dp"
-                        android:background="@drawable/border"
+                        android:background="@drawable/border_with_radius_16"
                         android:maxLength="60"
                         android:theme="@style/onSelectedThemeCarrot" />
 
@@ -178,7 +178,7 @@
                             android:textSize="18dp"
                             android:padding="8dp"
                             android:layout_marginTop="8dp"
-                            android:background="@drawable/border"
+                            android:background="@drawable/border_with_radius_8"
                             android:maxLength="20"
                             android:theme="@style/onSelectedThemeCarrot" />
 
@@ -252,7 +252,7 @@
                             android:textSize="18dp"
                             android:padding="8dp"
                             android:layout_marginTop="8dp"
-                            android:background="@drawable/border"
+                            android:background="@drawable/border_with_radius_8"
                             android:nextFocusDown="@id/pet_breed_input"
                             android:maxLength="8"
                             android:theme="@style/onSelectedThemeCarrot" />
@@ -281,7 +281,7 @@
                             android:textSize="18dp"
                             android:padding="8dp"
                             android:layout_marginTop="8dp"
-                            android:background="@drawable/border"
+                            android:background="@drawable/border_with_radius_8"
                             android:imeOptions="actionDone"
                             android:maxLength="8"
                             android:theme="@style/onSelectedThemeCarrot" />
