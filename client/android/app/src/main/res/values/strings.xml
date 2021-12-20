@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">집사의노트</string>
+    <string name="app_name">집사의 노트</string>
     <string name="title_activity_main">MainActivity</string>
 
     <!-- SharedPreferences -->
