@@ -3,10 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/drawable/ic_baseline_check_circle_24.xml" value="0.38229166666666664" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/activity_general_files.xml" value="0.25677083333333334" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/activity_post_general_files.xml" value="0.33" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/activity_search.xml" value="0.33" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/activity_update_post_file.xml" value="0.33242753623188404" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/create_update_post_pet_item.xml" value="0.75" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/follower_following_list_item.xml" value="0.20380434782608695" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_create_update_pet.xml" value="0.2" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_create_update_post.xml" value="0.33" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_post.xml" value="0.3546195652173913" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/pet_schedule_list_item.xml" value="0.3546195652173913" />
