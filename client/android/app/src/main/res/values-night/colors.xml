@@ -4,4 +4,6 @@
     <color name="white">#FF000000</color>
     <color name="carrot">#FFBB86FC</color>
     <color name="pumpkin">#FF3700B3</color>
+    <color name="light_pumpkin">#6A40C6</color>
+    <color name="ghost_white">#070700</color>
 </resources>
