@@ -31,6 +31,7 @@
             android:layout_width="144dp"
             android:gravity="center_horizontal"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="@string/app_name"
             android:fontFamily="@font/sunflower_light"
             android:textColor="#ffffff"
