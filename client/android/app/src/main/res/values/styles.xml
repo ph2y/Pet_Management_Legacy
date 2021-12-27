@@ -5,6 +5,11 @@
         <item name="android:textColorHighlight">#CCE67E22</item>
     </style>
 
+    <style name="onSelectedThemeWhite">
+        <item name="colorControlActivated">@color/white</item>
+        <item name="android:textColorHighlight">@color/pumpkin</item>
+    </style>
+
     <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
         <item name="android:windowBackground">@drawable/splash</item>
     </style>
