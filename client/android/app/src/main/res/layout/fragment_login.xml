@@ -23,7 +23,6 @@
             android:layout_width="144dp"
             android:layout_height="144dp"
             android:src="@drawable/app_icon_without_background"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
