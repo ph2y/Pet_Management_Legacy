@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@android:color/holo_orange_dark"/>
+    <item android:drawable="@color/pumpkin"/>
     <item>
         <bitmap
-            android:src="@drawable/outline_pets_white_48"
+            android:src="@drawable/splash_image"
             android:gravity="center" />
     </item>
 </layer-list>
