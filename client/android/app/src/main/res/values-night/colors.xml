@@ -6,4 +6,6 @@
     <color name="pumpkin">#FF3700B3</color>
     <color name="light_pumpkin">#6A40C6</color>
     <color name="ghost_white">#070700</color>
+    <color name="ghost_white2">#0D0D08</color>
+    <color name="cardview_background">@color/cardview_dark_background</color>
 </resources>

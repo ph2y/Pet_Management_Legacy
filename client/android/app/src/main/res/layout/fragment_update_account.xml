@@ -31,9 +31,9 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
-            android:textColor="@color/white"
             android:layout_toEndOf="@id/back_button"
             android:text="@string/account"
+            android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
 

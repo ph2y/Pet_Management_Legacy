@@ -21,4 +21,5 @@
     <color name="dark_brown">#514438</color>
     <color name="ghost_white">#F8F8FF</color>
     <color name="ghost_white2">#F2F2F7</color>
+    <color name="cardview_background">@color/cardview_light_background</color>
 </resources>
