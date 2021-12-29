@@ -21,19 +21,19 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_baseline_arrow_back_36_white"
-            android:background="?selectableItemBackgroundBorderless"/>
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_baseline_arrow_back_36_white" />
 
         <TextView
             android:id="@+id/back_button_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/back_button"
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
-            android:textSize="20dp"
+            android:layout_toEndOf="@id/back_button"
+            android:text="@string/create_pet_title"
             android:textColor="@color/white"
-            android:text="@string/create_pet_title"/>
+            android:textSize="20dp" />
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -60,9 +60,9 @@
                 android:id="@+id/create_pet_progress_bar"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                android:visibility="gone"
+                android:layout_centerInParent="true"
                 android:indeterminateTint="@color/carrot"
-                android:layout_centerInParent="true"/>
+                android:visibility="gone" />
 
         </RelativeLayout>
 
@@ -96,7 +96,7 @@
                     android:layout_height="match_parent"
                     android:src="@android:color/transparent"
                     app:civ_border_color="@color/carrot"
-                    app:civ_border_width="1dp" />
+                    app:civ_border_width="2dp" />
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/pet_photo_input_button"
@@ -113,12 +113,12 @@
                 android:id="@+id/pet_info_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="24dp"
-                android:paddingRight="24dp"
                 android:layout_marginTop="25dp"
                 android:layout_marginBottom="10dp"
                 android:gravity="center"
                 android:orientation="vertical"
+                android:paddingLeft="24dp"
+                android:paddingRight="24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -127,27 +127,27 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="32dp"
+                    android:background="@drawable/border_bottom"
                     android:orientation="vertical"
-                    android:background="@drawable/border_bottom">
+                    android:paddingBottom="32dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/pet_message"/>
+                        android:text="@string/pet_message" />
 
                     <EditText
                         android:id="@+id/pet_message_input"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:inputType="textMultiLine"
-                        android:gravity="top"
-                        android:lines="2"
-                        android:textSize="16dp"
-                        android:padding="12dp"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/border_with_radius_16"
+                        android:gravity="top"
+                        android:inputType="textMultiLine"
+                        android:lines="2"
                         android:maxLength="60"
+                        android:padding="12dp"
+                        android:textSize="16dp"
                         android:theme="@style/onSelectedThemeCarrot" />
 
                 </LinearLayout>
@@ -173,13 +173,13 @@
                             android:id="@+id/pet_name_input"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/pet_name_hint"
-                            android:inputType="textPersonName"
-                            android:textSize="18dp"
-                            android:padding="8dp"
                             android:layout_marginTop="8dp"
                             android:background="@drawable/border_with_radius_8"
+                            android:hint="@string/pet_name_hint"
+                            android:inputType="textPersonName"
                             android:maxLength="20"
+                            android:padding="8dp"
+                            android:textSize="18dp"
                             android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
@@ -247,14 +247,14 @@
                             android:id="@+id/pet_species_input"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/pet_species_hint"
-                            android:inputType="textPersonName"
-                            android:textSize="18dp"
-                            android:padding="8dp"
                             android:layout_marginTop="8dp"
                             android:background="@drawable/border_with_radius_8"
-                            android:nextFocusDown="@id/pet_breed_input"
+                            android:hint="@string/pet_species_hint"
+                            android:inputType="textPersonName"
                             android:maxLength="8"
+                            android:nextFocusDown="@id/pet_breed_input"
+                            android:padding="8dp"
+                            android:textSize="18dp"
                             android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
@@ -276,14 +276,14 @@
                             android:id="@+id/pet_breed_input"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="@string/pet_breed_hint"
-                            android:inputType="textPersonName"
-                            android:textSize="18dp"
-                            android:padding="8dp"
                             android:layout_marginTop="8dp"
                             android:background="@drawable/border_with_radius_8"
+                            android:hint="@string/pet_breed_hint"
                             android:imeOptions="actionDone"
+                            android:inputType="textPersonName"
                             android:maxLength="8"
+                            android:padding="8dp"
+                            android:textSize="18dp"
                             android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
