@@ -121,8 +121,6 @@ class PetProfileFragment : Fragment(){
     override fun onStart() {
         super.onStart()
 
-        checkIsLoading()
-
         // for set representative button
         if (myPetViewModel.fragmentType == "pet_profile_pet_manager") {
             binding.setRepresentativeButton.setOnClickListener {
@@ -153,22 +151,6 @@ class PetProfileFragment : Fragment(){
                     .replace(R.id.my_pet_activity_fragment_container, CreateUpdatePetFragment())
                     .addToBackStack(null)
                     .commit()
-            }
-
-            binding.deletePetButton.setOnClickListener {
-                val builder = AlertDialog.Builder(activity)
-                builder.setMessage(context?.getString(R.string.delete_pet_dialog_message))
-                    .setPositiveButton(
-                        R.string.confirm
-                    ) { _, _ ->
-                        deletePet()
-                    }
-                    .setNegativeButton(
-                        R.string.cancel
-                    ) { dialog, _ ->
-                        dialog.cancel()
-                    }
-                    .create().show()
             }
         }
 
@@ -202,27 +184,6 @@ class PetProfileFragment : Fragment(){
 
         isViewDestroyed = true
         myPetViewModel.petManagerApiIsLoading = false
-    }
-
-    // set button to loading
-    private fun disableButton() {
-        binding.deletePetButton.isEnabled = false
-    }
-
-    // set button to normal
-    private fun enableButton() {
-        binding.deletePetButton.isEnabled = true
-    }
-
-    // for loading check
-    private fun checkIsLoading() {
-        // if loading -> set button to loading
-        if(myPetViewModel.petManagerApiIsLoading) {
-            disableButton()
-        }
-        else {
-            enableButton()
-        }
     }
 
     private fun replacePetProfile(pet: Pet) {
@@ -454,7 +415,6 @@ class PetProfileFragment : Fragment(){
     private fun setRepresentativePet() {
         // set api state/button to loading
         myPetViewModel.petManagerApiIsLoading = true
-        disableButton()
 
         // create DTO for API call
         val accountData = SessionManager.fetchLoggedInAccount(requireContext())!!
@@ -489,39 +449,13 @@ class PetProfileFragment : Fragment(){
 
                 // set api state/button to normal
                 myPetViewModel.petManagerApiIsLoading = false
-                enableButton()
             }
         }, {
             // set api state/button to normal
             myPetViewModel.petManagerApiIsLoading = false
-            enableButton()
         }, {
             // set api state/button to normal
             myPetViewModel.petManagerApiIsLoading = false
-            enableButton()
-        })
-    }
-
-    private fun deletePet() {
-        // set api state/button to loading
-        myPetViewModel.petManagerApiIsLoading = true
-        disableButton()
-
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .deletePetReq(DeletePetReqDto(requireActivity().intent.getLongExtra("petId", -1)))
-        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
-            // set api state/button to normal
-            myPetViewModel.petManagerApiIsLoading = false
-            enableButton()
-
-            Toast.makeText(context, context?.getText(R.string.delete_pet_successful), Toast.LENGTH_LONG).show()
-            activity?.finish()
-        }, {
-            myPetViewModel.petManagerApiIsLoading = false
-            enableButton()
-        }, {
-            myPetViewModel.petManagerApiIsLoading = false
-            enableButton()
         })
     }
 
