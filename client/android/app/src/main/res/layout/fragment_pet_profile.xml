@@ -254,7 +254,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
                         android:gravity="center"
-                        android:background="@drawable/button_with_radius"
+                        android:background="@drawable/button_with_radius_pumpkin"
                         android:textSize="18sp"
                         android:textColor="@color/white"
                         android:text="@string/update_pet_button"/>
