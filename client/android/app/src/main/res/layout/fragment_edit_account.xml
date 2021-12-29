@@ -77,75 +77,77 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp">
+            android:paddingTop="16dp"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
 
-            <RelativeLayout
-                android:id="@+id/account_photo_input_layout"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+            <LinearLayout
+                android:id="@+id/account_photo_and_nickname_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="30dp"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:background="@drawable/border_bottom"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/account_info_layout">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/account_photo_input"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:src="@android:color/transparent"
-                    app:civ_border_color="@color/carrot"
-                    app:civ_border_width="2dp"
-                    tools:srcCompat="@drawable/ic_baseline_account_circle_36" />
+                <RelativeLayout
+                    android:layout_width="150dp"
+                    android:layout_height="150dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/account_photo_input_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentBottom="true"
-                    android:src="@drawable/ic_baseline_add_photo_alternate_48"
-                    app:civ_circle_background_color="@color/pumpkin" />
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/account_photo_input"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@android:color/transparent"
+                        app:civ_border_color="@color/carrot"
+                        app:civ_border_width="2dp"
+                        tools:srcCompat="@drawable/ic_baseline_account_circle_36" />
 
-            </RelativeLayout>
-
-            <LinearLayout
-                android:id="@+id/account_info_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:paddingLeft="24dp"
-                android:paddingRight="24dp"
-                app:layout_constraintTop_toBottomOf="@id/account_photo_input_layout"
-                app:layout_constraintBottom_toTopOf="@id/account_leave_layout"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/account_photo_input_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentBottom="true"
+                        android:src="@drawable/ic_baseline_add_photo_alternate_48"
+                        app:civ_circle_background_color="@color/pumpkin" />
+                </RelativeLayout>
 
                 <EditText
                     android:id="@+id/nickname_edit"
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_marginTop="15dp"
                     android:padding="12dp"
                     android:textSize="22sp"
                     android:background="@drawable/border_with_radius_8"
                     android:hint="@string/nickname_hint"
                     android:inputType="textPersonName"
                     android:textAlignment="center"
-                    android:maxLength="10"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/account_photo_input_layout" />
+                    android:maxLength="10"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/account_info_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/account_photo_and_nickname_input_layout"
+                app:layout_constraintBottom_toTopOf="@id/account_leave_layout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="vertical"
-                    android:paddingBottom="20dp"
                     android:background="@drawable/border_bottom">
 
                     <LinearLayout
@@ -309,6 +311,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
                     android:paddingTop="20dp"
@@ -348,8 +351,6 @@
                 android:id="@+id/account_leave_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="24dp"
-                android:paddingRight="24dp"
                 android:paddingTop="20dp"
                 android:paddingBottom="20dp"
                 android:orientation="horizontal"
