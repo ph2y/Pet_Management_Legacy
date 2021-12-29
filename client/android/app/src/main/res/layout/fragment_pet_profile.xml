@@ -36,7 +36,7 @@
                 android:layout_toEndOf="@id/back_button"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="12dp"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textColor="@color/white"
                 android:text="@string/pet_profile_title"/>
 
@@ -49,7 +49,7 @@
                 android:padding="4dp"
                 android:clickable="true"
                 android:focusable="true"
-                android:textSize="20dp"
+                android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/white"
                 android:text="@string/set_representative_button"
@@ -91,7 +91,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:padding="6dp"
-                    android:textSize="20dp"/>
+                    android:textSize="20sp"/>
 
             </LinearLayout>
 
@@ -167,7 +167,7 @@
                         android:maxLines="2"
                         android:text="랄로"
                         android:ellipsize="end"
-                        android:textSize="32dp"
+                        android:textSize="32sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toBottomOf="@id/pet_photo"
                         app:layout_constraintStart_toStartOf="parent"
@@ -182,7 +182,7 @@
                         app:layout_constraintStart_toEndOf="@id/pet_name"
                         app:layout_constraintBottom_toBottomOf="@id/pet_name"
                         android:text="2살"
-                        android:textSize="16dp"/>
+                        android:textSize="16sp"/>
 
                     <TextView
                         android:id="@+id/pet_message"
@@ -193,7 +193,7 @@
                         android:paddingTop="8dp"
                         android:paddingBottom="8dp"
                         android:gravity="center"
-                        android:textSize="16dp"
+                        android:textSize="16sp"
                         android:textStyle="bold"
                         app:layout_constraintTop_toBottomOf="@id/pet_name"
                         app:layout_constraintStart_toStartOf="parent"

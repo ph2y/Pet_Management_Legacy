@@ -20,7 +20,7 @@
             android:layout_marginTop="15dp"
             android:layout_gravity="center"
             android:text="@string/terms_title"
-            android:textSize="32dp"/>
+            android:textSize="32sp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"

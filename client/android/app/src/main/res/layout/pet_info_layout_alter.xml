@@ -44,7 +44,7 @@
         android:maxLines="2"
         android:text="랄로"
         android:ellipsize="end"
-        android:textSize="32dp"
+        android:textSize="32sp"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -59,7 +59,7 @@
         app:layout_constraintStart_toEndOf="@id/pet_name"
         app:layout_constraintBottom_toBottomOf="@id/pet_name"
         android:text="2살"
-        android:textSize="16dp"/>
+        android:textSize="16sp"/>
 
     <TextView
         android:id="@+id/pet_message"
@@ -71,7 +71,7 @@
         android:paddingBottom="8dp"
         android:gravity="center"
         android:visibility="gone"
-        android:textSize="16dp"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintTop_toBottomOf="@id/pet_name"
         app:layout_constraintStart_toStartOf="parent"
@@ -91,7 +91,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="포메라니안"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/pet_gender"
@@ -99,7 +99,7 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/pet_breed"
             android:text="@string/pet_gender_male_symbol"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/text_between_gender_and_age"
@@ -107,14 +107,14 @@
             android:layout_height="wrap_content"
             android:layout_toEndOf="@id/pet_gender"
             android:text=", "
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
 
         <TextView
             android:id="@+id/pet_birth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="21-09-13"
-            android:textSize="16dp"/>
+            android:textSize="16sp"/>
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

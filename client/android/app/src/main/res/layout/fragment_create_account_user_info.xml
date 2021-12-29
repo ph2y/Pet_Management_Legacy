@@ -22,7 +22,7 @@
             android:layout_marginTop="15dp"
             android:layout_gravity="center"
             android:text="@string/user_info_title"
-            android:textSize="32dp"/>
+            android:textSize="32sp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
                 android:layout_marginEnd="4dp"
                 android:visibility="gone"
                 android:text="@string/phone_message"
-                android:textSize="12dp"
+                android:textSize="12sp"
                 android:textColor="@android:color/holo_red_dark"/>
 
             <TextView
@@ -59,7 +59,7 @@
                 android:layout_marginEnd="4dp"
                 android:visibility="gone"
                 android:text="@string/phone_message_overlap"
-                android:textSize="12dp"
+                android:textSize="12sp"
                 android:textColor="@android:color/holo_red_dark"/>
 
             <EditText
@@ -82,7 +82,7 @@
                 android:layout_marginEnd="4dp"
                 android:visibility="gone"
                 android:text="@string/email_message"
-                android:textSize="12dp"
+                android:textSize="12sp"
                 android:textColor="@android:color/holo_red_dark"/>
 
             <TextView
@@ -93,7 +93,7 @@
                 android:layout_marginEnd="4dp"
                 android:visibility="gone"
                 android:text="@string/email_message_overlap"
-                android:textSize="12dp"
+                android:textSize="12sp"
                 android:textColor="@android:color/holo_red_dark"/>
 
             <LinearLayout
@@ -111,7 +111,7 @@
                         android:layout_height="48dp"
                         android:layout_centerInParent="true"
                         android:enabled="false"
-                        android:textSize="16dp"
+                        android:textSize="16sp"
                         android:text="@string/request_email_code_button"/>
 
                     <ProgressBar
@@ -135,7 +135,7 @@
                     android:hint="@string/email_code_hint"
                     android:inputType="number"
                     android:maxLength="8"
-                    android:textSize="16dp"
+                    android:textSize="16sp"
                     android:background="@drawable/edit_text_rectangle"
                     android:theme="@style/onSelectedThemeCarrot"/>
 
@@ -153,7 +153,7 @@
                     android:layout_marginStart="4dp"
                     android:visibility="gone"
                     android:text="@string/email_message_code_valid"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:textColor="@android:color/holo_green_dark"/>
 
                 <TextView
@@ -164,7 +164,7 @@
                     android:layout_marginStart="4dp"
                     android:visibility="gone"
                     android:text="@string/email_message_request"
-                    android:textSize="12dp"
+                    android:textSize="12sp"
                     android:textColor="@android:color/holo_red_dark"/>
 
                 <LinearLayout
@@ -181,7 +181,7 @@
                         android:textColor="@color/carrot"
                         android:layout_gravity="center"
                         android:textStyle="bold"
-                        android:textSize="12dp"
+                        android:textSize="12sp"
                         android:text="@string/email_code_chronometer_label"/>
 
                     <Chronometer
@@ -193,7 +193,7 @@
                         android:countDown="true"
                         android:textColor="@color/carrot"
                         android:textStyle="bold"
-                        android:textSize="12dp"/>
+                        android:textSize="12sp"/>
 
                 </LinearLayout>
 

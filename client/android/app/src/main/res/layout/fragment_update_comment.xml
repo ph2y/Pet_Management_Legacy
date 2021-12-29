@@ -32,7 +32,7 @@
             android:layout_toEndOf="@id/button_back"
             android:layout_centerVertical="true"
             android:layout_marginStart="12dp"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:text="@string/update_comment_title"/>
     </RelativeLayout>
@@ -51,7 +51,7 @@
             android:background="@drawable/border"
             android:hint="@string/comment_input_hint"
             android:padding="10dp"
-            android:textSize="16dp"
+            android:textSize="16sp"
             android:gravity="top"
             android:minLines="2"
             android:maxLines="8"
