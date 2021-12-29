@@ -113,7 +113,7 @@
                         android:layout_height="wrap_content"
                         android:paddingStart="16dp"
                         android:paddingEnd="16dp"
-                        android:background="@drawable/border_bottom_ghost_white2"
+                        android:background="@drawable/border_bottom_ghost_white2_1"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent">
@@ -136,7 +136,7 @@
                         android:layout_height="@dimen/preference_item_height"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:background="@drawable/border_bottom_ghost_white2"
+                        android:background="@drawable/border_bottom_ghost_white2_2"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/layout_preference_header">
@@ -165,7 +165,7 @@
                         android:layout_height="@dimen/preference_item_height"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:background="@drawable/border_bottom_ghost_white2"
+                        android:background="@drawable/border_bottom_ghost_white2_2"
                         app:layout_constraintBottom_toTopOf="@id/theme_lookup"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/preferences_lookup">
@@ -246,7 +246,7 @@
                         android:layout_height="wrap_content"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:background="@drawable/border_bottom_ghost_white2"
+                        android:background="@drawable/border_bottom_ghost_white2_1"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent">
@@ -319,7 +319,7 @@
                         android:layout_height="wrap_content"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:background="@drawable/border_bottom_ghost_white2"
+                        android:background="@drawable/border_bottom_ghost_white2_1"
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent">
@@ -341,7 +341,7 @@
                         android:layout_height="@dimen/preference_item_height"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:background="@drawable/border_bottom_ghost_white2"
+                        android:background="@drawable/border_bottom_ghost_white2_2"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/layout_info_version_header">
@@ -370,7 +370,7 @@
                         android:layout_height="@dimen/preference_item_height"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:background="@drawable/border_bottom_ghost_white2"
+                        android:background="@drawable/border_bottom_ghost_white2_2"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/terms_and_policies_lookup">
