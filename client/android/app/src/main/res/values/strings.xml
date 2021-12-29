@@ -184,7 +184,7 @@
     <string name="account_original_password_hint">기존 비밀번호</string>
     <string name="account_password_changed">비밀번호가 성공적으로 변경되었습니다</string>
     <string name="account_password_mismatch">기존 비밀번호가 틀립니다\n다시 입력해주세요</string>
-    <string name="nickname_hint">닉네임을 설정해주세요</string>
+    <string name="nickname_hint">별명</string>
     <string name="password_change_hint">8~20자의 영문, 숫자, 특수문자만 사용 가능</string>
     <string name="change">변경</string>
     <string name="re_verify">재인증</string>
