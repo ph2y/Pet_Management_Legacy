@@ -12,7 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.databinding.FragmentPetScheduleEditBinding
+import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePetScheduleBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
@@ -23,8 +23,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.time.LocalTime
 
-class PetScheduleEditFragment : Fragment() {
-    private var _binding: FragmentPetScheduleEditBinding? = null
+class CreateUpdatePetScheduleFragment : Fragment() {
+    private var _binding: FragmentCreateUpdatePetScheduleBinding? = null
     private val binding get() = _binding!!
 
     private val myPetViewModel: MyPetViewModel by activityViewModels()
@@ -39,7 +39,7 @@ class PetScheduleEditFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentPetScheduleEditBinding.inflate(inflater, container, false)
+        _binding = FragmentCreateUpdatePetScheduleBinding.inflate(inflater, container, false)
         isViewDestroyed = false
 
         // for update_pet_schedule
@@ -106,7 +106,7 @@ class PetScheduleEditFragment : Fragment() {
 
         addPetNameList()
 
-        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentPetScheduleEditParentLayout)
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateUpdatePetScheduleParentLayout)
 
         return binding.root
     }

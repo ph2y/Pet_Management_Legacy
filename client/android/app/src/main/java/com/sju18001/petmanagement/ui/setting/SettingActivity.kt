@@ -8,7 +8,7 @@ import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.ActivitySettingBinding
-import com.sju18001.petmanagement.ui.setting.account.EditAccountFragment
+import com.sju18001.petmanagement.ui.setting.account.UpdateAccountFragment
 import com.sju18001.petmanagement.ui.setting.information.LicenseFragment
 import com.sju18001.petmanagement.ui.setting.information.TermsAndPoliciesFragment
 import com.sju18001.petmanagement.ui.setting.preferences.NotificationPreferencesFragment
@@ -40,9 +40,9 @@ class SettingActivity : AppCompatActivity() {
 
         if(supportFragmentManager.findFragmentById(R.id.setting_activity_fragment_container) == null) {
             val fragment = when(fragmentType){
-                "account_edit" -> {
+                "update_account" -> {
                     actionBar?.setTitle(R.string.account)
-                    EditAccountFragment()
+                    UpdateAccountFragment()
                 }
                 "preferences" -> {
                     actionBar?.setTitle(R.string.preferences)

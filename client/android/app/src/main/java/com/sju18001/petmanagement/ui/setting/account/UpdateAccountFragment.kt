@@ -20,7 +20,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.databinding.FragmentEditAccountBinding
+import com.sju18001.petmanagement.databinding.FragmentUpdateAccountBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
@@ -36,14 +36,14 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 
-class EditAccountFragment : Fragment() {
+class UpdateAccountFragment : Fragment() {
 
     // constant variables
     private val PICK_PHOTO = 0
-    private var EDIT_ACCOUNT_DIRECTORY: String = "edit_account"
+    private var UPDATE_ACCOUNT_DIRECTORY: String = "update_account"
 
-    private lateinit var editAccountViewModel: EditAccountViewModel
-    private var _binding: FragmentEditAccountBinding? = null
+    private lateinit var updateAccountViewModel: UpdateAccountViewModel
+    private var _binding: FragmentUpdateAccountBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -59,10 +59,10 @@ class EditAccountFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        editAccountViewModel =
-            ViewModelProvider(this).get(EditAccountViewModel::class.java)
+        updateAccountViewModel =
+            ViewModelProvider(this).get(UpdateAccountViewModel::class.java)
 
-        _binding = FragmentEditAccountBinding.inflate(inflater, container, false)
+        _binding = FragmentUpdateAccountBinding.inflate(inflater, container, false)
         isViewDestroyed = false
 
         val root: View = binding.root
@@ -251,7 +251,7 @@ class EditAccountFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentEditAccountParentFragment)
+        Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentUpdateAccountParentFragment)
     }
 
     override fun onResume() {
@@ -269,7 +269,7 @@ class EditAccountFragment : Fragment() {
 
         // delete copied file(if any)
         if(isRemoving || requireActivity().isFinishing) {
-            Util.deleteCopiedFiles(requireContext(), EDIT_ACCOUNT_DIRECTORY)
+            Util.deleteCopiedFiles(requireContext(), UPDATE_ACCOUNT_DIRECTORY)
         }
     }
 
@@ -453,7 +453,7 @@ class EditAccountFragment : Fragment() {
 
                 // copy selected photo and get real path
                 val accountPhotoPathValue = ServerUtil.createCopyAndReturnRealPathLocal(requireActivity(),
-                    data.data!!, EDIT_ACCOUNT_DIRECTORY, fileName)
+                    data.data!!, UPDATE_ACCOUNT_DIRECTORY, fileName)
 
                 // file type exception -> delete copied file + show Toast message
                 if (!Util.isUrlPhoto(accountPhotoPathValue)) {

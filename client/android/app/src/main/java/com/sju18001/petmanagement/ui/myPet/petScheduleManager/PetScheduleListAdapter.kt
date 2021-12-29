@@ -14,7 +14,7 @@ import com.sju18001.petmanagement.restapi.dao.PetSchedule
 import java.time.LocalTime
 
 interface PetScheduleListAdapterInterface{
-    fun startPetScheduleEditFragmentForUpdate(data: PetSchedule)
+    fun startCreateUpdatePetScheduleFragmentForUpdate(data: PetSchedule)
     fun askForDeleteItem(position: Int, item: PetSchedule)
     fun deletePetSchedule(id: Long)
     fun updatePetSchedule(data: PetSchedule)
@@ -48,7 +48,7 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
 
         // 아이템 click
         holder.itemView.setOnClickListener {
-            petScheduleListAdapterInterface.startPetScheduleEditFragmentForUpdate(dataSet[position])
+            petScheduleListAdapterInterface.startCreateUpdatePetScheduleFragmentForUpdate(dataSet[position])
         }
 
         // 아이템 Long click

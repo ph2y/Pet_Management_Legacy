@@ -2,5 +2,5 @@ package com.sju18001.petmanagement.ui.setting.account
 
 import androidx.lifecycle.ViewModel
 
-class EditAccountViewModel : ViewModel() {
+class UpdateAccountViewModel : ViewModel() {
 }

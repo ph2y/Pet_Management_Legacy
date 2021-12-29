@@ -42,7 +42,7 @@ class WelcomePageProfileFragment : Fragment() {
         binding.acceptButton.setOnClickListener{
             if(accountData != null){
                 val accountLookupIntent = Intent(context, SettingActivity::class.java)
-                accountLookupIntent.putExtra("fragmentType", "account_edit")
+                accountLookupIntent.putExtra("fragmentType", "update_account")
                 accountLookupIntent.putExtra("id", accountData!!.id)
                 accountLookupIntent.putExtra("username", accountData!!.username)
                 accountLookupIntent.putExtra("email", accountData!!.email)

@@ -89,7 +89,7 @@ class PetScheduleManagerFragment : Fragment() {
         adapter = PetScheduleListAdapter(arrayListOf(), myPetViewModel.petNameForId)
         adapter.petScheduleListAdapterInterface = object: PetScheduleListAdapterInterface {
             @RequiresApi(Build.VERSION_CODES.O)
-            override fun startPetScheduleEditFragmentForUpdate(data: PetSchedule) {
+            override fun startCreateUpdatePetScheduleFragmentForUpdate(data: PetSchedule) {
                 val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
                 myPetActivityIntent
                     .putExtra("fragmentType", "update_pet_schedule")
