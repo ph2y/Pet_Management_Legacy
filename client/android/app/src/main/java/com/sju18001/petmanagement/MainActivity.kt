@@ -78,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                 actionBar?.setTitle(R.string.title_my_pet)
                 actionBar?.show()
             }
+            /* TODO: 지도 복구 시 해당 코드 복구 + 0123으로 인덱싱
             1 -> {
                 addFragmentWhenFragmentIsNull(mapFragment, "map")
                 activeFragment = mapFragment
@@ -86,8 +87,8 @@ class MainActivity : AppCompatActivity() {
                 activeFragmentIndex = 1
                 invalidateOptionsMenu()
                 actionBar?.hide()
-            }
-            2 -> {
+            }*/
+            1 -> {
                 addFragmentWhenFragmentIsNull(communityFragment, "community")
                 activeFragment = communityFragment
 
@@ -97,7 +98,7 @@ class MainActivity : AppCompatActivity() {
                 actionBar?.setTitle(R.string.title_community)
                 actionBar?.show()
             }
-            3 -> {
+            2 -> {
                 addFragmentWhenFragmentIsNull(settingFragment, "setting")
                 activeFragment = settingFragment
 
@@ -145,7 +146,9 @@ class MainActivity : AppCompatActivity() {
                     true
                 }
                 /*
-                TODO: 지도 복구 시, 해당 코드 복구 / 인덱싱(0, 1, 2, 3 순서대로)
+                TODO: 지도 복구 시 해당 코드 복구
+                commit: 80872d41103f4a4782e59ab014c6c14d24995b45
+
                 R.id.navigation_map -> {
                     addFragmentWhenFragmentIsNull(mapFragment, "map")
                     fragmentManager.beginTransaction().hide(activeFragment).show(mapFragment).commitNow()
@@ -217,12 +220,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         when(activeFragmentIndex) {
             0 -> { return false }
-            1 -> { return false }
-            2 -> {
+            // 1 -> { return false } TODO: 지도 복구 시 해당 코드 복구
+            1 -> {
                 menuInflater.inflate(R.menu.follower_following_menu, menu)
                 return true
             }
-            3 -> { return false }
+            2 -> { return false }
         }
         return false
     }
@@ -230,15 +233,15 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(activeFragmentIndex) {
             0 -> { return false }
-            1 -> { return false }
-            2 -> {
+            // 1 -> { return false } TODO: 지도 복구 시 해당 코드 복구
+            1 -> {
                 // start follower following activity
                 startActivity(Intent(this, FollowerFollowingActivity::class.java))
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
 
                 return super.onOptionsItemSelected(item)
             }
-            3 -> { return false }
+            2 -> { return false }
         }
         return false
     }
