@@ -140,7 +140,7 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@id/account_photo_and_nickname_input_layout"
-                app:layout_constraintBottom_toTopOf="@id/account_leave_layout"
+                app:layout_constraintBottom_toTopOf="@id/logout_and_delete_account_layout"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent">
 
@@ -348,7 +348,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/account_leave_layout"
+                android:id="@+id/logout_and_delete_account_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingTop="20dp"

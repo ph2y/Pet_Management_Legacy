@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
@@ -193,6 +194,23 @@ class CreateUpdatePetFragment : Fragment() {
             else {
                 activity?.finish()
             }
+        }
+
+        // for delete button
+        binding.deletePetButton.setOnClickListener {
+            val builder = AlertDialog.Builder(activity)
+            builder.setMessage(context?.getString(R.string.delete_pet_dialog_message))
+                .setPositiveButton(
+                    R.string.confirm
+                ) { _, _ ->
+                    deletePet()
+                }
+                .setNegativeButton(
+                    R.string.cancel
+                ) { dialog, _ ->
+                    dialog.cancel()
+                }
+                .create().show()
         }
 
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateUpdatePetParentLayout)
@@ -534,6 +552,25 @@ class CreateUpdatePetFragment : Fragment() {
         myPetViewModel.petGenderValueProfile = if(binding.genderFemale.isChecked) { "♀" } else { "♂" }
         myPetViewModel.petAgeValueProfile = (LocalDate.now().year - binding.petBirthInput.year).toString()
         myPetViewModel.petMessageValueProfile = binding.petMessageInput.text.toString()
+    }
+
+    private fun deletePet() {
+        // set api state/button to loading
+        myPetViewModel.petManagerApiIsLoading = true
+
+        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+            .deletePetReq(DeletePetReqDto(requireActivity().intent.getLongExtra("petId", -1)))
+        ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
+            // set api state/button to normal
+            myPetViewModel.petManagerApiIsLoading = false
+
+            Toast.makeText(context, context?.getText(R.string.delete_pet_successful), Toast.LENGTH_LONG).show()
+            activity?.finish()
+        }, {
+            myPetViewModel.petManagerApiIsLoading = false
+        }, {
+            myPetViewModel.petManagerApiIsLoading = false
+        })
     }
 
     // for photo select
