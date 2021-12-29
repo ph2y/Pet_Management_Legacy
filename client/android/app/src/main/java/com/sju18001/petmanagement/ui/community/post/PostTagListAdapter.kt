@@ -26,7 +26,7 @@ class PostTagListAdapter(private var dataSet: ArrayList<String>) : RecyclerView.
 
         // Click tag
         holder.parentView.setOnClickListener {
-            // TODO: 태그 기능
+            // TODO: 태그 검색 기능
         }
     }
 

@@ -32,7 +32,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:civ_border_width="4dp"
-                app:civ_border_color="@color/peter_river"/>
+                app:civ_border_color="@color/beige"/>
 
             <ImageView
                 android:id="@+id/representative_pet_icon"
