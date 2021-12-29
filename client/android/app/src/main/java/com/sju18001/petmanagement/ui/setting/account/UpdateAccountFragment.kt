@@ -243,13 +243,6 @@ class UpdateAccountFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
-        binding.emailEdit.addTextChangedListener(object: TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                settingViewModel.accountEmailValue = s.toString()
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
-        })
 
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentUpdateAccountParentFragment)
     }
@@ -275,8 +268,7 @@ class UpdateAccountFragment : Fragment() {
 
     // check regex validation
     private fun checkIsValid(): Boolean {
-        return PatternRegex.checkEmailRegex(settingViewModel.accountEmailValue) &&
-                PatternRegex.checkNicknameRegex(settingViewModel.accountNicknameValue) &&
+        return PatternRegex.checkNicknameRegex(settingViewModel.accountNicknameValue) &&
                 PatternRegex.checkPhoneRegex(settingViewModel.accountPhoneValue)
     }
 
@@ -483,8 +475,6 @@ class UpdateAccountFragment : Fragment() {
         binding.confirmButton.visibility = View.GONE
         binding.updateAccountProgressBar.visibility = View.VISIBLE
 
-        binding.emailReverifyButton.isEnabled = false
-        binding.emailEdit.isEnabled = false
         binding.marketingSwitch.isEnabled = false
         binding.accountPhotoInputButton.isEnabled = false
         binding.nicknameEdit.isEnabled = false
@@ -500,8 +490,6 @@ class UpdateAccountFragment : Fragment() {
         binding.confirmButton.visibility = View.VISIBLE
         binding.updateAccountProgressBar.visibility = View.GONE
 
-        binding.emailReverifyButton.isEnabled = true
-        binding.emailEdit.isEnabled = true
         binding.marketingSwitch.isEnabled = true
         binding.accountPhotoInputButton.isEnabled = true
         binding.nicknameEdit.isEnabled = true
