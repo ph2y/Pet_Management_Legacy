@@ -6,9 +6,24 @@ import androidx.lifecycle.ViewModel
 
 class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewModel() {
     // for pet
-    var petId = handle.get<Long>("petId")
+    var fetchedPetData = handle.get<Boolean>("fetchedPetData")?: false
         set(value) {
-            handle.set("petId", value)
+            handle.set("fetchedPetData", value)
+            field = value
+        }
+    var petList = handle.get<MutableList<PetListItem>>("petList")?: mutableListOf()
+        set(value) {
+            handle.set("petList", value)
+            field = value
+        }
+    var selectedPetId = handle.get<Long>("selectedPetId")
+        set(value) {
+            handle.set("selectedPetId", value)
+            field = value
+        }
+    var selectedPetIndex = handle.get<Int>("selectedPetIndex")?: -1
+        set(value) {
+            handle.set("selectedPetIndex", value)
             field = value
         }
 

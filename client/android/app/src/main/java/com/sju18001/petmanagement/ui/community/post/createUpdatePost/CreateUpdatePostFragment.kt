@@ -28,7 +28,6 @@ import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.restapi.global.FileMetaData
 import com.sju18001.petmanagement.restapi.global.FileType
@@ -36,10 +35,6 @@ import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.math.BigDecimal
@@ -64,10 +59,8 @@ class CreateUpdatePostFragment : Fragment() {
 
     private var isViewDestroyed = false
 
-    // variables for pet
-    private var petIdAndNameList: MutableList<Pet> = mutableListOf()
-
     // variables for RecyclerView
+    private lateinit var petAdapter: PetListAdapter
     private lateinit var photoAdapter: PhotoListAdapter
     private lateinit var generalFilesAdapter: GeneralFileListAdapter
     private lateinit var hashtagAdapter: HashtagListAdapter
@@ -77,7 +70,6 @@ class CreateUpdatePostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // view binding
         _binding = FragmentCreateUpdatePostBinding.inflate(inflater, container, false)
         isViewDestroyed = false
 
@@ -97,25 +89,23 @@ class CreateUpdatePostFragment : Fragment() {
             binding.backButtonTitle.text = context?.getText(R.string.update_post_title)
         }
 
-        // fetch post data for update(if not already fetched)
-        if(requireActivity().intent.getStringExtra("fragmentType") == "update_post" &&
-                !createUpdatePostViewModel.fetchedPostDataForUpdate) {
+        // fetch post data for update (if not already fetched)
+        if(requireActivity().intent.getStringExtra("fragmentType") == "update_post"
+            && (!createUpdatePostViewModel.fetchedPostDataForUpdate || !createUpdatePostViewModel.fetchedPetData)) {
                 // save post id
                 createUpdatePostViewModel.postId = requireActivity().intent.getLongExtra("postId", -1)
 
-                // show loading screen + disable button
-                binding.createEditPostMainScrollView.visibility = View.INVISIBLE
-                binding.postDataLoadingLayout.visibility = View.VISIBLE
-                binding.confirmButton.isEnabled = false
-
+                showLoadingScreen()
                 fetchPostData()
         }
 
-        // for view restore and pet spinner
-        else {
-            setPetSpinnerAndPhoto()
-            restoreState()
+        // fetch pet data + set pet recyclerview (if not already fetched)
+        else if (!createUpdatePostViewModel.fetchedPetData) {
+            showLoadingScreen()
+            fetchPetDataAndSetRecyclerView()
         }
+
+        restoreState()
 
         // for location switch
         binding.locationSwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -239,7 +229,7 @@ class CreateUpdatePostFragment : Fragment() {
             if(isPostEmpty()) {
                 Toast.makeText(context, context?.getText(R.string.post_invalid_message), Toast.LENGTH_LONG).show()
             }
-            else if(createUpdatePostViewModel.petId == null) {
+            else if(createUpdatePostViewModel.selectedPetId == null) {
                 Toast.makeText(context, context?.getText(R.string.pet_not_selected_message), Toast.LENGTH_LONG).show()
             }
             else {
@@ -391,6 +381,13 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     private fun initializeRecyclerViews() {
+        // initialize RecyclerView (for pet)
+        petAdapter = PetListAdapter(createUpdatePostViewModel, requireContext())
+        binding.petRecyclerView.adapter = petAdapter
+        binding.petRecyclerView.layoutManager = LinearLayoutManager(activity)
+        (binding.petRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        petAdapter.updateDataSet(createUpdatePostViewModel.petList)
+
         // initialize RecyclerView (for photos)
         photoAdapter = PhotoListAdapter(createUpdatePostViewModel, requireContext(), binding)
         binding.photosRecyclerView.adapter = photoAdapter
@@ -407,7 +404,6 @@ class CreateUpdatePostFragment : Fragment() {
         (binding.generalRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
         generalFilesAdapter.setResult(createUpdatePostViewModel.generalFileNameList)
 
-
         // TODO: initialize RecyclerView (for audio files)
 
         // initialize RecyclerView (for hashtags)
@@ -418,115 +414,65 @@ class CreateUpdatePostFragment : Fragment() {
         hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
     }
 
-    // for pet views
-    private fun setPetSpinnerAndPhoto() {
+    private fun fetchPetDataAndSetRecyclerView() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(FetchPetReqDto( null , null))
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
-            // get pet id and name
-            val apiResponse: MutableList<Pet> = mutableListOf()
+            // fetch pet info (unsorted)
+            val unsortedPetList: MutableList<PetListItem> = mutableListOf()
             response.body()?.petList?.map {
-                val item = Pet(
-                    it.id, "", it.name, "", "", null, null, false, null, null
+                val item = PetListItem(
+                    it.id, it.photoUrl, null, it.name, it.id == createUpdatePostViewModel.selectedPetId
                 )
-                apiResponse.add(item)
+                unsortedPetList.add(item)
             }
 
-            reorderPetList(apiResponse)
-            setPetSpinner()
+            reorderPetList(unsortedPetList)
+            fetchPetPhotos()
         }, {}, {})
     }
 
-    private fun setPetPhoto() {
-        // exception
-        if(createUpdatePostViewModel.petId == null) return
-
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetPhotoReq(FetchPetPhotoReqDto(createUpdatePostViewModel.petId!!))
-        call.enqueue(object: Callback<ResponseBody> {
-            override fun onResponse(
-                call: Call<ResponseBody>,
-                response: Response<ResponseBody>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful) {
-                    // set fetched photo to view
-                    binding.petPhotoCircleView.setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
-                }
-                else {
-                    if(Util.getMessageFromErrorBody(response.errorBody()!!) == "null") {
-                        // Set default
-                        binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
-                    }
-                    else{
-                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
-    }
-
-    // set pet spinner
-    private fun setPetSpinner() {
-        // set spinner values
-        val spinnerArray: ArrayList<String> = ArrayList<String>()
-        spinnerArray.add(requireContext().getText(R.string.pet_name_spinner_placeholder).toString())
-
-        for(pet in petIdAndNameList) {
-            spinnerArray.add(pet.name)
-        }
-
-        val spinnerArrayAdapter: ArrayAdapter<String> =
-            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item, spinnerArray)
-        binding.petNameSpinner.adapter = spinnerArrayAdapter
-
-        // set pet spinner listener
-        binding.petNameSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if(position != 0) {
-                    createUpdatePostViewModel.petId = petIdAndNameList[position - 1].id
-                    setPetPhoto()
-                }
-                else {
-                    createUpdatePostViewModel.petId = null
-                    binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-        // set spinner position
-        if(createUpdatePostViewModel.petId != null) {
-            for(i in 0 until petIdAndNameList.size) {
-                if(createUpdatePostViewModel.petId == petIdAndNameList[i].id) {
-                    binding.petNameSpinner.setSelection(i + 1)
-                    return
-                }
-            }
-
-            // exception(no such pet id) -> reset pet id to null
-            createUpdatePostViewModel.petId = null
-        }
-    }
-
-    // reorder pet list
-    private fun reorderPetList(apiResponse: MutableList<Pet>) {
+    private fun reorderPetList(apiResponse: MutableList<PetListItem>) {
         // get saved pet list order
         val petListOrder = PetManagerFragment()
             .getPetListOrder(requireContext().getString(R.string.data_name_pet_list_id_order), requireContext())
 
         // sort by order
-        petIdAndNameList = mutableListOf()
-        for(id in petListOrder) {
-            val pet = apiResponse.find { it.id == id }
-            petIdAndNameList.add(pet!!)
+        for (id in petListOrder) {
+            val item = apiResponse.find { it.petId == id }
+
+            if (item!!.isSelected) {
+                createUpdatePostViewModel.selectedPetIndex = createUpdatePostViewModel.petList.size
+            }
+            createUpdatePostViewModel.petList.add(item)
+        }
+    }
+
+    private fun fetchPetPhotos() {
+        val fetchedFlags = BooleanArray(createUpdatePostViewModel.petList.size) { false }
+
+        for (i in 0 until createUpdatePostViewModel.petList.size) {
+            // if no photo
+            if (createUpdatePostViewModel.petList[i].petPhotoUrl == null) {
+                fetchedFlags[i] = true
+                continue
+            }
+
+            // fetch pet photo
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                .fetchPetPhotoReq(FetchPetPhotoReqDto(createUpdatePostViewModel.petList[i].petId))
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
+                createUpdatePostViewModel.petList[i].petPhoto = BitmapFactory.decodeStream(response.body()!!.byteStream())
+                fetchedFlags[i] = true
+
+                if (fetchedFlags.all{true}) {
+                    createUpdatePostViewModel.fetchedPetData = true
+                    petAdapter.updateDataSet(createUpdatePostViewModel.petList)
+
+                    hideLoadingScreen()
+                    restoreState()
+                }
+            }, {}, {})
         }
     }
 
@@ -622,12 +568,27 @@ class CreateUpdatePostFragment : Fragment() {
         }
     }
 
-    // set button to loading
+    private fun showLoadingScreen() {
+        binding.createUpdatePostMainScrollView.visibility = View.INVISIBLE
+        binding.postDataLoadingLayout.visibility = View.VISIBLE
+        binding.confirmButton.isEnabled = false
+    }
+
+    private fun hideLoadingScreen() {
+        binding.createUpdatePostMainScrollView.visibility = View.VISIBLE
+        binding.postDataLoadingLayout.visibility = View.GONE
+        binding.confirmButton.isEnabled = true
+    }
+
     private fun lockViews() {
         binding.confirmButton.visibility = View.GONE
         binding.createUpdatePostProgressBar.visibility = View.VISIBLE
 
-        binding.petNameSpinner.isEnabled = false
+        binding.petRecyclerView.let {
+            for(i in 0..petAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.isClickable = false
+            }
+        }
         binding.locationSwitch.isEnabled = false
         binding.uploadFileButton.isEnabled = false
         binding.disclosureSpinner.isEnabled = false
@@ -652,12 +613,15 @@ class CreateUpdatePostFragment : Fragment() {
         binding.backButton.isEnabled = false
     }
 
-    // set button to normal
     private fun unlockViews() {
         binding.confirmButton.visibility = View.VISIBLE
         binding.createUpdatePostProgressBar.visibility = View.GONE
 
-        binding.petNameSpinner.isEnabled = true
+        binding.petRecyclerView.let {
+            for(i in 0..petAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.isClickable = true
+            }
+        }
         binding.locationSwitch.isEnabled = true
         binding.uploadFileButton.isEnabled = true
         binding.disclosureSpinner.isEnabled = true
@@ -712,7 +676,7 @@ class CreateUpdatePostFragment : Fragment() {
 
         // create DTO
         val createPostReqDto = CreatePostReqDto(
-            createUpdatePostViewModel.petId!!,
+            createUpdatePostViewModel.selectedPetId!!,
             createUpdatePostViewModel.postEditText,
             createUpdatePostViewModel.hashtagList,
             createUpdatePostViewModel.disclosure,
@@ -763,7 +727,7 @@ class CreateUpdatePostFragment : Fragment() {
         // create DTO
         val updatePostReqDto = UpdatePostReqDto(
             createUpdatePostViewModel.postId!!,
-            createUpdatePostViewModel.petId!!,
+            createUpdatePostViewModel.selectedPetId!!,
             createUpdatePostViewModel.postEditText,
             createUpdatePostViewModel.hashtagList,
             createUpdatePostViewModel.disclosure,
@@ -963,13 +927,7 @@ class CreateUpdatePostFragment : Fragment() {
 
                     // set views with post data
                     if (createUpdatePostViewModel.fetchedPostDataForUpdate) {
-                        // hide loading screen + enable button
-                        binding.createEditPostMainScrollView.visibility = View.VISIBLE
-                        binding.postDataLoadingLayout.visibility = View.GONE
-                        binding.confirmButton.isEnabled = true
-
-                        setPetSpinnerAndPhoto()
-                        restoreState()
+                        fetchPetDataAndSetRecyclerView()
                     }
                 }
             }, {}, {})
@@ -1008,13 +966,7 @@ class CreateUpdatePostFragment : Fragment() {
 
                     // set views with post data
                     if (createUpdatePostViewModel.fetchedPostDataForUpdate) {
-                        // hide loading screen + enable button
-                        binding.createEditPostMainScrollView.visibility = View.VISIBLE
-                        binding.postDataLoadingLayout.visibility = View.GONE
-                        binding.confirmButton.isEnabled = true
-
-                        setPetSpinnerAndPhoto()
-                        restoreState()
+                        fetchPetDataAndSetRecyclerView()
                     }
                 }
             }, {}, {})
@@ -1028,7 +980,7 @@ class CreateUpdatePostFragment : Fragment() {
             // fetch post data (excluding files) and save to ViewModel
             val post = response.body()?.postList!![0]
 
-            createUpdatePostViewModel.petId = post.pet.id
+            createUpdatePostViewModel.selectedPetId = post.pet.id
             createUpdatePostViewModel.isUsingLocation = post.geoTagLat != 0.0
             createUpdatePostViewModel.disclosure = post.disclosure
             if(post.serializedHashTags != "") {
@@ -1072,21 +1024,12 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate = true
             }
 
-            // TODO: fetch post audio data
-
             // if no attachments
             if (post.mediaAttachments == null && post.fileAttachments == null) {
-                // show loading screen + disable button
-                binding.createEditPostMainScrollView.visibility = View.VISIBLE
-                binding.postDataLoadingLayout.visibility = View.GONE
-                binding.confirmButton.isEnabled = true
-
                 // set fetched to true
                 createUpdatePostViewModel.fetchedPostDataForUpdate = true
 
-                // set views with post data
-                setPetSpinnerAndPhoto()
-                restoreState()
+                fetchPetDataAndSetRecyclerView()
             }
         }, {
             requireActivity().finish()

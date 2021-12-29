@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/create_update_post_pet_item_parent_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
+    android:clickable="true"
     app:cardCornerRadius="8dp"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -32,10 +34,11 @@
                 android:layout_alignParentBottom="true"
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
+                android:visibility="invisible"
                 android:src="@drawable/ic_baseline_check_24"
-                app:civ_circle_background_color="@color/pumpkin"
                 app:civ_border_color="@color/pumpkin"
-                app:civ_border_width="1dp"/>
+                app:civ_border_width="1dp"
+                app:civ_circle_background_color="@color/pumpkin" />
 
         </RelativeLayout>
 
@@ -47,7 +50,6 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:paddingBottom="8dp"
-            android:text="한울aaaaaaa"
             android:maxLines="1"
             android:ellipsize="end"/>
 
