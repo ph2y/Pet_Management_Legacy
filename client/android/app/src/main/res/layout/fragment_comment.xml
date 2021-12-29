@@ -127,6 +127,7 @@
             android:src="@drawable/ic_baseline_account_circle_24"
             app:civ_border_width="1dp"
             app:civ_border_color="@color/carrot"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"/>
         <EditText
@@ -144,6 +145,7 @@
             android:inputType="textMultiLine"
             android:theme="@style/onSelectedThemeCarrot"
             android:imeOptions="actionSend"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@id/image_profile"
             app:layout_constraintEnd_toStartOf="@id/layout_comment_button"
@@ -159,10 +161,10 @@
                 android:id="@+id/button_create_comment"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_baseline_send_24"
                 android:background="@android:color/transparent"
+                android:src="@drawable/ic_baseline_send_28"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent" />
             <ProgressBar
                 android:id="@+id/progress_bar_comment"
                 android:layout_width="30dp"
