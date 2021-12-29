@@ -122,9 +122,9 @@
         app:layout_constraintStart_toStartOf="parent">
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/image_profile"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_baseline_account_circle_24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_account_circle_28"
             app:civ_border_width="1dp"
             app:civ_border_color="@color/carrot"
             app:layout_constraintTop_toTopOf="parent"
@@ -140,7 +140,7 @@
             android:layout_marginRight="10dp"
             android:paddingTop="3dp"
             android:paddingBottom="3dp"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:maxLines="8"
             android:inputType="textMultiLine"
             android:theme="@style/onSelectedThemeCarrot"
