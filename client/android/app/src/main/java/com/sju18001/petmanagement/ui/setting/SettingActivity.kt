@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPage
+package com.sju18001.petmanagement.ui.setting
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -7,29 +7,29 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProvider
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.databinding.ActivityMyPageBinding
-import com.sju18001.petmanagement.ui.myPage.account.EditAccountFragment
-import com.sju18001.petmanagement.ui.myPage.information.LicenseFragment
-import com.sju18001.petmanagement.ui.myPage.information.TermsAndPoliciesFragment
-import com.sju18001.petmanagement.ui.myPage.preferences.NotificationPreferencesFragment
-import com.sju18001.petmanagement.ui.myPage.preferences.PreferencesFragment
-import com.sju18001.petmanagement.ui.myPage.preferences.ThemePreferencesFragment
+import com.sju18001.petmanagement.databinding.ActivitySettingBinding
+import com.sju18001.petmanagement.ui.setting.account.EditAccountFragment
+import com.sju18001.petmanagement.ui.setting.information.LicenseFragment
+import com.sju18001.petmanagement.ui.setting.information.TermsAndPoliciesFragment
+import com.sju18001.petmanagement.ui.setting.preferences.NotificationPreferencesFragment
+import com.sju18001.petmanagement.ui.setting.preferences.PreferencesFragment
+import com.sju18001.petmanagement.ui.setting.preferences.ThemePreferencesFragment
 
-class MyPageActivity : AppCompatActivity() {
+class SettingActivity : AppCompatActivity() {
 
     // variable for view binding
-    private lateinit var binding: ActivityMyPageBinding
+    private lateinit var binding: ActivitySettingBinding
 
     // variable for ViewModel
-    private val myPageViewModel: MyPageViewModel by lazy{
-        ViewModelProvider(this, SavedStateViewModelFactory(application, this)).get(MyPageViewModel::class.java)
+    private val settingViewModel: SettingViewModel by lazy{
+        ViewModelProvider(this, SavedStateViewModelFactory(application, this)).get(SettingViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // view binding
-        binding = ActivityMyPageBinding.inflate(layoutInflater)
+        binding = ActivitySettingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val actionBar: ActionBar? = supportActionBar
@@ -38,7 +38,7 @@ class MyPageActivity : AppCompatActivity() {
         // get fragment type and show it(for first launch)
         val fragmentType = intent.getStringExtra("fragmentType")
 
-        if(supportFragmentManager.findFragmentById(R.id.my_page_activity_fragment_container) == null) {
+        if(supportFragmentManager.findFragmentById(R.id.setting_activity_fragment_container) == null) {
             val fragment = when(fragmentType){
                 "account_edit" -> {
                     actionBar?.setTitle(R.string.account)
@@ -68,7 +68,7 @@ class MyPageActivity : AppCompatActivity() {
             }
             supportFragmentManager
                 .beginTransaction()
-                .add(R.id.my_page_activity_fragment_container, fragment)
+                .add(R.id.setting_activity_fragment_container, fragment)
                 .commit()
         }
     }

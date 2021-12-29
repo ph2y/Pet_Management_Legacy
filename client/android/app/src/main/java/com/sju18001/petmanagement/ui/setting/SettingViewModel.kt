@@ -1,10 +1,10 @@
-package com.sju18001.petmanagement.ui.myPage
+package com.sju18001.petmanagement.ui.setting
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
-class MyPageViewModel(private val handle: SavedStateHandle) : ViewModel() {
-    // variables for account profile fetch in myPage
+class SettingViewModel(private val handle: SavedStateHandle) : ViewModel() {
+    // variables for account profile fetch in setting
     var accountNicknameProfileValue = handle.get<String>("accountNicknameProfileValue")?: ""
         set(value){
             handle.set("accountNicknameProfileValue", value)

@@ -56,7 +56,7 @@
         </provider>
 
         <activity android:name=".ui.myPet.MyPetActivity" />
-        <activity android:name=".ui.myPage.MyPageActivity" />
+        <activity android:name=".ui.setting.SettingActivity" />
         <activity android:name=".MainActivity" />
     </application>
 

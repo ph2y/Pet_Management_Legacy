@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPage
+package com.sju18001.petmanagement.ui.setting
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
-import com.sju18001.petmanagement.databinding.FragmentMyPageBinding
+import com.sju18001.petmanagement.databinding.FragmentSettingBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
@@ -19,15 +19,15 @@ import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
 import java.io.File
 
-class MyPageFragment : Fragment() {
-    private var _binding: FragmentMyPageBinding? = null
+class SettingFragment : Fragment() {
+    private var _binding: FragmentSettingBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
 
     // variable for ViewModel
-    val myPageViewModel: MyPageViewModel by activityViewModels()
+    val settingViewModel: SettingViewModel by activityViewModels()
 
     private var isViewDestroyed = false
 
@@ -39,7 +39,7 @@ class MyPageFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentMyPageBinding.inflate(inflater, container, false)
+        _binding = FragmentSettingBinding.inflate(inflater, container, false)
         isViewDestroyed = false
 
         return binding.root
@@ -49,7 +49,7 @@ class MyPageFragment : Fragment() {
         super.onStart()
 
         binding.accountLookup.setOnClickListener {
-            val accountLookupIntent = Intent(context, MyPageActivity::class.java)
+            val accountLookupIntent = Intent(context, SettingActivity::class.java)
             accountLookupIntent.putExtra("fragmentType", "account_edit")
             accountLookupIntent.putExtra("id", accountData.id)
             accountLookupIntent.putExtra("username", accountData.username)
@@ -62,11 +62,11 @@ class MyPageFragment : Fragment() {
 
             if(accountData.photoUrl != null) {
                 Util.saveByteArrayToSharedPreferences(requireContext(), requireContext().getString(R.string.pref_name_byte_arrays),
-                    requireContext().getString(R.string.data_name_my_page_selected_account_photo), myPageViewModel.accountPhotoProfileByteArray)
+                    requireContext().getString(R.string.data_name_setting_selected_account_photo), settingViewModel.accountPhotoProfileByteArray)
             }
             else {
                 Util.saveByteArrayToSharedPreferences(requireContext(), requireContext().getString(R.string.pref_name_byte_arrays),
-                    requireContext().getString(R.string.data_name_my_page_selected_account_photo), null)
+                    requireContext().getString(R.string.data_name_setting_selected_account_photo), null)
             }
 
             startActivity(accountLookupIntent)
@@ -74,21 +74,21 @@ class MyPageFragment : Fragment() {
         }
 
         binding.preferencesLookup.setOnClickListener {
-            val preferencesLookupIntent = Intent(context, MyPageActivity::class.java)
+            val preferencesLookupIntent = Intent(context, SettingActivity::class.java)
             preferencesLookupIntent.putExtra("fragmentType", "preferences")
             startActivity(preferencesLookupIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
 
         binding.notificationLookup.setOnClickListener {
-            val notificationPreferencesIntent = Intent(context, MyPageActivity::class.java)
+            val notificationPreferencesIntent = Intent(context, SettingActivity::class.java)
             notificationPreferencesIntent.putExtra("fragmentType", "notification_preferences")
             startActivity(notificationPreferencesIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
 
         binding.themeLookup.setOnClickListener {
-            val themePreferencesIntent = Intent(context, MyPageActivity::class.java)
+            val themePreferencesIntent = Intent(context, SettingActivity::class.java)
             themePreferencesIntent.putExtra("fragmentType", "theme_preferences")
             startActivity(themePreferencesIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
@@ -113,13 +113,13 @@ class MyPageFragment : Fragment() {
         }
 
         binding.termsAndPoliciesLookup.setOnClickListener {
-            val termsAndPoliciesIntent = Intent(context, MyPageActivity::class.java)
+            val termsAndPoliciesIntent = Intent(context, SettingActivity::class.java)
             termsAndPoliciesIntent.putExtra("fragmentType", "terms_and_policies")
             startActivity(termsAndPoliciesIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
         binding.licenseLookup.setOnClickListener {
-            val licenseIntent = Intent(context, MyPageActivity::class.java)
+            val licenseIntent = Intent(context, SettingActivity::class.java)
             licenseIntent.putExtra("fragmentType", "license")
             startActivity(licenseIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
@@ -144,7 +144,7 @@ class MyPageFragment : Fragment() {
     private fun fetchAccountProfileData() {
         // create empty body
         accountData = SessionManager.fetchLoggedInAccount(requireContext())!!
-        myPageViewModel.accountNicknameProfileValue = accountData.nickname!!
+        settingViewModel.accountNicknameProfileValue = accountData.nickname!!
 
         // set views after API response
         setViewsWithAccountProfileData()
@@ -162,15 +162,15 @@ class MyPageFragment : Fragment() {
             .fetchAccountPhotoReq(FetchAccountPhotoReqDto(null))
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             // save in ViewModel by byte array
-            myPageViewModel.accountPhotoProfileByteArray = response.body()!!.byteStream().readBytes()
-            binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(myPageViewModel.accountPhotoProfileByteArray, 0, myPageViewModel.accountPhotoProfileByteArray!!.size))
+            settingViewModel.accountPhotoProfileByteArray = response.body()!!.byteStream().readBytes()
+            binding.accountPhoto.setImageBitmap(BitmapFactory.decodeByteArray(settingViewModel.accountPhotoProfileByteArray, 0, settingViewModel.accountPhotoProfileByteArray!!.size))
         }, {}, {})
     }
 
     // set views for account profile
     private fun setViewsWithAccountProfileData() {
         fetchAccountPhotoAndSetView()
-        binding.nicknameText.text = myPageViewModel.accountNicknameProfileValue
+        binding.nicknameText.text = settingViewModel.accountNicknameProfileValue
     }
 
     // set temporary files size

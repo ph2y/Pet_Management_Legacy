@@ -1,11 +1,10 @@
-package com.sju18001.petmanagement.ui.myPage.preferences
+package com.sju18001.petmanagement.ui.setting.preferences
 
 import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import androidx.preference.SwitchPreference
 import com.sju18001.petmanagement.R
 
 class ThemePreferencesFragment : PreferenceFragmentCompat() {

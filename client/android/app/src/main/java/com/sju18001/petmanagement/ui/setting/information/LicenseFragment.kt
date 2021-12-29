@@ -1,21 +1,21 @@
-package com.sju18001.petmanagement.ui.myPage.information
+package com.sju18001.petmanagement.ui.setting.information
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.sju18001.petmanagement.databinding.FragmentTermsAndPoliciesBinding
+import com.sju18001.petmanagement.databinding.FragmentLicenseBinding
 
-class TermsAndPoliciesFragment : Fragment() {
-    private var _binding: FragmentTermsAndPoliciesBinding? = null
+class LicenseFragment : Fragment() {
+    private var _binding: FragmentLicenseBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentTermsAndPoliciesBinding.inflate(inflater, container, false)
+        _binding = FragmentLicenseBinding.inflate(inflater, container, false)
         return binding.root
     }
 

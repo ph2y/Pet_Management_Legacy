@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPage.account
+package com.sju18001.petmanagement.ui.setting.account
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -27,7 +27,7 @@ import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.ui.login.LoginActivity
-import com.sju18001.petmanagement.ui.myPage.MyPageViewModel
+import com.sju18001.petmanagement.ui.setting.SettingViewModel
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -50,7 +50,7 @@ class EditAccountFragment : Fragment() {
     private val binding get() = _binding!!
 
     // variable for ViewModel
-    private val myPageViewModel: MyPageViewModel by activityViewModels()
+    private val settingViewModel: SettingViewModel by activityViewModels()
 
     private var isViewDestroyed = false
 
@@ -70,7 +70,7 @@ class EditAccountFragment : Fragment() {
         (activity as AppCompatActivity)!!.supportActionBar!!.hide()
 
         // save account data to ViewModel(for account profile) if not already loaded
-        if(!myPageViewModel.loadedFromIntent) { saveAccountDataForAccountProfile() }
+        if(!settingViewModel.loadedFromIntent) { saveAccountDataForAccountProfile() }
 
         return root
     }
@@ -113,8 +113,8 @@ class EditAccountFragment : Fragment() {
                 dialog.dismiss()
 
                 binding.accountPhotoInput.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
-                myPageViewModel.accountPhotoByteArray = null
-                myPageViewModel.accountPhotoPathValue = ""
+                settingViewModel.accountPhotoByteArray = null
+                settingViewModel.accountPhotoPathValue = ""
             }
         }
 
@@ -127,25 +127,25 @@ class EditAccountFragment : Fragment() {
             dialog.findViewById<EditText>(R.id.new_password_input).addTextChangedListener(object: TextWatcher {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if(PatternRegex.checkPasswordRegex(s)) {
-                        myPageViewModel.accountPwValid = true
+                        settingViewModel.accountPwValid = true
                         dialog.findViewById<TextView>(R.id.pw_message2).visibility = View.GONE
                     }
                     else {
-                        myPageViewModel.accountPwValid = false
+                        settingViewModel.accountPwValid = false
                         dialog.findViewById<TextView>(R.id.pw_message2).visibility = View.VISIBLE
                     }
                     if(s.toString() == dialog.findViewById<EditText>(R.id.new_password_check_input).text.toString()) {
-                        myPageViewModel.accountPwCheckValid = true
+                        settingViewModel.accountPwCheckValid = true
                         dialog.findViewById<TextView>(R.id.pw_check_message2).visibility = View.GONE
                     }
                     else {
-                        myPageViewModel.accountPwCheckValid = false
+                        settingViewModel.accountPwCheckValid = false
                         dialog.findViewById<TextView>(R.id.pw_check_message2).visibility = View.VISIBLE
                     }
 
                     // check validation
                     dialog.findViewById<Button>(R.id.password_change_confirm_button).isEnabled =
-                        myPageViewModel.accountPwValid && myPageViewModel.accountPwCheckValid
+                        settingViewModel.accountPwValid && settingViewModel.accountPwCheckValid
                 }
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun afterTextChanged(s: Editable?) {}
@@ -154,17 +154,17 @@ class EditAccountFragment : Fragment() {
             dialog.findViewById<EditText>(R.id.new_password_check_input).addTextChangedListener(object: TextWatcher {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     if(s.toString() == dialog.findViewById<EditText>(R.id.new_password_input).text.toString()) {
-                         myPageViewModel.accountPwCheckValid = true
+                         settingViewModel.accountPwCheckValid = true
                         dialog.findViewById<TextView>(R.id.pw_check_message2).visibility = View.GONE
                     }
                     else {
-                        myPageViewModel.accountPwCheckValid = false
+                        settingViewModel.accountPwCheckValid = false
                         dialog.findViewById<TextView>(R.id.pw_check_message2).visibility = View.VISIBLE
                     }
 
                     // check validation
                     dialog.findViewById<Button>(R.id.password_change_confirm_button).isEnabled =
-                        myPageViewModel.accountPwValid && myPageViewModel.accountPwCheckValid
+                        settingViewModel.accountPwValid && settingViewModel.accountPwCheckValid
                 }
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun afterTextChanged(s: Editable?) {}
@@ -218,7 +218,7 @@ class EditAccountFragment : Fragment() {
         }
 
         binding.marketingSwitch.setOnCheckedChangeListener { _, isChecked ->
-            myPageViewModel.accountMarketingValue = isChecked
+            settingViewModel.accountMarketingValue = isChecked
             if(isChecked) {
                 Toast.makeText(context, context?.getText(R.string.marketing_agree), Toast.LENGTH_SHORT).show()
             }
@@ -230,7 +230,7 @@ class EditAccountFragment : Fragment() {
         // for EditText text change listeners
         binding.nicknameEdit.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                myPageViewModel.accountNicknameValue = s.toString()
+                settingViewModel.accountNicknameValue = s.toString()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -238,14 +238,14 @@ class EditAccountFragment : Fragment() {
         binding.phoneEdit.addTextChangedListener(PhoneNumberFormattingTextWatcher("KR"))
         binding.phoneEdit.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                myPageViewModel.accountPhoneValue = s.toString()
+                settingViewModel.accountPhoneValue = s.toString()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
         binding.emailEdit.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                myPageViewModel.accountEmailValue = s.toString()
+                settingViewModel.accountEmailValue = s.toString()
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -275,9 +275,9 @@ class EditAccountFragment : Fragment() {
 
     // check regex validation
     private fun checkIsValid(): Boolean {
-        return PatternRegex.checkEmailRegex(myPageViewModel.accountEmailValue) &&
-                PatternRegex.checkNicknameRegex(myPageViewModel.accountNicknameValue) &&
-                PatternRegex.checkPhoneRegex(myPageViewModel.accountPhoneValue)
+        return PatternRegex.checkEmailRegex(settingViewModel.accountEmailValue) &&
+                PatternRegex.checkNicknameRegex(settingViewModel.accountNicknameValue) &&
+                PatternRegex.checkPhoneRegex(settingViewModel.accountPhoneValue)
     }
 
     // update account
@@ -286,26 +286,26 @@ class EditAccountFragment : Fragment() {
 
         // create dto
         val updateAccountReqDto = UpdateAccountReqDto(
-            myPageViewModel.accountEmailValue,
-            myPageViewModel.accountPhoneValue,
-            myPageViewModel.accountNicknameValue,
-            myPageViewModel.accountMarketingValue,
-            myPageViewModel.accountUserMessageValue,
-            myPageViewModel.representativePetId
+            settingViewModel.accountEmailValue,
+            settingViewModel.accountPhoneValue,
+            settingViewModel.accountNicknameValue,
+            settingViewModel.accountMarketingValue,
+            settingViewModel.accountUserMessageValue,
+            settingViewModel.representativePetId
         )
 
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .updateAccountReq(updateAccountReqDto)
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
             if(response.body()?._metadata?.status == true) {
-                updateAccountPhoto(myPageViewModel.accountPhotoPathValue)
+                updateAccountPhoto(settingViewModel.accountPhotoPathValue)
 
                 // 세션 갱신
                 val prevAccount = SessionManager.fetchLoggedInAccount(requireContext())!!
                 val account = Account(
-                    prevAccount.id, prevAccount.username, myPageViewModel.accountEmailValue, myPageViewModel.accountPhoneValue,
-                    null, myPageViewModel.accountMarketingValue, myPageViewModel.accountNicknameValue, prevAccount.photoUrl,
-                    myPageViewModel.accountUserMessageValue, myPageViewModel.representativePetId
+                    prevAccount.id, prevAccount.username, settingViewModel.accountEmailValue, settingViewModel.accountPhoneValue,
+                    null, settingViewModel.accountMarketingValue, settingViewModel.accountNicknameValue, prevAccount.photoUrl,
+                    settingViewModel.accountUserMessageValue, settingViewModel.representativePetId
                 )
                 SessionManager.saveLoggedInAccount(requireContext(), account)
             }
@@ -411,35 +411,35 @@ class EditAccountFragment : Fragment() {
     }
 
     private fun saveAccountDataForAccountProfile() {
-        myPageViewModel.loadedFromIntent = true
-        myPageViewModel.accountEmailValue = requireActivity().intent.getStringExtra("email").toString()
-        myPageViewModel.accountPhoneValue = requireActivity().intent.getStringExtra("phone").toString()
-        myPageViewModel.accountMarketingValue = requireActivity().intent.getBooleanExtra("marketing", false)
-        myPageViewModel.accountNicknameValue = requireActivity().intent.getStringExtra("nickname").toString()
-        myPageViewModel.accountUserMessageValue = requireActivity().intent.getStringExtra("userMessage").toString()
-        myPageViewModel.accountPhotoByteArray = Util.getByteArrayFromSharedPreferences(requireContext(),
+        settingViewModel.loadedFromIntent = true
+        settingViewModel.accountEmailValue = requireActivity().intent.getStringExtra("email").toString()
+        settingViewModel.accountPhoneValue = requireActivity().intent.getStringExtra("phone").toString()
+        settingViewModel.accountMarketingValue = requireActivity().intent.getBooleanExtra("marketing", false)
+        settingViewModel.accountNicknameValue = requireActivity().intent.getStringExtra("nickname").toString()
+        settingViewModel.accountUserMessageValue = requireActivity().intent.getStringExtra("userMessage").toString()
+        settingViewModel.accountPhotoByteArray = Util.getByteArrayFromSharedPreferences(requireContext(),
             requireContext().getString(R.string.pref_name_byte_arrays),
-            requireContext().getString(R.string.data_name_my_page_selected_account_photo))
-        myPageViewModel.representativePetId = requireActivity().intent.getLongExtra("representativePetId", 0)
+            requireContext().getString(R.string.data_name_setting_selected_account_photo))
+        settingViewModel.representativePetId = requireActivity().intent.getLongExtra("representativePetId", 0)
     }
 
     private fun restoreState() {
-        if(myPageViewModel.accountPhotoByteArray != null) {
-            val bitmap = BitmapFactory.decodeByteArray(myPageViewModel.accountPhotoByteArray, 0, myPageViewModel.accountPhotoByteArray!!.size)
+        if(settingViewModel.accountPhotoByteArray != null) {
+            val bitmap = BitmapFactory.decodeByteArray(settingViewModel.accountPhotoByteArray, 0, settingViewModel.accountPhotoByteArray!!.size)
             binding.accountPhotoInput.setImageBitmap(bitmap)
         }
-        else if(myPageViewModel.accountPhotoPathValue != "") {
-            binding.accountPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPageViewModel.accountPhotoPathValue))
+        else if(settingViewModel.accountPhotoPathValue != "") {
+            binding.accountPhotoInput.setImageBitmap(BitmapFactory.decodeFile(settingViewModel.accountPhotoPathValue))
         }
         else {
             // set to default image
             binding.accountPhotoInput.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
         }
 
-        binding.nicknameEdit.setText(myPageViewModel.accountNicknameValue)
-        binding.emailEdit.setText(myPageViewModel.accountEmailValue)
-        binding.phoneEdit.setText(myPageViewModel.accountPhoneValue)
-        binding.marketingSwitch.isChecked = myPageViewModel.accountMarketingValue!!
+        binding.nicknameEdit.setText(settingViewModel.accountNicknameValue)
+        binding.emailEdit.setText(settingViewModel.accountEmailValue)
+        binding.phoneEdit.setText(settingViewModel.accountPhoneValue)
+        binding.marketingSwitch.isChecked = settingViewModel.accountMarketingValue!!
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -463,18 +463,18 @@ class EditAccountFragment : Fragment() {
                 }
 
                 // delete previous profile photo data
-                myPageViewModel.accountPhotoByteArray = null
+                settingViewModel.accountPhotoByteArray = null
 
                 // delete previously copied file(if any)
-                if(myPageViewModel.accountPhotoPathValue != "") {
-                    File(myPageViewModel.accountPhotoPathValue).delete()
+                if(settingViewModel.accountPhotoPathValue != "") {
+                    File(settingViewModel.accountPhotoPathValue).delete()
                 }
 
                 // save path to ViewModel
-                myPageViewModel.accountPhotoPathValue = accountPhotoPathValue
+                settingViewModel.accountPhotoPathValue = accountPhotoPathValue
 
                 // set photo to view
-                binding.accountPhotoInput.setImageBitmap(BitmapFactory.decodeFile(myPageViewModel.accountPhotoPathValue))
+                binding.accountPhotoInput.setImageBitmap(BitmapFactory.decodeFile(settingViewModel.accountPhotoPathValue))
             }
         }
     }

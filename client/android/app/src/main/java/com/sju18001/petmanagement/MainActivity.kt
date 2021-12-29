@@ -17,18 +17,12 @@ import com.sju18001.petmanagement.databinding.ActivityMainBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dto.FetchPetScheduleResDto
 import com.sju18001.petmanagement.ui.community.CommunityFragment
 import com.sju18001.petmanagement.ui.community.followerFollowing.FollowerFollowingActivity
 import com.sju18001.petmanagement.ui.map.MapFragment
-import com.sju18001.petmanagement.ui.myPage.MyPageFragment
+import com.sju18001.petmanagement.ui.setting.SettingFragment
 import com.sju18001.petmanagement.ui.myPet.MyPetFragment
 import com.sju18001.petmanagement.ui.myPet.petScheduleManager.PetScheduleNotification
-import okhttp3.MediaType
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.security.MessageDigest
 import java.util.*
 
@@ -39,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private var myPetFragment: Fragment = MyPetFragment()
     private var mapFragment: Fragment = MapFragment()
     private var communityFragment: Fragment = CommunityFragment()
-    private var myPageFragment: Fragment = MyPageFragment()
+    private var settingFragment: Fragment = SettingFragment()
     private var fragmentManager: FragmentManager = supportFragmentManager
     private lateinit var activeFragment: Fragment
     private var activeFragmentIndex: Int = 0
@@ -62,7 +56,7 @@ class MainActivity : AppCompatActivity() {
         fragmentManager.findFragmentByTag("community")?.let {
             fragmentManager.beginTransaction().remove(it).commitNow()
         }
-        fragmentManager.findFragmentByTag("myPage")?.let {
+        fragmentManager.findFragmentByTag("setting")?.let {
             fragmentManager.beginTransaction().remove(it).commitNow()
         }
 
@@ -104,13 +98,13 @@ class MainActivity : AppCompatActivity() {
                 actionBar?.show()
             }
             3 -> {
-                addFragmentWhenFragmentIsNull(myPageFragment, "myPage")
-                activeFragment = myPageFragment
+                addFragmentWhenFragmentIsNull(settingFragment, "setting")
+                activeFragment = settingFragment
 
                 navView.menu.getItem(3).isChecked = true
                 activeFragmentIndex = 3
                 invalidateOptionsMenu()
-                actionBar?.setTitle(R.string.title_my_page)
+                actionBar?.setTitle(R.string.title_setting)
                 actionBar?.show()
             }
             else -> {
@@ -182,18 +176,18 @@ class MainActivity : AppCompatActivity() {
 
                     true
                 }
-                R.id.navigation_my_page -> {
-                    addFragmentWhenFragmentIsNull(myPageFragment, "myPage")
-                    fragmentManager.beginTransaction().hide(activeFragment).show(myPageFragment).commitNow()
+                R.id.navigation_setting -> {
+                    addFragmentWhenFragmentIsNull(settingFragment, "setting")
+                    fragmentManager.beginTransaction().hide(activeFragment).show(settingFragment).commitNow()
 
                     navView.menu.getItem(3).isChecked = true
 
                     invalidateOptionsMenu()
-                    actionBar?.setTitle(R.string.title_my_page)
+                    actionBar?.setTitle(R.string.title_setting)
                     actionBar?.show()
 
                     activeFragmentIndex = 3
-                    activeFragment = myPageFragment
+                    activeFragment = settingFragment
 
                     true
                 }

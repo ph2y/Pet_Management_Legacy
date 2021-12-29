@@ -1,4 +1,4 @@
-package com.sju18001.petmanagement.ui.myPage.account
+package com.sju18001.petmanagement.ui.setting.account
 
 import androidx.lifecycle.ViewModel
 

@@ -9,18 +9,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.sju18001.petmanagement.MainActivity
 import com.sju18001.petmanagement.R
-import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentWelcomePageProfileBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
 import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
-import com.sju18001.petmanagement.ui.myPage.MyPageActivity
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.sju18001.petmanagement.ui.setting.SettingActivity
 
 class WelcomePageProfileFragment : Fragment() {
     private var _binding: FragmentWelcomePageProfileBinding? = null
@@ -46,7 +41,7 @@ class WelcomePageProfileFragment : Fragment() {
         // 수락 버튼
         binding.acceptButton.setOnClickListener{
             if(accountData != null){
-                val accountLookupIntent = Intent(context, MyPageActivity::class.java)
+                val accountLookupIntent = Intent(context, SettingActivity::class.java)
                 accountLookupIntent.putExtra("fragmentType", "account_edit")
                 accountLookupIntent.putExtra("id", accountData!!.id)
                 accountLookupIntent.putExtra("username", accountData!!.username)
