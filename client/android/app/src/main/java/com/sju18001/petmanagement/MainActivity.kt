@@ -144,6 +144,8 @@ class MainActivity : AppCompatActivity() {
 
                     true
                 }
+                /*
+                TODO: 지도 복구 시, 해당 코드 복구 / 인덱싱(0, 1, 2, 3 순서대로)
                 R.id.navigation_map -> {
                     addFragmentWhenFragmentIsNull(mapFragment, "map")
                     fragmentManager.beginTransaction().hide(activeFragment).show(mapFragment).commitNow()
@@ -158,18 +160,18 @@ class MainActivity : AppCompatActivity() {
                     activeFragment = mapFragment
 
                     true
-                }
+                }*/
                 R.id.navigation_community -> {
                     addFragmentWhenFragmentIsNull(communityFragment, "community")
                     fragmentManager.beginTransaction().hide(activeFragment).show(communityFragment).commitNow()
 
-                    navView.menu.getItem(2).isChecked = true
+                    navView.menu.getItem(1).isChecked = true
 
                     invalidateOptionsMenu()
                     actionBar?.setTitle(R.string.title_community)
                     actionBar?.show()
 
-                    activeFragmentIndex = 2
+                    activeFragmentIndex = 1
                     activeFragment = communityFragment
 
                     (activeFragment as CommunityFragment).startAllVideos()
@@ -180,13 +182,13 @@ class MainActivity : AppCompatActivity() {
                     addFragmentWhenFragmentIsNull(settingFragment, "setting")
                     fragmentManager.beginTransaction().hide(activeFragment).show(settingFragment).commitNow()
 
-                    navView.menu.getItem(3).isChecked = true
+                    navView.menu.getItem(2).isChecked = true
 
                     invalidateOptionsMenu()
                     actionBar?.setTitle(R.string.title_setting)
                     actionBar?.show()
 
-                    activeFragmentIndex = 3
+                    activeFragmentIndex = 2
                     activeFragment = settingFragment
 
                     true
