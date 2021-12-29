@@ -75,6 +75,9 @@ class CreateUpdatePetFragment : Fragment() {
         if(requireActivity().intent.getStringExtra("fragmentType") == "pet_profile_pet_manager") {
             binding.backButtonTitle.text = context?.getText(R.string.update_pet_title)
         }
+        else if(requireActivity().intent.getStringExtra("fragmentType") == "create_pet"){
+            binding.deletePetLayout.visibility = View.GONE
+        }
 
         // for DatePicker
         val calendar = Calendar.getInstance()
