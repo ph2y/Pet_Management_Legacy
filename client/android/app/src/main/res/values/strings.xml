@@ -2,6 +2,9 @@
     <string name="app_name">집사의 노트</string>
     <string name="title_activity_main">MainActivity</string>
 
+    <!-- MainActivity -->
+    <string name="exit_dialog">앱을 종료하시겠습니까?</string>
+
     <!-- SharedPreferences -->
     <string name="user_session">UserSession</string>
     <string name="pref_name_pet_list_id_order">PetListIdOrder</string>

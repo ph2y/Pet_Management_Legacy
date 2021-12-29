@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -207,6 +208,22 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
 
         isViewDestroyed = true
+    }
+
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(baseContext.getString(R.string.exit_dialog))
+            .setPositiveButton(
+                R.string.confirm
+            ) { _, _ ->
+                super.onBackPressed()
+            }
+            .setNegativeButton(
+                R.string.cancel
+            ) { dialog, _ ->
+                dialog.cancel()
+            }
+            .create().show()
     }
 
     // for saving currently active fragment index
