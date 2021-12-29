@@ -157,6 +157,69 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/phone_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/phone_hint"/>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/update_input_height">
+
+                            <TextView
+                                android:id="@+id/phone_edit"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:maxLength="13"
+                                android:padding="8dp"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:inputType="phone"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                tools:text="010-1111-1111" />
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/email_hint"/>
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/update_input_height">
+
+                            <TextView
+                                android:id="@+id/email_edit"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:padding="8dp"
+                                android:inputType="textEmailAddress"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                app:layout_constraintTop_toTopOf="parent"
+                                app:layout_constraintBottom_toBottomOf="parent"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                tools:text="first@gmail.com" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:layout_marginTop="10dp">
+
+                        <TextView
                             android:id="@+id/password_title"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -195,74 +258,6 @@
                                 app:layout_constraintTop_toTopOf="parent" />
                         </androidx.constraintlayout.widget.ConstraintLayout>
 
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_marginTop="10dp">
-
-                        <TextView
-                            android:id="@+id/phone_title"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/phone_hint"/>
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/update_input_height"
-                            android:layout_marginTop="8dp">
-
-                            <EditText
-                                android:id="@+id/phone_edit"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:maxLength="13"
-                                android:enabled="false"
-                                android:padding="8dp"
-                                android:textSize="18sp"
-                                android:inputType="phone"
-                                android:background="@drawable/border_with_radius_8"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                tools:text="010-1111-1111" />
-                        </androidx.constraintlayout.widget.ConstraintLayout>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_marginTop="10dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/email_hint"/>
-
-                        <androidx.constraintlayout.widget.ConstraintLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="@dimen/update_input_height"
-                            android:layout_marginTop="8dp">
-
-                            <EditText
-                                android:id="@+id/email_edit"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_marginRight="8dp"
-                                android:padding="8dp"
-                                android:inputType="textEmailAddress"
-                                android:enabled="false"
-                                android:textSize="18sp"
-                                android:background="@drawable/border_with_radius_8"
-                                app:layout_constraintTop_toTopOf="parent"
-                                app:layout_constraintBottom_toBottomOf="parent"
-                                app:layout_constraintStart_toStartOf="parent"
-                                app:layout_constraintEnd_toEndOf="parent"
-                                tools:text="first@gmail.com" />
-
-                        </androidx.constraintlayout.widget.ConstraintLayout>
                     </LinearLayout>
                 </LinearLayout>
 
