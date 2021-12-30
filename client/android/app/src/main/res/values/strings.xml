@@ -228,7 +228,7 @@
     <string name="create_post_successful">글 쓰기에 성공했어요!</string>
     <string name="update_post_successful">글 수정에 성공했어요!</string>
     <string name="delete_post_successful">글 삭제에 성공했어요!</string>
-    <string name="post_data_loading_message">글 정보 불러오는 중…</string>
+    <string name="post_data_loading_message">정보 불러오는 중…</string>
     <string name="empty_post_list_notification">불러올 포스트가 없어요.\n새 포스트를 추가해보세요!</string>
     <string name="duplicate_file_exception_message">이미 추가된 파일이에요!</string>
 

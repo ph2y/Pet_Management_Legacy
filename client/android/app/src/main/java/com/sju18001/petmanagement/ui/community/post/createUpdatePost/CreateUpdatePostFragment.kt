@@ -61,7 +61,7 @@ class CreateUpdatePostFragment : Fragment() {
 
     // variables for RecyclerView
     private lateinit var petAdapter: PetListAdapter
-    private lateinit var photoAdapter: PhotoListAdapter
+    private lateinit var mediaAdapter: MediaListAdapter
     private lateinit var generalFilesAdapter: GeneralFileListAdapter
     private lateinit var hashtagAdapter: HashtagListAdapter
 
@@ -154,12 +154,8 @@ class CreateUpdatePostFragment : Fragment() {
 
             dialog.findViewById<ImageView>(R.id.close_button).setOnClickListener { dialog.dismiss() }
             dialog.findViewById<Button>(R.id.upload_photo_button).setOnClickListener {
-                if(createUpdatePostViewModel.photoThumbnailList.size == 10) {
-                    Toast.makeText(
-                        context,
-                        context?.getText(R.string.photo_video_usage_full_message),
-                        Toast.LENGTH_LONG
-                    ).show()
+                if(createUpdatePostViewModel.mediaThumbnailList.size == 10) {
+                    Toast.makeText(context, context?.getText(R.string.photo_video_usage_full_message), Toast.LENGTH_LONG).show()
                 }
                 else {
                     dialog.dismiss()
@@ -282,23 +278,23 @@ class CreateUpdatePostFragment : Fragment() {
                     }
 
                     // add path to list
-                    createUpdatePostViewModel.photoPathList.add(postPhotoPathValue)
+                    createUpdatePostViewModel.mediaPathList.add(postPhotoPathValue)
 
                     // create bytearray for thumbnail
-                    val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoPathList.last())
+                    val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.mediaPathList.last())
                     val stream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                     val photoByteArray = stream.toByteArray()
 
                     // save thumbnail
                     val thumbnail = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
-                    createUpdatePostViewModel.photoThumbnailList.add(thumbnail)
+                    createUpdatePostViewModel.mediaThumbnailList.add(thumbnail)
 
                     // update RecyclerView
-                    photoAdapter.notifyItemInserted(createUpdatePostViewModel.photoThumbnailList.size)
-                    binding.photosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.photoThumbnailList.size - 1)
+                    mediaAdapter.notifyItemInserted(createUpdatePostViewModel.mediaThumbnailList.size)
+                    binding.mediaRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.mediaThumbnailList.size - 1)
 
-                    updatePhotoUsage()
+                    updateMediaUsage()
                 }
                 else {
                     Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
@@ -389,12 +385,12 @@ class CreateUpdatePostFragment : Fragment() {
         (binding.petRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
         petAdapter.updateDataSet(createUpdatePostViewModel.petList)
 
-        // initialize RecyclerView (for photos)
-        photoAdapter = PhotoListAdapter(createUpdatePostViewModel, requireContext(), binding)
-        binding.photosRecyclerView.adapter = photoAdapter
-        binding.photosRecyclerView.layoutManager = LinearLayoutManager(activity)
-        (binding.photosRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
-        photoAdapter.setResult(createUpdatePostViewModel.photoThumbnailList)
+        // initialize RecyclerView (for media)
+        mediaAdapter = MediaListAdapter(createUpdatePostViewModel, requireContext(), binding)
+        binding.mediaRecyclerView.adapter = mediaAdapter
+        binding.mediaRecyclerView.layoutManager = LinearLayoutManager(activity)
+        (binding.mediaRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        mediaAdapter.setResult(createUpdatePostViewModel.mediaThumbnailList)
 
         // TODO: initialize RecyclerView (for videos)
 
@@ -508,17 +504,17 @@ class CreateUpdatePostFragment : Fragment() {
         return latAndLong
     }
 
-    // update photo usage
-    private fun updatePhotoUsage() {
-        val uploadedCount = createUpdatePostViewModel.photoThumbnailList.size
+    // update media usage
+    private fun updateMediaUsage() {
+        val uploadedCount = createUpdatePostViewModel.mediaThumbnailList.size
         if (uploadedCount == 0) {
-            binding.uploadPhotoLayout.visibility = View.GONE
+            binding.uploadMediaLayout.visibility = View.GONE
         }
         else {
-            binding.uploadPhotoLayout.visibility = View.VISIBLE
+            binding.uploadMediaLayout.visibility = View.VISIBLE
         }
-        val photoUsageText = "$uploadedCount/10"
-        binding.photoUsage.text = photoUsageText
+        val mediaUsageText = "$uploadedCount/10"
+        binding.mediaUsage.text = mediaUsageText
     }
 
     // update general usage
@@ -601,8 +597,8 @@ class CreateUpdatePostFragment : Fragment() {
         binding.hashtagInputEditText.isEnabled = false
         binding.hashtagInputButton.isEnabled = false
         binding.postEditText.isEnabled = false
-        binding.photosRecyclerView.let {
-            for(i in 0..photoAdapter.itemCount) {
+        binding.mediaRecyclerView.let {
+            for(i in 0..mediaAdapter.itemCount) {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
             }
         }
@@ -635,8 +631,8 @@ class CreateUpdatePostFragment : Fragment() {
         binding.hashtagInputEditText.isEnabled = true
         binding.hashtagInputButton.isEnabled = true
         binding.postEditText.isEnabled = true
-        binding.photosRecyclerView.let {
-            for(i in 0..photoAdapter.itemCount) {
+        binding.mediaRecyclerView.let {
+            for(i in 0..mediaAdapter.itemCount) {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
             }
         }
@@ -654,7 +650,7 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     private fun isPostEmpty(): Boolean {
-        return createUpdatePostViewModel.photoThumbnailList.size == 0 &&
+        return createUpdatePostViewModel.mediaThumbnailList.size == 0 &&
                 createUpdatePostViewModel.generalFileNameList.size == 0 &&
                 createUpdatePostViewModel.postEditText.trim().isEmpty()
     }
@@ -746,7 +742,7 @@ class CreateUpdatePostFragment : Fragment() {
             .updatePostReq(updatePostReqDto)
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             // update media (photos and videos) TODO: create logic for updating videos
-            if(createUpdatePostViewModel.photoPathList.size == 0) {
+            if(createUpdatePostViewModel.mediaPathList.size == 0) {
                 // 기존에 Media가 0개였다면 FileType.IMAGE_FILE에 대해 DeletePostFile를 호출하지 않는다
                 if(requireActivity().intent.getIntExtra("originalMediaCount", 0) > 0){
                     createUpdatePostViewModel.updatedPostPhotoData = true
@@ -822,8 +818,8 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     private fun updatePostMedia(id: Long) {
-        // exception (no photo files)
-        if(createUpdatePostViewModel.photoPathList.size == 0) {
+        // exception (no media files)
+        if(createUpdatePostViewModel.mediaPathList.size == 0) {
             createUpdatePostViewModel.updatedPostPhotoData = true
 
             if (isApiLoadComplete()) {
@@ -833,12 +829,12 @@ class CreateUpdatePostFragment : Fragment() {
         } else {
             // create file list
             val fileList: ArrayList<MultipartBody.Part> = ArrayList()
-            for(i in 0 until createUpdatePostViewModel.photoPathList.size) {
-                val fileName = "file_$i" + createUpdatePostViewModel.photoPathList[i]
-                    .substring(createUpdatePostViewModel.photoPathList[i].lastIndexOf("."))
+            for(i in 0 until createUpdatePostViewModel.mediaPathList.size) {
+                val fileName = "file_$i" + createUpdatePostViewModel.mediaPathList[i]
+                    .substring(createUpdatePostViewModel.mediaPathList[i].lastIndexOf("."))
 
                 fileList.add(MultipartBody.Part.createFormData("fileList", fileName,
-                    RequestBody.create(MediaType.parse("multipart/form-data"), File(createUpdatePostViewModel.photoPathList[i]))))
+                    RequestBody.create(MediaType.parse("multipart/form-data"), File(createUpdatePostViewModel.mediaPathList[i]))))
             }
 
             // API call
@@ -912,22 +908,22 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // copy file and get real path
                 val mediaByteArray = response.body()!!.byteStream().readBytes()
-                createUpdatePostViewModel.photoPathList[index] =
+                createUpdatePostViewModel.mediaPathList[index] =
                     ServerUtil.createCopyAndReturnRealPathServer(requireContext(), mediaByteArray, extension, CREATE_UPDATE_POST_DIRECTORY)
 
                 // save photo thumbnail
                 val thumbnail = BitmapFactory.decodeByteArray(mediaByteArray, 0, mediaByteArray.size)
-                createUpdatePostViewModel.photoThumbnailList[index] = thumbnail
+                createUpdatePostViewModel.mediaThumbnailList[index] = thumbnail
 
                 // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
-                if("" !in createUpdatePostViewModel.photoPathList) {
+                if("" !in createUpdatePostViewModel.mediaPathList) {
                     // update RecyclerView and photo usage
-                    photoAdapter.setResult(createUpdatePostViewModel.photoThumbnailList)
-                    updatePhotoUsage()
+                    mediaAdapter.setResult(createUpdatePostViewModel.mediaThumbnailList)
+                    updateMediaUsage()
 
                     // set fetched to true
-                    createUpdatePostViewModel.fetchedPostPhotoDataForUpdate = true
-                    if (createUpdatePostViewModel.fetchedPostPhotoDataForUpdate &&
+                    createUpdatePostViewModel.fetchedPostMediaDataForUpdate = true
+                    if (createUpdatePostViewModel.fetchedPostMediaDataForUpdate &&
                         createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate) {
                         createUpdatePostViewModel.fetchedPostDataForUpdate = true
                     }
@@ -966,7 +962,7 @@ class CreateUpdatePostFragment : Fragment() {
 
                     // set fetched to true
                     createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate = true
-                    if (createUpdatePostViewModel.fetchedPostPhotoDataForUpdate &&
+                    if (createUpdatePostViewModel.fetchedPostMediaDataForUpdate &&
                         createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate) {
                         createUpdatePostViewModel.fetchedPostDataForUpdate = true
                     }
@@ -996,24 +992,22 @@ class CreateUpdatePostFragment : Fragment() {
             }
             createUpdatePostViewModel.postEditText = post.contents
 
-            // fetch post media (photos) data
+            // fetch post media (photos) data // TODO: fetch post media (videos) data
             if(post.mediaAttachments != null) {
                 val postMedia =
                     Gson().fromJson(post.mediaAttachments, Array<FileMetaData>::class.java)
 
                 // initialize lists
                 for (i in postMedia.indices) {
-                    createUpdatePostViewModel.photoPathList.add("")
-                    createUpdatePostViewModel.photoThumbnailList.add(null)
+                    createUpdatePostViewModel.mediaPathList.add("")
+                    createUpdatePostViewModel.mediaThumbnailList.add(null)
                 }
 
                 fetchPostMediaData(postMedia)
             }
             else {
-                createUpdatePostViewModel.fetchedPostPhotoDataForUpdate = true
+                createUpdatePostViewModel.fetchedPostMediaDataForUpdate = true
             }
-
-            // TODO: fetch post media (videos) data
 
             // fetch post general data
             if (post.fileAttachments != null) {
@@ -1078,7 +1072,7 @@ class CreateUpdatePostFragment : Fragment() {
     // for view restore
     private fun restoreState() {
         // restore usages
-        updatePhotoUsage()
+        updateMediaUsage()
         updateGeneralUsage()
 
         // restore location button

@@ -11,10 +11,10 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
 import java.io.File
 
-class PhotoListAdapter(private val createUpdatePostViewModel: CreateUpdatePostViewModel,
+class MediaListAdapter(private val createUpdatePostViewModel: CreateUpdatePostViewModel,
                        private val context: Context,
                        private val binding: FragmentCreateUpdatePostBinding) :
-        RecyclerView.Adapter<PhotoListAdapter.HistoryListViewHolder>() {
+        RecyclerView.Adapter<MediaListAdapter.HistoryListViewHolder>() {
 
     private var resultList = mutableListOf<Bitmap?>()
 
@@ -25,7 +25,7 @@ class PhotoListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
         val itemView = LayoutInflater.from(parent.context)
-                .inflate(R.layout.uploaded_photos_list_item, parent, false)
+                .inflate(R.layout.uploaded_media_list_item, parent, false)
         return HistoryListViewHolder(itemView)
     }
 
@@ -46,15 +46,15 @@ class PhotoListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
             deleteItem(position)
 
             // update photo upload layout
-            val uploadedCount = createUpdatePostViewModel.photoThumbnailList.size
+            val uploadedCount = createUpdatePostViewModel.mediaThumbnailList.size
             if (uploadedCount == 0) {
-                binding.uploadPhotoLayout.visibility = View.GONE
+                binding.uploadMediaLayout.visibility = View.GONE
             }
             else {
-                binding.uploadPhotoLayout.visibility = View.VISIBLE
+                binding.uploadMediaLayout.visibility = View.VISIBLE
             }
             val photoUsageText = "$uploadedCount/10"
-            binding.photoUsage.text = photoUsageText
+            binding.mediaUsage.text = photoUsageText
         }
     }
 
@@ -62,11 +62,11 @@ class PhotoListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
 
     private fun deleteItem(position: Int) {
         // delete file
-        File(createUpdatePostViewModel.photoPathList[position]).delete()
+        File(createUpdatePostViewModel.mediaPathList[position]).delete()
 
         // delete ViewModel values + RecyclerView list
-        createUpdatePostViewModel.photoPathList.removeAt(position)
-        createUpdatePostViewModel.photoThumbnailList.removeAt(position)
+        createUpdatePostViewModel.mediaPathList.removeAt(position)
+        createUpdatePostViewModel.mediaThumbnailList.removeAt(position)
 
         // for item remove animation
         notifyItemRemoved(position)

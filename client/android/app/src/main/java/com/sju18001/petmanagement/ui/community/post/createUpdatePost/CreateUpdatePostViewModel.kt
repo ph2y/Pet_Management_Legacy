@@ -34,15 +34,15 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
             field = value
         }
 
-    // for photo files
-    var photoPathList = handle.get<MutableList<String>>("photoPathList")?: mutableListOf()
+    // for media files
+    var mediaPathList = handle.get<MutableList<String>>("mediaPathList")?: mutableListOf()
         set(value) {
-            handle.set("photoPathList", value)
+            handle.set("mediaPathList", value)
             field = value
         }
-    var photoThumbnailList = handle.get<MutableList<Bitmap?>>("photoThumbnailList")?: mutableListOf()
+    var mediaThumbnailList = handle.get<MutableList<Bitmap?>>("mediaThumbnailList")?: mutableListOf()
         set(value) {
-            handle.set("photoThumbnailList", value)
+            handle.set("mediaThumbnailList", value)
             field = value
         }
 
@@ -96,9 +96,9 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
             handle.set("fetchedPostDataForUpdate", value)
             field = value
         }
-    var fetchedPostPhotoDataForUpdate = handle.get<Boolean>("fetchedPostPhotoDataForUpdate")?: false
+    var fetchedPostMediaDataForUpdate = handle.get<Boolean>("fetchedPostMediaDataForUpdate")?: false
         set(value) {
-            handle.set("fetchedPostPhotoDataForUpdate", value)
+            handle.set("fetchedPostMediaDataForUpdate", value)
             field = value
         }
     var fetchedPostGeneralFileDataForUpdate = handle.get<Boolean>("fetchedPostGeneralFileDataForUpdate")?: false
