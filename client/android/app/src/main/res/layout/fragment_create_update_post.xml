@@ -106,131 +106,151 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
                 android:layout_marginEnd="4dp"
                 android:orientation="horizontal"/>
 
-            <EditText
-                android:id="@+id/post_edit_text"
+            <LinearLayout
+                android:id="@+id/post_content_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:hint="@string/write_post_hint"
-                android:inputType="textMultiLine|textNoSuggestions"
-                android:maxLength="10000"
-                android:theme="@style/onSelectedThemeCarrot"
-                android:background="@android:color/transparent"
+                android:minHeight="120dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/pet_recycler_view"
-                app:layout_constraintBottom_toTopOf="@id/hashtag_layout"/>
+                app:layout_constraintBottom_toTopOf="@id/hashtag_layout">
 
-            <RelativeLayout
+                <EditText
+                    android:id="@+id/post_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="top"
+                    android:padding="16dp"
+                    android:hint="@string/write_post_hint"
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:maxLength="10000"
+                    android:theme="@style/onSelectedThemeCarrot"
+                    android:background="@android:color/transparent"/>
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:id="@+id/hashtag_layout"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="wrap_content"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/post_edit_text"
+                app:layout_constraintTop_toBottomOf="@id/post_content_layout"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/upload_media_layout">
+                app:layout_constraintBottom_toTopOf="@id/divider"
+                android:orientation="vertical">
 
-                <RelativeLayout
-                    android:id="@+id/hashtag_input_layout"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/hashtag_recycler_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@id/hashtag_input_button_layout">
+                    android:layout_marginStart="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:orientation="horizontal"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:orientation="horizontal"
+                    android:background="@drawable/border_with_radius_16">
 
                     <TextView
                         android:id="@+id/hashtag_icon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
                         android:layout_marginStart="8dp"
+                        android:padding="4dp"
                         android:text="#"
-                        android:textSize="30dp"
-                        android:textStyle="bold" />
+                        android:textSize="28dp"/>
 
                     <EditText
                         android:id="@+id/hashtag_input_edit_text"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/hashtag_icon"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="4dp"
                         android:imeOptions="actionGo"
-                        android:inputType="text"
+                        android:inputType="textNoSuggestions"
+                        android:maxLines="1"
                         android:maxLength="20"
                         android:textSize="16dp"
-                        android:theme="@style/onSelectedThemeCarrot" />
+                        android:theme="@style/onSelectedThemeCarrot"
+                        android:background="@android:color/transparent"/>
 
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/hashtag_input_button_layout"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_toStartOf="@id/upload_file_button">
-
-                    <TextView
-                        android:id="@+id/hashtag_usage"
+                    <ImageView
+                        android:id="@+id/hashtag_clear_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:text="@string/hashtag_usage"
-                        android:textSize="11dp" />
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="12dp"
+                        android:src="@drawable/ic_baseline_cancel_24"/>
 
-                    <androidx.appcompat.widget.AppCompatImageButton
-                        android:id="@+id/hashtag_input_button"
-                        android:layout_width="60dp"
-                        android:layout_height="30dp"
-                        android:layout_centerInParent="true"
-                        android:background="@drawable/button_with_radius"
-                        android:src="@drawable/ic_baseline_add_24" />
+                </LinearLayout>
 
-                </RelativeLayout>
+            </LinearLayout>
 
-                <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/upload_file_button"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/button_with_radius"
-                    android:src="@drawable/ic_baseline_attach_file_24" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/hashtag_recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_alignParentBottom="true"
-                    android:orientation="horizontal"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/upload_media_layout"
+            <View
+                android:id="@+id/divider"
                 android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:orientation="horizontal"
+                android:layout_height="1dp"
                 app:layout_constraintTop_toBottomOf="@id/hashtag_layout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/upload_general_layout">
+                app:layout_constraintBottom_toTopOf="@id/media_recycler_view"
+                android:layout_marginBottom="8dp"
+                android:background="@color/border_line"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/media_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/general_recycler_view"
+                android:orientation="horizontal"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/general_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                app:layout_constraintTop_toBottomOf="@id/media_recycler_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/attachment_buttons_layout"
+                android:orientation="horizontal"/>
+
+            <RelativeLayout
+                android:id="@+id/attachment_buttons_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/general_recycler_view"
+                app:layout_constraintEnd_toEndOf="parent">
 
                 <LinearLayout
-                    android:id="@+id/media_usage_layout"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_centerVertical="true"
+                    android:id="@+id/media_attachment_button"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/button_with_radius"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center"
                     android:orientation="vertical">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_baseline_photo_library_36" />
+                        android:src="@drawable/ic_baseline_photo_camera_24" />
 
                     <TextView
                         android:id="@+id/media_usage"
@@ -241,37 +261,23 @@
 
                 </LinearLayout>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/media_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
-                    android:layout_toEndOf="@id/media_usage_layout"
-                    android:orientation="horizontal" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/upload_general_layout"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/upload_media_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
                 <LinearLayout
-                    android:id="@+id/general_usage_layout"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_centerVertical="true"
+                    android:id="@+id/general_attachment_button"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_toEndOf="@id/media_attachment_button"
+                    android:background="@drawable/button_with_radius"
+                    android:clickable="true"
+                    android:focusable="true"
                     android:gravity="center"
                     android:orientation="vertical">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_baseline_file_present_36" />
+                        android:src="@drawable/ic_baseline_file_present_24" />
 
                     <TextView
                         android:id="@+id/general_usage"
@@ -281,14 +287,6 @@
                         android:textSize="12dp" />
 
                 </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/general_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
-                    android:layout_toEndOf="@id/general_usage_layout"
-                    android:orientation="horizontal" />
 
             </RelativeLayout>
 

@@ -34,12 +34,6 @@ class HashtagListAdapter(private val createUpdatePostViewModel: CreateUpdatePost
         // for delete button
         holder.deleteButton.setOnClickListener {
             deleteItem(position)
-
-            // update hashtag layout
-            val hashtagCount = createUpdatePostViewModel.hashtagList.size
-            if(hashtagCount == 0) { binding.hashtagRecyclerView.visibility = View.GONE }
-            val hashtagUsageText = "$hashtagCount/5"
-            binding.hashtagUsage.text = hashtagUsageText
         }
     }
 

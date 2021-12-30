@@ -20,8 +20,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.gson.Gson
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Permission
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
@@ -108,7 +111,6 @@ class CreateUpdatePostFragment : Fragment() {
         }
 
         // for location button
-
         binding.locationButton.setOnClickListener {
             createUpdatePostViewModel.isUsingLocation = !createUpdatePostViewModel.isUsingLocation
 
@@ -145,11 +147,39 @@ class CreateUpdatePostFragment : Fragment() {
             }
         }
 
-        // for upload file button
-        binding.uploadFileButton.setOnClickListener {
+        // for hashtag EditText listener
+        binding.hashtagInputEditText.setOnEditorActionListener{ _, _, _ ->
+            addHashtag()
+            true
+        }
+        binding.hashtagInputEditText.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                createUpdatePostViewModel.hashtagEditText = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // for hashtag clear button
+        binding.hashtagClearButton.setOnClickListener {
+            createUpdatePostViewModel.hashtagEditText = ""
+            binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
+        }
+
+        // for post EditText listener
+        binding.postEditText.addTextChangedListener(object: TextWatcher {
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                createUpdatePostViewModel.postEditText = s.toString()
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun afterTextChanged(s: Editable?) {}
+        })
+
+        // for media attachment button
+        binding.mediaAttachmentButton.setOnClickListener {
             val dialog = Dialog(requireActivity())
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setContentView(R.layout.select_file_type_dialog)
+            dialog.setContentView(R.layout.select_media_type_dialog)
             dialog.show()
 
             dialog.findViewById<ImageView>(R.id.close_button).setOnClickListener { dialog.dismiss() }
@@ -175,47 +205,19 @@ class CreateUpdatePostFragment : Fragment() {
 //                intent.action = Intent.ACTION_GET_CONTENT
 //                startActivityForResult(Intent.createChooser(intent, "동영상 선택"), PICK_VIDEO)
             }
-            dialog.findViewById<Button>(R.id.upload_general_button).setOnClickListener {
-                dialog.dismiss()
+        }
 
+        // for general attachment button
+        binding.generalAttachmentButton.setOnClickListener {
+            if(createUpdatePostViewModel.generalFilePathList.size == 10) {
+                Toast.makeText(context, context?.getText(R.string.general_usage_full_message), Toast.LENGTH_LONG).show()
+            } else {
                 val intent = Intent()
                 intent.type = "*/*"
                 intent.action = Intent.ACTION_GET_CONTENT
                 startActivityForResult(Intent.createChooser(intent, "파일 선택"), PICK_GENERAL_FILE)
             }
-            dialog.findViewById<Button>(R.id.upload_audio_button).setOnClickListener {
-                dialog.dismiss()
-
-                // TODO: implement logic for uploading audio files
-            }
         }
-
-        // for hashtag EditText listener
-        binding.hashtagInputEditText.setOnEditorActionListener{ _, _, _ ->
-            addHashtag()
-            true
-        }
-        binding.hashtagInputEditText.addTextChangedListener(object: TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                createUpdatePostViewModel.hashtagEditText = s.toString()
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
-        })
-
-        // for hashtag input button
-        binding.hashtagInputButton.setOnClickListener {
-            addHashtag()
-        }
-
-        // for post EditText listener
-        binding.postEditText.addTextChangedListener(object: TextWatcher {
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                createUpdatePostViewModel.postEditText = s.toString()
-            }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun afterTextChanged(s: Editable?) {}
-        })
 
         // for confirm button
         binding.confirmButton.setOnClickListener {
@@ -392,8 +394,6 @@ class CreateUpdatePostFragment : Fragment() {
         (binding.mediaRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
         mediaAdapter.setResult(createUpdatePostViewModel.mediaThumbnailList)
 
-        // TODO: initialize RecyclerView (for videos)
-
         // initialize RecyclerView (for general files)
         generalFilesAdapter = GeneralFileListAdapter(createUpdatePostViewModel, requireContext(), binding)
         binding.generalRecyclerView.adapter = generalFilesAdapter
@@ -401,13 +401,11 @@ class CreateUpdatePostFragment : Fragment() {
         (binding.generalRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
         generalFilesAdapter.setResult(createUpdatePostViewModel.generalFileNameList)
 
-        // TODO: initialize RecyclerView (for audio files)
-
         // initialize RecyclerView (for hashtags)
         hashtagAdapter = HashtagListAdapter(createUpdatePostViewModel, binding)
         binding.hashtagRecyclerView.adapter = hashtagAdapter
-        binding.hashtagRecyclerView.layoutManager = LinearLayoutManager(activity)
-        (binding.hashtagRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        binding.hashtagRecyclerView.layoutManager = FlexboxLayoutManager(activity)
+        (binding.hashtagRecyclerView.layoutManager as FlexboxLayoutManager).flexWrap = FlexWrap.WRAP
         hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
     }
 
@@ -508,10 +506,10 @@ class CreateUpdatePostFragment : Fragment() {
     private fun updateMediaUsage() {
         val uploadedCount = createUpdatePostViewModel.mediaThumbnailList.size
         if (uploadedCount == 0) {
-            binding.uploadMediaLayout.visibility = View.GONE
+            binding.mediaRecyclerView.visibility = View.GONE
         }
         else {
-            binding.uploadMediaLayout.visibility = View.VISIBLE
+            binding.mediaRecyclerView.visibility = View.VISIBLE
         }
         val mediaUsageText = "$uploadedCount/10"
         binding.mediaUsage.text = mediaUsageText
@@ -522,32 +520,23 @@ class CreateUpdatePostFragment : Fragment() {
         val uploadedCount = createUpdatePostViewModel.generalFileNameList.size
 
         if (uploadedCount == 0) {
-            binding.uploadGeneralLayout.visibility = View.GONE
+            binding.generalRecyclerView.visibility = View.GONE
         }
         else {
-            binding.uploadGeneralLayout.visibility = View.VISIBLE
+            binding.generalRecyclerView.visibility = View.VISIBLE
         }
         val generalUsageText = "$uploadedCount/10"
         binding.generalUsage.text = generalUsageText
     }
 
-    // update hashtag usage
-    private fun updateHashtagUsage() {
-        val hashtagCount = createUpdatePostViewModel.hashtagList.size
-        if(hashtagCount != 0) { binding.hashtagRecyclerView.visibility = View.VISIBLE }
-        val hashtagUsageText = "$hashtagCount/5"
-        binding.hashtagUsage.text = hashtagUsageText
-    }
-
     private fun addHashtag(){
-        createUpdatePostViewModel.hashtagEditText = createUpdatePostViewModel.hashtagEditText.trim()
-        binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
+        if (createUpdatePostViewModel.hashtagEditText.isEmpty()) return
 
-        if(binding.hashtagInputEditText.text.toString() == "") {
-            Toast.makeText(context, context?.getText(R.string.hashtag_empty_message), Toast.LENGTH_LONG).show()
+        if(!PatternRegex.checkHashtagRegex(createUpdatePostViewModel.hashtagEditText)) {
+            Toast.makeText(context, context?.getText(R.string.hashtag_regex_exception_message), Toast.LENGTH_SHORT).show()
         }
         else if(createUpdatePostViewModel.hashtagList.size == 5) {
-            Toast.makeText(context, context?.getText(R.string.hashtag_usage_full_message), Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context?.getText(R.string.hashtag_usage_full_message), Toast.LENGTH_SHORT).show()
         }
         else {
             // save hashtag
@@ -560,8 +549,6 @@ class CreateUpdatePostFragment : Fragment() {
 
             // reset hashtag EditText
             binding.hashtagInputEditText.setText("")
-
-            updateHashtagUsage()
         }
     }
 
@@ -592,10 +579,11 @@ class CreateUpdatePostFragment : Fragment() {
             }
         }
         binding.locationButton.isEnabled = false
-        binding.uploadFileButton.isEnabled = false
+        binding.mediaAttachmentButton.isEnabled = false
+        binding.generalAttachmentButton.isEnabled = false
         binding.disclosureButton.isEnabled = false
         binding.hashtagInputEditText.isEnabled = false
-        binding.hashtagInputButton.isEnabled = false
+        binding.hashtagClearButton.isEnabled = false
         binding.postEditText.isEnabled = false
         binding.mediaRecyclerView.let {
             for(i in 0..mediaAdapter.itemCount) {
@@ -626,10 +614,11 @@ class CreateUpdatePostFragment : Fragment() {
             }
         }
         binding.locationButton.isEnabled = true
-        binding.uploadFileButton.isEnabled = true
+        binding.mediaAttachmentButton.isEnabled = true
+        binding.generalAttachmentButton.isEnabled = true
         binding.disclosureButton.isEnabled = true
         binding.hashtagInputEditText.isEnabled = true
-        binding.hashtagInputButton.isEnabled = true
+        binding.hashtagClearButton.isEnabled = true
         binding.postEditText.isEnabled = true
         binding.mediaRecyclerView.let {
             for(i in 0..mediaAdapter.itemCount) {
@@ -698,7 +687,6 @@ class CreateUpdatePostFragment : Fragment() {
             updatePostMedia(response.body()!!.id)
             // TODO: create logic for updating video files
             updatePostGeneralFiles(response.body()!!.id)
-            // TODO: create logic for updating audio files
         }, {
             // set api state/button to normal
             createUpdatePostViewModel.apiIsLoading = false
@@ -780,8 +768,6 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.deletedPostGeneralFileData = true
                 updatePostGeneralFiles(createUpdatePostViewModel.postId!!)
             }
-
-            // TODO: create logic for updating audio files
         }, {
             // set api state/button to normal
             createUpdatePostViewModel.apiIsLoading = false
@@ -1097,7 +1083,6 @@ class CreateUpdatePostFragment : Fragment() {
 
         // restore hashtag layout
         binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
-        updateHashtagUsage()
 
         // restore post EditText
         binding.postEditText.setText(createUpdatePostViewModel.postEditText)

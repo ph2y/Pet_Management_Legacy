@@ -48,10 +48,10 @@ class MediaListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
             // update photo upload layout
             val uploadedCount = createUpdatePostViewModel.mediaThumbnailList.size
             if (uploadedCount == 0) {
-                binding.uploadMediaLayout.visibility = View.GONE
+                binding.mediaRecyclerView.visibility = View.GONE
             }
             else {
-                binding.uploadMediaLayout.visibility = View.VISIBLE
+                binding.mediaRecyclerView.visibility = View.VISIBLE
             }
             val photoUsageText = "$uploadedCount/10"
             binding.mediaUsage.text = photoUsageText

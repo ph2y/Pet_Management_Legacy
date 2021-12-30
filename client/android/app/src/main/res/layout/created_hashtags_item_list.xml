@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        android:textStyle="bold"
+        android:textColor="@color/peter_river"
         android:textSize="16dp"/>
 
     <ImageView
