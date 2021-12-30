@@ -327,7 +327,6 @@
                 android:id="@+id/delete_pet_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right"
                 android:orientation="horizontal"
                 android:paddingTop="20dp"
                 android:paddingBottom="20dp"
@@ -336,13 +335,13 @@
 
                 <TextView
                     android:id="@+id/delete_pet_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="?attr/selectableItemBackground"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:text="@string/delete_pet_button"
-                    android:textColor="@android:color/holo_red_dark" />
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:gravity="center"
+                    android:background="@drawable/button_with_radius_red"
+                    android:textSize="18sp"
+                    android:textColor="@color/white"
+                    android:text="@string/delete_pet_button"/>
 
             </LinearLayout>
 

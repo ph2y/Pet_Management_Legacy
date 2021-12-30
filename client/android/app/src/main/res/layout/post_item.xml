@@ -111,7 +111,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/layout_contents_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
@@ -172,7 +172,6 @@
                 android:id="@+id/create_like_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_baseline_favorite_border_28"
                 app:layout_constraintTop_toTopOf="parent"
@@ -182,7 +181,6 @@
                 android:id="@+id/delete_like_button"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginStart="2dp"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_baseline_favorite_28"
                 android:visibility="gone"
