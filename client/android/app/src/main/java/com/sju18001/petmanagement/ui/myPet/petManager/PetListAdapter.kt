@@ -11,6 +11,7 @@ import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
@@ -32,11 +33,11 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
     private var resultList = emptyList<Pet>()
 
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+        val cardView: CardView = itemView.findViewById(R.id.card_view)
         val petPhoto: ImageView = itemView.findViewById(R.id.pet_photo)
         val representativePetIcon: ImageView = itemView.findViewById(R.id.representative_pet_icon)
         val petName: TextView = itemView.findViewById(R.id.pet_name)
         val petMessage: TextView = itemView.findViewById(R.id.pet_message)
-        val dragHandle: ImageView = itemView.findViewById(R.id.drag_handle)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
@@ -72,8 +73,8 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         holder.petName.text = currentItem.name
         holder.petMessage.text = if(currentItem.message.isNullOrEmpty()) context.getString(R.string.filled_heart) else currentItem.message
 
-        // handle button for dragging
-        holder.dragHandle.setOnLongClickListener(View.OnLongClickListener {
+        // Long clicking the item to draging
+        holder.cardView.setOnLongClickListener(View.OnLongClickListener {
             this.startDragListener.onStartDrag(holder)
             return@OnLongClickListener false
         })
@@ -151,7 +152,6 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
     override fun onRowSelected(itemViewHolder: HistoryListViewHolder) {}
     override fun onRowClear(itemViewHolder: HistoryListViewHolder) {}
 
-    // fetch pet photo
     private fun fetchPetPhoto(id: Long, view: View) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
             .fetchPetPhotoReq(FetchPetPhotoReqDto(id))

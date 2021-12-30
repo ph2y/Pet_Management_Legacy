@@ -3,8 +3,10 @@ package com.sju18001.petmanagement.ui.myPet.petManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-class PetListDragAdapter(val adapter: PetListAdapter) : ItemTouchHelper.Callback() {
-
+class PetListDragAdapter(
+    val adapter: PetListAdapter,
+    val restoreScroll: ()->Unit
+) : ItemTouchHelper.Callback() {
     public interface Listener {
         fun onRowMoved(fromPosition: Int, toPosition: Int)
         fun onRowSelected(itemViewHolder: PetListAdapter.HistoryListViewHolder)
@@ -15,7 +17,7 @@ class PetListDragAdapter(val adapter: PetListAdapter) : ItemTouchHelper.Callback
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return makeMovementFlags(ItemTouchHelper.UP or ItemTouchHelper.DOWN, 0)
+        return makeMovementFlags(ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT, 0)
     }
 
     override fun onMove(
@@ -40,6 +42,26 @@ class PetListDragAdapter(val adapter: PetListAdapter) : ItemTouchHelper.Callback
         if (viewHolder is PetListAdapter.HistoryListViewHolder) {
             adapter.onRowClear(viewHolder)
         }
+
+        // 드래그가 끝난 뒤, 스크롤을 PagerSnapHelper에 맞춰서 복구
+        restoreScroll.invoke()
+    }
+
+    // 스크롤 감도 조절
+    override fun interpolateOutOfBoundsScroll(
+        recyclerView: RecyclerView,
+        viewSize: Int,
+        viewSizeOutOfBounds: Int,
+        totalSize: Int,
+        msSinceStartScroll: Long
+    ): Int {
+        return super.interpolateOutOfBoundsScroll(
+            recyclerView,
+            viewSize,
+            viewSizeOutOfBounds,
+            totalSize,
+            msSinceStartScroll
+        )*4
     }
 
     override fun isItemViewSwipeEnabled(): Boolean { return false }

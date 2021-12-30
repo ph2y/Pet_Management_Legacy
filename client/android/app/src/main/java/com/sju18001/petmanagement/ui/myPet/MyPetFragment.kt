@@ -41,6 +41,7 @@ class MyPetFragment : Fragment() {
                     requireActivity().intent.putExtra("pageIndex", position)
                 }
             })
+            it.isUserInputEnabled = false
         }
 
         TabLayoutMediator(tabLayout, viewPager){ tab, position ->

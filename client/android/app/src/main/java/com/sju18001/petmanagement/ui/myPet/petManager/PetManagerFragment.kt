@@ -4,14 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.util.Log
+import android.view.*
+import android.view.DragEvent.ACTION_DRAG_ENDED
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sju18001.petmanagement.R
@@ -39,6 +37,9 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
     private var petList: MutableList<Pet> = mutableListOf()
     lateinit var touchHelper: ItemTouchHelper
 
+    private lateinit var snapHelper: SnapHelper
+    private lateinit var layoutManager: LinearLayoutManager
+
     private var isViewDestroyed = false
 
     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
@@ -56,10 +57,20 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
 
         val root: View = binding.root
 
-        // initialize RecyclerView
+
+        // Initialize RecyclerView
         adapter = PetListAdapter(this, requireActivity())
         binding.myPetListRecyclerView.adapter = adapter
-        binding.myPetListRecyclerView.layoutManager = LinearLayoutManager(activity)
+
+        // Initialize LayoutManager
+        layoutManager = LinearLayoutManager(activity)
+        layoutManager.orientation = LinearLayoutManager.HORIZONTAL
+        binding.myPetListRecyclerView.layoutManager = layoutManager
+
+        // Initialize PagerSnapHelper
+        snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(binding.myPetListRecyclerView)
+
 
         // set adapter item change observer
         adapter.registerAdapterDataObserver(object: RecyclerView.AdapterDataObserver() {
@@ -70,7 +81,12 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             }
         })
 
-        touchHelper = ItemTouchHelper(PetListDragAdapter(adapter))
+        touchHelper = ItemTouchHelper(PetListDragAdapter(adapter) {
+            snapHelper.findSnapView(layoutManager)?.let {
+                val position = layoutManager.getPosition(it)
+                binding.myPetListRecyclerView.smoothScrollToPosition(position)
+            }
+        })
         touchHelper.attachToRecyclerView(binding.myPetListRecyclerView)
 
         return root
