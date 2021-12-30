@@ -93,8 +93,8 @@ class MainActivity : AppCompatActivity() {
                 addFragmentWhenFragmentIsNull(communityFragment, "community")
                 activeFragment = communityFragment
 
-                navView.menu.getItem(2).isChecked = true
-                activeFragmentIndex = 2
+                navView.menu.getItem(1).isChecked = true
+                activeFragmentIndex = 1
                 invalidateOptionsMenu()
                 actionBar?.setTitle(R.string.title_community)
                 actionBar?.show()
@@ -103,8 +103,8 @@ class MainActivity : AppCompatActivity() {
                 addFragmentWhenFragmentIsNull(settingFragment, "setting")
                 activeFragment = settingFragment
 
-                navView.menu.getItem(3).isChecked = true
-                activeFragmentIndex = 3
+                navView.menu.getItem(2).isChecked = true
+                activeFragmentIndex = 2
                 invalidateOptionsMenu()
                 actionBar?.setTitle(R.string.title_setting)
                 actionBar?.show()
