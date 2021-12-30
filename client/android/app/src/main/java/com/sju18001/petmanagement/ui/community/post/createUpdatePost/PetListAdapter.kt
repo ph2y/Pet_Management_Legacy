@@ -4,8 +4,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import de.hdodenhof.circleimageview.CircleImageView
@@ -16,7 +16,7 @@ class PetListAdapter(private val createUpdatePostViewModel: CreateUpdatePostView
     private var dataSet = mutableListOf<PetListItem>()
 
     class ViewHolder(view: View): RecyclerView.ViewHolder(view) {
-        val parentLayout: CardView = view.findViewById(R.id.create_update_post_pet_item_parent_layout)
+        val parentLayout: LinearLayout = view.findViewById(R.id.create_update_post_pet_item_parent_layout)
         val petPhoto: CircleImageView = view.findViewById(R.id.pet_photo)
         val petName: TextView = view.findViewById(R.id.pet_name)
         val selectedIcon: CircleImageView = view.findViewById(R.id.selected_icon)
@@ -38,8 +38,10 @@ class PetListAdapter(private val createUpdatePostViewModel: CreateUpdatePostView
         }
 
         if (dataSet[position].isSelected) {
+            holder.parentLayout.alpha = 1f
             holder.selectedIcon.visibility = View.VISIBLE
         } else {
+            holder.parentLayout.alpha = .5f
             holder.selectedIcon.visibility = View.INVISIBLE
         }
 
