@@ -84,11 +84,6 @@ class CreateUpdatePostFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        // for title
-        if(requireActivity().intent.getStringExtra("fragmentType") == "update_post") {
-            binding.backButtonTitle.text = context?.getText(R.string.update_post_title)
-        }
-
         // fetch post data for update (if not already fetched)
         if(requireActivity().intent.getStringExtra("fragmentType") == "update_post"
             && (!createUpdatePostViewModel.fetchedPostDataForUpdate || !createUpdatePostViewModel.fetchedPetData)) {
@@ -107,9 +102,47 @@ class CreateUpdatePostFragment : Fragment() {
 
         restoreState()
 
-        // for location switch
-        binding.locationSwitch.setOnCheckedChangeListener { _, isChecked ->
-            createUpdatePostViewModel.isUsingLocation = isChecked
+        // for title
+        if(requireActivity().intent.getStringExtra("fragmentType") == "update_post") {
+            binding.backButtonTitle.text = context?.getText(R.string.update_post_title)
+        }
+
+        // for location button
+
+        binding.locationButton.setOnClickListener {
+            createUpdatePostViewModel.isUsingLocation = !createUpdatePostViewModel.isUsingLocation
+
+            if (createUpdatePostViewModel.isUsingLocation) {
+                Toast.makeText(context, context?.getText(R.string.location_on), Toast.LENGTH_SHORT).show()
+                binding.locationButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_location_on_30))
+            } else {
+                Toast.makeText(context, context?.getText(R.string.location_off), Toast.LENGTH_SHORT).show()
+                binding.locationButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_location_off_30))
+            }
+        }
+
+        // for disclosure button
+        binding.disclosureButton.setOnClickListener {
+            when (createUpdatePostViewModel.disclosure) {
+                DISCLOSURE_PUBLIC -> {
+                    createUpdatePostViewModel.disclosure = DISCLOSURE_PRIVATE
+
+                    Toast.makeText(context, context?.getText(R.string.disclosure_private), Toast.LENGTH_SHORT).show()
+                    binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_lock_30))
+                }
+                DISCLOSURE_PRIVATE -> {
+                    createUpdatePostViewModel.disclosure = DISCLOSURE_FRIEND
+
+                    Toast.makeText(context, context?.getText(R.string.disclosure_friend), Toast.LENGTH_SHORT).show()
+                    binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_group_30))
+                }
+                DISCLOSURE_FRIEND -> {
+                    createUpdatePostViewModel.disclosure = DISCLOSURE_PUBLIC
+
+                    Toast.makeText(context, context?.getText(R.string.disclosure_public), Toast.LENGTH_SHORT).show()
+                    binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_public_30))
+                }
+            }
         }
 
         // for upload file button
@@ -159,38 +192,6 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // TODO: implement logic for uploading audio files
             }
-        }
-
-        // for disclosure spinner
-        ArrayAdapter.createFromResource(requireContext(), R.array.disclosure_array, android.R.layout.simple_spinner_item)
-            .also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                binding.disclosureSpinner.adapter = adapter
-        }
-        binding.disclosureSpinner.setSelection(0, false)
-        binding.disclosureSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                when(position) {
-                    0 -> {
-                        createUpdatePostViewModel.disclosure = DISCLOSURE_PUBLIC
-                        binding.disclosureIcon.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_public_24))
-                    }
-                    1 -> {
-                        createUpdatePostViewModel.disclosure = DISCLOSURE_PRIVATE
-                        binding.disclosureIcon.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_lock_24))
-                    }
-                    2 -> {
-                        createUpdatePostViewModel.disclosure = DISCLOSURE_FRIEND
-                        binding.disclosureIcon.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_group_24))
-                    }
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-        when(createUpdatePostViewModel.disclosure) {
-            DISCLOSURE_PUBLIC -> { binding.disclosureSpinner.setSelection(0) }
-            DISCLOSURE_PRIVATE -> { binding.disclosureSpinner.setSelection(1) }
-            DISCLOSURE_FRIEND -> { binding.disclosureSpinner.setSelection(2) }
         }
 
         // for hashtag EditText listener
@@ -569,19 +570,24 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     private fun showLoadingScreen() {
+        binding.locationButton.visibility = View.INVISIBLE
+        binding.disclosureButton.visibility = View.INVISIBLE
         binding.createUpdatePostMainScrollView.visibility = View.INVISIBLE
         binding.postDataLoadingLayout.visibility = View.VISIBLE
         binding.confirmButton.isEnabled = false
     }
 
     private fun hideLoadingScreen() {
+        binding.locationButton.visibility = View.VISIBLE
+        binding.disclosureButton.visibility = View.VISIBLE
         binding.createUpdatePostMainScrollView.visibility = View.VISIBLE
         binding.postDataLoadingLayout.visibility = View.GONE
         binding.confirmButton.isEnabled = true
     }
 
     private fun lockViews() {
-        binding.confirmButton.visibility = View.GONE
+        binding.confirmButton.isEnabled = false
+        binding.confirmButton.text = ""
         binding.createUpdatePostProgressBar.visibility = View.VISIBLE
 
         binding.petRecyclerView.let {
@@ -589,9 +595,9 @@ class CreateUpdatePostFragment : Fragment() {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.isClickable = false
             }
         }
-        binding.locationSwitch.isEnabled = false
+        binding.locationButton.isEnabled = false
         binding.uploadFileButton.isEnabled = false
-        binding.disclosureSpinner.isEnabled = false
+        binding.disclosureButton.isEnabled = false
         binding.hashtagInputEditText.isEnabled = false
         binding.hashtagInputButton.isEnabled = false
         binding.postEditText.isEnabled = false
@@ -614,7 +620,8 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     private fun unlockViews() {
-        binding.confirmButton.visibility = View.VISIBLE
+        binding.confirmButton.isEnabled = true
+        binding.confirmButton.text = requireContext().getText(R.string.confirm)
         binding.createUpdatePostProgressBar.visibility = View.GONE
 
         binding.petRecyclerView.let {
@@ -622,9 +629,9 @@ class CreateUpdatePostFragment : Fragment() {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.isClickable = true
             }
         }
-        binding.locationSwitch.isEnabled = true
+        binding.locationButton.isEnabled = true
         binding.uploadFileButton.isEnabled = true
-        binding.disclosureSpinner.isEnabled = true
+        binding.disclosureButton.isEnabled = true
         binding.hashtagInputEditText.isEnabled = true
         binding.hashtagInputButton.isEnabled = true
         binding.postEditText.isEnabled = true
@@ -1070,18 +1077,28 @@ class CreateUpdatePostFragment : Fragment() {
 
     // for view restore
     private fun restoreState() {
-        // restore location switch
-        binding.locationSwitch.isChecked = createUpdatePostViewModel.isUsingLocation
-
         // restore usages
         updatePhotoUsage()
         updateGeneralUsage()
 
-        // restore disclosure spinner
-        when(createUpdatePostViewModel.disclosure) {
-            DISCLOSURE_PUBLIC -> { binding.disclosureSpinner.setSelection(0) }
-            DISCLOSURE_PRIVATE -> { binding.disclosureSpinner.setSelection(1) }
-            DISCLOSURE_FRIEND -> { binding.disclosureSpinner.setSelection(2) }
+        // restore location button
+        if (createUpdatePostViewModel.isUsingLocation) {
+            binding.locationButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_location_on_30))
+        } else {
+            binding.locationButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_location_off_30))
+        }
+
+        // restore disclosure button
+        when (createUpdatePostViewModel.disclosure) {
+            DISCLOSURE_PUBLIC -> {
+                binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_public_30))
+            }
+            DISCLOSURE_PRIVATE -> {
+                binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_lock_30))
+            }
+            DISCLOSURE_FRIEND -> {
+                binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_group_30))
+            }
         }
 
         // restore hashtag layout

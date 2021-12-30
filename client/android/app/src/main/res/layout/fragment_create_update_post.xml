@@ -48,8 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_baseline_arrow_back_36"
-            android:background="?selectableItemBackgroundBorderless"/>
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_baseline_arrow_back_36"/>
 
         <TextView
             android:id="@+id/back_button_title"
@@ -62,34 +62,24 @@
             android:textStyle="bold"
             android:text="@string/create_post_title"/>
 
-        <RelativeLayout
+        <ImageButton
+            android:id="@+id/location_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/disclosure_button"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="12dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_baseline_location_on_30"/>
+
+        <ImageButton
+            android:id="@+id/disclosure_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true">
-
-            <TextView
-                android:id="@+id/confirm_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="?attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="4dp"
-                android:text="@string/confirm_create_pet"
-                android:textSize="20dp"
-                android:textStyle="bold" />
-
-            <ProgressBar
-                android:id="@+id/create_update_post_progress_bar"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:visibility="gone"
-                android:indeterminateTint="@color/carrot"
-                android:layout_centerInParent="true"/>
-
-        </RelativeLayout>
+            android:layout_centerVertical="true"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_baseline_public_30"/>
 
     </RelativeLayout>
 
@@ -98,11 +88,11 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/confirm_button_layout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/back_button_layout">
+        app:layout_constraintTop_toBottomOf="@id/back_button_layout"
+        app:layout_constraintHorizontal_bias="0.0">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -118,61 +108,11 @@
                 android:orientation="horizontal"/>
 
             <RelativeLayout
-                android:id="@+id/post_info_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/upload_photo_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/pet_recycler_view"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:orientation="vertical"
-                    android:layout_marginStart="4dp">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/disclosure_icon"
-                            android:layout_width="34dp"
-                            android:layout_height="34dp"
-                            android:padding="4dp"
-                            android:src="@drawable/ic_baseline_public_24" />
-
-                        <Spinner
-                            android:id="@+id/disclosure_spinner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <Switch
-                    android:id="@+id/location_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/location_switch_label"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
                 android:id="@+id/upload_photo_layout"
                 android:layout_width="match_parent"
                 android:layout_height="90dp"
                 android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/post_info_layout"
+                app:layout_constraintTop_toBottomOf="@id/pet_recycler_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/upload_video_layout">
@@ -449,5 +389,34 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
+
+    <RelativeLayout
+        android:id="@+id/confirm_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/create_update_post_main_scroll_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/confirm_button"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:cornerRadius="0dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="@string/confirm"
+            android:textSize="18dp"/>
+
+        <ProgressBar
+            android:id="@+id/create_update_post_progress_bar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:visibility="gone"
+            android:indeterminateTint="@color/carrot"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
