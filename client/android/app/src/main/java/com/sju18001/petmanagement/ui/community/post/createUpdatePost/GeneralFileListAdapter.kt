@@ -60,9 +60,8 @@ class GeneralFileListAdapter(private val createUpdatePostViewModel: CreateUpdate
         createUpdatePostViewModel.generalFilePathList.removeAt(position)
         createUpdatePostViewModel.generalFileNameList.removeAt(position)
 
-        // for item remove animation
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, this.resultList.size)
+        // update recyclerview
+        notifyDataSetChanged()
     }
 
     public fun setResult(result: MutableList<String>){
