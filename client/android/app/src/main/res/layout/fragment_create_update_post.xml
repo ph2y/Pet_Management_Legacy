@@ -139,9 +139,11 @@
                     android:paddingStart="16dp"
                     android:paddingTop="16dp"
                     android:paddingEnd="16dp"
+                    android:gravity="top"
                     android:hint="@string/write_post_hint"
                     android:inputType="textMultiLine|textNoSuggestions"
                     android:maxLength="10000"
+                    android:minLines="5"
                     android:theme="@style/onSelectedThemeCarrot"
                     android:background="@android:color/transparent"/>
 
