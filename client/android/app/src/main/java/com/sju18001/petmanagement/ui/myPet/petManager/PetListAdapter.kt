@@ -37,6 +37,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
         val petPhoto: ImageView = itemView.findViewById(R.id.pet_photo)
         val representativePetIcon: ImageView = itemView.findViewById(R.id.representative_pet_icon)
         val petName: TextView = itemView.findViewById(R.id.pet_name)
+        val petBreed: TextView = itemView.findViewById(R.id.pet_breed)
         val petMessage: TextView = itemView.findViewById(R.id.pet_message)
     }
 
@@ -71,6 +72,7 @@ class PetListAdapter(private val startDragListener: OnStartDragListener, private
 
         // Set name, message
         holder.petName.text = currentItem.name
+        holder.petBreed.text = currentItem.breed
         holder.petMessage.text = if(currentItem.message.isNullOrEmpty()) context.getString(R.string.filled_heart) else currentItem.message
 
         // Long clicking the item to draging
