@@ -155,6 +155,12 @@ class CreateUpdatePostFragment : Fragment() {
         binding.hashtagInputEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 createUpdatePostViewModel.hashtagEditText = s.toString()
+
+                if (createUpdatePostViewModel.hashtagEditText.isNotEmpty()) {
+                    binding.hashtagClearButton.visibility = View.VISIBLE
+                } else {
+                    binding.hashtagClearButton.visibility = View.INVISIBLE
+                }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
@@ -555,6 +561,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun showLoadingScreen() {
         binding.locationButton.visibility = View.INVISIBLE
         binding.disclosureButton.visibility = View.INVISIBLE
+        binding.attachmentButtonsLayout.visibility = View.INVISIBLE
         binding.createUpdatePostMainScrollView.visibility = View.INVISIBLE
         binding.postDataLoadingLayout.visibility = View.VISIBLE
         binding.confirmButton.isEnabled = false
@@ -563,6 +570,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun hideLoadingScreen() {
         binding.locationButton.visibility = View.VISIBLE
         binding.disclosureButton.visibility = View.VISIBLE
+        binding.attachmentButtonsLayout.visibility = View.VISIBLE
         binding.createUpdatePostMainScrollView.visibility = View.VISIBLE
         binding.postDataLoadingLayout.visibility = View.GONE
         binding.confirmButton.isEnabled = true
@@ -1083,6 +1091,9 @@ class CreateUpdatePostFragment : Fragment() {
 
         // restore hashtag layout
         binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
+        if (createUpdatePostViewModel.hashtagEditText.isNotEmpty()) {
+            binding.hashtagClearButton.visibility = View.VISIBLE
+        }
 
         // restore post EditText
         binding.postEditText.setText(createUpdatePostViewModel.postEditText)

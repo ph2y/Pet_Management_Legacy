@@ -2,15 +2,17 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="30dp"
-    android:padding="4dp">
+    android:paddingStart="4dp"
+    android:paddingEnd="4dp">
 
     <TextView
         android:id="@+id/hashtag_text_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
+        android:gravity="center"
         android:textColor="@color/peter_river"
-        android:textSize="16dp"/>
+        android:textSize="16dp" />
 
     <ImageView
         android:id="@+id/delete_button"
