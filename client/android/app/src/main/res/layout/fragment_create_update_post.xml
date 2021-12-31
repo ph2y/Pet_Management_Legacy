@@ -245,8 +245,8 @@
                 app:layout_constraintTop_toBottomOf="@id/media_recycler_view"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                android:layout_marginTop="12dp"
-                android:paddingBottom="12dp"
+                android:layout_marginTop="8dp"
+                android:paddingBottom="8dp"
                 android:orientation="vertical"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

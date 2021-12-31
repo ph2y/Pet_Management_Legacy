@@ -13,7 +13,7 @@
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/activity_post_general_files.xml" value="0.33" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/activity_search.xml" value="0.33" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/activity_update_post_file.xml" value="0.33242753623188404" />
-        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/create_update_post_pet_item.xml" value="0.42887249736564803" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/create_update_post_pet_item.xml" value="0.9" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/created_hashtags_item_list.xml" value="1.1" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_create_account_user_info.xml" value="0.2" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_create_update_pet.xml" value="0.19927536231884058" />
@@ -25,6 +25,7 @@
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_pet_schedule_edit.xml" value="0.33" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_post.xml" value="0.3546195652173913" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_setting.xml" value="0.25677083333333334" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/pet_list_item.xml" value="0.19791666666666666" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/pet_schedule_list_item.xml" value="0.3546195652173913" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/post_general_file_item.xml" value="0.3546195652173913" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/post_item.xml" value="0.3546195652173913" />

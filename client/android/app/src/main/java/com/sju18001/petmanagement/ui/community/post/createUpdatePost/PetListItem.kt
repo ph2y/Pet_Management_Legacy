@@ -7,5 +7,6 @@ data class PetListItem (
     val petPhotoUrl: String?,
     var petPhoto: Bitmap?,
     val petName: String,
+    val isRepresentativePet: Boolean,
     var isSelected: Boolean
 )

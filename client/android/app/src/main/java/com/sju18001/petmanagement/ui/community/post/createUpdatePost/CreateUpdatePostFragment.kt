@@ -423,7 +423,9 @@ class CreateUpdatePostFragment : Fragment() {
             val unsortedPetList: MutableList<PetListItem> = mutableListOf()
             response.body()?.petList?.map {
                 val item = PetListItem(
-                    it.id, it.photoUrl, null, it.name, it.id == createUpdatePostViewModel.selectedPetId
+                    it.id, it.photoUrl, null, it.name,
+                    it.id == SessionManager.fetchLoggedInAccount(requireContext())?.representativePetId,
+                    it.id == createUpdatePostViewModel.selectedPetId
                 )
                 unsortedPetList.add(item)
             }

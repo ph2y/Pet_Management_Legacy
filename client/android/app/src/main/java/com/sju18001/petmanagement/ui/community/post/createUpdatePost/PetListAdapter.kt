@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +20,7 @@ class PetListAdapter(private val createUpdatePostViewModel: CreateUpdatePostView
         val parentLayout: LinearLayout = view.findViewById(R.id.create_update_post_pet_item_parent_layout)
         val petPhoto: CircleImageView = view.findViewById(R.id.pet_photo)
         val petName: TextView = view.findViewById(R.id.pet_name)
+        val representativePetIcon: ImageView = view.findViewById(R.id.representative_pet_icon)
         val selectedIcon: CircleImageView = view.findViewById(R.id.selected_icon)
     }
 
@@ -35,6 +37,12 @@ class PetListAdapter(private val createUpdatePostViewModel: CreateUpdatePostView
             holder.petPhoto.setImageBitmap(dataSet[position].petPhoto)
         } else {
             holder.petPhoto.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
+        }
+
+        if (dataSet[position].isRepresentativePet) {
+            holder.representativePetIcon.visibility = View.VISIBLE
+        } else {
+            holder.representativePetIcon.visibility = View.INVISIBLE
         }
 
         if (dataSet[position].isSelected) {
