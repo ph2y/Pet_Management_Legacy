@@ -21,6 +21,7 @@
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_login.xml" value="0.19927536231884058" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_my_pet.xml" value="0.19927536231884058" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_pet_manager.xml" value="0.19927536231884058" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_pet_profile.xml" value="0.19791666666666666" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_pet_schedule_edit.xml" value="0.33" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_post.xml" value="0.3546195652173913" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/fragment_setting.xml" value="0.25677083333333334" />
@@ -32,6 +33,8 @@
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/select_photo_video_dialog.xml" value="0.33" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/tag_item.xml" value="0.25677083333333334" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/uploaded_general_files_e.xml" value="0.3269927536231884" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/uploaded_general_files_list_item.xml" value="0.67" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/uploaded_media_list_item.xml" value="0.36614583333333334" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/uploaded_photos_list_item.xml" value="0.25677083333333334" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/drawable/border_bottom.xml" value="0.21574074074074073" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/drawable/border_bottom_ghost_white.xml" value="0.275" />

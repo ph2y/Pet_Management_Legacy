@@ -404,7 +404,7 @@ class CreateUpdatePostFragment : Fragment() {
         generalFilesAdapter = GeneralFileListAdapter(createUpdatePostViewModel, requireContext(), binding)
         binding.generalRecyclerView.adapter = generalFilesAdapter
         binding.generalRecyclerView.layoutManager = LinearLayoutManager(activity)
-        (binding.generalRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        (binding.generalRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.VERTICAL
         generalFilesAdapter.setResult(createUpdatePostViewModel.generalFileNameList)
 
         // initialize RecyclerView (for hashtags)
