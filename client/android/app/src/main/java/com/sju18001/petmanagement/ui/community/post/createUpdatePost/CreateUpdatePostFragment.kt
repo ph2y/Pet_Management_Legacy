@@ -257,7 +257,14 @@ class CreateUpdatePostFragment : Fragment() {
 
         // for back button
         binding.backButton.setOnClickListener {
-            activity?.finish()
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setMessage(requireContext().getString(R.string.cancel_dialog_message))
+                .setPositiveButton(R.string.confirm) { _, _ ->
+                    activity?.finish()
+                }
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
+                    dialog.cancel()
+                }.create().show()
         }
 
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateUpdatePostParentLayout)
