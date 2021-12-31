@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.community.post.createUpdatePost
 
+import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.SavedStateViewModelFactory
@@ -34,6 +35,17 @@ class CreateUpdatePostActivity : AppCompatActivity() {
                 .add(R.id.create_update_post_activity_fragment_container, CreateUpdatePostFragment())
                 .commit()
         }
+    }
+
+    override fun onBackPressed() {
+        val builder = AlertDialog.Builder(this)
+        builder.setMessage(this.getString(R.string.cancel_dialog_message))
+            .setPositiveButton(R.string.confirm) { _, _ ->
+                super.onBackPressed()
+            }
+            .setNegativeButton(R.string.cancel) { dialog, _ ->
+                dialog.cancel()
+            }.create().show()
     }
 
     override fun finish() {

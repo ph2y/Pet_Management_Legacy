@@ -2,6 +2,7 @@ package com.sju18001.petmanagement.ui.community.post.createUpdatePost
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -226,7 +227,7 @@ class CreateUpdatePostFragment : Fragment() {
         }
 
         // for confirm button
-        binding.confirmButton.setOnClickListener {
+        binding.postButton.setOnClickListener {
             // trim post content
             createUpdatePostViewModel.postEditText = createUpdatePostViewModel.postEditText.trim()
             binding.postEditText.setText(createUpdatePostViewModel.postEditText)
@@ -238,12 +239,19 @@ class CreateUpdatePostFragment : Fragment() {
                 Toast.makeText(context, context?.getText(R.string.pet_not_selected_message), Toast.LENGTH_LONG).show()
             }
             else {
-                if(requireActivity().intent.getStringExtra("fragmentType") == "create_post") {
-                    createPost()
-                }
-                else {
-                    updatePost()
-                }
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setMessage(requireContext().getString(R.string.post_dialog_message))
+                    .setPositiveButton(R.string.confirm) { _, _ ->
+                        if(requireActivity().intent.getStringExtra("fragmentType") == "create_post") {
+                            createPost()
+                        }
+                        else {
+                            updatePost()
+                        }
+                    }
+                    .setNegativeButton(R.string.cancel) { dialog, _ ->
+                        dialog.cancel()
+                    }.create().show()
             }
         }
 
@@ -566,7 +574,7 @@ class CreateUpdatePostFragment : Fragment() {
         binding.attachmentButtonsLayout.visibility = View.INVISIBLE
         binding.createUpdatePostMainScrollView.visibility = View.INVISIBLE
         binding.postDataLoadingLayout.visibility = View.VISIBLE
-        binding.confirmButton.isEnabled = false
+        binding.postButton.isEnabled = false
     }
 
     private fun hideLoadingScreen() {
@@ -575,12 +583,12 @@ class CreateUpdatePostFragment : Fragment() {
         binding.attachmentButtonsLayout.visibility = View.VISIBLE
         binding.createUpdatePostMainScrollView.visibility = View.VISIBLE
         binding.postDataLoadingLayout.visibility = View.GONE
-        binding.confirmButton.isEnabled = true
+        binding.postButton.isEnabled = true
     }
 
     private fun lockViews() {
-        binding.confirmButton.isEnabled = false
-        binding.confirmButton.text = ""
+        binding.postButton.isEnabled = false
+        binding.postButton.text = ""
         binding.createUpdatePostProgressBar.visibility = View.VISIBLE
 
         binding.petRecyclerView.let {
@@ -614,8 +622,8 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     private fun unlockViews() {
-        binding.confirmButton.isEnabled = true
-        binding.confirmButton.text = requireContext().getText(R.string.confirm)
+        binding.postButton.isEnabled = true
+        binding.postButton.text = requireContext().getText(R.string.confirm)
         binding.createUpdatePostProgressBar.visibility = View.GONE
 
         binding.petRecyclerView.let {

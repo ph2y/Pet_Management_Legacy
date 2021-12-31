@@ -328,14 +328,14 @@
             android:layout_height="50dp">
 
             <Button
-                android:id="@+id/confirm_button"
+                android:id="@+id/post_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:cornerRadius="0dp"
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
-                android:text="@string/confirm"
-                android:textSize="18dp"/>
+                android:text="@string/post_button"
+                android:textSize="18dp"
+                app:cornerRadius="0dp"/>
 
             <ProgressBar
                 android:id="@+id/create_update_post_progress_bar"

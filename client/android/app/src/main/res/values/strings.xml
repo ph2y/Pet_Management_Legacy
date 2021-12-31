@@ -233,6 +233,9 @@
     <string name="post_data_loading_message">정보 불러오는 중…</string>
     <string name="empty_post_list_notification">불러올 포스트가 없어요.\n새 포스트를 추가해보세요!</string>
     <string name="duplicate_file_exception_message">이미 추가된 파일이에요!</string>
+    <string name="post_button">완료</string>
+    <string name="post_dialog_message">글을 게시할까요?</string>
+    <string name="cancel_dialog_message">글 작성을 취소할까요?</string>
 
     <!-- Community Fragment -->
     <string name="comment">댓글</string>
