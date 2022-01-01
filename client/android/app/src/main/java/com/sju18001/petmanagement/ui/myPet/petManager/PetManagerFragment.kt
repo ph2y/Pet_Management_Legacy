@@ -59,7 +59,12 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
 
 
         // Initialize RecyclerView
-        adapter = PetListAdapter(this, requireActivity())
+        adapter = PetListAdapter(this, requireActivity()) {
+            val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
+            myPetActivityIntent.putExtra("fragmentType", "create_pet")
+            startActivity(myPetActivityIntent)
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+        }
         binding.myPetListRecyclerView.adapter = adapter
 
         // Initialize LayoutManager
@@ -92,18 +97,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         return root
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        // create pet fab -> start activity and set fragment to create pet
-        binding.createPetFab.setOnClickListener {
-            val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
-            myPetActivityIntent.putExtra("fragmentType", "create_pet")
-            startActivity(myPetActivityIntent)
-            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-        }
-    }
-
     override fun onResume() {
         super.onResume()
 
@@ -120,7 +113,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             }
 
             // if RecyclerView items not yet added
-            if(adapter.itemCount == 0) {
+            if(adapter.itemCount == 1) {
                 updatePetListOrder(petListApi)
                 reorderPetList(petListApi)
 
@@ -265,7 +258,7 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
 
     private fun setEmptyNotificationView(itemCount: Int) {
         // set notification view
-        val visibility = if(itemCount != 0) View.GONE else View.VISIBLE
+        val visibility = if(itemCount != 1) View.GONE else View.VISIBLE
         binding.emptyPetListNotification.visibility = visibility
     }
 }
