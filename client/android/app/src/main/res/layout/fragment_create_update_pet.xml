@@ -254,7 +254,7 @@
                             android:maxLength="8"
                             android:nextFocusDown="@id/pet_breed_input"
                             android:padding="8dp"
-                            android:textSize="18dp"
+                            android:textSize="18sp"
                             android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
@@ -283,7 +283,7 @@
                             android:inputType="textPersonName"
                             android:maxLength="8"
                             android:padding="8dp"
-                            android:textSize="18dp"
+                            android:textSize="18sp"
                             android:theme="@style/onSelectedThemeCarrot" />
 
                     </LinearLayout>
