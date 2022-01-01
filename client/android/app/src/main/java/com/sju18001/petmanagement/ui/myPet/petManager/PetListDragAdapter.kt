@@ -2,6 +2,7 @@ package com.sju18001.petmanagement.ui.myPet.petManager
 
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.sju18001.petmanagement.R
 
 class PetListDragAdapter(
     val adapter: PetListAdapter,
@@ -62,6 +63,16 @@ class PetListDragAdapter(
             totalSize,
             msSinceStartScroll
         )*4
+    }
+
+    override fun canDropOver(
+        recyclerView: RecyclerView,
+        current: RecyclerView.ViewHolder,
+        target: RecyclerView.ViewHolder
+    ): Boolean {
+        return if(current.itemViewType == R.layout.create_pet_button ||
+            target.itemViewType == R.layout.create_pet_button) false
+        else super.canDropOver(recyclerView, current, target)
     }
 
     override fun isItemViewSwipeEnabled(): Boolean { return false }
