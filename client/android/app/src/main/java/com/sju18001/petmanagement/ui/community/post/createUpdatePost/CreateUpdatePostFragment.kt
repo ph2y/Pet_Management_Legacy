@@ -578,6 +578,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun showLoadingScreen() {
         binding.locationButton.visibility = View.INVISIBLE
         binding.disclosureButton.visibility = View.INVISIBLE
+        binding.dividerD.visibility = View.INVISIBLE
         binding.attachmentButtonsLayout.visibility = View.INVISIBLE
         binding.createUpdatePostMainScrollView.visibility = View.INVISIBLE
         binding.postDataLoadingLayout.visibility = View.VISIBLE
@@ -587,6 +588,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun hideLoadingScreen() {
         binding.locationButton.visibility = View.VISIBLE
         binding.disclosureButton.visibility = View.VISIBLE
+        binding.dividerD.visibility = View.VISIBLE
         binding.attachmentButtonsLayout.visibility = View.VISIBLE
         binding.createUpdatePostMainScrollView.visibility = View.VISIBLE
         binding.postDataLoadingLayout.visibility = View.GONE

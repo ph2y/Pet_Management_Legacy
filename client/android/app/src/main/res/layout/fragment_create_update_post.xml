@@ -265,6 +265,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:orientation="vertical">
 
+        <View
+            android:id="@+id/dividerD"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:background="@color/border_line"/>
+
         <RelativeLayout
             android:id="@+id/attachment_buttons_layout"
             android:layout_width="match_parent"
@@ -273,50 +281,53 @@
 
             <LinearLayout
                 android:id="@+id/media_attachment_button"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
                 android:layout_alignParentStart="true"
-                android:background="@drawable/button_with_radius"
+                android:background="@drawable/button_with_less_radius"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_photo_camera_24" />
+                    android:src="@drawable/ic_baseline_photo_camera_20"/>
 
                 <TextView
                     android:id="@+id/media_usage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     android:text="@string/file_usage"
-                    android:textSize="12dp" />
+                    android:textSize="12dp"/>
 
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/general_attachment_button"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_toEndOf="@id/media_attachment_button"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
                 android:layout_marginStart="12dp"
-                android:background="@drawable/button_with_radius"
+                android:layout_toEndOf="@id/media_attachment_button"
+                android:background="@drawable/button_with_less_radius"
                 android:clickable="true"
                 android:focusable="true"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_file_present_24" />
+                    android:layout_marginStart="-4dp"
+                    android:src="@drawable/ic_baseline_file_present_20" />
 
                 <TextView
                     android:id="@+id/general_usage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
                     android:text="@string/file_usage"
                     android:textSize="12dp" />
 
