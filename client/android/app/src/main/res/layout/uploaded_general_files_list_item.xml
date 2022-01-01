@@ -18,8 +18,9 @@
         android:id="@+id/delete_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toEndOf="@id/general_files_name"
         android:layout_centerVertical="true"
-        android:src="@drawable/ic_baseline_cancel_24"/>
+        android:layout_toEndOf="@id/general_files_name"
+        android:layout_marginStart="2dp"
+        android:src="@drawable/ic_baseline_close_24"/>
 
 </RelativeLayout>

@@ -194,7 +194,7 @@
                     android:id="@+id/hashtag_input_edit_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingStart="4dp"
+                    android:paddingStart="8dp"
                     android:paddingTop="16dp"
                     android:paddingEnd="4dp"
                     android:paddingBottom="16dp"
