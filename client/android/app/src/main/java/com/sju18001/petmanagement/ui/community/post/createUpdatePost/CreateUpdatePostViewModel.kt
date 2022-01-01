@@ -6,9 +6,24 @@ import androidx.lifecycle.ViewModel
 
 class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewModel() {
     // for pet
-    var petId = handle.get<Long>("petId")
+    var fetchedPetData = handle.get<Boolean>("fetchedPetData")?: false
         set(value) {
-            handle.set("petId", value)
+            handle.set("fetchedPetData", value)
+            field = value
+        }
+    var petList = handle.get<MutableList<PetListItem>>("petList")?: mutableListOf()
+        set(value) {
+            handle.set("petList", value)
+            field = value
+        }
+    var selectedPetId = handle.get<Long>("selectedPetId")
+        set(value) {
+            handle.set("selectedPetId", value)
+            field = value
+        }
+    var selectedPetIndex = handle.get<Int>("selectedPetIndex")?: -1
+        set(value) {
+            handle.set("selectedPetIndex", value)
             field = value
         }
 
@@ -19,15 +34,20 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
             field = value
         }
 
-    // for photo files
+    // for media files
     var photoPathList = handle.get<MutableList<String>>("photoPathList")?: mutableListOf()
         set(value) {
             handle.set("photoPathList", value)
             field = value
         }
-    var photoThumbnailList = handle.get<MutableList<Bitmap?>>("photoThumbnailList")?: mutableListOf()
+    var videoPathList = handle.get<MutableList<String>>("videoPathList")?: mutableListOf()
         set(value) {
-            handle.set("photoThumbnailList", value)
+            handle.set("videoPathList", value)
+            field = value
+        }
+    var mediaThumbnailList = handle.get<MutableList<Bitmap?>>("mediaThumbnailList")?: mutableListOf()
+        set(value) {
+            handle.set("mediaThumbnailList", value)
             field = value
         }
 
@@ -81,9 +101,9 @@ class CreateUpdatePostViewModel(private val handle: SavedStateHandle) : ViewMode
             handle.set("fetchedPostDataForUpdate", value)
             field = value
         }
-    var fetchedPostPhotoDataForUpdate = handle.get<Boolean>("fetchedPostPhotoDataForUpdate")?: false
+    var fetchedPostMediaDataForUpdate = handle.get<Boolean>("fetchedPostMediaDataForUpdate")?: false
         set(value) {
-            handle.set("fetchedPostPhotoDataForUpdate", value)
+            handle.set("fetchedPostMediaDataForUpdate", value)
             field = value
         }
     var fetchedPostGeneralFileDataForUpdate = handle.get<Boolean>("fetchedPostGeneralFileDataForUpdate")?: false

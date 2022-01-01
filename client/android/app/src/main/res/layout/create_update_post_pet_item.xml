@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/create_update_post_pet_item_parent_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="?attr/selectableItemBackground">
+
+        <RelativeLayout
+            android:layout_width="72dp"
+            android:layout_height="72dp">
+
+            <ImageView
+                android:id="@+id/representative_pet_icon"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentTop="true"
+                android:elevation="1dp"
+                android:visibility="invisible"
+                android:src="@drawable/crown"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/pet_photo"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:padding="8dp"
+                android:src="@drawable/ic_baseline_pets_60_with_padding"
+                app:civ_border_color="@color/pumpkin"
+                app:civ_border_width="1dp"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/selected_icon"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="invisible"
+                android:src="@drawable/ic_baseline_check_24"
+                app:civ_border_color="@color/pumpkin"
+                app:civ_border_width="1dp"
+                app:civ_circle_background_color="@color/pumpkin" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/pet_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -11,6 +11,7 @@ class PatternRegex {
         private val patternEmail: Pattern = Patterns.EMAIL_ADDRESS
         private val patternPhone: Pattern = Pattern.compile("(^02|^\\d{3})-(\\d{3}|\\d{4})-\\d{4}")
         private val patternNickname: Pattern = Pattern.compile("(^[가-힣ㄱ-ㅎa-zA-Z0-9]{2,20}$)")
+        private val patternHashtag: Pattern = Pattern.compile("(^[ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9_]{1,20}$)")
 
         fun checkUsernameRegex(s: CharSequence?): Boolean {
             return patternUsername.matcher(s).matches()
@@ -30,6 +31,10 @@ class PatternRegex {
 
         fun checkNicknameRegex(s: CharSequence?): Boolean {
             return patternNickname.matcher(s).matches()
+        }
+
+        fun checkHashtagRegex(s: CharSequence?): Boolean {
+            return patternHashtag.matcher(s).matches()
         }
     }
 }

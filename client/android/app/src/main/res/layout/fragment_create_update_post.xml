@@ -38,7 +38,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/create_edit_post_main_scroll_view"
+        app:layout_constraintBottom_toTopOf="@id/create_update_post_main_scroll_view"
         android:padding="16dp"
         android:background="?android:colorBackground">
 
@@ -48,8 +48,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_baseline_arrow_back_36"
-            android:background="?selectableItemBackgroundBorderless"/>
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_baseline_arrow_back_36"/>
 
         <TextView
             android:id="@+id/back_button_title"
@@ -62,24 +62,322 @@
             android:textStyle="bold"
             android:text="@string/create_post_title"/>
 
-        <RelativeLayout
+        <ImageButton
+            android:id="@+id/location_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/disclosure_button"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="12dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_baseline_location_on_30"/>
+
+        <ImageButton
+            android:id="@+id/disclosure_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true">
+            android:layout_centerVertical="true"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_baseline_public_30"/>
 
-            <TextView
-                android:id="@+id/confirm_button"
-                android:layout_width="wrap_content"
+    </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/create_update_post_main_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/footer_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/back_button_layout"
+        app:layout_constraintHorizontal_bias="0.0">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/pet_recycler_view"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:background="?attr/selectableItemBackground"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:orientation="horizontal"/>
+
+            <View
+                android:id="@+id/dividerA"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pet_recycler_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/post_content_layout"
+                android:background="@color/border_line"/>
+
+            <LinearLayout
+                android:id="@+id/post_content_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dividerA"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/dividerB"
+                android:orientation="vertical">
+
+                <EditText
+                    android:id="@+id/post_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="16dp"
+                    android:gravity="top"
+                    android:hint="@string/write_post_hint"
+                    android:inputType="textMultiLine|textNoSuggestions"
+                    android:maxLength="10000"
+                    android:minLines="5"
+                    android:theme="@style/onSelectedThemeCarrot"
+                    android:background="@android:color/transparent"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/hashtag_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="12dp"
+                    android:orientation="horizontal"/>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/dividerB"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/post_content_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/hashtag_input_layout"
+                android:background="@color/border_line"/>
+
+            <LinearLayout
+                android:id="@+id/hashtag_input_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/dividerB"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/dividerC"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/hashtag_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_gravity="center"
+                    android:text="#"
+                    android:textSize="28dp"/>
+
+                <EditText
+                    android:id="@+id/hashtag_input_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="8dp"
+                    android:paddingTop="16dp"
+                    android:paddingEnd="4dp"
+                    android:paddingBottom="16dp"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:imeOptions="actionGo"
+                    android:inputType="textNoSuggestions"
+                    android:maxLines="1"
+                    android:maxLength="20"
+                    android:theme="@style/onSelectedThemeCarrot"
+                    android:background="@android:color/transparent"/>
+
+                <ImageView
+                    android:id="@+id/hashtag_clear_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="12dp"
+                    android:layout_gravity="center"
+                    android:visibility="invisible"
+                    android:src="@drawable/ic_baseline_cancel_24"/>
+
+            </LinearLayout>
+
+            <View
+                android:id="@+id/dividerC"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/hashtag_input_layout"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/media_recycler_view"
+                android:background="@color/border_line"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/media_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                app:layout_constraintTop_toBottomOf="@id/dividerC"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/general_recycler_view"
+                android:orientation="horizontal"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/general_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/media_recycler_view"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="8dp"
+                android:paddingBottom="8dp"
+                android:orientation="vertical"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/footer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/create_update_post_main_scroll_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:orientation="vertical">
+
+        <View
+            android:id="@+id/dividerD"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginEnd="4dp"
+            android:background="@color/border_line"/>
+
+        <RelativeLayout
+            android:id="@+id/attachment_buttons_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:id="@+id/photo_attachment_button"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/button_with_less_radius"
                 android:clickable="true"
                 android:focusable="true"
-                android:padding="4dp"
-                android:text="@string/confirm_create_pet"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_photo_camera_20"/>
+
+                <TextView
+                    android:id="@+id/photo_usage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/file_usage"
+                    android:textSize="12dp"/>
+
+            </LinearLayout>
+
+            <!-- TODO: enable this (clickable, alpha) -->
+            <LinearLayout
+                android:id="@+id/video_attachment_button"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="12dp"
+                android:layout_toEndOf="@id/photo_attachment_button"
+                android:background="@drawable/button_with_less_radius"
+                android:clickable="false"
+                android:alpha=".5"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_videocam_20" />
+
+                <TextView
+                    android:id="@+id/video_usage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/file_usage"
+                    android:textSize="12dp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/general_attachment_button"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="12dp"
+                android:layout_toEndOf="@id/video_attachment_button"
+                android:background="@drawable/button_with_less_radius"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="-4dp"
+                    android:src="@drawable/ic_baseline_file_present_20" />
+
+                <TextView
+                    android:id="@+id/general_usage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/file_usage"
+                    android:textSize="12dp" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/confirm_button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp">
+
+            <Button
+                android:id="@+id/post_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:insetTop="0dp"
+                android:insetBottom="0dp"
+                android:text="@string/post_button"
+                android:textSize="18dp"
+                app:cornerRadius="0dp"/>
 
             <ProgressBar
                 android:id="@+id/create_update_post_progress_bar"
@@ -91,377 +389,6 @@
 
         </RelativeLayout>
 
-    </RelativeLayout>
-
-    <ScrollView
-        android:id="@+id/create_edit_post_main_scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:fillViewport="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/back_button_layout">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RelativeLayout
-                android:id="@+id/post_info_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintBottom_toTopOf="@id/upload_photo_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp">
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerVertical="true"
-                    android:orientation="vertical"
-                    android:layout_marginStart="4dp">
-
-                    <LinearLayout
-                        android:id="@+id/pet_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/pet_photo_circle_view"
-                            android:layout_width="34dp"
-                            android:layout_height="34dp"
-                            android:layout_gravity="center"
-                            android:src="@drawable/ic_baseline_pets_60_with_padding"
-                            app:civ_border_color="@color/carrot"
-                            app:civ_border_width="1dp" />
-
-                        <Spinner
-                            android:id="@+id/pet_name_spinner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"/>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <ImageView
-                            android:id="@+id/disclosure_icon"
-                            android:layout_width="34dp"
-                            android:layout_height="34dp"
-                            android:padding="4dp"
-                            android:src="@drawable/ic_baseline_public_24" />
-
-                        <Spinner
-                            android:id="@+id/disclosure_spinner"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"/>
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <Switch
-                    android:id="@+id/location_switch"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:text="@string/location_switch_label"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/upload_photo_layout"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/post_info_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/upload_video_layout">
-
-                <LinearLayout
-                    android:id="@+id/photo_usage_layout"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_centerVertical="true"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_baseline_photo_library_36" />
-
-                    <TextView
-                        android:id="@+id/photo_usage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/file_usage"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/photos_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentEnd="true"
-                    android:layout_toEndOf="@id/photo_usage_layout"
-                    android:orientation="horizontal" />
-
-            </RelativeLayout>
-
-            <!-- TODO: make this visible -->
-            <RelativeLayout
-                android:visibility="gone"
-                android:id="@+id/upload_video_layout"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/upload_photo_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/upload_general_layout">
-
-                <LinearLayout
-                    android:id="@+id/video_usage_layout"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_centerVertical="true"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_baseline_video_library_36" />
-
-                    <TextView
-                        android:id="@+id/video_usage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/file_usage"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/videos_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_toEndOf="@id/video_usage_layout"
-                    android:layout_alignParentEnd="true"
-                    android:orientation="horizontal"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/upload_general_layout"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/upload_video_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/upload_audio_layout">
-
-                <LinearLayout
-                    android:id="@+id/general_usage_layout"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_centerVertical="true"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_baseline_file_present_36" />
-
-                    <TextView
-                        android:id="@+id/general_usage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/file_usage"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/general_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_toEndOf="@id/general_usage_layout"
-                    android:layout_alignParentEnd="true"
-                    android:orientation="horizontal"/>
-
-            </RelativeLayout>
-
-            <!-- TODO: make this visible -->
-            <RelativeLayout
-                android:visibility="gone"
-                android:id="@+id/upload_audio_layout"
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:orientation="horizontal"
-                app:layout_constraintTop_toBottomOf="@id/upload_general_layout"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/hashtag_and_file_layout">
-
-                <LinearLayout
-                    android:id="@+id/audio_usage_layout"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    android:layout_centerVertical="true"
-                    android:gravity="center"
-                    android:orientation="vertical">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/ic_baseline_audio_file_36" />
-
-                    <TextView
-                        android:id="@+id/audio_usage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/file_usage"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/audio_recycler_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_toEndOf="@id/audio_usage_layout"
-                    android:layout_alignParentEnd="true"
-                    android:orientation="horizontal"/>
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/hashtag_and_file_layout"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toTopOf="@id/hashtag_recycler_view"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/upload_audio_layout">
-
-                <RelativeLayout
-                    android:id="@+id/hashtag_input_layout"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@id/hashtag_input_button_layout"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:id="@+id/hashtag_icon"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginStart="8dp"
-                        android:text="#"
-                        android:textSize="30dp"
-                        android:textStyle="bold" />
-
-                    <EditText
-                        android:id="@+id/hashtag_input_edit_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
-                        android:layout_toEndOf="@id/hashtag_icon"
-                        android:imeOptions="actionGo"
-                        android:inputType="text"
-                        android:maxLength="20"
-                        android:textSize="16dp"
-                        android:theme="@style/onSelectedThemeCarrot" />
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/hashtag_input_button_layout"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_toStartOf="@id/upload_file_button">
-
-                    <TextView
-                        android:id="@+id/hashtag_usage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_centerHorizontal="true"
-                        android:text="@string/hashtag_usage"
-                        android:textSize="11dp" />
-
-                    <androidx.appcompat.widget.AppCompatImageButton
-                        android:id="@+id/hashtag_input_button"
-                        android:layout_width="60dp"
-                        android:layout_height="30dp"
-                        android:layout_centerInParent="true"
-                        android:background="@drawable/button_with_radius"
-                        android:src="@drawable/ic_baseline_add_24" />
-
-                </RelativeLayout>
-
-                <androidx.appcompat.widget.AppCompatImageButton
-                    android:id="@+id/upload_file_button"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="16dp"
-                    android:background="@drawable/button_with_radius"
-                    android:src="@drawable/ic_baseline_attach_file_24" />
-
-            </RelativeLayout>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/hashtag_recycler_view"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginEnd="12dp"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@id/post_edit_text"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/hashtag_and_file_layout"/>
-
-            <EditText
-                android:id="@+id/post_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="15dp"
-                android:gravity="top"
-                android:hint="@string/write_post_hint"
-                android:inputType="textMultiLine|textNoSuggestions"
-                android:maxLength="10000"
-                android:theme="@style/onSelectedThemeCarrot"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/hashtag_recycler_view"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </ScrollView>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

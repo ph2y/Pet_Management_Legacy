@@ -206,13 +206,12 @@
     <string name="create_post_title">글 쓰기</string>
     <string name="update_post_title">글 수정</string>
     <string name="pet_name_spinner_placeholder">펫 선택</string>
-    <string name="location_switch_label">위치 정보 사용 </string>
+    <string name="location_on">위치 정보 사용 </string>
+    <string name="location_off">위치 정보 사용 안함</string>
     <string name="file_usage">0/10</string>
-    <string-array name="disclosure_array">
-        <item>공개</item>
-        <item>비공개</item>
-        <item>팔로워만</item>
-    </string-array>
+    <string name="disclosure_public">공개</string>
+    <string name="disclosure_private">비공개</string>
+    <string name="disclosure_friend">팔로워만</string>
     <string name="hashtag_usage">0/5</string>
     <string name="upload_photo_video_label">사진 및 동영상을 업로드하세요.</string>
     <string name="select_file_type_label">파일 유형 선택</string>
@@ -224,17 +223,22 @@
     <string name="file_type_exception_message">지원하지 않는 파일 유형이에요!</string>
     <string name="file_null_exception_message">파일이 존재하지 않아요!</string>
     <string name="photo_video_usage_full_message">사진 및 동영상은 최대 10개까지만 업로드 가능해요!</string>
+    <string name="general_usage_full_message">첨부 파일은 최대 10개까지만 업로드 가능해요!</string>
     <string name="hashtag_usage_full_message">해시태그는 최대 5개까지만 입력 가능해요!</string>
-    <string name="hashtag_empty_message">해시태그 내용을 입력해주세요!</string>
+    <string name="hashtag_regex_exception_message">한글, 영문, 숫자, 언더스코어(_)만 사용 가능해요!</string>
+    <string name="hashtag_input_button">태그 입력</string>
     <string name="post_invalid_message">글 내용을 입력하세요!</string>
     <string name="pet_not_selected_message">펫을 선택해주세요!</string>
     <string name="delete_post_dialog">정말 글을 삭제하시겠어요?</string>
     <string name="create_post_successful">글 쓰기에 성공했어요!</string>
     <string name="update_post_successful">글 수정에 성공했어요!</string>
     <string name="delete_post_successful">글 삭제에 성공했어요!</string>
-    <string name="post_data_loading_message">글 정보 불러오는 중…</string>
+    <string name="post_data_loading_message">정보 불러오는 중…</string>
     <string name="empty_post_list_notification">불러올 포스트가 없어요.\n새 포스트를 추가해보세요!</string>
     <string name="duplicate_file_exception_message">이미 추가된 파일이에요!</string>
+    <string name="post_button">완료</string>
+    <string name="post_dialog_message">글을 게시할까요?</string>
+    <string name="cancel_dialog_message">글 작성을 취소할까요?</string>
 
     <!-- Community Fragment -->
     <string name="comment">댓글</string>

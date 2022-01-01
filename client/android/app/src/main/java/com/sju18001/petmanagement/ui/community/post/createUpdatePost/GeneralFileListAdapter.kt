@@ -40,10 +40,10 @@ class GeneralFileListAdapter(private val createUpdatePostViewModel: CreateUpdate
             // update general upload layout
             val uploadedCount = createUpdatePostViewModel.generalFileNameList.size
             if (uploadedCount == 0) {
-                binding.uploadGeneralLayout.visibility = View.GONE
+                binding.generalRecyclerView.visibility = View.GONE
             }
             else {
-                binding.uploadGeneralLayout.visibility = View.VISIBLE
+                binding.generalRecyclerView.visibility = View.VISIBLE
             }
             val generalUsageText = "$uploadedCount/10"
             binding.generalUsage.text = generalUsageText
@@ -60,9 +60,8 @@ class GeneralFileListAdapter(private val createUpdatePostViewModel: CreateUpdate
         createUpdatePostViewModel.generalFilePathList.removeAt(position)
         createUpdatePostViewModel.generalFileNameList.removeAt(position)
 
-        // for item remove animation
-        notifyItemRemoved(position)
-        notifyItemRangeChanged(position, this.resultList.size)
+        // update recyclerview
+        notifyDataSetChanged()
     }
 
     public fun setResult(result: MutableList<String>){

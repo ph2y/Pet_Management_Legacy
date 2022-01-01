@@ -2,6 +2,7 @@ package com.sju18001.petmanagement.ui.community.post.createUpdatePost
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
@@ -20,15 +21,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.flexbox.FlexWrap
+import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.gson.Gson
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.PatternRegex
 import com.sju18001.petmanagement.controller.Permission
 import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentCreateUpdatePostBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
-import com.sju18001.petmanagement.restapi.dao.Pet
 import com.sju18001.petmanagement.restapi.dto.*
 import com.sju18001.petmanagement.restapi.global.FileMetaData
 import com.sju18001.petmanagement.restapi.global.FileType
@@ -36,10 +39,6 @@ import com.sju18001.petmanagement.ui.myPet.petManager.PetManagerFragment
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import okhttp3.ResponseBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.math.BigDecimal
@@ -64,11 +63,9 @@ class CreateUpdatePostFragment : Fragment() {
 
     private var isViewDestroyed = false
 
-    // variables for pet
-    private var petIdAndNameList: MutableList<Pet> = mutableListOf()
-
     // variables for RecyclerView
-    private lateinit var photoAdapter: PhotoListAdapter
+    private lateinit var petAdapter: PetListAdapter
+    private lateinit var mediaAdapter: MediaListAdapter
     private lateinit var generalFilesAdapter: GeneralFileListAdapter
     private lateinit var hashtagAdapter: HashtagListAdapter
 
@@ -77,7 +74,6 @@ class CreateUpdatePostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // view binding
         _binding = FragmentCreateUpdatePostBinding.inflate(inflater, container, false)
         isViewDestroyed = false
 
@@ -92,115 +88,64 @@ class CreateUpdatePostFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
+        // fetch post data for update (if not already fetched)
+        if(requireActivity().intent.getStringExtra("fragmentType") == "update_post"
+            && (!createUpdatePostViewModel.fetchedPostDataForUpdate || !createUpdatePostViewModel.fetchedPetData)) {
+                // save post id
+                createUpdatePostViewModel.postId = requireActivity().intent.getLongExtra("postId", -1)
+
+                showLoadingScreen()
+                fetchPostData()
+        }
+
+        // fetch pet data + set pet recyclerview (if not already fetched)
+        else if (!createUpdatePostViewModel.fetchedPetData) {
+            showLoadingScreen()
+            fetchPetDataAndSetRecyclerView()
+        }
+
+        restoreState()
+
         // for title
         if(requireActivity().intent.getStringExtra("fragmentType") == "update_post") {
             binding.backButtonTitle.text = context?.getText(R.string.update_post_title)
         }
 
-        // fetch post data for update(if not already fetched)
-        if(requireActivity().intent.getStringExtra("fragmentType") == "update_post" &&
-                !createUpdatePostViewModel.fetchedPostDataForUpdate) {
-                // save post id
-                createUpdatePostViewModel.postId = requireActivity().intent.getLongExtra("postId", -1)
+        // for location button
+        binding.locationButton.setOnClickListener {
+            createUpdatePostViewModel.isUsingLocation = !createUpdatePostViewModel.isUsingLocation
 
-                // show loading screen + disable button
-                binding.createEditPostMainScrollView.visibility = View.INVISIBLE
-                binding.postDataLoadingLayout.visibility = View.VISIBLE
-                binding.confirmButton.isEnabled = false
-
-                fetchPostData()
+            if (createUpdatePostViewModel.isUsingLocation) {
+                Toast.makeText(context, context?.getText(R.string.location_on), Toast.LENGTH_SHORT).show()
+                binding.locationButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_location_on_30))
+            } else {
+                Toast.makeText(context, context?.getText(R.string.location_off), Toast.LENGTH_SHORT).show()
+                binding.locationButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_location_off_30))
+            }
         }
 
-        // for view restore and pet spinner
-        else {
-            setPetSpinnerAndPhoto()
-            restoreState()
-        }
+        // for disclosure button
+        binding.disclosureButton.setOnClickListener {
+            when (createUpdatePostViewModel.disclosure) {
+                DISCLOSURE_PUBLIC -> {
+                    createUpdatePostViewModel.disclosure = DISCLOSURE_PRIVATE
 
-        // for location switch
-        binding.locationSwitch.setOnCheckedChangeListener { _, isChecked ->
-            createUpdatePostViewModel.isUsingLocation = isChecked
-        }
-
-        // for upload file button
-        binding.uploadFileButton.setOnClickListener {
-            val dialog = Dialog(requireActivity())
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setContentView(R.layout.select_file_type_dialog)
-            dialog.show()
-
-            dialog.findViewById<ImageView>(R.id.close_button).setOnClickListener { dialog.dismiss() }
-            dialog.findViewById<Button>(R.id.upload_photo_button).setOnClickListener {
-                if(createUpdatePostViewModel.photoThumbnailList.size == 10) {
-                    Toast.makeText(
-                        context,
-                        context?.getText(R.string.photo_video_usage_full_message),
-                        Toast.LENGTH_LONG
-                    ).show()
+                    Toast.makeText(context, context?.getText(R.string.disclosure_private), Toast.LENGTH_SHORT).show()
+                    binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_lock_30))
                 }
-                else {
-                    dialog.dismiss()
+                DISCLOSURE_PRIVATE -> {
+                    createUpdatePostViewModel.disclosure = DISCLOSURE_FRIEND
 
-                    val intent = Intent()
-                    intent.type = "image/*"
-                    intent.action = Intent.ACTION_GET_CONTENT
-                    startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
+                    Toast.makeText(context, context?.getText(R.string.disclosure_friend), Toast.LENGTH_SHORT).show()
+                    binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_group_30))
+                }
+                DISCLOSURE_FRIEND -> {
+                    createUpdatePostViewModel.disclosure = DISCLOSURE_PUBLIC
+
+                    Toast.makeText(context, context?.getText(R.string.disclosure_public), Toast.LENGTH_SHORT).show()
+                    binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_public_30))
                 }
             }
-            dialog.findViewById<Button>(R.id.upload_video_button).setOnClickListener {
-                dialog.dismiss()
-
-                // TODO: implement logic for uploading videos
-//                val intent = Intent()
-//                intent.type = "video/*"
-//                intent.action = Intent.ACTION_GET_CONTENT
-//                startActivityForResult(Intent.createChooser(intent, "동영상 선택"), PICK_VIDEO)
-            }
-            dialog.findViewById<Button>(R.id.upload_general_button).setOnClickListener {
-                dialog.dismiss()
-
-                val intent = Intent()
-                intent.type = "*/*"
-                intent.action = Intent.ACTION_GET_CONTENT
-                startActivityForResult(Intent.createChooser(intent, "파일 선택"), PICK_GENERAL_FILE)
-            }
-            dialog.findViewById<Button>(R.id.upload_audio_button).setOnClickListener {
-                dialog.dismiss()
-
-                // TODO: implement logic for uploading audio files
-            }
-        }
-
-        // for disclosure spinner
-        ArrayAdapter.createFromResource(requireContext(), R.array.disclosure_array, android.R.layout.simple_spinner_item)
-            .also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                binding.disclosureSpinner.adapter = adapter
-        }
-        binding.disclosureSpinner.setSelection(0, false)
-        binding.disclosureSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                when(position) {
-                    0 -> {
-                        createUpdatePostViewModel.disclosure = DISCLOSURE_PUBLIC
-                        binding.disclosureIcon.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_public_24))
-                    }
-                    1 -> {
-                        createUpdatePostViewModel.disclosure = DISCLOSURE_PRIVATE
-                        binding.disclosureIcon.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_lock_24))
-                    }
-                    2 -> {
-                        createUpdatePostViewModel.disclosure = DISCLOSURE_FRIEND
-                        binding.disclosureIcon.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_group_24))
-                    }
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-        when(createUpdatePostViewModel.disclosure) {
-            DISCLOSURE_PUBLIC -> { binding.disclosureSpinner.setSelection(0) }
-            DISCLOSURE_PRIVATE -> { binding.disclosureSpinner.setSelection(1) }
-            DISCLOSURE_FRIEND -> { binding.disclosureSpinner.setSelection(2) }
         }
 
         // for hashtag EditText listener
@@ -211,14 +156,21 @@ class CreateUpdatePostFragment : Fragment() {
         binding.hashtagInputEditText.addTextChangedListener(object: TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 createUpdatePostViewModel.hashtagEditText = s.toString()
+
+                if (createUpdatePostViewModel.hashtagEditText.isNotEmpty()) {
+                    binding.hashtagClearButton.visibility = View.VISIBLE
+                } else {
+                    binding.hashtagClearButton.visibility = View.INVISIBLE
+                }
             }
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for hashtag input button
-        binding.hashtagInputButton.setOnClickListener {
-            addHashtag()
+        // for hashtag clear button
+        binding.hashtagClearButton.setOnClickListener {
+            createUpdatePostViewModel.hashtagEditText = ""
+            binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
         }
 
         // for post EditText listener
@@ -230,8 +182,40 @@ class CreateUpdatePostFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
+        // for photo attachment button
+        binding.photoAttachmentButton.setOnClickListener {
+            if(createUpdatePostViewModel.photoPathList.size == 10) {
+                Toast.makeText(context, context?.getText(R.string.photo_video_usage_full_message), Toast.LENGTH_LONG).show()
+            }
+            else {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
+            }
+        }
+
+        // TODO: add logic for video attachment button
+        // TODO: implement logic for uploading videos
+//                val intent = Intent()
+//                intent.type = "video/*"
+//                intent.action = Intent.ACTION_GET_CONTENT
+//                startActivityForResult(Intent.createChooser(intent, "동영상 선택"), PICK_VIDEO)
+
+        // for general attachment button
+        binding.generalAttachmentButton.setOnClickListener {
+            if(createUpdatePostViewModel.generalFilePathList.size == 10) {
+                Toast.makeText(context, context?.getText(R.string.general_usage_full_message), Toast.LENGTH_LONG).show()
+            } else {
+                val intent = Intent()
+                intent.type = "*/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "파일 선택"), PICK_GENERAL_FILE)
+            }
+        }
+
         // for confirm button
-        binding.confirmButton.setOnClickListener {
+        binding.postButton.setOnClickListener {
             // trim post content
             createUpdatePostViewModel.postEditText = createUpdatePostViewModel.postEditText.trim()
             binding.postEditText.setText(createUpdatePostViewModel.postEditText)
@@ -239,22 +223,36 @@ class CreateUpdatePostFragment : Fragment() {
             if(isPostEmpty()) {
                 Toast.makeText(context, context?.getText(R.string.post_invalid_message), Toast.LENGTH_LONG).show()
             }
-            else if(createUpdatePostViewModel.petId == null) {
+            else if(createUpdatePostViewModel.selectedPetId == null) {
                 Toast.makeText(context, context?.getText(R.string.pet_not_selected_message), Toast.LENGTH_LONG).show()
             }
             else {
-                if(requireActivity().intent.getStringExtra("fragmentType") == "create_post") {
-                    createPost()
-                }
-                else {
-                    updatePost()
-                }
+                val builder = AlertDialog.Builder(requireContext())
+                builder.setMessage(requireContext().getString(R.string.post_dialog_message))
+                    .setPositiveButton(R.string.confirm) { _, _ ->
+                        if(requireActivity().intent.getStringExtra("fragmentType") == "create_post") {
+                            createPost()
+                        }
+                        else {
+                            updatePost()
+                        }
+                    }
+                    .setNegativeButton(R.string.cancel) { dialog, _ ->
+                        dialog.cancel()
+                    }.create().show()
             }
         }
 
         // for back button
         binding.backButton.setOnClickListener {
-            activity?.finish()
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setMessage(requireContext().getString(R.string.cancel_dialog_message))
+                .setPositiveButton(R.string.confirm) { _, _ ->
+                    activity?.finish()
+                }
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
+                    dialog.cancel()
+                }.create().show()
         }
 
         Util.setupViewsForHideKeyboard(requireActivity(), binding.fragmentCreateUpdatePostParentLayout)
@@ -301,13 +299,13 @@ class CreateUpdatePostFragment : Fragment() {
 
                     // save thumbnail
                     val thumbnail = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
-                    createUpdatePostViewModel.photoThumbnailList.add(thumbnail)
+                    createUpdatePostViewModel.mediaThumbnailList.add(thumbnail)
 
                     // update RecyclerView
-                    photoAdapter.notifyItemInserted(createUpdatePostViewModel.photoThumbnailList.size)
-                    binding.photosRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.photoThumbnailList.size - 1)
+                    mediaAdapter.notifyItemInserted(createUpdatePostViewModel.mediaThumbnailList.size)
+                    binding.mediaRecyclerView.smoothScrollToPosition(createUpdatePostViewModel.mediaThumbnailList.size - 1)
 
-                    updatePhotoUsage()
+                    updateMediaUsage()
                 }
                 else {
                     Toast.makeText(context, context?.getText(R.string.file_null_exception_message), Toast.LENGTH_LONG).show()
@@ -391,142 +389,96 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     private fun initializeRecyclerViews() {
-        // initialize RecyclerView (for photos)
-        photoAdapter = PhotoListAdapter(createUpdatePostViewModel, requireContext(), binding)
-        binding.photosRecyclerView.adapter = photoAdapter
-        binding.photosRecyclerView.layoutManager = LinearLayoutManager(activity)
-        (binding.photosRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
-        photoAdapter.setResult(createUpdatePostViewModel.photoThumbnailList)
+        // initialize RecyclerView (for pet)
+        petAdapter = PetListAdapter(createUpdatePostViewModel, requireContext())
+        binding.petRecyclerView.adapter = petAdapter
+        binding.petRecyclerView.layoutManager = LinearLayoutManager(activity)
+        (binding.petRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        petAdapter.updateDataSet(createUpdatePostViewModel.petList)
 
-        // TODO: initialize RecyclerView (for videos)
+        // initialize RecyclerView (for media)
+        mediaAdapter = MediaListAdapter(createUpdatePostViewModel, requireContext(), binding)
+        binding.mediaRecyclerView.adapter = mediaAdapter
+        binding.mediaRecyclerView.layoutManager = LinearLayoutManager(activity)
+        (binding.mediaRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        mediaAdapter.setResult(createUpdatePostViewModel.mediaThumbnailList)
 
         // initialize RecyclerView (for general files)
         generalFilesAdapter = GeneralFileListAdapter(createUpdatePostViewModel, requireContext(), binding)
         binding.generalRecyclerView.adapter = generalFilesAdapter
         binding.generalRecyclerView.layoutManager = LinearLayoutManager(activity)
-        (binding.generalRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        (binding.generalRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.VERTICAL
         generalFilesAdapter.setResult(createUpdatePostViewModel.generalFileNameList)
-
-
-        // TODO: initialize RecyclerView (for audio files)
 
         // initialize RecyclerView (for hashtags)
         hashtagAdapter = HashtagListAdapter(createUpdatePostViewModel, binding)
         binding.hashtagRecyclerView.adapter = hashtagAdapter
-        binding.hashtagRecyclerView.layoutManager = LinearLayoutManager(activity)
-        (binding.hashtagRecyclerView.layoutManager as LinearLayoutManager).orientation = LinearLayoutManager.HORIZONTAL
+        binding.hashtagRecyclerView.layoutManager = FlexboxLayoutManager(activity)
+        (binding.hashtagRecyclerView.layoutManager as FlexboxLayoutManager).flexWrap = FlexWrap.WRAP
         hashtagAdapter.setResult(createUpdatePostViewModel.hashtagList)
     }
 
-    // for pet views
-    private fun setPetSpinnerAndPhoto() {
+    private fun fetchPetDataAndSetRecyclerView() {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
             .fetchPetReq(FetchPetReqDto( null , null))
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
-            // get pet id and name
-            val apiResponse: MutableList<Pet> = mutableListOf()
+            // fetch pet info (unsorted)
+            val unsortedPetList: MutableList<PetListItem> = mutableListOf()
             response.body()?.petList?.map {
-                val item = Pet(
-                    it.id, "", it.name, "", "", null, null, false, null, null
+                val item = PetListItem(
+                    it.id, it.photoUrl, null, it.name,
+                    it.id == SessionManager.fetchLoggedInAccount(requireContext())?.representativePetId,
+                    it.id == createUpdatePostViewModel.selectedPetId
                 )
-                apiResponse.add(item)
+                unsortedPetList.add(item)
             }
 
-            reorderPetList(apiResponse)
-            setPetSpinner()
+            reorderPetList(unsortedPetList)
+            fetchPetPhotos()
         }, {}, {})
     }
 
-    private fun setPetPhoto() {
-        // exception
-        if(createUpdatePostViewModel.petId == null) return
-
-        val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-            .fetchPetPhotoReq(FetchPetPhotoReqDto(createUpdatePostViewModel.petId!!))
-        call.enqueue(object: Callback<ResponseBody> {
-            override fun onResponse(
-                call: Call<ResponseBody>,
-                response: Response<ResponseBody>
-            ) {
-                if(isViewDestroyed) return
-
-                if(response.isSuccessful) {
-                    // set fetched photo to view
-                    binding.petPhotoCircleView.setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
-                }
-                else {
-                    if(Util.getMessageFromErrorBody(response.errorBody()!!) == "null") {
-                        // Set default
-                        binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
-                    }
-                    else{
-                        Util.showToastAndLogForFailedResponse(requireContext(), response.errorBody())
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                if(isViewDestroyed) return
-
-                Util.showToastAndLog(requireContext(), t.message.toString())
-            }
-        })
-    }
-
-    // set pet spinner
-    private fun setPetSpinner() {
-        // set spinner values
-        val spinnerArray: ArrayList<String> = ArrayList<String>()
-        spinnerArray.add(requireContext().getText(R.string.pet_name_spinner_placeholder).toString())
-
-        for(pet in petIdAndNameList) {
-            spinnerArray.add(pet.name)
-        }
-
-        val spinnerArrayAdapter: ArrayAdapter<String> =
-            ArrayAdapter<String>(requireContext(), android.R.layout.simple_spinner_dropdown_item, spinnerArray)
-        binding.petNameSpinner.adapter = spinnerArrayAdapter
-
-        // set pet spinner listener
-        binding.petNameSpinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                if(position != 0) {
-                    createUpdatePostViewModel.petId = petIdAndNameList[position - 1].id
-                    setPetPhoto()
-                }
-                else {
-                    createUpdatePostViewModel.petId = null
-                    binding.petPhotoCircleView.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
-                }
-            }
-            override fun onNothingSelected(parent: AdapterView<*>?) {}
-        }
-
-        // set spinner position
-        if(createUpdatePostViewModel.petId != null) {
-            for(i in 0 until petIdAndNameList.size) {
-                if(createUpdatePostViewModel.petId == petIdAndNameList[i].id) {
-                    binding.petNameSpinner.setSelection(i + 1)
-                    return
-                }
-            }
-
-            // exception(no such pet id) -> reset pet id to null
-            createUpdatePostViewModel.petId = null
-        }
-    }
-
-    // reorder pet list
-    private fun reorderPetList(apiResponse: MutableList<Pet>) {
+    private fun reorderPetList(apiResponse: MutableList<PetListItem>) {
         // get saved pet list order
         val petListOrder = PetManagerFragment()
             .getPetListOrder(requireContext().getString(R.string.data_name_pet_list_id_order), requireContext())
 
         // sort by order
-        petIdAndNameList = mutableListOf()
-        for(id in petListOrder) {
-            val pet = apiResponse.find { it.id == id }
-            petIdAndNameList.add(pet!!)
+        for (id in petListOrder) {
+            val item = apiResponse.find { it.petId == id }
+
+            if (item!!.isSelected) {
+                createUpdatePostViewModel.selectedPetIndex = createUpdatePostViewModel.petList.size
+            }
+            createUpdatePostViewModel.petList.add(item)
+        }
+    }
+
+    private fun fetchPetPhotos() {
+        val fetchedFlags = BooleanArray(createUpdatePostViewModel.petList.size) { false }
+
+        for (i in 0 until createUpdatePostViewModel.petList.size) {
+            // if no photo
+            if (createUpdatePostViewModel.petList[i].petPhotoUrl == null) {
+                fetchedFlags[i] = true
+                continue
+            }
+
+            // fetch pet photo
+            val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                .fetchPetPhotoReq(FetchPetPhotoReqDto(createUpdatePostViewModel.petList[i].petId))
+            ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
+                createUpdatePostViewModel.petList[i].petPhoto = BitmapFactory.decodeStream(response.body()!!.byteStream())
+                fetchedFlags[i] = true
+
+                if (fetchedFlags.all{true}) {
+                    createUpdatePostViewModel.fetchedPetData = true
+                    petAdapter.updateDataSet(createUpdatePostViewModel.petList)
+
+                    hideLoadingScreen()
+                    restoreState()
+                }
+            }, {}, {})
         }
     }
 
@@ -561,17 +513,17 @@ class CreateUpdatePostFragment : Fragment() {
         return latAndLong
     }
 
-    // update photo usage
-    private fun updatePhotoUsage() {
-        val uploadedCount = createUpdatePostViewModel.photoThumbnailList.size
+    // update media usage
+    private fun updateMediaUsage() {
+        val uploadedCount = createUpdatePostViewModel.photoPathList.size
         if (uploadedCount == 0) {
-            binding.uploadPhotoLayout.visibility = View.GONE
+            binding.mediaRecyclerView.visibility = View.GONE
         }
         else {
-            binding.uploadPhotoLayout.visibility = View.VISIBLE
+            binding.mediaRecyclerView.visibility = View.VISIBLE
         }
-        val photoUsageText = "$uploadedCount/10"
-        binding.photoUsage.text = photoUsageText
+        val mediaUsageText = "$uploadedCount/10"
+        binding.photoUsage.text = mediaUsageText
     }
 
     // update general usage
@@ -579,32 +531,23 @@ class CreateUpdatePostFragment : Fragment() {
         val uploadedCount = createUpdatePostViewModel.generalFileNameList.size
 
         if (uploadedCount == 0) {
-            binding.uploadGeneralLayout.visibility = View.GONE
+            binding.generalRecyclerView.visibility = View.GONE
         }
         else {
-            binding.uploadGeneralLayout.visibility = View.VISIBLE
+            binding.generalRecyclerView.visibility = View.VISIBLE
         }
         val generalUsageText = "$uploadedCount/10"
         binding.generalUsage.text = generalUsageText
     }
 
-    // update hashtag usage
-    private fun updateHashtagUsage() {
-        val hashtagCount = createUpdatePostViewModel.hashtagList.size
-        if(hashtagCount != 0) { binding.hashtagRecyclerView.visibility = View.VISIBLE }
-        val hashtagUsageText = "$hashtagCount/5"
-        binding.hashtagUsage.text = hashtagUsageText
-    }
-
     private fun addHashtag(){
-        createUpdatePostViewModel.hashtagEditText = createUpdatePostViewModel.hashtagEditText.trim()
-        binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
+        if (createUpdatePostViewModel.hashtagEditText.isEmpty()) return
 
-        if(binding.hashtagInputEditText.text.toString() == "") {
-            Toast.makeText(context, context?.getText(R.string.hashtag_empty_message), Toast.LENGTH_LONG).show()
+        if(!PatternRegex.checkHashtagRegex(createUpdatePostViewModel.hashtagEditText)) {
+            Toast.makeText(context, context?.getText(R.string.hashtag_regex_exception_message), Toast.LENGTH_SHORT).show()
         }
         else if(createUpdatePostViewModel.hashtagList.size == 5) {
-            Toast.makeText(context, context?.getText(R.string.hashtag_usage_full_message), Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context?.getText(R.string.hashtag_usage_full_message), Toast.LENGTH_SHORT).show()
         }
         else {
             // save hashtag
@@ -617,25 +560,48 @@ class CreateUpdatePostFragment : Fragment() {
 
             // reset hashtag EditText
             binding.hashtagInputEditText.setText("")
-
-            updateHashtagUsage()
         }
     }
 
-    // set button to loading
+    private fun showLoadingScreen() {
+        binding.locationButton.visibility = View.INVISIBLE
+        binding.disclosureButton.visibility = View.INVISIBLE
+        binding.dividerD.visibility = View.INVISIBLE
+        binding.attachmentButtonsLayout.visibility = View.INVISIBLE
+        binding.createUpdatePostMainScrollView.visibility = View.INVISIBLE
+        binding.postDataLoadingLayout.visibility = View.VISIBLE
+        binding.postButton.isEnabled = false
+    }
+
+    private fun hideLoadingScreen() {
+        binding.locationButton.visibility = View.VISIBLE
+        binding.disclosureButton.visibility = View.VISIBLE
+        binding.dividerD.visibility = View.VISIBLE
+        binding.attachmentButtonsLayout.visibility = View.VISIBLE
+        binding.createUpdatePostMainScrollView.visibility = View.VISIBLE
+        binding.postDataLoadingLayout.visibility = View.GONE
+        binding.postButton.isEnabled = true
+    }
+
     private fun lockViews() {
-        binding.confirmButton.visibility = View.GONE
+        binding.postButton.isEnabled = false
+        binding.postButton.text = ""
         binding.createUpdatePostProgressBar.visibility = View.VISIBLE
 
-        binding.petNameSpinner.isEnabled = false
-        binding.locationSwitch.isEnabled = false
-        binding.uploadFileButton.isEnabled = false
-        binding.disclosureSpinner.isEnabled = false
+        binding.petRecyclerView.let {
+            for(i in 0..petAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.isClickable = false
+            }
+        }
+        binding.locationButton.isEnabled = false
+        binding.photoAttachmentButton.isEnabled = false
+        binding.generalAttachmentButton.isEnabled = false
+        binding.disclosureButton.isEnabled = false
         binding.hashtagInputEditText.isEnabled = false
-        binding.hashtagInputButton.isEnabled = false
+        binding.hashtagClearButton.isEnabled = false
         binding.postEditText.isEnabled = false
-        binding.photosRecyclerView.let {
-            for(i in 0..photoAdapter.itemCount) {
+        binding.mediaRecyclerView.let {
+            for(i in 0..mediaAdapter.itemCount) {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.GONE
             }
         }
@@ -652,20 +618,25 @@ class CreateUpdatePostFragment : Fragment() {
         binding.backButton.isEnabled = false
     }
 
-    // set button to normal
     private fun unlockViews() {
-        binding.confirmButton.visibility = View.VISIBLE
+        binding.postButton.isEnabled = true
+        binding.postButton.text = requireContext().getText(R.string.confirm)
         binding.createUpdatePostProgressBar.visibility = View.GONE
 
-        binding.petNameSpinner.isEnabled = true
-        binding.locationSwitch.isEnabled = true
-        binding.uploadFileButton.isEnabled = true
-        binding.disclosureSpinner.isEnabled = true
+        binding.petRecyclerView.let {
+            for(i in 0..petAdapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.isClickable = true
+            }
+        }
+        binding.locationButton.isEnabled = true
+        binding.photoAttachmentButton.isEnabled = true
+        binding.generalAttachmentButton.isEnabled = true
+        binding.disclosureButton.isEnabled = true
         binding.hashtagInputEditText.isEnabled = true
-        binding.hashtagInputButton.isEnabled = true
+        binding.hashtagClearButton.isEnabled = true
         binding.postEditText.isEnabled = true
-        binding.photosRecyclerView.let {
-            for(i in 0..photoAdapter.itemCount) {
+        binding.mediaRecyclerView.let {
+            for(i in 0..mediaAdapter.itemCount) {
                 it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<ImageView>(R.id.delete_button)?.visibility = View.VISIBLE
             }
         }
@@ -683,7 +654,7 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     private fun isPostEmpty(): Boolean {
-        return createUpdatePostViewModel.photoThumbnailList.size == 0 &&
+        return createUpdatePostViewModel.mediaThumbnailList.size == 0 &&
                 createUpdatePostViewModel.generalFileNameList.size == 0 &&
                 createUpdatePostViewModel.postEditText.trim().isEmpty()
     }
@@ -712,7 +683,7 @@ class CreateUpdatePostFragment : Fragment() {
 
         // create DTO
         val createPostReqDto = CreatePostReqDto(
-            createUpdatePostViewModel.petId!!,
+            createUpdatePostViewModel.selectedPetId!!,
             createUpdatePostViewModel.postEditText,
             createUpdatePostViewModel.hashtagList,
             createUpdatePostViewModel.disclosure,
@@ -731,7 +702,6 @@ class CreateUpdatePostFragment : Fragment() {
             updatePostMedia(response.body()!!.id)
             // TODO: create logic for updating video files
             updatePostGeneralFiles(response.body()!!.id)
-            // TODO: create logic for updating audio files
         }, {
             // set api state/button to normal
             createUpdatePostViewModel.apiIsLoading = false
@@ -763,7 +733,7 @@ class CreateUpdatePostFragment : Fragment() {
         // create DTO
         val updatePostReqDto = UpdatePostReqDto(
             createUpdatePostViewModel.postId!!,
-            createUpdatePostViewModel.petId!!,
+            createUpdatePostViewModel.selectedPetId!!,
             createUpdatePostViewModel.postEditText,
             createUpdatePostViewModel.hashtagList,
             createUpdatePostViewModel.disclosure,
@@ -813,8 +783,6 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.deletedPostGeneralFileData = true
                 updatePostGeneralFiles(createUpdatePostViewModel.postId!!)
             }
-
-            // TODO: create logic for updating audio files
         }, {
             // set api state/button to normal
             createUpdatePostViewModel.apiIsLoading = false
@@ -851,7 +819,7 @@ class CreateUpdatePostFragment : Fragment() {
     }
 
     private fun updatePostMedia(id: Long) {
-        // exception (no photo files)
+        // exception (no media files)
         if(createUpdatePostViewModel.photoPathList.size == 0) {
             createUpdatePostViewModel.updatedPostPhotoData = true
 
@@ -931,7 +899,7 @@ class CreateUpdatePostFragment : Fragment() {
         }
     }
 
-    private fun fetchPostMediaData(postMedia: Array<FileMetaData>) {
+    private fun fetchPostMediaData(postMedia: Array<FileMetaData>) { // TODO: add logic for branching photos and videos
         for(index in postMedia.indices) {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .fetchPostMediaReq(FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index))
@@ -946,30 +914,24 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // save photo thumbnail
                 val thumbnail = BitmapFactory.decodeByteArray(mediaByteArray, 0, mediaByteArray.size)
-                createUpdatePostViewModel.photoThumbnailList[index] = thumbnail
+                createUpdatePostViewModel.mediaThumbnailList[index] = thumbnail
 
                 // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
                 if("" !in createUpdatePostViewModel.photoPathList) {
                     // update RecyclerView and photo usage
-                    photoAdapter.setResult(createUpdatePostViewModel.photoThumbnailList)
-                    updatePhotoUsage()
+                    mediaAdapter.setResult(createUpdatePostViewModel.mediaThumbnailList)
+                    updateMediaUsage()
 
                     // set fetched to true
-                    createUpdatePostViewModel.fetchedPostPhotoDataForUpdate = true
-                    if (createUpdatePostViewModel.fetchedPostPhotoDataForUpdate &&
+                    createUpdatePostViewModel.fetchedPostMediaDataForUpdate = true
+                    if (createUpdatePostViewModel.fetchedPostMediaDataForUpdate &&
                         createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate) {
                         createUpdatePostViewModel.fetchedPostDataForUpdate = true
                     }
 
                     // set views with post data
                     if (createUpdatePostViewModel.fetchedPostDataForUpdate) {
-                        // hide loading screen + enable button
-                        binding.createEditPostMainScrollView.visibility = View.VISIBLE
-                        binding.postDataLoadingLayout.visibility = View.GONE
-                        binding.confirmButton.isEnabled = true
-
-                        setPetSpinnerAndPhoto()
-                        restoreState()
+                        fetchPetDataAndSetRecyclerView()
                     }
                 }
             }, {}, {})
@@ -1001,20 +963,14 @@ class CreateUpdatePostFragment : Fragment() {
 
                     // set fetched to true
                     createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate = true
-                    if (createUpdatePostViewModel.fetchedPostPhotoDataForUpdate &&
+                    if (createUpdatePostViewModel.fetchedPostMediaDataForUpdate &&
                         createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate) {
                         createUpdatePostViewModel.fetchedPostDataForUpdate = true
                     }
 
                     // set views with post data
                     if (createUpdatePostViewModel.fetchedPostDataForUpdate) {
-                        // hide loading screen + enable button
-                        binding.createEditPostMainScrollView.visibility = View.VISIBLE
-                        binding.postDataLoadingLayout.visibility = View.GONE
-                        binding.confirmButton.isEnabled = true
-
-                        setPetSpinnerAndPhoto()
-                        restoreState()
+                        fetchPetDataAndSetRecyclerView()
                     }
                 }
             }, {}, {})
@@ -1028,7 +984,7 @@ class CreateUpdatePostFragment : Fragment() {
             // fetch post data (excluding files) and save to ViewModel
             val post = response.body()?.postList!![0]
 
-            createUpdatePostViewModel.petId = post.pet.id
+            createUpdatePostViewModel.selectedPetId = post.pet.id
             createUpdatePostViewModel.isUsingLocation = post.geoTagLat != 0.0
             createUpdatePostViewModel.disclosure = post.disclosure
             if(post.serializedHashTags != "") {
@@ -1037,7 +993,7 @@ class CreateUpdatePostFragment : Fragment() {
             }
             createUpdatePostViewModel.postEditText = post.contents
 
-            // fetch post media (photos) data
+            // fetch post media (photos) data // TODO: fetch post media (videos) data
             if(post.mediaAttachments != null) {
                 val postMedia =
                     Gson().fromJson(post.mediaAttachments, Array<FileMetaData>::class.java)
@@ -1045,16 +1001,14 @@ class CreateUpdatePostFragment : Fragment() {
                 // initialize lists
                 for (i in postMedia.indices) {
                     createUpdatePostViewModel.photoPathList.add("")
-                    createUpdatePostViewModel.photoThumbnailList.add(null)
+                    createUpdatePostViewModel.mediaThumbnailList.add(null)
                 }
 
                 fetchPostMediaData(postMedia)
             }
             else {
-                createUpdatePostViewModel.fetchedPostPhotoDataForUpdate = true
+                createUpdatePostViewModel.fetchedPostMediaDataForUpdate = true
             }
-
-            // TODO: fetch post media (videos) data
 
             // fetch post general data
             if (post.fileAttachments != null) {
@@ -1072,21 +1026,12 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.fetchedPostGeneralFileDataForUpdate = true
             }
 
-            // TODO: fetch post audio data
-
             // if no attachments
             if (post.mediaAttachments == null && post.fileAttachments == null) {
-                // show loading screen + disable button
-                binding.createEditPostMainScrollView.visibility = View.VISIBLE
-                binding.postDataLoadingLayout.visibility = View.GONE
-                binding.confirmButton.isEnabled = true
-
                 // set fetched to true
                 createUpdatePostViewModel.fetchedPostDataForUpdate = true
 
-                // set views with post data
-                setPetSpinnerAndPhoto()
-                restoreState()
+                fetchPetDataAndSetRecyclerView()
             }
         }, {
             requireActivity().finish()
@@ -1127,23 +1072,35 @@ class CreateUpdatePostFragment : Fragment() {
 
     // for view restore
     private fun restoreState() {
-        // restore location switch
-        binding.locationSwitch.isChecked = createUpdatePostViewModel.isUsingLocation
-
         // restore usages
-        updatePhotoUsage()
+        updateMediaUsage()
         updateGeneralUsage()
 
-        // restore disclosure spinner
-        when(createUpdatePostViewModel.disclosure) {
-            DISCLOSURE_PUBLIC -> { binding.disclosureSpinner.setSelection(0) }
-            DISCLOSURE_PRIVATE -> { binding.disclosureSpinner.setSelection(1) }
-            DISCLOSURE_FRIEND -> { binding.disclosureSpinner.setSelection(2) }
+        // restore location button
+        if (createUpdatePostViewModel.isUsingLocation) {
+            binding.locationButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_location_on_30))
+        } else {
+            binding.locationButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_location_off_30))
+        }
+
+        // restore disclosure button
+        when (createUpdatePostViewModel.disclosure) {
+            DISCLOSURE_PUBLIC -> {
+                binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_public_30))
+            }
+            DISCLOSURE_PRIVATE -> {
+                binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_lock_30))
+            }
+            DISCLOSURE_FRIEND -> {
+                binding.disclosureButton.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_group_30))
+            }
         }
 
         // restore hashtag layout
         binding.hashtagInputEditText.setText(createUpdatePostViewModel.hashtagEditText)
-        updateHashtagUsage()
+        if (createUpdatePostViewModel.hashtagEditText.isNotEmpty()) {
+            binding.hashtagClearButton.visibility = View.VISIBLE
+        }
 
         // restore post EditText
         binding.postEditText.setText(createUpdatePostViewModel.postEditText)
