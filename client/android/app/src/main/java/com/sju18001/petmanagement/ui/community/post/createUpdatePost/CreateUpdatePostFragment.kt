@@ -182,37 +182,25 @@ class CreateUpdatePostFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {}
         })
 
-        // for media attachment button
-        binding.mediaAttachmentButton.setOnClickListener {
-            val dialog = Dialog(requireActivity())
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-            dialog.setContentView(R.layout.select_media_type_dialog)
-            dialog.show()
-
-            dialog.findViewById<ImageView>(R.id.close_button).setOnClickListener { dialog.dismiss() }
-            dialog.findViewById<Button>(R.id.upload_photo_button).setOnClickListener {
-                if(createUpdatePostViewModel.mediaThumbnailList.size == 10) {
-                    Toast.makeText(context, context?.getText(R.string.photo_video_usage_full_message), Toast.LENGTH_LONG).show()
-                }
-                else {
-                    dialog.dismiss()
-
-                    val intent = Intent()
-                    intent.type = "image/*"
-                    intent.action = Intent.ACTION_GET_CONTENT
-                    startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
-                }
+        // for photo attachment button
+        binding.photoAttachmentButton.setOnClickListener {
+            if(createUpdatePostViewModel.photoPathList.size == 10) {
+                Toast.makeText(context, context?.getText(R.string.photo_video_usage_full_message), Toast.LENGTH_LONG).show()
             }
-            dialog.findViewById<Button>(R.id.upload_video_button).setOnClickListener {
-                dialog.dismiss()
+            else {
+                val intent = Intent()
+                intent.type = "image/*"
+                intent.action = Intent.ACTION_GET_CONTENT
+                startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_PHOTO)
+            }
+        }
 
-                // TODO: implement logic for uploading videos
+        // TODO: add logic for video attachment button
+        // TODO: implement logic for uploading videos
 //                val intent = Intent()
 //                intent.type = "video/*"
 //                intent.action = Intent.ACTION_GET_CONTENT
 //                startActivityForResult(Intent.createChooser(intent, "동영상 선택"), PICK_VIDEO)
-            }
-        }
 
         // for general attachment button
         binding.generalAttachmentButton.setOnClickListener {
@@ -301,10 +289,10 @@ class CreateUpdatePostFragment : Fragment() {
                     }
 
                     // add path to list
-                    createUpdatePostViewModel.mediaPathList.add(postPhotoPathValue)
+                    createUpdatePostViewModel.photoPathList.add(postPhotoPathValue)
 
                     // create bytearray for thumbnail
-                    val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.mediaPathList.last())
+                    val bitmap = BitmapFactory.decodeFile(createUpdatePostViewModel.photoPathList.last())
                     val stream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
                     val photoByteArray = stream.toByteArray()
@@ -527,7 +515,7 @@ class CreateUpdatePostFragment : Fragment() {
 
     // update media usage
     private fun updateMediaUsage() {
-        val uploadedCount = createUpdatePostViewModel.mediaThumbnailList.size
+        val uploadedCount = createUpdatePostViewModel.photoPathList.size
         if (uploadedCount == 0) {
             binding.mediaRecyclerView.visibility = View.GONE
         }
@@ -535,7 +523,7 @@ class CreateUpdatePostFragment : Fragment() {
             binding.mediaRecyclerView.visibility = View.VISIBLE
         }
         val mediaUsageText = "$uploadedCount/10"
-        binding.mediaUsage.text = mediaUsageText
+        binding.photoUsage.text = mediaUsageText
     }
 
     // update general usage
@@ -606,7 +594,7 @@ class CreateUpdatePostFragment : Fragment() {
             }
         }
         binding.locationButton.isEnabled = false
-        binding.mediaAttachmentButton.isEnabled = false
+        binding.photoAttachmentButton.isEnabled = false
         binding.generalAttachmentButton.isEnabled = false
         binding.disclosureButton.isEnabled = false
         binding.hashtagInputEditText.isEnabled = false
@@ -641,7 +629,7 @@ class CreateUpdatePostFragment : Fragment() {
             }
         }
         binding.locationButton.isEnabled = true
-        binding.mediaAttachmentButton.isEnabled = true
+        binding.photoAttachmentButton.isEnabled = true
         binding.generalAttachmentButton.isEnabled = true
         binding.disclosureButton.isEnabled = true
         binding.hashtagInputEditText.isEnabled = true
@@ -757,7 +745,7 @@ class CreateUpdatePostFragment : Fragment() {
             .updatePostReq(updatePostReqDto)
         ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), {
             // update media (photos and videos) TODO: create logic for updating videos
-            if(createUpdatePostViewModel.mediaPathList.size == 0) {
+            if(createUpdatePostViewModel.photoPathList.size == 0) {
                 // 기존에 Media가 0개였다면 FileType.IMAGE_FILE에 대해 DeletePostFile를 호출하지 않는다
                 if(requireActivity().intent.getIntExtra("originalMediaCount", 0) > 0){
                     createUpdatePostViewModel.updatedPostPhotoData = true
@@ -832,7 +820,7 @@ class CreateUpdatePostFragment : Fragment() {
 
     private fun updatePostMedia(id: Long) {
         // exception (no media files)
-        if(createUpdatePostViewModel.mediaPathList.size == 0) {
+        if(createUpdatePostViewModel.photoPathList.size == 0) {
             createUpdatePostViewModel.updatedPostPhotoData = true
 
             if (isApiLoadComplete()) {
@@ -842,12 +830,12 @@ class CreateUpdatePostFragment : Fragment() {
         } else {
             // create file list
             val fileList: ArrayList<MultipartBody.Part> = ArrayList()
-            for(i in 0 until createUpdatePostViewModel.mediaPathList.size) {
-                val fileName = "file_$i" + createUpdatePostViewModel.mediaPathList[i]
-                    .substring(createUpdatePostViewModel.mediaPathList[i].lastIndexOf("."))
+            for(i in 0 until createUpdatePostViewModel.photoPathList.size) {
+                val fileName = "file_$i" + createUpdatePostViewModel.photoPathList[i]
+                    .substring(createUpdatePostViewModel.photoPathList[i].lastIndexOf("."))
 
                 fileList.add(MultipartBody.Part.createFormData("fileList", fileName,
-                    RequestBody.create(MediaType.parse("multipart/form-data"), File(createUpdatePostViewModel.mediaPathList[i]))))
+                    RequestBody.create(MediaType.parse("multipart/form-data"), File(createUpdatePostViewModel.photoPathList[i]))))
             }
 
             // API call
@@ -911,7 +899,7 @@ class CreateUpdatePostFragment : Fragment() {
         }
     }
 
-    private fun fetchPostMediaData(postMedia: Array<FileMetaData>) {
+    private fun fetchPostMediaData(postMedia: Array<FileMetaData>) { // TODO: add logic for branching photos and videos
         for(index in postMedia.indices) {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .fetchPostMediaReq(FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index))
@@ -921,7 +909,7 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // copy file and get real path
                 val mediaByteArray = response.body()!!.byteStream().readBytes()
-                createUpdatePostViewModel.mediaPathList[index] =
+                createUpdatePostViewModel.photoPathList[index] =
                     ServerUtil.createCopyAndReturnRealPathServer(requireContext(), mediaByteArray, extension, CREATE_UPDATE_POST_DIRECTORY)
 
                 // save photo thumbnail
@@ -929,7 +917,7 @@ class CreateUpdatePostFragment : Fragment() {
                 createUpdatePostViewModel.mediaThumbnailList[index] = thumbnail
 
                 // if all is done fetching -> set RecyclerView + set usage + show main ScrollView
-                if("" !in createUpdatePostViewModel.mediaPathList) {
+                if("" !in createUpdatePostViewModel.photoPathList) {
                     // update RecyclerView and photo usage
                     mediaAdapter.setResult(createUpdatePostViewModel.mediaThumbnailList)
                     updateMediaUsage()
@@ -1012,7 +1000,7 @@ class CreateUpdatePostFragment : Fragment() {
 
                 // initialize lists
                 for (i in postMedia.indices) {
-                    createUpdatePostViewModel.mediaPathList.add("")
+                    createUpdatePostViewModel.photoPathList.add("")
                     createUpdatePostViewModel.mediaThumbnailList.add(null)
                 }
 

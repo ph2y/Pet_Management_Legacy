@@ -33,7 +33,7 @@ class MediaListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
         // set thumbnail
         holder.thumbnail.setImageBitmap(resultList[position])
 
-        // TODO: delete this (the below code was used for creating video thumbnails)
+        // TODO: add logic for video thumbnails (the below code was used for creating video thumbnails)
 //        else {
 //            Glide.with(context)
 //                .load(createUpdatePostViewModel.photoPathList[position])
@@ -46,7 +46,7 @@ class MediaListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
             deleteItem(position)
 
             // update photo upload layout
-            val uploadedCount = createUpdatePostViewModel.mediaThumbnailList.size
+            val uploadedCount = createUpdatePostViewModel.photoPathList.size
             if (uploadedCount == 0) {
                 binding.mediaRecyclerView.visibility = View.GONE
             }
@@ -54,7 +54,9 @@ class MediaListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
                 binding.mediaRecyclerView.visibility = View.VISIBLE
             }
             val photoUsageText = "$uploadedCount/10"
-            binding.mediaUsage.text = photoUsageText
+            binding.photoUsage.text = photoUsageText
+
+            // TODO: add logic for video usage
         }
     }
 
@@ -62,10 +64,10 @@ class MediaListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
 
     private fun deleteItem(position: Int) {
         // delete file
-        File(createUpdatePostViewModel.mediaPathList[position]).delete()
+        File(createUpdatePostViewModel.photoPathList[position]).delete()
 
         // delete ViewModel values + RecyclerView list
-        createUpdatePostViewModel.mediaPathList.removeAt(position)
+        createUpdatePostViewModel.photoPathList.removeAt(position)
         createUpdatePostViewModel.mediaThumbnailList.removeAt(position)
 
         // for item remove animation

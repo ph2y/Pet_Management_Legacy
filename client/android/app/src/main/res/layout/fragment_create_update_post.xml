@@ -280,7 +280,7 @@
             android:padding="12dp">
 
             <LinearLayout
-                android:id="@+id/media_attachment_button"
+                android:id="@+id/photo_attachment_button"
                 android:layout_width="72dp"
                 android:layout_height="36dp"
                 android:layout_alignParentStart="true"
@@ -296,7 +296,7 @@
                     android:src="@drawable/ic_baseline_photo_camera_20"/>
 
                 <TextView
-                    android:id="@+id/media_usage"
+                    android:id="@+id/photo_usage"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
@@ -305,12 +305,41 @@
 
             </LinearLayout>
 
+            <!-- TODO: enable this (clickable, alpha) -->
+            <LinearLayout
+                android:id="@+id/video_attachment_button"
+                android:layout_width="72dp"
+                android:layout_height="36dp"
+                android:layout_marginStart="12dp"
+                android:layout_toEndOf="@id/photo_attachment_button"
+                android:background="@drawable/button_with_less_radius"
+                android:clickable="false"
+                android:alpha=".5"
+                android:focusable="true"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_baseline_videocam_20" />
+
+                <TextView
+                    android:id="@+id/video_usage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="@string/file_usage"
+                    android:textSize="12dp" />
+
+            </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/general_attachment_button"
                 android:layout_width="72dp"
                 android:layout_height="36dp"
                 android:layout_marginStart="12dp"
-                android:layout_toEndOf="@id/media_attachment_button"
+                android:layout_toEndOf="@id/video_attachment_button"
                 android:background="@drawable/button_with_less_radius"
                 android:clickable="true"
                 android:focusable="true"
