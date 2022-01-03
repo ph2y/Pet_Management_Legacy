@@ -10,7 +10,8 @@ import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.databinding.ActivitySettingBinding
 import com.sju18001.petmanagement.ui.setting.account.UpdateAccountFragment
 import com.sju18001.petmanagement.ui.setting.information.LicenseFragment
-import com.sju18001.petmanagement.ui.setting.information.TermsAndPoliciesFragment
+import com.sju18001.petmanagement.ui.setting.information.PrivacyTermsFragment
+import com.sju18001.petmanagement.ui.setting.information.UsageTermsFragment
 import com.sju18001.petmanagement.ui.setting.preferences.NotificationPreferencesFragment
 import com.sju18001.petmanagement.ui.setting.preferences.PreferencesFragment
 import com.sju18001.petmanagement.ui.setting.preferences.ThemePreferencesFragment
@@ -56,9 +57,13 @@ class SettingActivity : AppCompatActivity() {
                     actionBar?.setTitle(R.string.theme_preferences)
                     ThemePreferencesFragment()
                 }
-                "terms_and_policies" -> {
-                    actionBar?.setTitle(R.string.terms_and_policies_title)
-                    TermsAndPoliciesFragment()
+                "privacy_terms" -> {
+                    actionBar?.setTitle(R.string.privacy_terms_title)
+                    PrivacyTermsFragment()
+                }
+                "usage_terms" -> {
+                    actionBar?.setTitle(R.string.usage_terms_title)
+                    UsageTermsFragment()
                 }
                 "license" -> {
                     actionBar?.setTitle(R.string.license_title)

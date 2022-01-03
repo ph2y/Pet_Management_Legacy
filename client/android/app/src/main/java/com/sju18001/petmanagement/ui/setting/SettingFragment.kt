@@ -112,10 +112,16 @@ class SettingFragment : Fragment() {
                 .create().show()
         }
 
-        binding.termsAndPoliciesLookup.setOnClickListener {
-            val termsAndPoliciesIntent = Intent(context, SettingActivity::class.java)
-            termsAndPoliciesIntent.putExtra("fragmentType", "terms_and_policies")
-            startActivity(termsAndPoliciesIntent)
+        binding.privacyTermsLookup.setOnClickListener {
+            val privacyTermsIntent = Intent(context, SettingActivity::class.java)
+            privacyTermsIntent.putExtra("fragmentType", "privacy_terms")
+            startActivity(privacyTermsIntent)
+            requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+        }
+        binding.usageTermsLookup.setOnClickListener {
+            val usageTermsIntent = Intent(context, SettingActivity::class.java)
+            usageTermsIntent.putExtra("fragmentType", "usage_terms")
+            startActivity(usageTermsIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
         }
         binding.licenseLookup.setOnClickListener {

@@ -134,9 +134,10 @@
                         android:id="@+id/preferences_lookup"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/preference_item_height"
+                        android:background="@drawable/border_bottom_ghost_white2_2"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:background="@drawable/border_bottom_ghost_white2_2"
+                        android:visibility="gone"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/layout_preference_header">
@@ -163,9 +164,10 @@
                         android:id="@+id/notification_lookup"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/preference_item_height"
+                        android:background="@drawable/border_bottom_ghost_white2_2"
                         android:paddingStart="12dp"
                         android:paddingEnd="12dp"
-                        android:background="@drawable/border_bottom_ghost_white2_2"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toTopOf="@id/theme_lookup"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/preferences_lookup">
@@ -336,7 +338,7 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                     <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/terms_and_policies_lookup"
+                        android:id="@+id/privacy_terms_lookup"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/preference_item_height"
                         android:paddingStart="12dp"
@@ -349,7 +351,36 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/policy"
+                            android:text="@string/privacy_terms"
+                            android:textSize="18sp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_baseline_chevron_right_24"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/usage_terms_lookup"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/preference_item_height"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:background="@drawable/border_bottom_ghost_white2_2"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/privacy_terms_lookup">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/usage_terms"
                             android:textSize="18sp"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -373,7 +404,7 @@
                         android:background="@drawable/border_bottom_ghost_white2_2"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/terms_and_policies_lookup">
+                        app:layout_constraintTop_toBottomOf="@id/usage_terms_lookup">
 
                         <TextView
                             android:layout_width="wrap_content"
