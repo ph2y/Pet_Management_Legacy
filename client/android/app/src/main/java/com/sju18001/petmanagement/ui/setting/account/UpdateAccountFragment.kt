@@ -114,7 +114,11 @@ class UpdateAccountFragment : Fragment() {
 
                 binding.accountPhotoInput.setImageDrawable(requireActivity().getDrawable(R.drawable.ic_baseline_account_circle_36))
                 settingViewModel.accountPhotoByteArray = null
-                settingViewModel.accountPhotoPathValue = ""
+                if (settingViewModel.accountPhotoPathValue != "") {
+                    File(settingViewModel.accountPhotoPathValue).delete()
+                    settingViewModel.accountPhotoPathValue = ""
+                }
+                settingViewModel.isDeletePhoto = true
             }
         }
 
@@ -308,9 +312,16 @@ class UpdateAccountFragment : Fragment() {
         })
     }
 
+    // update account photo
     private fun updateAccountPhoto(path: String) {
-        // if no photo selected -> don't update photo + close
-        if(path == "") {
+        // exception
+        if (!settingViewModel.isDeletePhoto && path == "") {
+            closeAfterSuccess()
+            return
+        }
+
+        // delete photo
+        if(settingViewModel.isDeletePhoto!!) {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
                 .deleteAccountPhotoReq(ServerUtil.getEmptyBody())
             call.enqueue(object: Callback<DeleteAccountPhotoResDto> {
@@ -346,6 +357,7 @@ class UpdateAccountFragment : Fragment() {
                 }
             })
         }
+        // update photo
         else {
             val updateAccountPhotoReq = MultipartBody.Part.createFormData("file", File(path).name, RequestBody.create(MediaType.parse("multipart/form-data"), File(path)))
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
