@@ -52,6 +52,11 @@ class SettingViewModel(private val handle: SavedStateHandle) : ViewModel() {
             handle.set("accountPhotoPathValue", value)
             field = value
         }
+    var isDeletePhoto = handle.get<Boolean>("isDeletePhoto")?: false
+        set(value) {
+            handle.set("isDeletePhoto", value)
+            field = value
+        }
     var accountUserMessageValue = handle.get<String>("accountUserMessageValue")?: ""
         set(value){
             handle.set("accountUserMessageValue", value)
