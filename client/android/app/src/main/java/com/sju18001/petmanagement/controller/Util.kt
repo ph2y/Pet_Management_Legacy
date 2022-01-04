@@ -298,11 +298,11 @@ class Util {
         fun log(context: Context, text: String) {
             // set File
             val logFilePath = context.getExternalFilesDir(null).toString() + File.separator + LOG_FILE_NAME
-            val logFIle = File(logFilePath)
+            val logFile = File(logFilePath)
 
-            if(!logFIle.exists()) {
+            if(!logFile.exists()) {
                 try {
-                    logFIle.createNewFile()
+                    logFile.createNewFile()
                 }
                 catch (e: IOException) {
                     e.printStackTrace()
@@ -315,7 +315,7 @@ class Util {
                 val dateString: String = dateFormat.format(calendar.time)
 
 
-                val buffer = BufferedWriter(FileWriter(logFIle, true))
+                val buffer = BufferedWriter(FileWriter(logFile, true))
                 buffer.append("[$dateString]$text")
                 buffer.newLine()
                 buffer.close()
