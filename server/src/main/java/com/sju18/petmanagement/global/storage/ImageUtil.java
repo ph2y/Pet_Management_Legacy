@@ -29,17 +29,24 @@ public class ImageUtil {
         String defaultFilePath = filePath.split("\\.")[0];
         String fileFormat = filePath.split("\\.")[1];
 
-        if(imageType == ImageUtil.ORIGINAL_IMAGE) {
-            return defaultFilePath + "original." + fileFormat;
+        // 손실 압축 이미지 포맷인 JPEG, JPG, WEBP 은 imageType에 따라 파일 URL 생성
+        if(fileFormat.equals("jpeg") || fileFormat.equals("jpg") || fileFormat.equals("webp")) {
+            if(imageType == ImageUtil.ORIGINAL_IMAGE) {
+                return defaultFilePath + "original." + fileFormat;
+            }
+            else if(imageType == ImageUtil.GENERAL_IMAGE) {
+                return defaultFilePath + "general." + fileFormat;
+            }
+            else if(imageType == ImageUtil.THUMBNAIL_IMAGE) {
+                return defaultFilePath + "thumbnail." + fileFormat;
+            }
+            else {
+                return defaultFilePath;
+            }
         }
-        else if(imageType == ImageUtil.GENERAL_IMAGE) {
-            return defaultFilePath + "general." + fileFormat;
-        }
-        else if(imageType == ImageUtil.THUMBNAIL_IMAGE) {
-            return defaultFilePath + "thumbnail." + fileFormat;
-        }
+        // 무손실 압축 이미지 포맷인 PNG, GIF 은 ORIGINAL_IMAGE 파일 URL 생성
         else {
-            return defaultFilePath;
+            return defaultFilePath + "original." + fileFormat;
         }
     }
 
@@ -48,20 +55,28 @@ public class ImageUtil {
         // 업로드 된 파일 확장자
         String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
 
-        String originalFileName = fileName + "original." + fileFormat;
-        String generalFileName = fileName + "general." + fileFormat;
-        String thumbnailFileName = fileName + "thumbnail." + fileFormat;
+        // 손실 압축 이미지 포맷인 JPEG, JPG, WEBP 은 Resize/Crop 후 3개의 파일로 저장
+        if(fileFormat.equals("jpeg") || fileFormat.equals("jpg") || fileFormat.equals("webp")) {
+            String originalFileName = fileName + "original." + fileFormat;
+            String generalFileName = fileName + "general." + fileFormat;
+            String thumbnailFileName = fileName + "thumbnail." + fileFormat;
 
-        // 원본 이미지 저장 후 이미지 파일 불러오기
-        uploadedFile.transferTo(savePath.resolve(originalFileName));
-        File originalFile = new File(savePath.resolve(originalFileName).toString());
+            // 원본 이미지 저장 후 이미지 파일 불러오기
+            uploadedFile.transferTo(savePath.resolve(originalFileName));
+            File originalFile = new File(savePath.resolve(originalFileName).toString());
 
-        // 원본 파일을 미리보기, 일반 버전 파일로 후처리 후 저장
-        BufferedImage generalImage = resizeToGeneralImage(originalFile);
-        BufferedImage thumbnailImage = resizeToThumbnailImage(originalFile);
+            // 원본 파일을 미리보기, 일반 버전 파일로 후처리 후 저장
+            BufferedImage generalImage = resizeToGeneralImage(originalFile);
+            BufferedImage thumbnailImage = resizeToThumbnailImage(originalFile);
 
-        ImageIO.write(generalImage, fileFormat, savePath.resolve(generalFileName).toFile());
-        ImageIO.write(thumbnailImage, fileFormat, savePath.resolve(thumbnailFileName).toFile());
+            ImageIO.write(generalImage, fileFormat, savePath.resolve(generalFileName).toFile());
+            ImageIO.write(thumbnailImage, fileFormat, savePath.resolve(thumbnailFileName).toFile());
+        }
+        // 무손실 압축 이미지 포맷인 PNG, GIF은 Resize 없이 원본 파일만 저장
+        else {
+            String originalFileName = fileName + "original." + fileFormat;
+            uploadedFile.transferTo(savePath.resolve(originalFileName));
+        }
     }
 
     public static BufferedImage resizeToThumbnailImage(File originalFile) throws Exception {

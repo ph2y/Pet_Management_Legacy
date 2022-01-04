@@ -26,7 +26,7 @@ class ServerUtil {
             context: Context,
             onSuccessful: (Response<T>)->Unit,
             onNotSuccessful: (Response<T>)->Unit,
-            onFailure: ()->Unit
+            onFailure: (t: Throwable)->Unit
         ){
             call.enqueue(object: Callback<T> {
                 override fun onResponse(call: Call<T>, response: Response<T>) {
@@ -43,7 +43,7 @@ class ServerUtil {
                 override fun onFailure(call: Call<T>, t: Throwable) {
                     if(getIsViewDestroyed()) return
 
-                    onFailure.invoke()
+                    onFailure.invoke(t)
                     Util.showToastAndLog(context, t.message.toString())
                 }
             })

@@ -162,10 +162,12 @@ class LoginFragment : Fragment() {
                 if(isViewDestroyed) return
 
                 // create custom snack bar to display error message
-                displayErrorMessage(t.message.toString())
+                displayErrorMessage(context?.getText(R.string.default_error_message)!!.toString())
 
                 unlockViews()
 
+                // manually log error message
+                Util.log(context!!, t.message.toString())
                 Log.d("error", t.message.toString())
             }
         })
@@ -266,7 +268,7 @@ class LoginFragment : Fragment() {
 
     private fun displayErrorMessage(message: String) {
         snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_parent_layout)!!,
-            message, Snackbar.LENGTH_LONG)
+            message, Snackbar.LENGTH_SHORT)
         val snackBarView = snackBar!!.view
         snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_red_dark))
         snackBarView.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
@@ -275,7 +277,7 @@ class LoginFragment : Fragment() {
 
     private fun displaySuccessMessage(message: String) {
         snackBar = Snackbar.make(view?.findViewById(R.id.fragment_login_parent_layout)!!,
-            message, Snackbar.LENGTH_LONG)
+            message, Snackbar.LENGTH_SHORT)
         val snackBarView = snackBar!!.view
         snackBarView.setBackgroundColor(resources.getColor(android.R.color.holo_green_dark))
         snackBarView.findViewById<TextView>(R.id.snackbar_text).textAlignment = View.TEXT_ALIGNMENT_CENTER
