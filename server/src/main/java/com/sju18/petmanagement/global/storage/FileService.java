@@ -160,8 +160,8 @@ public class FileService {
         String[] acceptableExtensions = new String[]{
                 "jpg","png","jpeg", "gif", "webp"
         };
-        // 업로드 파일 용량 제한 (5MB)
-        long fileSizeLimit = 5000000;
+        // 업로드 파일 용량 제한 (20MB)
+        long fileSizeLimit = 20 * 1000000;
 
         // 파일 유효성 검사
         checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
@@ -184,8 +184,8 @@ public class FileService {
         String[] acceptableExtensions = new String[]{
                 "jpg","png","jpeg", "gif", "webp"
         };
-        // 업로드 파일 용량 제한 (5MB)
-        long fileSizeLimit = 5000000;
+        // 업로드 파일 용량 제한 (20MB)
+        long fileSizeLimit = 20 * 1000000;
 
         // 파일 유효성 검사
         checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
@@ -204,8 +204,8 @@ public class FileService {
         String[] acceptableExtensions = new String[]{
                 "jpg","png","jpeg", "gif", "webp"
         };
-        // 업로드 개별 파일 용량 제한 (100MB)
-        long fileSizeLimit = 100000000;
+        // 업로드 파일 용량 제한 (20MB)
+        long fileSizeLimit = 20 * 1000000;
         // 업로드 파일 갯수 확인
         this.checkFileCount(uploadedFiles, 20);
 
@@ -306,8 +306,8 @@ public class FileService {
         String[] acceptableExtensions = new String[]{
                 "jpg","png","jpeg", "gif", "webp"
         };
-        // 업로드 개별 파일 용량 제한 (10MB)
-        long fileSizeLimit = 5000000;
+        // 업로드 파일 용량 제한 (20MB)
+        long fileSizeLimit = 20 * 1000000;
         // 파일 메타데이터 리스트
         List<FileMetadata> fileMetaDataList = new ArrayList<>();
 
