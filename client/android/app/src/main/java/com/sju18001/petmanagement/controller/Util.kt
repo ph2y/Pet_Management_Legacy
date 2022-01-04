@@ -35,7 +35,7 @@ import java.util.*
 
 class Util {
     companion object{
-        private const val LOG_FILE_NAME = "pet_management_client_log_file"
+        private const val LOG_FILE_NAME = "client_log_file"
 
         fun convertDpToPixel(dp: Int): Int{
             return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), Resources.getSystem().displayMetrics).toInt()
@@ -296,8 +296,9 @@ class Util {
         }
 
         fun log(context: Context, text: String) {
-            // set File path
-            val logFIle = File(context.getExternalFilesDir(null).toString() + LOG_FILE_NAME)
+            // set File
+            val logFilePath = context.getExternalFilesDir(null).toString() + File.separator + LOG_FILE_NAME
+            val logFIle = File(logFilePath)
 
             if(!logFIle.exists()) {
                 try {
