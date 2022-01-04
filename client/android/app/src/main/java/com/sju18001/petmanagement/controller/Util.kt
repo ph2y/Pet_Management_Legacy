@@ -18,11 +18,16 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.restapi.Place
 import com.sju18001.petmanagement.restapi.global.FileMetaData
 import okhttp3.ResponseBody
 import org.json.JSONObject
+import java.io.BufferedWriter
 import java.io.File
+import java.io.FileWriter
+import java.io.IOException
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.*
@@ -30,6 +35,8 @@ import java.util.*
 
 class Util {
     companion object{
+        private const val LOG_FILE_NAME = "pet_management_client_log_file"
+
         fun convertDpToPixel(dp: Int): Int{
             return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp.toFloat(), Resources.getSystem().displayMetrics).toInt()
         }
@@ -281,8 +288,40 @@ class Util {
         }
 
         fun showToastAndLog(context: Context, message: String){
-            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+            val toastMessage: String = context.getText(R.string.default_error_message) as String
+
+            Toast.makeText(context, toastMessage, Toast.LENGTH_SHORT).show()
+            log(context, message)
             Log.d("error", message)
+        }
+
+        fun log(context: Context, text: String) {
+            // set File path
+            val logFIle = File(context.getExternalFilesDir(null).toString() + LOG_FILE_NAME)
+
+            if(!logFIle.exists()) {
+                try {
+                    logFIle.createNewFile()
+                }
+                catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+
+            try {
+                val calendar: Calendar = Calendar.getInstance()
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+                val dateString: String = dateFormat.format(calendar.time)
+
+
+                val buffer = BufferedWriter(FileWriter(logFIle, true))
+                buffer.append("[$dateString]$text")
+                buffer.newLine()
+                buffer.close()
+            }
+            catch (e: IOException) {
+                e.printStackTrace()
+            }
         }
     }
 }
