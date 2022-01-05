@@ -57,7 +57,7 @@ class PetListAdapter(
     }
 
     class AddPetButtonViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val addPetButton: CircleImageView = itemView.findViewById(R.id.button_create_pet)
+        val createPetButton: ImageView = itemView.findViewById(R.id.button_create_pet)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -154,7 +154,7 @@ class PetListAdapter(
             R.layout.create_pet_button ->{
                 holder as AddPetButtonViewHolder
 
-                holder.addPetButton.setOnClickListener {
+                holder.createPetButton.setOnClickListener {
                     onClickCreateButton.invoke()
                 }
             }
