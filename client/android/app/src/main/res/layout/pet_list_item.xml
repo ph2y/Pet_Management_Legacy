@@ -23,7 +23,7 @@
             android:id="@+id/layout_pet_photo"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
