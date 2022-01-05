@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.ContactsContract
 import android.provider.OpenableColumns
+import android.provider.Settings.Global.getString
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
@@ -18,12 +19,15 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.gson.Gson
+import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.restapi.Place
 import com.sju18001.petmanagement.restapi.global.FileMetaData
 import okhttp3.ResponseBody
 import org.json.JSONObject
 import java.io.File
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Period
 import java.time.ZoneId
 import java.util.*
 
@@ -268,11 +272,11 @@ class Util {
             }
         }
 
-        fun getArrayFromMediaAttachments(mediaAttachments: String?): Array<FileMetaData>{
+        fun getArrayFromMediaAttachments(mediaAttachments: String?): Array<FileMetaData> {
             return if (mediaAttachments != null) Gson().fromJson(mediaAttachments, Array<FileMetaData>::class.java) else arrayOf()
         }
 
-        fun showToastAndLogForFailedResponse(context: Context, errorBody: ResponseBody?){
+        fun showToastAndLogForFailedResponse(context: Context, errorBody: ResponseBody?) {
             if(errorBody == null) return
 
             getMessageFromErrorBody(errorBody)?.let{
@@ -280,9 +284,18 @@ class Util {
             }
         }
 
-        fun showToastAndLog(context: Context, message: String){
+        fun showToastAndLog(context: Context, message: String) {
             Toast.makeText(context, message, Toast.LENGTH_LONG).show()
             Log.d("error", message)
+        }
+
+        fun getAgeFromBirth(birth: String?): String {
+            return Period.between(LocalDate.parse(birth), LocalDate.now()).years.toString()
+        }
+
+        fun getGenderSymbol(gender: Boolean, context: Context): String {
+            return if(gender) context.getString(R.string.pet_gender_female_symbol)
+            else context.getString(R.string.pet_gender_male_symbol)
         }
     }
 }

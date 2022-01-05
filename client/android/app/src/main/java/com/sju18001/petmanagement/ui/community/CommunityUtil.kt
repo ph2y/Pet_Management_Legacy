@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import com.sju18001.petmanagement.R
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
 import com.sju18001.petmanagement.restapi.SessionManager
@@ -39,15 +40,8 @@ class CommunityUtil {
             petProfileIntent.putExtra("petBirth", petBirth)
             petProfileIntent.putExtra("petSpecies", pet.species)
             petProfileIntent.putExtra("petBreed", pet.breed)
-            val petGender = if(pet.gender) {
-                context.getString(R.string.pet_gender_female_symbol)
-            }
-            else {
-                context.getString(R.string.pet_gender_male_symbol)
-            }
-            val petAge = Period.between(LocalDate.parse(pet.birth), LocalDate.now()).years.toString()
-            petProfileIntent.putExtra("petGender", petGender)
-            petProfileIntent.putExtra("petAge", petAge)
+            petProfileIntent.putExtra("petGender", Util.getGenderSymbol(pet.gender, context))
+            petProfileIntent.putExtra("petAge", Util.getAgeFromBirth(pet.birth))
             petProfileIntent.putExtra("petMessage", pet.message)
 
             petProfileIntent.putExtra("fragmentType", "pet_profile_community")
