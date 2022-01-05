@@ -24,22 +24,20 @@
             android:layout_width="144dp"
             android:layout_height="144dp"
             android:src="@drawable/app_icon_without_background"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:layout_width="144dp"
-            android:gravity="center_horizontal"
-            android:layout_height="wrap_content"
+            android:layout_height="36dp"
+            android:autoSizeTextType="uniform"
             android:layout_marginTop="8dp"
+            android:gravity="center_horizontal"
             android:text="@string/app_name"
             android:fontFamily="@font/sunflower_light"
             android:textColor="#ffffff"
-            android:textSize="28sp"
             app:layout_constraintTop_toBottomOf="@id/app_logo_icon"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
