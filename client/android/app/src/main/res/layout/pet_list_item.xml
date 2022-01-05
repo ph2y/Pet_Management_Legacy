@@ -2,7 +2,7 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:layout_height="300dp"
+    android:layout_height="wrap_content"
     android:layout_marginTop="4dp"
     android:layout_marginBottom="4dp"
     android:layout_marginLeft="12dp"
@@ -49,7 +49,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/layout_pet_info"
+            android:id="@+id/layout_pet_info_top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -65,9 +65,10 @@
                 android:id="@+id/pet_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="몽자"
+                android:text="듀크"
                 android:textStyle="bold"
-                android:textSize="24sp"
+                android:textColor="@color/black"
+                android:textSize="28sp"
                 android:gravity="center_horizontal"
                 android:singleLine="true"
                 app:layout_constraintTop_toTopOf="parent"
@@ -80,7 +81,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="노루"
-                android:textSize="16sp"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:fontFamily="@font/noto_sans_kr_light"
+                android:includeFontPadding="false"
                 android:gravity="center_horizontal"
                 app:layout_constraintTop_toBottomOf="@id/pet_name"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -89,20 +93,125 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:id="@+id/divider"
+            android:layout_width="36dp"
+            android:layout_height="4dp"
+            android:layout_marginTop="12dp"
+            android:background="@color/gray"
+            app:layout_constraintTop_toBottomOf="@id/layout_pet_info_top"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/layout_pet_info_middle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:layout_constraintTop_toBottomOf="@id/divider"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:id="@+id/layout_pet_age"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/layout_pet_birth">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/age"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/noto_sans_kr_light"
+                    android:includeFontPadding="false"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4살"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/noto_sans_kr_light"
+                    android:includeFontPadding="false"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_pet_birth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/layout_pet_age"
+                app:layout_constraintEnd_toStartOf="@id/layout_pet_gender">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/birth"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/noto_sans_kr_light"
+                    android:includeFontPadding="false"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="12월 3일"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/noto_sans_kr_light"
+                    android:includeFontPadding="false"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_pet_gender"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/layout_pet_birth"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gender"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/noto_sans_kr_light"
+                    android:includeFontPadding="false"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pet_gender_female_symbol"
+                    android:textSize="18sp"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/noto_sans_kr_light"
+                    android:includeFontPadding="false"/>
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="85dp"
+            android:layout_marginTop="8dp"
             android:paddingTop="4dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            app:layout_constraintTop_toBottomOf="@id/layout_pet_info"
+            android:paddingBottom="15dp"
+            app:layout_constraintTop_toBottomOf="@id/layout_pet_info_middle"
             app:layout_constraintStart_toStartOf="parent">
 
             <TextView
                 android:id="@+id/pet_message"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
                 android:paddingTop="16dp"
                 android:paddingBottom="10dp"
                 android:paddingLeft="10dp"
@@ -111,8 +220,8 @@
                 android:text="12123"
                 android:ellipsize="end"
                 android:textSize="16sp"
-                android:textStyle="bold"
                 android:textColor="@color/dark_brown"
+                android:gravity="center_horizontal"
                 android:background="@drawable/pet_message_bubble"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"/>
