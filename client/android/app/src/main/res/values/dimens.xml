@@ -7,4 +7,6 @@
     <dimen name="update_input_height">40dp</dimen>
     <dimen name="update_button_height">52dp</dimen>
     <dimen name="preference_item_height">47dp</dimen>
+
+    <dimen name="my_pet_list_recycler_view_padding">40dp</dimen>
 </resources>

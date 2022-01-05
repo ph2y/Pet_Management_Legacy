@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -7,6 +8,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.DragEvent.ACTION_DRAG_ENDED
+import androidx.core.view.setPadding
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.*
@@ -14,6 +17,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.CustomProgressBar
+import com.sju18001.petmanagement.controller.Util
 import com.sju18001.petmanagement.databinding.FragmentPetManagerBinding
 import com.sju18001.petmanagement.restapi.RetrofitBuilder
 import com.sju18001.petmanagement.restapi.ServerUtil
@@ -23,6 +27,7 @@ import com.sju18001.petmanagement.restapi.dto.FetchPetReqDto
 import com.sju18001.petmanagement.ui.myPet.MyPetActivity
 import com.sju18001.petmanagement.ui.myPet.MyPetViewModel
 import java.lang.reflect.Type
+import kotlin.properties.Delegates
 
 class PetManagerFragment : Fragment(), OnStartDragListener {
     // variable for ViewModel
@@ -59,12 +64,17 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
 
 
         // Initialize RecyclerView
-        adapter = PetListAdapter(this, requireActivity()) {
+        adapter = PetListAdapter(this, requireActivity(), {
             val myPetActivityIntent = Intent(context, MyPetActivity::class.java)
             myPetActivityIntent.putExtra("fragmentType", "create_pet")
             startActivity(myPetActivityIntent)
             requireActivity().overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-        }
+        }, {
+            snapHelper.findSnapView(layoutManager)?.let {
+                val position = layoutManager.getPosition(it)
+                binding.myPetListRecyclerView.smoothScrollToPosition(position)
+            }
+        })
         binding.myPetListRecyclerView.adapter = adapter
 
         // Initialize LayoutManager
@@ -86,12 +96,8 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             }
         })
 
-        touchHelper = ItemTouchHelper(PetListDragAdapter(adapter) {
-            snapHelper.findSnapView(layoutManager)?.let {
-                val position = layoutManager.getPosition(it)
-                binding.myPetListRecyclerView.smoothScrollToPosition(position)
-            }
-        })
+
+        touchHelper = ItemTouchHelper(PetListDragAdapter(adapter))
         touchHelper.attachToRecyclerView(binding.myPetListRecyclerView)
 
         return root
@@ -133,7 +139,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             { CustomProgressBar.removeProgressBar(binding.fragmentPetPetManagerParentLayout) })
     }
 
-    // update pet list order
     private fun updatePetListOrder(apiResponse: ArrayList<Pet>) {
         // get current saved pet list order
         val petListOrder = getPetListOrder(requireContext()
@@ -172,7 +177,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
             .data_name_pet_list_id_order), petListOrder, requireContext())
     }
 
-    // reorder pet list
     private fun reorderPetList(apiResponse: ArrayList<Pet>) {
         // get saved pet list order
         val petListOrder = getPetListOrder(requireContext()
@@ -186,7 +190,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         }
     }
 
-    // check for difference in lists
     private fun checkListDifference(apiResponse: ArrayList<Pet>) {
         // variables for id lists
         val apiResponseIdList: MutableList<Long> = mutableListOf()
@@ -235,7 +238,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         adapter.setResult(petList)
     }
 
-    // save pet list order
     public fun savePetListOrder(dataName: String, list: MutableList<Long>, context: Context) {
         val preferences: SharedPreferences = context.getSharedPreferences(
             context.getString(R.string.pref_name_pet_list_id_order), Context.MODE_PRIVATE)
@@ -244,7 +246,6 @@ class PetManagerFragment : Fragment(), OnStartDragListener {
         preferences.edit().putString(dataName, json).apply()
     }
 
-    // get pet list order
     public fun getPetListOrder(dataName: String?, context: Context): MutableList<Long> {
         val preferences: SharedPreferences = context.getSharedPreferences(
             context.getString(R.string.pref_name_pet_list_id_order), Context.MODE_PRIVATE)

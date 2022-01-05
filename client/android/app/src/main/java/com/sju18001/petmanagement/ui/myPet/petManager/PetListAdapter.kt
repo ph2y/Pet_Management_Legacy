@@ -1,5 +1,6 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -34,14 +35,16 @@ import java.util.*
 class PetListAdapter(
         private val startDragListener: OnStartDragListener,
         private val context: Context,
-        private val onClickCreateButton: ()->Unit
+        private val onClickCreateButton: ()->Unit,
+        private val restoreScroll: ()->Unit
     ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>(), PetListDragAdapter.Listener {
 
     private var resultList = emptyList<Pet>()
 
+    private var clickable: Boolean = true
+
     class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val cardView: CardView = itemView.findViewById(R.id.card_view)
         val petPhoto: ImageView = itemView.findViewById(R.id.pet_photo)
         val representativePetIcon: ImageView = itemView.findViewById(R.id.representative_pet_icon)
         val petName: TextView = itemView.findViewById(R.id.pet_name)
@@ -100,13 +103,16 @@ class PetListAdapter(
                 setPetInfoLayout(holder, currentItem)
 
                 // Long clicking the item to draging
-                holder.cardView.setOnLongClickListener(View.OnLongClickListener {
+                holder.itemView.setOnLongClickListener(View.OnLongClickListener {
                     this.startDragListener.onStartDrag(holder)
+
                     return@OnLongClickListener false
                 })
 
                 // click -> open pet profile
                 holder.itemView.setOnClickListener {
+                    if(!clickable) return@setOnClickListener
+
                     // if pet photo not yet fetched
                     if (currentItem.photoUrl != null && holder.petPhoto.drawable == null) {
                         return@setOnClickListener
@@ -185,8 +191,36 @@ class PetListAdapter(
         PetManagerFragment().savePetListOrder(context.getString(R.string.data_name_pet_list_id_order),
             petListIdOrder, context)
     }
-    override fun onRowSelected(itemViewHolder: HistoryListViewHolder) {}
-    override fun onRowClear(itemViewHolder: HistoryListViewHolder) {}
+    override fun onRowSelected(itemViewHolder: HistoryListViewHolder) {
+        val anim = ValueAnimator.ofFloat(1f, 0.5f)
+        anim.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Float
+
+            itemViewHolder.itemView.scaleX = value
+            itemViewHolder.itemView.scaleY = value
+        }
+        anim.duration = 100
+        anim.start()
+
+        // LongClick 직후에 곧바로 발생하는 Click을 방지하기 위함
+        clickable = false
+    }
+    override fun onRowClear(itemViewHolder: HistoryListViewHolder) {
+        val anim = ValueAnimator.ofFloat(0.5f, 1f)
+        anim.addUpdateListener { valueAnimator ->
+            val value = valueAnimator.animatedValue as Float
+
+            itemViewHolder.itemView.scaleX = value
+            itemViewHolder.itemView.scaleY = value
+        }
+        anim.duration = 100
+        anim.start()
+        
+        clickable = true
+
+        // 드래그가 끝난 뒤, 스크롤을 PagerSnapHelper에 맞춰서 복구
+        restoreScroll.invoke()
+    }
 
     private fun fetchPetPhoto(id: Long, view: View) {
         val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(context)!!)
