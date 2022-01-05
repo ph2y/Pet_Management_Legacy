@@ -3,6 +3,7 @@ package com.sju18001.petmanagement.ui.myPet.petManager
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.BitmapDrawable
@@ -10,9 +11,11 @@ import android.os.Build
 import android.util.Log
 import android.view.*
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.cardview.widget.CardView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 import com.sju18001.petmanagement.controller.Util
@@ -43,6 +46,10 @@ class PetListAdapter(
         val representativePetIcon: ImageView = itemView.findViewById(R.id.representative_pet_icon)
         val petName: TextView = itemView.findViewById(R.id.pet_name)
         val petBreed: TextView = itemView.findViewById(R.id.pet_breed)
+        val petAge: TextView = itemView.findViewById(R.id.pet_age)
+        val petBirthLayout: LinearLayout = itemView.findViewById(R.id.layout_pet_birth)
+        val petBirth: TextView = itemView.findViewById(R.id.pet_birth)
+        val petGender: TextView = itemView.findViewById(R.id.pet_gender)
         val petMessage: TextView = itemView.findViewById(R.id.pet_message)
     }
 
@@ -90,10 +97,7 @@ class PetListAdapter(
                     holder.petPhoto.setImageDrawable(context.getDrawable(R.drawable.ic_baseline_pets_60_with_padding))
                 }
 
-                // Set name, message
-                holder.petName.text = currentItem.name
-                holder.petBreed.text = currentItem.breed
-                holder.petMessage.text = if(currentItem.message.isNullOrEmpty()) context.getString(R.string.filled_heart) else currentItem.message
+                setPetInfoLayout(holder, currentItem)
 
                 // Long clicking the item to draging
                 holder.cardView.setOnLongClickListener(View.OnLongClickListener {
@@ -130,15 +134,8 @@ class PetListAdapter(
                     )
                     petProfileIntent.putExtra("petSpecies", currentItem.species)
                     petProfileIntent.putExtra("petBreed", currentItem.breed)
-                    val petGender = if(currentItem.gender) {
-                        holder.itemView.context.getString(R.string.pet_gender_female_symbol)
-                    }
-                    else {
-                        holder.itemView.context.getString(R.string.pet_gender_male_symbol)
-                    }
-                    val petAge = Period.between(LocalDate.parse(currentItem.birth), LocalDate.now()).years.toString()
-                    petProfileIntent.putExtra("petGender", petGender)
-                    petProfileIntent.putExtra("petAge", petAge)
+                    petProfileIntent.putExtra("petGender", Util.getGenderSymbol(currentItem.gender, context))
+                    petProfileIntent.putExtra("petAge", Util.getAgeFromBirth(currentItem.birth))
                     petProfileIntent.putExtra("petMessage", currentItem.message)
                     petProfileIntent.putExtra("isRepresentativePet", isRepresentativePet)
 
@@ -198,6 +195,32 @@ class PetListAdapter(
             // set fetched photo to view
             (view as ImageView).setImageBitmap(BitmapFactory.decodeStream(response.body()!!.byteStream()))
         }, {}, {})
+    }
+
+    private fun setPetInfoLayout(holder: HistoryListViewHolder, item: Pet){
+        holder.petName.text = item.name
+        holder.petBreed.text = item.breed
+        holder.petAge.text = Util.getAgeFromBirth(item.birth) + "살"
+
+        // Set visibility of pet_birth_layout
+        if(item.yearOnly!!){
+            holder.petBirthLayout.visibility = View.GONE
+        } else {
+            holder.petBirth.text = getBirthString(item.birth!!)
+        }
+
+        holder.petGender.text = Util.getGenderSymbol(item.gender, context)
+        // Set color of pet_gender
+        if(item.gender) holder.petGender.setTextColor(context.getColor(R.color.pink))
+        else holder.petGender.setTextColor(context.getColor(R.color.peter_river))
+
+        holder.petMessage.text =
+            if(item.message.isNullOrEmpty()) context.getString(R.string.filled_heart) else item.message
+    }
+
+    private fun getBirthString(birth: String): String {
+        val localDate = LocalDate.parse(birth)
+        return "${localDate.monthValue}월 ${localDate.dayOfMonth}일"
     }
 
     public fun setResult(result: List<Pet>){

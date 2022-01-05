@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import android.provider.ContactsContract
 import android.provider.OpenableColumns
+import android.provider.Settings.Global.getString
 import android.util.DisplayMetrics
 import android.util.Log
 import android.util.TypedValue
@@ -28,7 +29,9 @@ import java.io.File
 import java.io.FileWriter
 import java.io.IOException
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.Period
 import java.time.ZoneId
 import java.util.*
 
@@ -275,11 +278,11 @@ class Util {
             }
         }
 
-        fun getArrayFromMediaAttachments(mediaAttachments: String?): Array<FileMetaData>{
+        fun getArrayFromMediaAttachments(mediaAttachments: String?): Array<FileMetaData> {
             return if (mediaAttachments != null) Gson().fromJson(mediaAttachments, Array<FileMetaData>::class.java) else arrayOf()
         }
 
-        fun showToastAndLogForFailedResponse(context: Context, errorBody: ResponseBody?){
+        fun showToastAndLogForFailedResponse(context: Context, errorBody: ResponseBody?) {
             if(errorBody == null) return
 
             getMessageFromErrorBody(errorBody)?.let{
@@ -297,14 +300,14 @@ class Util {
 
         fun log(context: Context, text: String) {
             // set File
-            val logFilePath = context.getExternalFilesDir(null).toString() + File.separator + LOG_FILE_NAME
+            val logFilePath =
+                context.getExternalFilesDir(null).toString() + File.separator + LOG_FILE_NAME
             val logFile = File(logFilePath)
 
-            if(!logFile.exists()) {
+            if (!logFile.exists()) {
                 try {
                     logFile.createNewFile()
-                }
-                catch (e: IOException) {
+                } catch (e: IOException) {
                     e.printStackTrace()
                 }
             }
@@ -319,10 +322,18 @@ class Util {
                 buffer.append("[$dateString]$text")
                 buffer.newLine()
                 buffer.close()
-            }
-            catch (e: IOException) {
+            } catch (e: IOException) {
                 e.printStackTrace()
             }
+        }
+
+        fun getAgeFromBirth(birth: String?): String {
+            return Period.between(LocalDate.parse(birth), LocalDate.now()).years.toString()
+        }
+
+        fun getGenderSymbol(gender: Boolean, context: Context): String {
+            return if(gender) context.getString(R.string.pet_gender_female_symbol)
+            else context.getString(R.string.pet_gender_male_symbol)
         }
     }
 }

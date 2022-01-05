@@ -204,15 +204,8 @@ class PetProfileFragment : Fragment(){
         myPetViewModel.petBirthValueProfile = if(pet.yearOnly!!) pet.birth!!.substring(0,4) else pet.birth!!
         myPetViewModel.petSpeciesValueProfile = pet.species
         myPetViewModel.petBreedValueProfile = pet.breed
-        val petGender = if(pet.gender) {
-            requireContext().getString(R.string.pet_gender_female_symbol)
-        }
-        else {
-            requireContext().getString(R.string.pet_gender_male_symbol)
-        }
-        myPetViewModel.petGenderValueProfile = petGender
-        val petAge = Period.between(LocalDate.parse(pet.birth), LocalDate.now()).years.toString()
-        myPetViewModel.petAgeValueProfile = petAge
+        myPetViewModel.petGenderValueProfile = Util.getGenderSymbol(pet.gender, requireContext())
+        myPetViewModel.petAgeValueProfile = Util.getAgeFromBirth(pet.birth)
         myPetViewModel.petMessageValueProfile = pet.message.toString()
         myPetViewModel.isRepresentativePetProfile =
             myPetViewModel.petIdValueProfile == myPetViewModel.accountRepresentativePetId
