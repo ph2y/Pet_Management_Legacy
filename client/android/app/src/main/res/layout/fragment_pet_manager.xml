@@ -9,12 +9,13 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+            android:layout_height="match_parent">
+
             <TextView
                 android:id="@+id/empty_pet_list_notification"
                 android:layout_width="wrap_content"
@@ -34,8 +35,12 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/my_pet_list_recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="40dp"
+                android:layout_height="wrap_content"
+                android:paddingLeft="40dp"
+                android:paddingRight="40dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp"
+                android:foregroundGravity="center"
                 android:clipToPadding="false"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"

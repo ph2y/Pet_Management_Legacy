@@ -6,8 +6,11 @@
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/drawable/border_bottom.xml" value="0.38229166666666664" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/drawable/border_with_radius_16.xml" value="0.38229166666666664" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/drawable/border_with_radius_8.xml" value="0.38229166666666664" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/drawable/button_with_less_radius.xml" value="0.38229166666666664" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/drawable/button_with_radius.xml" value="0.22083333333333333" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/drawable/button_with_radius_red.xml" value="0.38229166666666664" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/drawable/ic_baseline_cancel_24.xml" value="0.38229166666666664" />
+        <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.38229166666666664" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/drawable/ic_baseline_group_36.xml" value="0.38229166666666664" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/activity_general_files.xml" value="0.25677083333333334" />
         <entry key="..\:/Android/Projects-nonAndroid/Pet-Management/client/android/app/src/main/res/layout/activity_post_general_files.xml" value="0.33" />
@@ -57,7 +60,7 @@
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/drawable/ic_baseline_more_horiz_18.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/drawable/ic_baseline_send_24.xml" value="0.25364583333333335" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/drawable/pet_message_bubble.xml" value="0.1" />
+        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/drawable/pet_message_bubble.xml" value="0.25" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/drawable/splash.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/drawable/username_pw_edit_text.xml" value="0.2203125" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/drawable/white_with_radius_16.xml" value="0.21574074074074073" />
@@ -66,9 +69,8 @@
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/activity_general_files.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/activity_search.xml" value="0.22056159420289856" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/activity_setting.xml" value="0.1778115501519757" />
-        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/add_pet_button.xml" value="0.17603850050658562" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/change_password_dialog.xml" value="0.3229166666666667" />
-        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/created_hashtags_item_list.xml" value="0.5" />
+        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/created_hashtags_item_list.xml" value="0.26197916666666665" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/follower_following_list_item.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_comment.xml" value="0.25" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_create_account.xml" value="0.3229166666666667" />
@@ -77,15 +79,16 @@
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_create_account_user_info.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_create_update_pet.xml" value="0.33" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_create_update_pet_schedule.xml" value="0.28802083333333334" />
-        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_create_update_post.xml" value="0.25" />
+        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_create_update_post.xml" value="0.1" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_edit_account.xml" value="0.33" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_follower_following.xml" value="0.1398176291793313" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_login.xml" value="0.25" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_map.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_my_pet.xml" value="0.28802083333333334" />
-        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_pet_manager.xml" value="0.16" />
+        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_pet_manager.xml" value="0.2" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_pet_profile.xml" value="0.25" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_pet_schedule_edit.xml" value="0.1778115501519757" />
+        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_privacy_terms.xml" value="0.1405775075987842" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_recover_password.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_recover_username.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_recovery.xml" value="0.3229166666666667" />
@@ -96,14 +99,13 @@
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/fragment_welcome_page_profile.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/pet_info_layout_alter.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/pet_info_layout_origin.xml" value="0.3229166666666667" />
-        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/pet_list_item.xml" value="0.5" />
+        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/pet_list_item.xml" value="0.33" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/pet_name_list_item.xml" value="0.28802083333333334" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/pet_schedule_list_item.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/post_item.xml" value="0.33" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/select_file_type_dialog.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/select_photo_dialog.xml" value="0.3229166666666667" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/tag_item.xml" value="0.2625" />
-        <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/layout/uploaded_general_files_list_item.xml" value="0.25" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/menu/bottom_nav_menu.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/menu/follower_following_menu.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/fchop/Development/cross/Pet-Management/client/android/app/src/main/res/mipmap-anydpi-v26/ic_app_icon.xml" value="0.22135416666666666" />
