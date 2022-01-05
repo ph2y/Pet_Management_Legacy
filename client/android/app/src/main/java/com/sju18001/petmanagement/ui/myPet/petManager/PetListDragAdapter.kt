@@ -1,18 +1,21 @@
 package com.sju18001.petmanagement.ui.myPet.petManager
 
+import android.content.Context
+import android.util.Log
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.R
 
 class PetListDragAdapter(
-    val adapter: PetListAdapter,
-    val restoreScroll: ()->Unit
+    private val adapter: PetListAdapter
 ) : ItemTouchHelper.Callback() {
     public interface Listener {
         fun onRowMoved(fromPosition: Int, toPosition: Int)
         fun onRowSelected(itemViewHolder: PetListAdapter.HistoryListViewHolder)
         fun onRowClear(itemViewHolder: PetListAdapter.HistoryListViewHolder)
     }
+
+    private val SCROLL_SENSITIVITY = 15
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
@@ -43,9 +46,6 @@ class PetListDragAdapter(
         if (viewHolder is PetListAdapter.HistoryListViewHolder) {
             adapter.onRowClear(viewHolder)
         }
-
-        // 드래그가 끝난 뒤, 스크롤을 PagerSnapHelper에 맞춰서 복구
-        restoreScroll.invoke()
     }
 
     // 스크롤 감도 조절
@@ -56,13 +56,14 @@ class PetListDragAdapter(
         totalSize: Int,
         msSinceStartScroll: Long
     ): Int {
-        return super.interpolateOutOfBoundsScroll(
-            recyclerView,
-            viewSize,
-            viewSizeOutOfBounds,
-            totalSize,
-            msSinceStartScroll
-        )*4
+        return if(super.interpolateOutOfBoundsScroll(
+                recyclerView,
+                viewSize,
+                viewSizeOutOfBounds,
+                totalSize,
+                msSinceStartScroll
+            ) > 0) SCROLL_SENSITIVITY
+        else -SCROLL_SENSITIVITY
     }
 
     override fun canDropOver(
