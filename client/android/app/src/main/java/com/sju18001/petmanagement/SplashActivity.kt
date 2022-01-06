@@ -53,9 +53,7 @@ class SplashActivity: AppCompatActivity() {
                     startActivity(intent)
                     finish()
                 }
-            }, {
-                startLoginActivityAndFinish()
-            }, {})
+            }, { startLoginActivityAndFinish() }, { startLoginActivityAndFinish() })
         }
         else { // token is empty -> LoginActivity
             startLoginActivityAndFinish()
