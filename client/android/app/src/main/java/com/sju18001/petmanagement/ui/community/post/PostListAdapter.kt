@@ -3,7 +3,6 @@ package com.sju18001.petmanagement.ui.community.post
 import android.app.Activity
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.restapi.dao.Post
@@ -62,22 +61,15 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.post_item, parent, false)
 
-        val holder = ViewHolder(view)
-        val position = holder.absoluteAdapterPosition
-
-        if(position != RecyclerView.NO_POSITION) {
-            Log.e("ASD", "$position")
-            setListenerOnView(holder, position)
-        }
-
-        return holder
+        return ViewHolder(view)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val safePosition = holder.absoluteAdapterPosition
+        val safePosition = holder.adapterPosition
 
         updateDataSetToViewHolder(holder, dataSet[safePosition], likedCounts[safePosition], safePosition)
+        setListenerOnView(holder, position)
     }
 
     override fun getItemCount(): Int = dataSet.size
