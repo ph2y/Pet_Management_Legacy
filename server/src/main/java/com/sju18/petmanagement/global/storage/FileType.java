@@ -8,8 +8,7 @@ import lombok.Getter;
 public enum FileType {
     GENERAL_FILE("general"),
     IMAGE_FILE("image"),
-    VIDEO_FILE("video"),
-    AUDIO_FILE("audio");
+    VIDEO_FILE("video");
 
     private final String value;
 }

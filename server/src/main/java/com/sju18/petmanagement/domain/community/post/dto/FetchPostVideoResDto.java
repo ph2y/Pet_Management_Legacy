@@ -6,6 +6,6 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class FetchPostMediaResDto {
+public class FetchPostVideoResDto {
     private DtoMetadata _metadata;
 }

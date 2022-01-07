@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.PositiveOrZero;
 
 @Data
-public class FetchPostMediaReqDto {
+public class FetchPostVideoReqDto {
     @PositiveOrZero
     Long id;
     @PositiveOrZero

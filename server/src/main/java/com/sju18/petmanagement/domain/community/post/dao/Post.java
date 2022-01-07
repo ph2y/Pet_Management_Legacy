@@ -47,7 +47,9 @@ public class Post {
     private Double geoTagLat;
     private Double geoTagLong;
     @Lob
-    private String mediaAttachments;
+    private String imageAttachments;
+    @Lob
+    private String videoAttachments;
     @Lob
     private String fileAttachments;
 }
