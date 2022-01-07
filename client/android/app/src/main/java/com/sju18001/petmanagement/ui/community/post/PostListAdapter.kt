@@ -3,6 +3,7 @@ package com.sju18001.petmanagement.ui.community.post
 import android.app.Activity
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.restapi.dao.Post
@@ -61,15 +62,16 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.post_item, parent, false)
 
-        return ViewHolder(view)
+        val holder = ViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val safePosition = holder.adapterPosition
-
+        val safePosition = holder.absoluteAdapterPosition
         updateDataSetToViewHolder(holder, dataSet[safePosition], likedCounts[safePosition], safePosition)
-        setListenerOnView(holder, position)
     }
 
     override fun getItemCount(): Int = dataSet.size
@@ -95,9 +97,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         }
 
         // set general files button
-        if (!data.fileAttachments.isNullOrEmpty()) {
-            holder.generalFilesButton.visibility = View.VISIBLE
-        }
+        holder.generalFilesButton.visibility = if(data.fileAttachments.isNullOrEmpty()) View.GONE else View.VISIBLE
 
         // 저장된 데이터에 따라, ViewPager, Tag, ViewMore 셋팅
         setViewPager(holder, data)
@@ -144,7 +144,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         viewMoreTextView.visibility = View.GONE
 
         // getEllipsisCount()을 통한 더보기 표시 및 구현
-        contentsTextView.post{
+        contentsTextView.post {
             val lineCount = contentsTextView.layout.lineCount
             if (lineCount > 0) {
                 if (contentsTextView.layout.getEllipsisCount(lineCount - 1) > 0) {
@@ -162,39 +162,47 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setListenerOnView(holder: ViewHolder, position: Int){
-        val item = dataSet[position]
-
+    private fun setListenerOnView(holder: ViewHolder){
         // 프로필 이동
         holder.accountPhotoImage.setOnClickListener {
+            val item = dataSet[holder.absoluteAdapterPosition]
             CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, item.pet, item.author)
         }
         holder.layoutUserInfo.setOnClickListener {
+            val item = dataSet[holder.absoluteAdapterPosition]
             CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, item.pet, item.author)
         }
 
         // 댓글 버튼
         holder.commentButton.setOnClickListener {
+            val item = dataSet[holder.absoluteAdapterPosition]
             communityPostListAdapterInterface.startCommentActivity(item.id)
         }
 
         // 좋아요 버튼
         holder.createLikeButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+            val item = dataSet[position]
             communityPostListAdapterInterface.createLike(item.id, holder, position)
         }
 
         // 좋아요 취소 버튼
         holder.deleteLikeButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+            val item = dataSet[position]
             communityPostListAdapterInterface.deleteLike(item.id, holder, position)
         }
 
         // general files button
         holder.generalFilesButton.setOnClickListener {
+            val item = dataSet[holder.absoluteAdapterPosition]
             communityPostListAdapterInterface.startGeneralFilesActivity(item.id, item.fileAttachments!!)
         }
 
         // ... 버튼 -> Dialog 띄우기
         holder.dialogButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+            val item = dataSet[position]
             communityPostListAdapterInterface.onClickPostFunctionButton(item, position)
         }
     }
