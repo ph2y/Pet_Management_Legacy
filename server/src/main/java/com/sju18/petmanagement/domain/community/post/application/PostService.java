@@ -16,7 +16,8 @@ import com.sju18.petmanagement.global.storage.FileType;
 import com.sju18.petmanagement.global.storage.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
-import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,12 +25,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRange;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Paths;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
@@ -125,35 +128,46 @@ public class PostService {
         return fileServ.readFileFromFileMetadataListJson(currentPost.getImageAttachments(), fileIndex, ImageUtil.GENERAL_IMAGE);
     }
 
-    public UrlResource getVideoUrlResource(Long postId, Integer fileIndex) throws Exception {
+    public ResponseEntity<byte[]> fetchPostVideo(Long postId, Integer fileIndex, String range) throws Exception {
         Post currentPost = postRepository.findById(postId)
                 .orElseThrow(() -> new Exception(
                         msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
                 ));
 
-        // 비디오 파일 인출
-        return new UrlResource(Paths.get(fileServ.readFileUrlFromFileMetadataListJson(currentPost.getVideoAttachments(), fileIndex, ImageUtil.NOT_IMAGE)).toUri());
-    }
+        long rangeStart = 0;
+        long rangeEnd;
+        byte[] data;
 
-    public ResourceRegion fetchPostVideo(HttpHeaders headers, UrlResource video) throws Exception {
-        final long chunkSize = 1000000L;
-        long contentLength = video.contentLength();
-        Optional<HttpRange> httpRangeOptional = headers.getRange().stream().findFirst();
-        HttpRange httpRange;
+        String fileUrl = fileServ.readFileUrlFromFileMetadataListJson(currentPost.getVideoAttachments(), fileIndex, ImageUtil.NOT_IMAGE);
+        Long fileSize = fileServ.getFileSize(fileUrl);
+        String fileType = fileServ.getFileExtension(fileUrl);
 
-        if(httpRangeOptional.isPresent()) {
-            httpRange = httpRangeOptional.get();
-            long start = httpRange.getRangeStart(contentLength);
-            long end = httpRange.getRangeEnd(contentLength);
-            long rangeLength = Long.min(chunkSize, end - start + 1);
-
-            return new ResourceRegion(video, start, rangeLength);
+        if (range == null) {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .header("Content-Type", "video/" + fileType)
+                    .header("Content-Length", String.valueOf(fileSize))
+                    .body(fileServ.readByteRange(fileUrl, rangeStart, fileSize - 1)); // Read the object and convert it as bytes
         }
-        else {
-            long rangeLength = Long.min(chunkSize, contentLength);
 
-            return new ResourceRegion(video, 0, rangeLength);
+        String[] ranges = range.split("-");
+        rangeStart = Long.parseLong(ranges[0].substring(6));
+        if (ranges.length > 1) {
+            rangeEnd = Long.parseLong(ranges[1]);
+        } else {
+            rangeEnd = fileSize - 1;
         }
+        if (fileSize < rangeEnd) {
+            rangeEnd = fileSize - 1;
+        }
+        data = fileServ.readByteRange(fileUrl, rangeStart, rangeEnd);
+
+        String contentLength = String.valueOf((rangeEnd - rangeStart) + 1);
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                .header("Content-Type", "video/" + fileType)
+                .header("Accept-Ranges", "bytes")
+                .header("Content-Length", contentLength)
+                .header("Content-Range", "bytes" + " " + rangeStart + "-" + rangeEnd + "/" + fileSize)
+                .body(data);
     }
 
     public byte[] fetchPostFile(Long postId, Integer fileIndex) throws Exception {

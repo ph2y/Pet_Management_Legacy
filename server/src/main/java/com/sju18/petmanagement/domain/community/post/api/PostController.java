@@ -11,8 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.core.io.support.ResourceRegion;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
@@ -23,6 +22,7 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
 
 @RequiredArgsConstructor
 @RestController
@@ -97,26 +97,20 @@ public class PostController {
         return ResponseEntity.ok(fileBinData);
     }
 
-
     @PostMapping("/api/post/video/fetch")
-    public ResponseEntity<?> fetchPostVideo(@RequestHeader HttpHeaders headers, @Valid @RequestBody FetchPostVideoReqDto reqDto) {
+    public ResponseEntity<?> fetchPostVideo(@RequestHeader(value = "Range", required = false) String httpRangeList, @Valid @RequestBody FetchPostVideoReqDto reqDto) {
         DtoMetadata dtoMetadata;
-        UrlResource video;
-        ResourceRegion region;
-
-        logger.info("video streaming...");
+        ResponseEntity<?> responseEntity;
 
         try {
-            video = postServ.getVideoUrlResource(reqDto.getId(), reqDto.getIndex());
-            region = postServ.fetchPostVideo(headers, video);
+            responseEntity = postServ.fetchPostVideo(reqDto.getId(), reqDto.getIndex(), httpRangeList);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
             return ResponseEntity.status(400).body(new FetchPostVideoResDto(dtoMetadata));
         }
-        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
-                .contentType(MediaTypeFactory.getMediaType(video).orElse(MediaType.APPLICATION_OCTET_STREAM))
-                .body(video);
+
+        return responseEntity;
     }
 
     @PostMapping("/api/post/file/fetch")
