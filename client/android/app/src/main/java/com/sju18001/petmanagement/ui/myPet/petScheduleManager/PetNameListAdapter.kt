@@ -28,7 +28,10 @@ class PetNameListAdapter(private val dataSet: ArrayList<PetNameListItem>) : Recy
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.pet_name_list_item, parent, false)
 
-        return ViewHolder(view)
+        val holder = ViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -36,13 +39,16 @@ class PetNameListAdapter(private val dataSet: ArrayList<PetNameListItem>) : Recy
         updateDataSetToViewHolder(holder, dataSet[position])
 
         petNameListAdapterInterface.setCheckBoxForViewModel(holder.petNameCheckBox, position)
-
-        holder.petNameCheckBox.setOnClickListener {
-            petNameListAdapterInterface.setViewModelForCheckBox(position)
-        }
     }
 
     override fun getItemCount(): Int = dataSet.size
+
+    private fun setListenerOnView(holder: ViewHolder) {
+        holder.petNameCheckBox.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+            petNameListAdapterInterface.setViewModelForCheckBox(position)
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateDataSetToViewHolder(holder: ViewHolder, data: PetNameListItem){

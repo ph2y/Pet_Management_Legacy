@@ -39,26 +39,36 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.pet_schedule_list_item, parent, false)
 
-        return ViewHolder(view)
+        val holder = ViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         updateDataSetToViewHolder(holder, dataSet[position])
+    }
 
-        // 아이템 click
+    override fun getItemCount(): Int = dataSet.size
+
+    private fun setListenerOnView(holder: ViewHolder) {
+        // 아이템 Click
         holder.itemView.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
             petScheduleListAdapterInterface.startCreateUpdatePetScheduleFragmentForUpdate(dataSet[position])
         }
 
         // 아이템 Long click
         holder.itemView.setOnLongClickListener { _ ->
+            val position = holder.absoluteAdapterPosition
             petScheduleListAdapterInterface.askForDeleteItem(position, dataSet[position])
             true
         }
 
         // 스위치
         holder.enabledSwitch.setOnCheckedChangeListener { _, isChecked ->
+            val position = holder.absoluteAdapterPosition
             dataSet[position].enabled = isChecked
             petScheduleListAdapterInterface.updatePetSchedule(dataSet[position])
 
@@ -71,8 +81,6 @@ class PetScheduleListAdapter(private var dataSet: ArrayList<PetSchedule>, privat
             }
         }
     }
-
-    override fun getItemCount(): Int = dataSet.size
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateDataSetToViewHolder(holder: ViewHolder, data: PetSchedule){

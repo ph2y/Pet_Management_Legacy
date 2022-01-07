@@ -28,7 +28,10 @@ class PetListAdapter(private val createUpdatePostViewModel: CreateUpdatePostView
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.create_update_post_pet_item, parent, false)
 
-        return ViewHolder(view)
+        val holder = ViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -54,9 +57,14 @@ class PetListAdapter(private val createUpdatePostViewModel: CreateUpdatePostView
         }
 
         holder.petName.text = dataSet[position].petName
+    }
 
-        // for pet select
+    override fun getItemCount(): Int = dataSet.size
+
+    private fun setListenerOnView(holder: ViewHolder) {
         holder.parentLayout.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+
             val previousSelectedIndex: Int = createUpdatePostViewModel.selectedPetIndex
 
             // update selected pet values
@@ -77,8 +85,6 @@ class PetListAdapter(private val createUpdatePostViewModel: CreateUpdatePostView
             notifyItemChanged(position)
         }
     }
-
-    override fun getItemCount(): Int = dataSet.size
 
     fun updateDataSet(newDataSet: MutableList<PetListItem>) {
         dataSet = newDataSet
