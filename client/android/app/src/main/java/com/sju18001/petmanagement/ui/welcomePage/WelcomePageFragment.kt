@@ -53,7 +53,7 @@ class WelcomePageFragment : Fragment() {
     }
 
     class WelcomePageCollectionAdapter(fragment: Fragment): FragmentStateAdapter(fragment){
-        override fun getItemCount(): Int = 3
+        override fun getItemCount(): Int = 1
 
         override fun createFragment(position: Int): Fragment {
             return WelcomePageProfileFragment()
