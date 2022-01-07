@@ -128,6 +128,16 @@ public class FileService {
         FileUtils.fileDelete(filePath);
     }
 
+    // 데이터 파일 사이즈 확인
+    public Long getFileSize(String fileUrl) throws IOException {
+        return Files.size(Paths.get(fileUrl));
+    }
+
+    // 데이터 파일 확장자 확인
+    public String getFileExtension(String fileUrl) {
+        return FileUtils.getExtension(Objects.requireNonNull(fileUrl));
+    }
+
     // 이미지 데이터 파일 삭제
     public void deleteImageFile(String filePath) {
         String defaultFilePath = filePath.split("\\.")[0];
@@ -159,7 +169,7 @@ public class FileService {
     // 사용자 프로필 사진 저장
     public String saveAccountPhoto(Long accountId, MultipartFile uploadedFile) throws Exception {
         // 업로드 된 파일 확장자
-        String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
+        String fileFormat = getFileExtension(uploadedFile.getOriginalFilename());
         // 업로드 파일 저장 파일명
         String fileName = "account_profile_photo_";
         // 업로드 파일 저장 경로
@@ -183,7 +193,7 @@ public class FileService {
     // 애완동물 프로필 사진 저장
     public String savePetPhoto(Long ownerAccountId, Long petId, MultipartFile uploadedFile) throws Exception {
         // 업로드 된 파일 확장자
-        String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
+        String fileFormat = getFileExtension(uploadedFile.getOriginalFilename());
         // 업로드 파일 저장 파일명
         String fileName = "pet_profile_photo_";
         // 업로드 파일 저장 경로
@@ -226,7 +236,7 @@ public class FileService {
         for (MultipartFile uploadedFile : uploadedFiles) {
             try {
                 // 업로드 된 파일 확장자
-                String fileFormat = FileUtils.getExtension(Objects.requireNonNull(uploadedFile.getOriginalFilename()));
+                String fileFormat = getFileExtension(uploadedFile.getOriginalFilename());
                 // 파일 유효성 검사
                 checkFileValidity(savePath, uploadedFile, acceptableExtensions, fileSizeLimit);
 
@@ -410,7 +420,7 @@ public class FileService {
         }
         // 파일 확장자 적합성 검사
         else if (Arrays.stream(acceptableExtensions).noneMatch(
-                extension -> FileUtils.getExtension(Objects.requireNonNull(originalFileName)).toLowerCase().equals(extension)
+                extension -> getFileExtension(uploadedFile.getOriginalFilename()).toLowerCase().equals(extension)
         )) {
             throw new Exception(msgSrc.getMessage("error.file.extension.valid", new String[]{originalFileName}, Locale.ENGLISH));
         }
@@ -424,6 +434,22 @@ public class FileService {
     private void checkFileCount(List<MultipartFile> uploadedFiles, Integer fileCountLimit) throws Exception {
         if (uploadedFiles.size() > fileCountLimit) {
             throw new Exception(msgSrc.getMessage("error.file.count", null, Locale.ENGLISH));
+        }
+    }
+
+    // 파일을 range 범위 안에서 바이트 단위로 읽기
+    public byte[] readByteRange(String fileUrl, long start, long end) throws IOException {
+        try (InputStream inputStream = (Files.newInputStream(Paths.get(fileUrl)));
+             ByteArrayOutputStream bufferedOutputStream = new ByteArrayOutputStream()) {
+            byte[] data = new byte[1024];
+            int nRead;
+            while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+                bufferedOutputStream.write(data, 0, nRead);
+            }
+            bufferedOutputStream.flush();
+            byte[] result = new byte[(int) (end - start) + 1];
+            System.arraycopy(bufferedOutputStream.toByteArray(), (int) start, result, 0, result.length);
+            return result;
         }
     }
 }
