@@ -268,6 +268,12 @@ class CreateUpdatePetScheduleFragment : Fragment() {
         binding.confirmButton.isEnabled = true
         binding.timePicker.isEnabled = true
         binding.petNameListRecyclerView.isEnabled = true
+        binding.petNameListRecyclerView.let{
+            for(i in 0..adapter.itemCount) {
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<CheckBox>(R.id.pet_name_check_box)?.isEnabled = true
+                it.findViewHolderForLayoutPosition(i)?.itemView?.findViewById<CheckBox>(R.id.pet_name_check_box)?.buttonTintList = context?.resources?.getColorStateList(R.color.carrot)
+            }
+        }
         binding.memoEditText.isEnabled = true
         binding.backButton.isEnabled = true
     }
