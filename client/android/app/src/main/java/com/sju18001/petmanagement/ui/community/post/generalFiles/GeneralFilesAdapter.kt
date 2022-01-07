@@ -31,22 +31,30 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
 
     private var isViewDestroyed = false
 
-    class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val generalFileName: TextView = itemView.findViewById(R.id.general_file_name)
-        val downloadButton: ImageButton = itemView.findViewById(R.id.download_button)
-        val downloadProgressBar: ProgressBar = itemView.findViewById(R.id.download_progress_bar)
+    class HistoryListViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        val generalFileName: TextView = view.findViewById(R.id.general_file_name)
+        val downloadButton: ImageButton = view.findViewById(R.id.download_button)
+        val downloadProgressBar: ProgressBar = view.findViewById(R.id.download_progress_bar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.post_general_file_item, parent, false)
-        return HistoryListViewHolder(itemView)
+
+        val holder = HistoryListViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     override fun onBindViewHolder(holder: HistoryListViewHolder, position: Int) {
         holder.generalFileName.text = resultList[position].name
+    }
 
+    private fun setListenerOnView(holder: HistoryListViewHolder) {
         holder.generalFileName.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+
             // set button to downloading
             holder.generalFileName.isClickable = false
             holder.downloadButton.visibility = View.INVISIBLE
@@ -60,6 +68,8 @@ class GeneralFilesAdapter(private val activity: Activity, private val generalFil
         }
 
         holder.downloadButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+
             // set button to downloading
             holder.downloadButton.visibility = View.INVISIBLE
             holder.downloadProgressBar.visibility = View.VISIBLE

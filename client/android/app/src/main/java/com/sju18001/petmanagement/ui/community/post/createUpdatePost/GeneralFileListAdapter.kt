@@ -18,23 +18,31 @@ class GeneralFileListAdapter(private val createUpdatePostViewModel: CreateUpdate
 
     private var resultList = mutableListOf<String>()
 
-    class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val fileName: TextView = itemView.findViewById(R.id.general_files_name)
-        val deleteButton: ImageView = itemView.findViewById(R.id.delete_button)
+    class HistoryListViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        val fileName: TextView = view.findViewById(R.id.general_files_name)
+        val deleteButton: ImageView = view.findViewById(R.id.delete_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.uploaded_general_files_list_item, parent, false)
-        return HistoryListViewHolder(itemView)
+
+        val holder = HistoryListViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     override fun onBindViewHolder(holder: HistoryListViewHolder, position: Int) {
-        // set file name
         holder.fileName.text = resultList[position]
+    }
 
-        // for delete button
+    override fun getItemCount() = resultList.size
+
+    private fun setListenerOnView(holder: HistoryListViewHolder) {
         holder.deleteButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+
             deleteItem(position)
 
             // update general upload layout
@@ -49,8 +57,6 @@ class GeneralFileListAdapter(private val createUpdatePostViewModel: CreateUpdate
             binding.generalUsage.text = generalUsageText
         }
     }
-
-    override fun getItemCount() = resultList.size
 
     private fun deleteItem(position: Int) {
         // delete file

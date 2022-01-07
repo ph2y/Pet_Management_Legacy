@@ -55,7 +55,10 @@ class CommentListAdapter(
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.comment_item, parent, false)
 
-        return ViewHolder(view)
+        val holder = ViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -64,8 +67,6 @@ class CommentListAdapter(
         
         // 댓글 내용에 indent 추가
         setSpanToContent(holder.nicknameTextView, holder.contentsTextView)
-
-        setListenerOnView(holder, position)
     }
 
     override fun getItemCount(): Int = dataSet.size
@@ -138,27 +139,32 @@ class CommentListAdapter(
         holder.replyTextView.visibility = if(isReply) View.GONE else View.VISIBLE
     }
 
-    private fun setListenerOnView(holder: ViewHolder, position: Int){
+    private fun setListenerOnView(holder: ViewHolder){
         // start pet profile
         holder.profileImage.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
             commentListAdapterInterface.startPetProfile(dataSet[position].author)
         }
         holder.nicknameTextView.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
             commentListAdapterInterface.startPetProfile(dataSet[position].author)
         }
 
         holder.replyTextView.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
             dataSet[position].author.nickname?.let {
                 commentListAdapterInterface.onClickReply(dataSet[position].id, it)
             }
         }
 
         holder.commentLayout.setOnLongClickListener { _ ->
+            val position = holder.absoluteAdapterPosition
             commentListAdapterInterface.onLongClickComment(dataSet[position].author.id, dataSet[position].id, dataSet[position].contents, position)
             true
         }
 
         holder.loadReplyTextView.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
             commentListAdapterInterface.fetchReplyComment(pageIndices[position], null, dataSet[position].id, position)
             pageIndices[position] += 1
             
