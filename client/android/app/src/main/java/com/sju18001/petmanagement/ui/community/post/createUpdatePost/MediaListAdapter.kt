@@ -18,15 +18,19 @@ class MediaListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
 
     private var resultList = mutableListOf<Bitmap?>()
 
-    class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val thumbnail: ImageView = itemView.findViewById(R.id.photos_thumbnail)
-        val deleteButton: ImageView = itemView.findViewById(R.id.delete_button)
+    class HistoryListViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        val thumbnail: ImageView = view.findViewById(R.id.photos_thumbnail)
+        val deleteButton: ImageView = view.findViewById(R.id.delete_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryListViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.uploaded_media_list_item, parent, false)
-        return HistoryListViewHolder(itemView)
+
+        val holder = HistoryListViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     override fun onBindViewHolder(holder: HistoryListViewHolder, position: Int) {
@@ -40,9 +44,14 @@ class MediaListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
 //                .placeholder(R.drawable.ic_baseline_video_library_36)
 //                .into(holder.thumbnail)
 //        }
+    }
 
-        // for delete button
+    override fun getItemCount() = resultList.size
+
+    private fun setListenerOnView(holder: HistoryListViewHolder) {
         holder.deleteButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+
             deleteItem(position)
 
             // update photo upload layout
@@ -59,8 +68,6 @@ class MediaListAdapter(private val createUpdatePostViewModel: CreateUpdatePostVi
             // TODO: add logic for video usage
         }
     }
-
-    override fun getItemCount() = resultList.size
 
     private fun deleteItem(position: Int) {
         // delete file

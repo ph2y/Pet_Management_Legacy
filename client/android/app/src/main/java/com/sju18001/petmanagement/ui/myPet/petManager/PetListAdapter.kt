@@ -56,19 +56,19 @@ class PetListAdapter(
         val petMessage: TextView = itemView.findViewById(R.id.pet_message)
     }
 
-    class AddPetButtonViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val createPetButton: ImageView = itemView.findViewById(R.id.button_create_pet)
+    class AddPetButtonViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        val createPetButton: ImageView = view.findViewById(R.id.button_create_pet)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
             R.layout.pet_list_item -> {
-                val itemView = LayoutInflater.from(parent.context).inflate(R.layout.pet_list_item, parent, false)
-                HistoryListViewHolder(itemView)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.pet_list_item, parent, false)
+                HistoryListViewHolder(view)
             }
             else -> {
-                val itemView = LayoutInflater.from(parent.context).inflate(R.layout.create_pet_button, parent, false)
-                AddPetButtonViewHolder(itemView)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.create_pet_button, parent, false)
+                AddPetButtonViewHolder(view)
             }
         }
     }

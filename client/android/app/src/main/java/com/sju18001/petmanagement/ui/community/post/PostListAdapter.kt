@@ -273,11 +273,18 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
             val postMediaVideo: VideoView = itemView.findViewById(R.id.video_post_media)
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewPagerHolder(parent)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerHolder{
+            val holder = ViewPagerHolder(parent)
+            setListenerOnView(holder)
+
+            return holder
+        }
 
         override fun onBindViewHolder(holder: ViewPagerHolder, position: Int) {
             communityPostListAdapterInterface.setPostMedia(holder, id, position, mediaAttachments[position].url, parentHolder.dummyLayout)
+        }
 
+        private fun setListenerOnView(holder: ViewPagerHolder) {
             // 페이지 전환 시 자동 재생
             viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {

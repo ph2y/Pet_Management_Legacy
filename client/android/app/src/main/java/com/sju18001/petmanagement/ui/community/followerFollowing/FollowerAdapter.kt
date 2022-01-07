@@ -26,29 +26,25 @@ class FollowerAdapter(val context: Context) :
 
     private var isViewDestroyed = false
 
-    class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val mainLayout: View = itemView.findViewById(R.id.main_layout)
-        val accountPhoto: CircleImageView = itemView.findViewById(R.id.account_photo)
-        val accountNickname: TextView = itemView.findViewById(R.id.account_nickname)
-        val followUnfollowButton: Button = itemView.findViewById(R.id.follow_unfollow_button)
+    class HistoryListViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        val mainLayout: View = view.findViewById(R.id.main_layout)
+        val accountPhoto: CircleImageView = view.findViewById(R.id.account_photo)
+        val accountNickname: TextView = view.findViewById(R.id.account_nickname)
+        val followUnfollowButton: Button = view.findViewById(R.id.follow_unfollow_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowerAdapter.HistoryListViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.follower_following_list_item, parent, false)
-        return FollowerAdapter.HistoryListViewHolder(itemView)
+
+        val holder = FollowerAdapter.HistoryListViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onBindViewHolder(holder: FollowerAdapter.HistoryListViewHolder, position: Int) {
-        // start pet profile
-        holder.mainLayout.setOnClickListener {
-            CommunityUtil.fetchRepresentativePetAndStartPetProfile(context, Account(
-                resultList[position].getId(), resultList[position].getUsername(), "", "", null,
-                null, resultList[position].getNickname(), if (resultList[position].getHasPhoto()) "true" else null,
-                "", resultList[position].getRepresentativePetId()), isViewDestroyed)
-        }
-
         // set account photo
         if(resultList[position].getHasPhoto()) {
             if(resultList[position].getPhoto() == null) {
@@ -77,7 +73,21 @@ class FollowerAdapter(val context: Context) :
             holder.followUnfollowButton.setTextColor(context.resources.getColor(R.color.white))
             holder.followUnfollowButton.text = context.getText(R.string.follow_button)
         }
+    }
+
+    private fun setListenerOnView(holder: FollowerAdapter.HistoryListViewHolder){
+        // start pet profile
+        holder.mainLayout.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+            CommunityUtil.fetchRepresentativePetAndStartPetProfile(context, Account(
+                resultList[position].getId(), resultList[position].getUsername(), "", "", null,
+                null, resultList[position].getNickname(), if (resultList[position].getHasPhoto()) "true" else null,
+                "", resultList[position].getRepresentativePetId()), isViewDestroyed)
+        }
+
         holder.followUnfollowButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+
             // set button to loading
             holder.followUnfollowButton.isEnabled = false
 
