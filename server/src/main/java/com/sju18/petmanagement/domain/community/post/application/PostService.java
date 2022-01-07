@@ -16,18 +16,24 @@ import com.sju18.petmanagement.global.storage.FileType;
 import com.sju18.petmanagement.global.storage.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRange;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -109,14 +115,45 @@ public class PostService {
                 ));
     }
 
-    public byte[] fetchPostMedia(Long postId, Integer fileIndex) throws Exception {
+    public byte[] fetchPostImage(Long postId, Integer fileIndex) throws Exception {
         Post currentPost = postRepository.findById(postId)
                 .orElseThrow(() -> new Exception(
                         msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
                 ));
 
-        // 미디어 파일 인출
-        return fileServ.readFileFromFileMetadataListJson(currentPost.getMediaAttachments(), fileIndex, ImageUtil.GENERAL_IMAGE);
+        // 이미지 파일 인출
+        return fileServ.readFileFromFileMetadataListJson(currentPost.getImageAttachments(), fileIndex, ImageUtil.GENERAL_IMAGE);
+    }
+
+    public UrlResource getVideoUrlResource(Long postId, Integer fileIndex) throws Exception {
+        Post currentPost = postRepository.findById(postId)
+                .orElseThrow(() -> new Exception(
+                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
+                ));
+
+        // 비디오 파일 인출
+        return new UrlResource(Paths.get(fileServ.readFileUrlFromFileMetadataListJson(currentPost.getVideoAttachments(), fileIndex, ImageUtil.NOT_IMAGE)).toUri());
+    }
+
+    public ResourceRegion fetchPostVideo(HttpHeaders headers, UrlResource video) throws Exception {
+        final long chunkSize = 1000000L;
+        long contentLength = video.contentLength();
+        Optional<HttpRange> httpRangeOptional = headers.getRange().stream().findFirst();
+        HttpRange httpRange;
+
+        if(httpRangeOptional.isPresent()) {
+            httpRange = httpRangeOptional.get();
+            long start = httpRange.getRangeStart(contentLength);
+            long end = httpRange.getRangeEnd(contentLength);
+            long rangeLength = Long.min(chunkSize, end - start + 1);
+
+            return new ResourceRegion(video, start, rangeLength);
+        }
+        else {
+            long rangeLength = Long.min(chunkSize, contentLength);
+
+            return new ResourceRegion(video, 0, rangeLength);
+        }
     }
 
     public byte[] fetchPostFile(Long postId, Integer fileIndex) throws Exception {
@@ -125,7 +162,7 @@ public class PostService {
                         msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
                 ));
 
-        // 미디어 파일 인출
+        // 일반 파일 인출
         return fileServ.readFileFromFileMetadataListJson(currentPost.getFileAttachments(), fileIndex, ImageUtil.NOT_IMAGE);
     }
 
@@ -193,20 +230,21 @@ public class PostService {
                 postRepository.save(currentPost);
                 return fileMetadataList;
             case IMAGE_FILE:
-                // 해당 게시물의 미디어 스토리지에 미디어 파일 저장
+                // 해당 게시물의 이미지 스토리지에 이미지 파일 저장
                 fileMetadataList = fileServ.savePostImageAttachments(reqDto.getId(), uploadedFileList);
 
                 // 파일정보 DB 데이터 업데이트
-                currentPost.setMediaAttachments(new Gson().toJson(fileMetadataList));
+                currentPost.setImageAttachments(new Gson().toJson(fileMetadataList));
                 postRepository.save(currentPost);
                 return fileMetadataList;
             case VIDEO_FILE:
-                // TODO: Video 파일 업로드 지원
-                return null;
+                // 해당 게시물의 비디오 스토리지에 비디오 파일 저장
+                fileMetadataList = fileServ.savePostVideoAttachments(reqDto.getId(), uploadedFileList);
 
-            case AUDIO_FILE:
-                // TODO: Audio 파일 업로드 지원
-                return null;
+                // 파일정보 DB 데이터 업데이트
+                currentPost.setVideoAttachments(new Gson().toJson(fileMetadataList));
+                postRepository.save(currentPost);
+                return fileMetadataList;
             default:
                 throw new Exception(
                         msgSrc.getMessage("error.post.invalidFileType", null, Locale.ENGLISH)
@@ -245,17 +283,18 @@ public class PostService {
                 currentPost.setFileAttachments(null);
                 break;
             case IMAGE_FILE:
-                // 기존 게시물의 모든 미디어 파일 삭제
-                fileServ.deletePostFiles(currentPost.getMediaAttachments(), ImageUtil.GENERAL_IMAGE);
+                // 기존 게시물의 모든 이미지 파일 삭제
+                fileServ.deletePostFiles(currentPost.getImageAttachments(), ImageUtil.GENERAL_IMAGE);
 
-                // 기존 게시물의 mediaAttachments 컬럼 null 설정 후 업데이트
-                currentPost.setMediaAttachments(null);
+                // 기존 게시물의 imageAttachments 컬럼 null 설정 후 업데이트
+                currentPost.setImageAttachments(null);
                 break;
             case VIDEO_FILE:
-                // TODO: Audio 파일 업로드 지원
-                break;
-            case AUDIO_FILE:
-                // TODO: Video 파일 업로드 지원
+                // 기존 게시물의 모든 비디오 파일 삭제
+                fileServ.deletePostFiles(currentPost.getVideoAttachments(), ImageUtil.NOT_IMAGE);
+
+                // 기존 게시물의 videoAttachments 컬럼 null 설정 후 업데이트
+                currentPost.setVideoAttachments(null);
                 break;
             default:
                 throw new Exception(

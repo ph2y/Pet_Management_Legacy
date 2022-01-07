@@ -11,14 +11,13 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.core.io.support.ResourceRegion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -84,18 +83,40 @@ public class PostController {
         return ResponseEntity.ok(new FetchPostResDto(dtoMetadata, postList, pageable, isLast));
     }
 
-    @PostMapping("/api/post/media/fetch")
-    public ResponseEntity<?> fetchPostMedia(@Valid @RequestBody FetchPostMediaReqDto reqDto) {
+    @PostMapping("/api/post/image/fetch")
+    public ResponseEntity<?> fetchPostImage(@Valid @RequestBody FetchPostImageReqDto reqDto) {
         DtoMetadata dtoMetadata;
         byte[] fileBinData;
         try {
-            fileBinData = postServ.fetchPostMedia(reqDto.getId(), reqDto.getIndex());
+            fileBinData = postServ.fetchPostImage(reqDto.getId(), reqDto.getIndex());
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new FetchPostMediaResDto(dtoMetadata));
+            return ResponseEntity.status(400).body(new FetchPostImageResDto(dtoMetadata));
         }
         return ResponseEntity.ok(fileBinData);
+    }
+
+
+    @PostMapping("/api/post/video/fetch")
+    public ResponseEntity<?> fetchPostVideo(@RequestHeader HttpHeaders headers, @Valid @RequestBody FetchPostVideoReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        UrlResource video;
+        ResourceRegion region;
+
+        logger.info("video streaming...");
+
+        try {
+            video = postServ.getVideoUrlResource(reqDto.getId(), reqDto.getIndex());
+            region = postServ.fetchPostVideo(headers, video);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new FetchPostVideoResDto(dtoMetadata));
+        }
+        return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
+                .contentType(MediaTypeFactory.getMediaType(video).orElse(MediaType.APPLICATION_OCTET_STREAM))
+                .body(video);
     }
 
     @PostMapping("/api/post/file/fetch")
@@ -127,6 +148,21 @@ public class PostController {
         return ResponseEntity.ok(new UpdatePostResDto(dtoMetadata));
     }
 
+    @PostMapping("/api/post/file/update")
+    public ResponseEntity<?> updatePostFile(Authentication auth, @ModelAttribute UpdatePostFileReqDto reqDto) {
+        DtoMetadata dtoMetadata;
+        List<FileMetadata> fileMetadataList;
+        try {
+            fileMetadataList = postServ.updatePostFile(auth, reqDto, FileType.valueOf(reqDto.getFileType().replace("\"", "")));
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new UpdatePostFileResDto(dtoMetadata, null));
+        }
+        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.postFile.update.success", null, Locale.ENGLISH));
+        return ResponseEntity.ok(new UpdatePostFileResDto(dtoMetadata, fileMetadataList));
+    }
+
     @PostMapping("/api/post/media/update")
     @Deprecated
     public ResponseEntity<?> updatePostMedia(Authentication auth, @ModelAttribute UpdatePostFileReqDto reqDto) {
@@ -140,21 +176,6 @@ public class PostController {
             return ResponseEntity.status(400).body(new UpdatePostFileResDto(dtoMetadata, null));
         }
         dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.postMedia.update.success", null, Locale.ENGLISH));
-        return ResponseEntity.ok(new UpdatePostFileResDto(dtoMetadata, fileMetadataList));
-    }
-
-    @PostMapping("/api/post/file/update")
-    public ResponseEntity<?> updatePostFile(Authentication auth, @ModelAttribute UpdatePostFileReqDto reqDto) {
-        DtoMetadata dtoMetadata;
-        List<FileMetadata> fileMetadataList;
-        try {
-            fileMetadataList = postServ.updatePostFile(auth, reqDto, FileType.valueOf(reqDto.getFileType().replace("\"", "")));
-        } catch (Exception e) {
-            logger.warn(e.toString());
-            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new UpdatePostFileResDto(dtoMetadata, null));
-        }
-        dtoMetadata = new DtoMetadata(msgSrc.getMessage("res.postFile.update.success", null, Locale.ENGLISH));
         return ResponseEntity.ok(new UpdatePostFileResDto(dtoMetadata, fileMetadataList));
     }
 
@@ -173,12 +194,11 @@ public class PostController {
         return ResponseEntity.ok(new DeletePostResDto(dtoMetadata));
     }
 
-    @PostMapping("/api/post/media/delete")
-    @Deprecated
-    public ResponseEntity<?> deletePostMedia(Authentication auth, @Valid @RequestBody DeletePostFileReqDto reqDto) {
+    @PostMapping("/api/post/file/delete")
+    public ResponseEntity<?> deletePostFile(Authentication auth, @Valid @RequestBody DeletePostFileReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
-            postServ.deletePostFile(auth, reqDto, FileType.IMAGE_FILE);
+            postServ.deletePostFile(auth, reqDto, FileType.valueOf(reqDto.getFileType().replace("\"", "")));
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
@@ -188,11 +208,12 @@ public class PostController {
         return ResponseEntity.ok(new DeletePostFileResDto(dtoMetadata));
     }
 
-    @PostMapping("/api/post/file/delete")
-    public ResponseEntity<?> deletePostFile(Authentication auth, @Valid @RequestBody DeletePostFileReqDto reqDto) {
+    @PostMapping("/api/post/media/delete")
+    @Deprecated
+    public ResponseEntity<?> deletePostMedia(Authentication auth, @Valid @RequestBody DeletePostFileReqDto reqDto) {
         DtoMetadata dtoMetadata;
         try {
-            postServ.deletePostFile(auth, reqDto, FileType.valueOf(reqDto.getFileType().replace("\"", "")));
+            postServ.deletePostFile(auth, reqDto, FileType.IMAGE_FILE);
         } catch (Exception e) {
             logger.warn(e.toString());
             dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
