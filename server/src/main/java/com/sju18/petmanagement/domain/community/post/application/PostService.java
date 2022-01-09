@@ -128,17 +128,11 @@ public class PostService {
         return fileServ.readFileFromFileMetadataListJson(currentPost.getImageAttachments(), fileIndex, ImageUtil.GENERAL_IMAGE);
     }
 
-    public ResponseEntity<byte[]> fetchPostVideo(Long postId, Integer fileIndex, String range) throws Exception {
-        Post currentPost = postRepository.findById(postId)
-                .orElseThrow(() -> new Exception(
-                        msgSrc.getMessage("error.post.notExists", null, Locale.ENGLISH)
-                ));
-
+    public ResponseEntity<byte[]> fetchPostVideo(String fileUrl, String range) throws Exception {
         long rangeStart = 0;
         long rangeEnd;
         byte[] data;
 
-        String fileUrl = fileServ.readFileUrlFromFileMetadataListJson(currentPost.getVideoAttachments(), fileIndex, ImageUtil.NOT_IMAGE);
         Long fileSize = fileServ.getFileSize(fileUrl);
         String fileType = fileServ.getFileExtension(fileUrl);
 
@@ -159,6 +153,7 @@ public class PostService {
         if (fileSize < rangeEnd) {
             rangeEnd = fileSize - 1;
         }
+        System.out.println("Video Streaming... | Range: bytes=" + rangeStart + "-" + rangeEnd);
         data = fileServ.readByteRange(fileUrl, rangeStart, rangeEnd);
 
         String contentLength = String.valueOf((rangeEnd - rangeStart) + 1);

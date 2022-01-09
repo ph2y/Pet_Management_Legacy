@@ -112,8 +112,14 @@ interface ServerApi {
     @POST("api/post/delete")
     fun deletePostReq(@Body deletePostReqDto: DeletePostReqDto): Call<DeletePostResDto>
 
-    @POST("api/post/media/fetch")
-    fun fetchPostMediaReq(@Body fetchPostMediaReqDto: FetchPostMediaReqDto): Call<ResponseBody>
+    @POST("api/post/image/fetch")
+    fun fetchPostImageReq(@Body fetchPostMediaReqDto: FetchPostImageReqDto): Call<ResponseBody>
+
+    @POST("api/post/video/fetch")
+    fun fetchPostVideoReq(@Body fetchPostMediaReqDto: FetchPostVideoReqDto): Call<ResponseBody>
+
+    @POST("api/post/file/fetch")
+    fun fetchPostFileReq(@Body fetchPostFileReqDto: FetchPostFileReqDto): Call<ResponseBody>
 
     @Multipart
     @POST("api/post/media/update")
@@ -129,9 +135,6 @@ interface ServerApi {
 
     @POST("api/post/file/delete")
     fun deletePostFileReq(@Body deletePostFileReqDto: DeletePostFileReqDto): Call<DeletePostFileResDto>
-
-    @POST("api/post/file/fetch")
-    fun fetchPostFileReq(@Body fetchPostFileReqDto: FetchPostFileReqDto): Call<ResponseBody>
 
     // Follow API
     @POST("api/community/follower/fetch")

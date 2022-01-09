@@ -106,8 +106,8 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
     }
 
     private fun setViewPager(holder: ViewHolder, data: Post){
-        if(!data.mediaAttachments.isNullOrEmpty()){
-            val mediaAttachments = Util.getArrayFromMediaAttachments(data.mediaAttachments)
+        if(!data.videoAttachments.isNullOrEmpty()){
+            val mediaAttachments = Util.getArrayFromMediaAttachments(data.videoAttachments)
 
             // 더미 이미지 생성
             holder.dummyLayout.visibility = View.VISIBLE
@@ -252,11 +252,11 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
     class PostMediaItemCollectionAdapter(
         private var communityPostListAdapterInterface: PostListAdapterInterface,
         private val id: Long,
-        private val mediaAttachments: Array<FileMetaData>,
+        private val videoAttachments: Array<FileMetaData>,
         private val parentHolder: PostListAdapter.ViewHolder
         ): RecyclerView.Adapter<PostMediaItemCollectionAdapter.ViewPagerHolder>() {
         private val viewPager = parentHolder.viewPager
-        override fun getItemCount(): Int = mediaAttachments.size
+        override fun getItemCount(): Int = videoAttachments.size
 
         inner class ViewPagerHolder(parent: ViewGroup): RecyclerView.ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.post_media_item, parent, false)
@@ -268,7 +268,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewPagerHolder(parent)
 
         override fun onBindViewHolder(holder: ViewPagerHolder, position: Int) {
-            communityPostListAdapterInterface.setPostMedia(holder, id, position, mediaAttachments[position].url, parentHolder.dummyLayout)
+            communityPostListAdapterInterface.setPostMedia(holder, id, position, videoAttachments[position].url, parentHolder.dummyLayout)
 
             // 페이지 전환 시 자동 재생
             viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
