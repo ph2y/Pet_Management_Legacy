@@ -7,8 +7,10 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +39,7 @@ import com.sju18001.petmanagement.ui.community.post.createUpdatePost.CreateUpdat
 import com.sju18001.petmanagement.ui.community.post.generalFiles.GeneralFilesActivity
 import java.io.File
 import java.io.FileOutputStream
+import java.net.URLEncoder
 
 class PostFragment : Fragment() {
     // 외부에서 petId를 지정해줄 수 있다.
@@ -225,79 +228,98 @@ class PostFragment : Fragment() {
                 holder.accountPhotoImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
             }
 
-            override fun setPostMedia(
+            override fun setPostMedia( // temporary video only
                 holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder,
                 id: Long,
                 index: Int,
                 url: String,
                 dummyImageView: ConstraintLayout
             ) {
-                val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                    .fetchPostMediaReq(FetchPostMediaReqDto(id, index))
-                ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
-                    // 더미 이미지 제거
-                    dummyImageView.visibility = View.GONE
+                // 더미 이미지 제거
+                dummyImageView.visibility = View.GONE
 
-                    if(Util.isUrlVideo(url)){
-                        // Save file
-                        val dir = File(requireContext().getExternalFilesDir(null).toString() +
-                                File.separator + COMMUNITY_DIRECTORY)
-                        if(! dir.exists()){
-                            dir.mkdir()
-                        }
+                if(Util.isUrlVideo(url)){
+                    /*
+                    // Save file
+                    val dir = File(requireContext().getExternalFilesDir(null).toString() +
+                            File.separator + COMMUNITY_DIRECTORY)
+                    if(! dir.exists()){
+                        dir.mkdir()
+                    }
 
-                        // 해당 파일 검색
-                        val filePrefix = "${id}_${index}_"
-                        val prevUri = dir.walk().find { it.name.startsWith(filePrefix) }
+                    // 해당 파일 검색
+                    val filePrefix = "${id}_${index}_"
+                    val prevUri = dir.walk().find { it.name.startsWith(filePrefix) }
 
-                        // 파일이 없을 때만 파일 생성
-                        val uri: Uri = if(prevUri != null){
-                            prevUri.toUri()
-                        }else{
-                            val file = File.createTempFile(
-                                filePrefix,
-                                ".${url.substringAfterLast(".", "")}",
-                                dir
-                            )
+                    // 파일이 없을 때만 파일 생성
+                    val uri: Uri = if(prevUri != null){
+                        prevUri.toUri()
+                    }else{
+                        val file = File.createTempFile(
+                            filePrefix,
+                            ".${url.substringAfterLast(".", "")}",
+                            dir
+                        )
 
-                            val os = FileOutputStream(file)
-                            os.write(response.body()!!.byteStream().readBytes())
-                            os.close()
+                        val os = FileOutputStream(file)
+                        os.write(response.body()!!.byteStream().readBytes())
+                        os.close()
 
-                            Uri.fromFile(file)
-                        }
+                        Uri.fromFile(file)
+                    }
 
 
-                        // View
-                        val postMediaVideo = holder.postMediaVideo
-                        postMediaVideo.visibility = View.VISIBLE
+                    // View
+                    val postMediaVideo = holder.postMediaVideo
+                    postMediaVideo.visibility = View.VISIBLE
 
-                        // 영상의 비율을 유지한 채로, 영상의 사이즈를 가로로 꽉 채웁니다.
-                        val retriever = MediaMetadataRetriever()
-                        retriever.setDataSource(requireContext(), uri)
+                    // 영상의 비율을 유지한 채로, 영상의 사이즈를 가로로 꽉 채웁니다.
+                    val retriever = MediaMetadataRetriever()
+                    retriever.setDataSource(requireContext(), uri)
 
-                        val videoWidth = Integer.parseInt(retriever.extractMetadata(
-                            MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH))
-                        val videoHeight = Integer.parseInt(retriever.extractMetadata(
-                            MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT))
+                    val videoWidth = Integer.parseInt(retriever.extractMetadata(
+                        MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH))
+                    val videoHeight = Integer.parseInt(retriever.extractMetadata(
+                        MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT))
 
-                        val screenWidth = Util.getScreenWidthInPixel(requireActivity())
-                        val ratio: Float = screenWidth.toFloat() / videoWidth.toFloat()
+                    val screenWidth = Util.getScreenWidthInPixel(requireActivity())
+                    val ratio: Float = screenWidth.toFloat() / videoWidth.toFloat()
 
-                        postMediaVideo.layoutParams.height = (videoHeight.toFloat() * ratio).toInt()
+                    postMediaVideo.layoutParams.height = (videoHeight.toFloat() * ratio).toInt()
+                     */
 
-                        // 반복 재생
-                        postMediaVideo.setOnCompletionListener {
-                            postMediaVideo.start()
-                        }
+                    // View
+                    val postMediaVideo = holder.postMediaVideo
+                    postMediaVideo.visibility = View.VISIBLE
 
-                        // 재생
-                        postMediaVideo.setVideoURI(uri)
-                        postMediaVideo.requestFocus()
+                    // 반복 재생
+                    postMediaVideo.setOnCompletionListener {
                         postMediaVideo.start()
                     }
-                    // 이미지
-                    else{
+
+                    // 준비되면 재생
+                    postMediaVideo.setOnPreparedListener {
+                        postMediaVideo.start()
+                    }
+
+                    // 에러
+                    postMediaVideo.setOnErrorListener { mediaPlayer: MediaPlayer, what: Int, extra: Int ->
+                        Log.d("videoError", "what: $what, extra: $extra")
+                        return@setOnErrorListener false
+                    }
+
+
+                    // 재생
+                    val encodedURL = URLEncoder.encode(url,"UTF8")
+                    postMediaVideo.setVideoPath("http://localhost:8080/api/video/stream=?$encodedURL")
+                    postMediaVideo.requestFocus()
+                    postMediaVideo.start()
+                }
+                // 이미지
+                else{
+                    val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
+                        .fetchPostImageReq(FetchPostImageReqDto(id, index))
+                    ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                         // Convert photo to byte array + get bitmap
                         val photoByteArray = response.body()!!.byteStream().readBytes()
                         val photoBitmap = BitmapFactory.decodeByteArray(photoByteArray, 0, photoByteArray.size)
@@ -311,8 +333,8 @@ class PostFragment : Fragment() {
                         val screenWidth = Util.getScreenWidthInPixel(requireActivity())
                         val ratio: Float = screenWidth.toFloat() / photoBitmap.width.toFloat()
                         postMediaImage.layoutParams.height = (photoBitmap.height.toFloat() * ratio).toInt()
-                    }
-                }, { dummyImageView.visibility = View.GONE }, { dummyImageView.visibility = View.GONE })
+                    }, { dummyImageView.visibility = View.GONE }, { dummyImageView.visibility = View.GONE })
+                }
             }
 
             override fun startGeneralFilesActivity(postId: Long, fileAttachments: String) {
@@ -440,7 +462,7 @@ class PostFragment : Fragment() {
                     createUpdatePostActivityIntent.putExtra("fragmentType", "update_post")
                     createUpdatePostActivityIntent.putExtra("postId", post.id)
                     createUpdatePostActivityIntent.putExtra("position", position)
-                    createUpdatePostActivityIntent.putExtra("originalMediaCount", Util.getArrayFromMediaAttachments(post.mediaAttachments).size)
+                    createUpdatePostActivityIntent.putExtra("originalMediaCount", Util.getArrayFromMediaAttachments(post.imageAttachments).size)
                     createUpdatePostActivityIntent.putExtra("originalGeneralFilesCount", Util.getArrayFromMediaAttachments(post.fileAttachments).size)
 
                     startForUpdateResult.launch(createUpdatePostActivityIntent)

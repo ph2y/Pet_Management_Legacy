@@ -902,7 +902,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun fetchPostMediaData(postMedia: Array<FileMetaData>) { // TODO: add logic for branching photos and videos
         for(index in postMedia.indices) {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                .fetchPostMediaReq(FetchPostMediaReqDto(createUpdatePostViewModel.postId!!, index))
+                .fetchPostVideoReq(FetchPostVideoReqDto(createUpdatePostViewModel.postId!!, index))
             ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                 // get file extension
                 val extension = postMedia[index].url.split('.').last()
@@ -994,9 +994,9 @@ class CreateUpdatePostFragment : Fragment() {
             createUpdatePostViewModel.postEditText = post.contents
 
             // fetch post media (photos) data // TODO: fetch post media (videos) data
-            if(post.mediaAttachments != null) {
+            if(post.videoAttachments != null) {
                 val postMedia =
-                    Gson().fromJson(post.mediaAttachments, Array<FileMetaData>::class.java)
+                    Gson().fromJson(post.videoAttachments, Array<FileMetaData>::class.java)
 
                 // initialize lists
                 for (i in postMedia.indices) {
@@ -1027,7 +1027,7 @@ class CreateUpdatePostFragment : Fragment() {
             }
 
             // if no attachments
-            if (post.mediaAttachments == null && post.fileAttachments == null) {
+            if (post.videoAttachments == null && post.fileAttachments == null) {
                 // set fetched to true
                 createUpdatePostViewModel.fetchedPostDataForUpdate = true
 

@@ -97,22 +97,6 @@ public class PostController {
         return ResponseEntity.ok(fileBinData);
     }
 
-    @PostMapping("/api/post/video/fetch")
-    public ResponseEntity<?> fetchPostVideo(@RequestHeader(value = "Range", required = false) String httpRangeList, @Valid @RequestBody FetchPostVideoReqDto reqDto) {
-        DtoMetadata dtoMetadata;
-        ResponseEntity<?> responseEntity;
-
-        try {
-            responseEntity = postServ.fetchPostVideo(reqDto.getId(), reqDto.getIndex(), httpRangeList);
-        } catch (Exception e) {
-            logger.warn(e.toString());
-            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
-            return ResponseEntity.status(400).body(new FetchPostVideoResDto(dtoMetadata));
-        }
-
-        return responseEntity;
-    }
-
     @PostMapping("/api/post/file/fetch")
     public ResponseEntity<?> fetchPostFile(@Valid @RequestBody FetchPostFileReqDto reqDto) {
         DtoMetadata dtoMetadata;

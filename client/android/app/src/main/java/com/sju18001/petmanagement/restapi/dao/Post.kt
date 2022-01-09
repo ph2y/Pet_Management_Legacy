@@ -13,6 +13,7 @@ data class Post(
     val disclosure: String,
     val geoTagLat: Double,
     val geoTagLong: Double,
-    val mediaAttachments: String?,
+    val imageAttachments: String?,
+    val videoAttachments: String?,
     val fileAttachments: String?
 )

@@ -56,7 +56,12 @@ data class DeletePostResDto (
     val _metadata: DtoMetadata
 )
 
-data class FetchPostMediaReqDto (
+data class FetchPostImageReqDto (
+    val id: Long,
+    val index: Int
+)
+
+data class FetchPostVideoReqDto (
     val id: Long,
     val index: Int
 )
