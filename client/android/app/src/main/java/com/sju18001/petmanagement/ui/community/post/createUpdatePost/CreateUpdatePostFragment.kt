@@ -461,6 +461,8 @@ class CreateUpdatePostFragment : Fragment() {
             // if no photo
             if (createUpdatePostViewModel.petList[i].petPhotoUrl == null) {
                 fetchedFlags[i] = true
+                checkFetchedFlags(fetchedFlags)
+
                 continue
             }
 
@@ -469,16 +471,20 @@ class CreateUpdatePostFragment : Fragment() {
                 .fetchPetPhotoReq(FetchPetPhotoReqDto(createUpdatePostViewModel.petList[i].petId))
             ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                 createUpdatePostViewModel.petList[i].petPhoto = BitmapFactory.decodeStream(response.body()!!.byteStream())
+
                 fetchedFlags[i] = true
-
-                if (fetchedFlags.all{true}) {
-                    createUpdatePostViewModel.fetchedPetData = true
-                    petAdapter.updateDataSet(createUpdatePostViewModel.petList)
-
-                    hideLoadingScreen()
-                    restoreState()
-                }
+                checkFetchedFlags(fetchedFlags)
             }, {}, {})
+        }
+    }
+
+    private fun checkFetchedFlags(fetchedFlags: BooleanArray){
+        if (fetchedFlags.all{true}) {
+            createUpdatePostViewModel.fetchedPetData = true
+            petAdapter.updateDataSet(createUpdatePostViewModel.petList)
+
+            hideLoadingScreen()
+            restoreState()
         }
     }
 
