@@ -99,7 +99,7 @@ public class PostController {
     }
 
     @GetMapping("/api/post/video/fetch")
-    public ResponseEntity<?> streamPostVideo(@RequestParam(name = "url") String fileUrl, @RequestHeader(value = "Range", required = false) String httpRangeList) {
+    public ResponseEntity<?> fetchPostVideo(@RequestParam(name = "url") String fileUrl, @RequestHeader(value = "Range", required = false) String httpRangeList) {
         DtoMetadata dtoMetadata;
         ResponseEntity<?> responseEntity;
 
