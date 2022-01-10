@@ -22,7 +22,6 @@ import java.util.List;
 public class JwtRequestFilter extends OncePerRequestFilter {
     private final AccountAuthService accountAuthServ;
     private final JwtTokenUtil jwtTokenUtil;
-    private static final List<String> EXCLUDE_URL = Collections.emptyList();
 
     // 의존성 주입용 생성자
     public JwtRequestFilter(AccountAuthService accountAuthServ, JwtTokenUtil jwtTokenUtil) {
@@ -73,7 +72,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     @Override
     // 검증하지 않을 예외 조건
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return EXCLUDE_URL.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
+        return WebSecurityConfig.EXCLUDE_URL.stream().anyMatch(exclude -> exclude.equalsIgnoreCase(request.getServletPath()));
     }
 
 }

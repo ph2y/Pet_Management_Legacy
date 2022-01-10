@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -95,6 +96,22 @@ public class PostController {
             return ResponseEntity.status(400).body(new FetchPostImageResDto(dtoMetadata));
         }
         return ResponseEntity.ok(fileBinData);
+    }
+
+    @GetMapping("/api/post/video/fetch")
+    public ResponseEntity<?> streamPostVideo(@RequestParam(name = "url") String fileUrl, @RequestHeader(value = "Range", required = false) String httpRangeList) {
+        DtoMetadata dtoMetadata;
+        ResponseEntity<?> responseEntity;
+
+        try {
+            responseEntity = postServ.fetchPostVideo(URLDecoder.decode(fileUrl,"UTF8"), httpRangeList);
+        } catch (Exception e) {
+            logger.warn(e.toString());
+            dtoMetadata = new DtoMetadata(e.getMessage(), e.getClass().getName());
+            return ResponseEntity.status(400).body(new FetchPostVideoResDto(dtoMetadata));
+        }
+
+        return responseEntity;
     }
 
     @PostMapping("/api/post/file/fetch")

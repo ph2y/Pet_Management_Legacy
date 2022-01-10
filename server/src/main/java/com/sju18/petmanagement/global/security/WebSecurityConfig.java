@@ -10,6 +10,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -18,6 +20,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtRequestFilter jwtRequestFilter;
     private final DataSource dataSource;
+
+    public static final List<String> EXCLUDE_URL = Arrays.asList(
+            "/api/account/create",
+            "/api/account/login",
+            "/api/account/logout",
+            "/api/account/authcode/send",
+            "/api/account/authcode/verify",
+            "/api/account/recoverUsername",
+            "/api/account/recoverPassword",
+            "/api/post/video/fetch",
+            "/api/post/video/fetch/**");
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -28,16 +41,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
-                .authorizeRequests().antMatchers(
-                        "/api/account/create",
-                    "/api/account/login",
-                    "/api/account/logout",
-                    "/api/account/authcode/send",
-                    "/api/account/authcode/verify",
-                    "/api/account/recoverUsername",
-                    "/api/account/recoverPassword",
-                    "/api/video/stream/**"
-                ).permitAll()
+                .authorizeRequests().antMatchers(EXCLUDE_URL.toArray(new String[EXCLUDE_URL.size()])).permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .exceptionHandling()
