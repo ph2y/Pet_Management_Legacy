@@ -241,7 +241,7 @@ class PostFragment : Fragment() {
                 if(Util.isUrlVideo(url)){
                     // 재생
                     val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                        .fetchPostVideoReq(url.replace(" ", "%20"))
+                        .fetchPostVideoReq(url)
                     ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                         // Save file
                         val dir = File(requireContext().getExternalFilesDir(null).toString() +
