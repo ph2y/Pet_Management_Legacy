@@ -129,13 +129,14 @@ public class PostService {
     }
 
     public ResponseEntity<byte[]> fetchPostVideo(String fileUrl, String range) throws Exception {
+        Long fileSize = fileServ.getFileSize(fileUrl);
+        String fileType = fileServ.getFileExtension(fileUrl);
+
         long rangeStart = 0;
         long rangeEnd;
         byte[] data;
 
-        Long fileSize = fileServ.getFileSize(fileUrl);
-        String fileType = fileServ.getFileExtension(fileUrl);
-
+        // HTTP Range 필드가 비어있으면 파일 전체 fetch
         if (range == null) {
             return ResponseEntity.status(HttpStatus.OK)
                     .header("Content-Type", "video/" + fileType)
@@ -143,6 +144,7 @@ public class PostService {
                     .body(fileServ.readByteRange(fileUrl, rangeStart, fileSize - 1)); // Read the object and convert it as bytes
         }
 
+        // 요청받은 Range 에 따라 파일을 나누어 fetch
         String[] ranges = range.split("-");
         rangeStart = Long.parseLong(ranges[0].substring(6));
         if (ranges.length > 1) {
@@ -153,6 +155,7 @@ public class PostService {
         if (fileSize < rangeEnd) {
             rangeEnd = fileSize - 1;
         }
+
         System.out.println("Video Streaming... | Range: bytes=" + rangeStart + "-" + rangeEnd);
         data = fileServ.readByteRange(fileUrl, rangeStart, rangeEnd);
 

@@ -437,18 +437,20 @@ public class FileService {
         }
     }
 
-    // 파일을 range 범위 안에서 바이트 단위로 읽기
+    // 파일을 KByte 단위로 부분 읽기
     public byte[] readByteRange(String fileUrl, long start, long end) throws IOException {
-        try (InputStream inputStream = (Files.newInputStream(Paths.get(fileUrl)));
-             ByteArrayOutputStream bufferedOutputStream = new ByteArrayOutputStream()) {
+        try (InputStream inputStream = (Files.newInputStream(Paths.get(fileUrl))); ByteArrayOutputStream bufferedOutputStream = new ByteArrayOutputStream()) {
             byte[] data = new byte[1024];
             int nRead;
+
             while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
                 bufferedOutputStream.write(data, 0, nRead);
             }
             bufferedOutputStream.flush();
+
             byte[] result = new byte[(int) (end - start) + 1];
             System.arraycopy(bufferedOutputStream.toByteArray(), (int) start, result, 0, result.length);
+
             return result;
         }
     }
