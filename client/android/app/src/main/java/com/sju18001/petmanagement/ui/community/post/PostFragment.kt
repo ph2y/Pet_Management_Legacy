@@ -37,6 +37,7 @@ import com.sju18001.petmanagement.ui.community.CommunityViewModel
 import com.sju18001.petmanagement.ui.community.comment.CommentActivity
 import com.sju18001.petmanagement.ui.community.post.createUpdatePost.CreateUpdatePostActivity
 import com.sju18001.petmanagement.ui.community.post.generalFiles.GeneralFilesActivity
+import wseemann.media.FFmpegMediaMetadataRetriever
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URLEncoder
@@ -239,67 +240,37 @@ class PostFragment : Fragment() {
                 dummyImageView.visibility = View.GONE
 
                 if(Util.isUrlVideo(url)){
-                    // 재생
-                    val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                        .fetchPostVideoReq(url)
-                    ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
-                        // Save file
-                        val dir = File(requireContext().getExternalFilesDir(null).toString() +
-                                File.separator + COMMUNITY_DIRECTORY)
-                        if(! dir.exists()){
-                            dir.mkdir()
-                        }
+                    // View
+                    val postMediaVideo = holder.postMediaVideo
+                    postMediaVideo.visibility = View.VISIBLE
 
-                        // 해당 파일 검색
-                        val filePrefix = "${id}_${index}_"
-                        val prevUri = dir.walk().find { it.name.startsWith(filePrefix) }
+                    // 영상의 비율을 유지한 채로, 영상의 사이즈를 가로로 꽉 채웁니다.
+                    val encodedUrl = RetrofitBuilder.BASE_URL + "/api/post/video/fetch?url=" + URLEncoder.encode(url, "UTF8")
 
-                        // 파일이 없을 때만 파일 생성
-                        val uri: Uri = if(prevUri != null){
-                            prevUri.toUri()
-                        }else{
-                            val file = File.createTempFile(
-                                filePrefix,
-                                ".${url.substringAfterLast(".", "")}",
-                                dir
-                            )
+                    val retriever = FFmpegMediaMetadataRetriever()
+                    retriever.setDataSource(encodedUrl)
 
-                            val os = FileOutputStream(file)
-                            os.write(response.body()!!.byteStream().readBytes())
-                            os.close()
+                    val videoWidth = Integer.parseInt(retriever.extractMetadata(
+                        FFmpegMediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH))
+                    val videoHeight = Integer.parseInt(retriever.extractMetadata(
+                        FFmpegMediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT))
 
-                            Uri.fromFile(file)
-                        }
+                    val screenWidth = Util.getScreenWidthInPixel(requireActivity())
+                    val ratio: Float = screenWidth.toFloat() / videoWidth.toFloat()
 
+                    postMediaVideo.layoutParams.height = (videoHeight.toFloat() * ratio).toInt()
 
-                        // View
-                        val postMediaVideo = holder.postMediaVideo
-                        postMediaVideo.visibility = View.VISIBLE
-
-                        // 영상의 비율을 유지한 채로, 영상의 사이즈를 가로로 꽉 채웁니다.
-                        val retriever = MediaMetadataRetriever()
-                        retriever.setDataSource(requireContext(), uri)
-
-                        val videoWidth = Integer.parseInt(retriever.extractMetadata(
-                            MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH))
-                        val videoHeight = Integer.parseInt(retriever.extractMetadata(
-                            MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT))
-
-                        val screenWidth = Util.getScreenWidthInPixel(requireActivity())
-                        val ratio: Float = screenWidth.toFloat() / videoWidth.toFloat()
-
-                        postMediaVideo.layoutParams.height = (videoHeight.toFloat() * ratio).toInt()
-
-                        // 반복 재생
-                        postMediaVideo.setOnCompletionListener {
-                            postMediaVideo.start()
-                        }
-
-                        // 재생
-                        postMediaVideo.setVideoURI(uri)
-                        postMediaVideo.requestFocus()
+                    // 반복 재생
+                    postMediaVideo.setOnCompletionListener {
                         postMediaVideo.start()
-                    }, { dummyImageView.visibility = View.GONE }, { dummyImageView.visibility = View.GONE })
+                    }
+
+                    // 재생
+                    postMediaVideo.setVideoPath(encodedUrl)
+                    postMediaVideo.requestFocus()
+                    postMediaVideo.setOnPreparedListener {
+                        postMediaVideo.start()
+                    }
                 }
                 // 이미지
                 else{
