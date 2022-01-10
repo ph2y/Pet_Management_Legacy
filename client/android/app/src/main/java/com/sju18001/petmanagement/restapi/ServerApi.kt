@@ -115,8 +115,8 @@ interface ServerApi {
     @POST("api/post/image/fetch")
     fun fetchPostImageReq(@Body fetchPostMediaReqDto: FetchPostImageReqDto): Call<ResponseBody>
 
-    @POST("api/post/video/fetch")
-    fun fetchPostVideoReq(@Body fetchPostMediaReqDto: FetchPostVideoReqDto): Call<ResponseBody>
+    @GET("api/post/video/fetch")
+    fun fetchPostVideoReq(@Query("url") url: String): Call<ResponseBody>
 
     @POST("api/post/file/fetch")
     fun fetchPostFileReq(@Body fetchPostFileReqDto: FetchPostFileReqDto): Call<ResponseBody>

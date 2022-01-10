@@ -902,7 +902,7 @@ class CreateUpdatePostFragment : Fragment() {
     private fun fetchPostMediaData(postMedia: Array<FileMetaData>) { // TODO: add logic for branching photos and videos
         for(index in postMedia.indices) {
             val call = RetrofitBuilder.getServerApiWithToken(SessionManager.fetchUserToken(requireContext())!!)
-                .fetchPostVideoReq(FetchPostVideoReqDto(createUpdatePostViewModel.postId!!, index))
+                .fetchPostVideoReq(postMedia[index].url.replace(" ", "%20"))
             ServerUtil.enqueueApiCall(call, {isViewDestroyed}, requireContext(), { response ->
                 // get file extension
                 val extension = postMedia[index].url.split('.').last()
