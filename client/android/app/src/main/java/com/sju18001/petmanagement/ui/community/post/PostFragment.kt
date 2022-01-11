@@ -229,7 +229,7 @@ class PostFragment : Fragment() {
                 holder.accountPhotoImage.setImageDrawable(requireContext().getDrawable(R.drawable.ic_baseline_account_circle_24))
             }
 
-            override fun setPostMedia( // temporary video only
+            override fun setPostMedia(
                 holder: PostListAdapter.PostMediaItemCollectionAdapter.ViewPagerHolder,
                 id: Long,
                 index: Int,

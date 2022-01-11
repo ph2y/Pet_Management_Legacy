@@ -106,8 +106,10 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
     }
 
     private fun setViewPager(holder: ViewHolder, data: Post){
-        if(!data.videoAttachments.isNullOrEmpty()){
-            val mediaAttachments = Util.getArrayFromMediaAttachments(data.videoAttachments)
+        if(!data.imageAttachments.isNullOrEmpty() || !data.videoAttachments.isNullOrEmpty()){
+            val imageAttachments = Util.getArrayFromMediaAttachments(data.imageAttachments)
+            val videoAttachments = Util.getArrayFromMediaAttachments(data.videoAttachments)
+            val mediaAttachments = imageAttachments + videoAttachments
 
             // 더미 이미지 생성
             holder.dummyLayout.visibility = View.VISIBLE
