@@ -56,19 +56,27 @@ class PetListAdapter(
         val petMessage: TextView = itemView.findViewById(R.id.pet_message)
     }
 
-    class AddPetButtonViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val createPetButton: ImageView = itemView.findViewById(R.id.button_create_pet)
+    class CreatePetButtonViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        val createPetButton: ImageView = view.findViewById(R.id.button_create_pet)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
             R.layout.pet_list_item -> {
-                val itemView = LayoutInflater.from(parent.context).inflate(R.layout.pet_list_item, parent, false)
-                HistoryListViewHolder(itemView)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.pet_list_item, parent, false)
+
+                val holder = HistoryListViewHolder(view)
+                setListenerOnView(holder)
+
+                holder
             }
             else -> {
-                val itemView = LayoutInflater.from(parent.context).inflate(R.layout.create_pet_button, parent, false)
-                AddPetButtonViewHolder(itemView)
+                val view = LayoutInflater.from(parent.context).inflate(R.layout.create_pet_button, parent, false)
+
+                val holder = CreatePetButtonViewHolder(view)
+                setListenerOnView(holder)
+
+                holder
             }
         }
     }
@@ -81,18 +89,17 @@ class PetListAdapter(
 
                 val currentItem = resultList[position]
 
-                // check if representative pet
+                // Set representative pet icon
                 val isRepresentativePet = currentItem.id == SessionManager.fetchLoggedInAccount(context)?.representativePetId?: 0
                 if (isRepresentativePet) {
                     holder.representativePetIcon.setImageResource(R.drawable.crown)
                     holder.representativePetIcon.scaleType = ImageView.ScaleType.FIT_XY
-
                     holder.representativePetIcon.visibility = View.VISIBLE
                 } else{
                     holder.representativePetIcon.visibility = View.INVISIBLE
                 }
 
-                // set values to views
+                // Set pet photo
                 if(currentItem.photoUrl != null) {
                     fetchPetPhoto(currentItem.id, holder.petPhoto)
                 }
@@ -101,62 +108,6 @@ class PetListAdapter(
                 }
 
                 setPetInfoLayout(holder, currentItem)
-
-                // Long clicking the item to draging
-                holder.itemView.setOnLongClickListener(View.OnLongClickListener {
-                    this.startDragListener.onStartDrag(holder)
-
-                    return@OnLongClickListener false
-                })
-
-                // click -> open pet profile
-                holder.itemView.setOnClickListener {
-                    if(!clickable) return@setOnClickListener
-
-                    // if pet photo not yet fetched
-                    if (currentItem.photoUrl != null && holder.petPhoto.drawable == null) {
-                        return@setOnClickListener
-                    }
-
-                    // set pet values to Intent
-                    val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
-                    if(currentItem.photoUrl != null) {
-                        val bitmap = (holder.petPhoto.drawable as BitmapDrawable).bitmap
-                        val stream = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-                        val photoByteArray = stream.toByteArray()
-                        Util.saveByteArrayToSharedPreferences(context, context.getString(R.string.pref_name_byte_arrays),
-                            context.getString(R.string.data_name_my_pet_selected_pet_photo), photoByteArray)
-                    }
-                    else {
-                        Util.saveByteArrayToSharedPreferences(context, context.getString(R.string.pref_name_byte_arrays),
-                            context.getString(R.string.data_name_my_pet_selected_pet_photo), null)
-                    }
-                    petProfileIntent.putExtra("petId", currentItem.id)
-                    petProfileIntent.putExtra("petName", currentItem.name)
-                    petProfileIntent.putExtra("petBirth",
-                        if(currentItem.yearOnly!!) currentItem.birth!!.substring(0, 4)
-                        else currentItem.birth
-                    )
-                    petProfileIntent.putExtra("petSpecies", currentItem.species)
-                    petProfileIntent.putExtra("petBreed", currentItem.breed)
-                    petProfileIntent.putExtra("petGender", Util.getGenderSymbol(currentItem.gender, context))
-                    petProfileIntent.putExtra("petAge", Util.getAgeFromBirth(currentItem.birth))
-                    petProfileIntent.putExtra("petMessage", currentItem.message)
-                    petProfileIntent.putExtra("isRepresentativePet", isRepresentativePet)
-
-                    // open activity
-                    petProfileIntent.putExtra("fragmentType", "pet_profile_pet_manager")
-                    holder.itemView.context.startActivity(petProfileIntent)
-                    (context as Activity).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
-                }
-            }
-            R.layout.create_pet_button ->{
-                holder as AddPetButtonViewHolder
-
-                holder.createPetButton.setOnClickListener {
-                    onClickCreateButton.invoke()
-                }
             }
         }
     }
@@ -220,6 +171,66 @@ class PetListAdapter(
 
         // 드래그가 끝난 뒤, 스크롤을 PagerSnapHelper에 맞춰서 복구
         restoreScroll.invoke()
+    }
+
+    private fun setListenerOnView(holder: HistoryListViewHolder) {
+        // Long clicking the item to draging
+        holder.itemView.setOnLongClickListener(View.OnLongClickListener {
+            this.startDragListener.onStartDrag(holder)
+
+            return@OnLongClickListener false
+        })
+
+        // click -> open pet profile
+        holder.itemView.setOnClickListener {
+            if(!clickable) return@setOnClickListener
+
+            val currentItem = resultList[holder.absoluteAdapterPosition]
+
+            // if pet photo not yet fetched
+            if (currentItem.photoUrl != null && holder.petPhoto.drawable == null) {
+                return@setOnClickListener
+            }
+
+            // set pet values to Intent
+            val petProfileIntent = Intent(holder.itemView.context, MyPetActivity::class.java)
+            if(currentItem.photoUrl != null) {
+                val bitmap = (holder.petPhoto.drawable as BitmapDrawable).bitmap
+                val stream = ByteArrayOutputStream()
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+                val photoByteArray = stream.toByteArray()
+                Util.saveByteArrayToSharedPreferences(context, context.getString(R.string.pref_name_byte_arrays),
+                    context.getString(R.string.data_name_my_pet_selected_pet_photo), photoByteArray)
+            }
+            else {
+                Util.saveByteArrayToSharedPreferences(context, context.getString(R.string.pref_name_byte_arrays),
+                    context.getString(R.string.data_name_my_pet_selected_pet_photo), null)
+            }
+            petProfileIntent.putExtra("petId", currentItem.id)
+            petProfileIntent.putExtra("petName", currentItem.name)
+            petProfileIntent.putExtra("petBirth",
+                if(currentItem.yearOnly!!) currentItem.birth!!.substring(0, 4)
+                else currentItem.birth
+            )
+            petProfileIntent.putExtra("petSpecies", currentItem.species)
+            petProfileIntent.putExtra("petBreed", currentItem.breed)
+            petProfileIntent.putExtra("petGender", Util.getGenderSymbol(currentItem.gender, context))
+            petProfileIntent.putExtra("petAge", Util.getAgeFromBirth(currentItem.birth))
+            petProfileIntent.putExtra("petMessage", currentItem.message)
+            val isRepresentativePet = currentItem.id == SessionManager.fetchLoggedInAccount(context)?.representativePetId?: 0
+            petProfileIntent.putExtra("isRepresentativePet", isRepresentativePet)
+
+            // open activity
+            petProfileIntent.putExtra("fragmentType", "pet_profile_pet_manager")
+            holder.itemView.context.startActivity(petProfileIntent)
+            (context as Activity).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left)
+        }
+    }
+
+    private fun setListenerOnView(holder: CreatePetButtonViewHolder) {
+        holder.createPetButton.setOnClickListener {
+            onClickCreateButton.invoke()
+        }
     }
 
     private fun fetchPetPhoto(id: Long, view: View) {

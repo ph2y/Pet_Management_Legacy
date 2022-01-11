@@ -23,11 +23,6 @@ class PostTagListAdapter(private var dataSet: ArrayList<String>) : RecyclerView.
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         // Set text
         holder.textTag.text = dataSet[position]
-
-        // Click tag
-        holder.parentView.setOnClickListener {
-            // TODO: 태그 검색 기능
-        }
     }
 
     override fun getItemCount(): Int = dataSet.size

@@ -19,6 +19,7 @@ import com.sju18001.petmanagement.restapi.dao.Account
 import com.sju18001.petmanagement.restapi.dto.DeleteFollowReqDto
 import com.sju18001.petmanagement.restapi.dto.FetchAccountPhotoReqDto
 import com.sju18001.petmanagement.ui.community.CommunityUtil
+import com.sju18001.petmanagement.ui.community.post.PostListAdapter
 import de.hdodenhof.circleimageview.CircleImageView
 
 class FollowingAdapter(val context: Context, val followerFollowingViewModel: FollowerFollowingViewModel):
@@ -28,29 +29,25 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
 
     private var isViewDestroyed = false
 
-    class HistoryListViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
-        val mainLayout: View = itemView.findViewById(R.id.main_layout)
-        val accountPhoto: CircleImageView = itemView.findViewById(R.id.account_photo)
-        val accountNickname: TextView = itemView.findViewById(R.id.account_nickname)
-        val followUnfollowButton: Button = itemView.findViewById(R.id.follow_unfollow_button)
+    class HistoryListViewHolder(view: View): RecyclerView.ViewHolder(view) {
+        val mainLayout: View = view.findViewById(R.id.main_layout)
+        val accountPhoto: CircleImageView = view.findViewById(R.id.account_photo)
+        val accountNickname: TextView = view.findViewById(R.id.account_nickname)
+        val followUnfollowButton: Button = view.findViewById(R.id.follow_unfollow_button)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FollowingAdapter.HistoryListViewHolder {
-        val itemView = LayoutInflater.from(parent.context)
+        val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.follower_following_list_item, parent, false)
-        return FollowingAdapter.HistoryListViewHolder(itemView)
+
+        val holder = FollowingAdapter.HistoryListViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     @RequiresApi(Build.VERSION_CODES.M)
     override fun onBindViewHolder(holder: FollowingAdapter.HistoryListViewHolder, position: Int) {
-        // start pet profile
-        holder.mainLayout.setOnClickListener {
-            CommunityUtil.fetchRepresentativePetAndStartPetProfile(context, Account(
-                resultList[position].getId(), resultList[position].getUsername(), "", "", null,
-                null, resultList[position].getNickname(), if (resultList[position].getHasPhoto()) "true" else null,
-                "", resultList[position].getRepresentativePetId()), isViewDestroyed)
-        }
-
         // set account photo
         if(resultList[position].getHasPhoto()) {
             if(resultList[position].getPhoto() == null) {
@@ -72,8 +69,22 @@ class FollowingAdapter(val context: Context, val followerFollowingViewModel: Fol
         holder.followUnfollowButton.setBackgroundColor(context.getColor(R.color.border_line))
         holder.followUnfollowButton.setTextColor(context.resources.getColor(R.color.black))
         holder.followUnfollowButton.text = context.getText(R.string.unfollow_button)
+    }
+
+    private fun setListenerOnView(holder: FollowingAdapter.HistoryListViewHolder) {
+        // start pet profile
+        holder.mainLayout.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+
+            CommunityUtil.fetchRepresentativePetAndStartPetProfile(context, Account(
+                resultList[position].getId(), resultList[position].getUsername(), "", "", null,
+                null, resultList[position].getNickname(), if (resultList[position].getHasPhoto()) "true" else null,
+                "", resultList[position].getRepresentativePetId()), isViewDestroyed)
+        }
 
         holder.followUnfollowButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+
             // show confirm dialog
             val builder = AlertDialog.Builder(context)
             val messageText = resultList[position].getNickname() + context.getString(R.string.unfollow_confirm_dialog_message)

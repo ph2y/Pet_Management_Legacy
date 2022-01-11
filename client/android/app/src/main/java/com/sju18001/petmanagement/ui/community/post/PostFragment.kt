@@ -310,6 +310,8 @@ class PostFragment : Fragment() {
             it.adapter = adapter
             it.layoutManager = LinearLayoutManager(activity)
 
+            it.setItemViewCacheSize(30)
+
             // 스크롤하여, 최하단에 위치할 시 post 추가 로드
             it.addOnScrollListener(object: RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

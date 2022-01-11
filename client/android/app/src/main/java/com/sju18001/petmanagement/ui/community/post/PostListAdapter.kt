@@ -3,6 +3,7 @@ package com.sju18001.petmanagement.ui.community.post
 import android.app.Activity
 import android.content.Context
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import androidx.recyclerview.widget.RecyclerView
 import com.sju18001.petmanagement.restapi.dao.Post
@@ -61,15 +62,16 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.post_item, parent, false)
 
-        return ViewHolder(view)
+        val holder = ViewHolder(view)
+        setListenerOnView(holder)
+
+        return holder
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val safePosition = holder.adapterPosition
-
+        val safePosition = holder.absoluteAdapterPosition
         updateDataSetToViewHolder(holder, dataSet[safePosition], likedCounts[safePosition], safePosition)
-        setListenerOnView(holder, position)
     }
 
     override fun getItemCount(): Int = dataSet.size
@@ -95,9 +97,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         }
 
         // set general files button
-        if (!data.fileAttachments.isNullOrEmpty()) {
-            holder.generalFilesButton.visibility = View.VISIBLE
-        }
+        holder.generalFilesButton.visibility = if(data.fileAttachments.isNullOrEmpty()) View.GONE else View.VISIBLE
 
         // 저장된 데이터에 따라, ViewPager, Tag, ViewMore 셋팅
         setViewPager(holder, data)
@@ -106,8 +106,10 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
     }
 
     private fun setViewPager(holder: ViewHolder, data: Post){
-        if(!data.videoAttachments.isNullOrEmpty()){
-            val mediaAttachments = Util.getArrayFromMediaAttachments(data.videoAttachments)
+        if(!data.imageAttachments.isNullOrEmpty() || !data.videoAttachments.isNullOrEmpty()){
+            val imageAttachments = Util.getArrayFromMediaAttachments(data.imageAttachments)
+            val videoAttachments = Util.getArrayFromMediaAttachments(data.videoAttachments)
+            val mediaAttachments = imageAttachments + videoAttachments
 
             // 더미 이미지 생성
             holder.dummyLayout.visibility = View.VISIBLE
@@ -144,7 +146,7 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
         viewMoreTextView.visibility = View.GONE
 
         // getEllipsisCount()을 통한 더보기 표시 및 구현
-        contentsTextView.post{
+        contentsTextView.post {
             val lineCount = contentsTextView.layout.lineCount
             if (lineCount > 0) {
                 if (contentsTextView.layout.getEllipsisCount(lineCount - 1) > 0) {
@@ -162,39 +164,47 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setListenerOnView(holder: ViewHolder, position: Int){
-        val item = dataSet[position]
-
+    private fun setListenerOnView(holder: ViewHolder){
         // 프로필 이동
         holder.accountPhotoImage.setOnClickListener {
+            val item = dataSet[holder.absoluteAdapterPosition]
             CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, item.pet, item.author)
         }
         holder.layoutUserInfo.setOnClickListener {
+            val item = dataSet[holder.absoluteAdapterPosition]
             CommunityUtil.startPetProfileFragmentFromCommunity(holder.itemView.context, item.pet, item.author)
         }
 
         // 댓글 버튼
         holder.commentButton.setOnClickListener {
+            val item = dataSet[holder.absoluteAdapterPosition]
             communityPostListAdapterInterface.startCommentActivity(item.id)
         }
 
         // 좋아요 버튼
         holder.createLikeButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+            val item = dataSet[position]
             communityPostListAdapterInterface.createLike(item.id, holder, position)
         }
 
         // 좋아요 취소 버튼
         holder.deleteLikeButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+            val item = dataSet[position]
             communityPostListAdapterInterface.deleteLike(item.id, holder, position)
         }
 
         // general files button
         holder.generalFilesButton.setOnClickListener {
+            val item = dataSet[holder.absoluteAdapterPosition]
             communityPostListAdapterInterface.startGeneralFilesActivity(item.id, item.fileAttachments!!)
         }
 
         // ... 버튼 -> Dialog 띄우기
         holder.dialogButton.setOnClickListener {
+            val position = holder.absoluteAdapterPosition
+            val item = dataSet[position]
             communityPostListAdapterInterface.onClickPostFunctionButton(item, position)
         }
     }
@@ -252,11 +262,11 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
     class PostMediaItemCollectionAdapter(
         private var communityPostListAdapterInterface: PostListAdapterInterface,
         private val id: Long,
-        private val videoAttachments: Array<FileMetaData>,
+        private val mediaAttachments: Array<FileMetaData>,
         private val parentHolder: PostListAdapter.ViewHolder
         ): RecyclerView.Adapter<PostMediaItemCollectionAdapter.ViewPagerHolder>() {
         private val viewPager = parentHolder.viewPager
-        override fun getItemCount(): Int = videoAttachments.size
+        override fun getItemCount(): Int = mediaAttachments.size
 
         inner class ViewPagerHolder(parent: ViewGroup): RecyclerView.ViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.post_media_item, parent, false)
@@ -265,11 +275,18 @@ class PostListAdapter(private var dataSet: ArrayList<Post>, private var likedCou
             val postMediaVideo: VideoView = itemView.findViewById(R.id.video_post_media)
         }
 
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewPagerHolder(parent)
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewPagerHolder{
+            val holder = ViewPagerHolder(parent)
+            setListenerOnView(holder)
+
+            return holder
+        }
 
         override fun onBindViewHolder(holder: ViewPagerHolder, position: Int) {
-            communityPostListAdapterInterface.setPostMedia(holder, id, position, videoAttachments[position].url, parentHolder.dummyLayout)
+            communityPostListAdapterInterface.setPostMedia(holder, id, position, mediaAttachments[position].url, parentHolder.dummyLayout)
+        }
 
+        private fun setListenerOnView(holder: ViewPagerHolder) {
             // 페이지 전환 시 자동 재생
             viewPager.registerOnPageChangeCallback(object: ViewPager2.OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
