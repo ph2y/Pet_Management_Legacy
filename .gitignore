@@ -9,6 +9,70 @@ server/local.properties
 /storage/
 /storage/*
 
+## IDE
+.idea
+
 ## server distribution
 .env
 build/
+
+### Client/Android 폴더 - Git으로 추적하지 않을 예외 파일 (임시 파일, 바이너리 파일 등)###
+client/android/*.iml
+client/android/.gradle
+client/android/.idea/caches
+client/android/.idea/libraries
+client/android/.idea/modules.xml
+client/android/.idea/workspace.xml
+client/android/.idea/navEditor.xml
+client/android/.idea/assetWizardSettings.xml
+client/android/.DS_Store
+client/android/build
+client/android/captures
+client/android/.externalNativeBuild
+client/android/.cxx
+client/android/local.properties
+
+### Server 폴더 - Git으로 추적하지 않을 예외 파일 (임시 파일, 바이너리 파일 등)###
+
+### 빌드된 바이너리 파일 ###
+server/.gradle
+server/build/
+server/!gradle/wrapper/gradle-wrapper.jar
+server/!**/src/main/**/build/
+server/!**/src/test/**/build/
+
+### STS 임시 파일 ###
+server/.apt_generated
+server/.classpath
+server/.factorypath
+server/.project
+server/.settings
+server/.springBeans
+server/.sts4-cache
+server/bin/
+server/!**/src/main/**/bin/
+server/!**/src/test/**/bin/
+
+
+### IDE 관련 임시 파일, 설정 파일 ###
+### IntelliJ IDEA ###
+server/.idea
+server/*.iws
+server/*.iml
+server/*.ipr
+server/out/
+server/!**/src/main/**/out/
+server/!**/src/test/**/out/
+
+### NetBeans ###
+server/nbproject/private/
+server/nbbuild/
+server/dist/
+server/nbdist/
+server/.nb-gradle/
+
+### VS Code ###
+server/.vscode/
+
+### 미디어 파일 저장 디렉토리 ###
+server/storage/
